@@ -116,7 +116,7 @@ function run(args, callback) {
 	} else {
 		compiler.run(function (err, stats) {
 			if (!err && stats.hasErrors()) {
-				err = stats.errors.length + ' errors';
+				err = stats.toJson().errors.length + ' errors';
 			}
 			callback(err, null);
 		});

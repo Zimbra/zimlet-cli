@@ -65,7 +65,7 @@ export default function run(args, callback) {
 	else {
 		compiler.run( (err, stats) => {
 			if (!err && stats.hasErrors()) {
-				err = `${stats.errors.length} errors`;
+				err = `${stats.toJson().errors.length} errors`;
 			}
 			callback(err, null);
 		});
