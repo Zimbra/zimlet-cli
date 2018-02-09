@@ -1,7 +1,7 @@
 {
   "name": "@zimbra/zimlet-cli",
   "version": "1.0.0",
-  "description": "Develop, Build, and Package zimlets for development and production.",
+  "description": "Develop, Build, and Package Zimbra X compatible zimlets for development and production.",
   "main": "dist/index.js",
   "bin": {
     "zimlet": "./dist/cli.js"
@@ -10,7 +10,6 @@
     "build": "babel src -d dist -s --copy-files",
     "prebuild": "mkdirp dist",
     "test": "eslint src",
-    "postinstall": "npm run -s build",
     "prepublishOnly": "npm run -s build"
   },
   "babel": {
@@ -26,16 +25,13 @@
     "extends": "eslint-config-synacor",
     "globals": {
       "zimlet": true
-    },
-    "rules": {
-      "no-console": 0
     }
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.2",
-    "eslint": "^4.12.1",
-    "eslint-config-synacor": "^2.0.2",
+    "eslint": "^4.17.0",
+    "eslint-config-synacor": "^2.1.0",
     "mkdirp": "^0.5.1"
   },
   "license": "UNLICENSED",
@@ -50,7 +46,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.23.0",
-    "bundle-loader": "^0.5.5",
+    "bundle-loader": "^0.5.6",
     "chalk": "^2.3.0",
     "console-clear": "^1.0.0",
     "cors": "^2.8.4",
