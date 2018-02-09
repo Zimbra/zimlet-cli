@@ -179,7 +179,7 @@ export function configure(env) {
 						babelrc: false,
 						comments: false,
 						presets: [
-							[require.resolve('babel-preset-es2015'), { loose: true, modules: false }],
+							[require.resolve('babel-preset-env'), { loose: true, modules: false }],
 							require.resolve('babel-preset-stage-0')
 						],
 						plugins: [
