@@ -4,7 +4,7 @@ import style from './style.css';
 const dropBoxKeyBindings = {
 	all: {
 		G: {
-			D: 'GO_TO_DROPBOX' // Creat
+			D: 'GO_TO_DROPBOX' // Create global routing shortcut
 		}
 	},
 	dropbox: {

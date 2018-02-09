@@ -9,12 +9,7 @@ A command-line build tool for next generation Zimlets, powered by Webpack.
 **(note: npm installation as outlined here is not currently supported as this module is not yet public)**
 
 ```
-npm install -g zimlet-cli
-
-# note: this is not yet implemented! (start with the example)
-zimlet create my-new-zimlet
-
-cd my-new-zimlet
+npm install -g @zimbra/zimlet-cli
 
 # development server
 zimlet watch
@@ -45,7 +40,7 @@ Want to work on the CLI? It's easy:
 
 ```
 # get into this directory:
-cd packages/\@zimbra/zimlet-cli
+cd zimlet-cli
 
 # install the dependencies:
 npm install
