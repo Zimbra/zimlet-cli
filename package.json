@@ -9,7 +9,7 @@
   "scripts": {
     "build": "babel src -d dist -s --copy-files",
     "prebuild": "mkdirp dist",
-    "test": "eslint src",
+    "test": "eslint src && npm run build",
     "prepublishOnly": "npm run -s build"
   },
   "babel": {
