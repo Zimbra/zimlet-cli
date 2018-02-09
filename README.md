@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/Zimbra/zimlet-cli.svg?style=shield&circle-token=770fdb94c5adb3ca436855b59c752a77fc4e7fed)](https://circleci.com/gh/Zimbra/zimlet-cli)
+
 # Zimlet CLI
 
 A command-line build tool for next generation Zimlets, powered by Webpack.
