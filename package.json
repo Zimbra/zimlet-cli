@@ -10,7 +10,8 @@
     "build": "babel src -d dist -s --copy-files",
     "prebuild": "mkdirp dist",
     "test": "eslint src && npm run build",
-    "prepublishOnly": "npm run -s build"
+    "prepublishOnly": "npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags",
+    "release": "npm publish"
   },
   "babel": {
     "presets": [
