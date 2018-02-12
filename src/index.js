@@ -148,8 +148,6 @@ export function configure(env) {
 			mainFields: ['browser', 'module', 'jsnext:main', 'main'],
 			modules: [
 				path.resolve(cwd, 'node_modules'),
-				path.resolve(__dirname, '..', 'node_modules'),
-				path.resolve(__dirname, '../../..'), // Resolves to the `packages` directory
 				'node_modules'
 			],
 
