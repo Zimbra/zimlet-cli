@@ -57,7 +57,7 @@ Doing the above (and repeating the last step for any change to the CLI's source)
 
 #### Webpack
 
-To customize webpack create a `zimlet.config.js` file in the root of your Zimlet which exports a function that will change webpack's config.
+To customize webpack create a `zimlet.config.js` file in the root of your Zimlet which exports a function that will change webpack's config. To use a file other than `zimlet.config.js`, set a custom path as `env.config`.
 
 ```js
 /**
