@@ -1,12 +1,14 @@
 import path from 'path';
 
+const defaultConfig = './zimlet.config.js';
+
 export default function transformConfig(env, config) {
-	let transformerPath = path.resolve(env.cwd, env.config || './zimlet.config.js');
+	let transformerPath = path.resolve(env.cwd, env.config || defaultConfig);
 	try {
 		require.resolve(transformerPath);
 	}
 	catch (err) {
-		if (env.config) {
+		if (env.config && env.config !== defaultConfig) {
 			console.warn(`zimlet-cli config could not be loaded!\nFile ${env.config} not found.`);
 		}
 		return;
