@@ -3,8 +3,17 @@
 import yargs from 'yargs';
 import run from './index';
 
+const optionsForAllCommands = {
+	config: {
+		type: 'string',
+		description: 'Path to a custom config file',
+		default: './zimlet.config.js'
+	}
+};
+
 yargs
 	.command('watch', 'Start a development server', {
+		...optionsForAllCommands,
 		port: {
 			type: 'number',
 			description: 'Port of dev server',
@@ -21,6 +30,7 @@ yargs
 		runCli(argv);
 	})
 	.command(['build'], 'Compile a zimlet', {
+		...optionsForAllCommands,
 		dest: {
 			type: 'string',
 			defaultDescription: './build',
@@ -31,6 +41,7 @@ yargs
 		runCli(argv);
 	})
 	.command(['package'], 'Package a zimlet for deployment', {
+		...optionsForAllCommands,
 		name: {
 			alias: 'n',
 			type: 'string',

@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import ip from 'ip';
 import chalk from 'chalk';
+import transformConfig from './lib/webpack/transform-config';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import clearConsole from 'console-clear';
@@ -81,7 +82,7 @@ export function configure(env) {
 		host = process.env.HOST || env.host || 'localhost',
 		port = process.env.PORT || env.port || 8081;
 
-	let cwd = process.cwd(),
+	let cwd = env.cwd = process.cwd(),
 		context = cwd,
 		pkg;
 
@@ -329,6 +330,7 @@ export function configure(env) {
 		};
 	}
 
+	transformConfig(env, webpackConfig);
 	return webpackConfig;
 }
 
