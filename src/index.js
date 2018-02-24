@@ -123,7 +123,13 @@ export function configure(env) {
 
 	let postCssLoaderOptions = {
 		plugins: [
-			cssnext({ browsers: ['last 2 versions', 'not ie > 0', 'iOS >= 8'] }),
+			cssnext({
+				browsers: ['last 2 versions', 'not ie > 0', 'iOS >= 8'] ,
+				features: {
+					//disable customProperties plugin so css variables and :root blocks are preserved
+					customProperties: false
+				}
+			}),
 			discardComments({ removeAll: true })
 		]
 	};
