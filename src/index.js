@@ -123,7 +123,7 @@ export function configure(env) {
 
 	let postCssLoaderOptions = {
 		plugins: [
-			cssnext({ browsers: ['last 2 versions', 'ie >= 11', 'iOS >= 8'] }),
+			cssnext({ browsers: ['last 2 versions', 'not ie > 0', 'iOS >= 8'] }),
 			discardComments({ removeAll: true })
 		]
 	};
