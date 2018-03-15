@@ -30,17 +30,19 @@ export async function initGit(target) {
 		const defaultGitEmail = 'zimlet-cli@users.noreply.github.com';
 
 		try {
-			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
-		}
-		catch (e) {
-			gitEmail = defaultGitEmail;
-		}
-
-		try {
 			gitUser = (await spawn('git', ['config', 'user.name'])).toString();
 		}
 		catch (e) {
+			warn(`Git config value of user.name not defined.  Defaulting to ${defaultGitUser} for initial commit message.`);
 			gitUser = defaultGitUser;
+		}
+
+		try {
+			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
+		}
+		catch (e) {
+			warn(`Git config value of user.email not defined.  Defaulting to ${defaultGitEmail} for initial commit message.`);
+			gitEmail = defaultGitEmail;
 		}
 
 		try {
@@ -49,8 +51,8 @@ export async function initGit(target) {
 				env: {
 					GIT_COMMITTER_NAME: gitUser,
 					GIT_COMMITTER_EMAIL: gitEmail,
-					GIT_AUTHOR_NAME: defaultGitUser,
-					GIT_AUTHOR_EMAIL: defaultGitEmail
+					GIT_AUTHOR_NAME: gitUser,
+					GIT_AUTHOR_EMAIL: gitEmail
 				}
 			});
 		}
