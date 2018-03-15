@@ -11,15 +11,9 @@ import clearConsole from 'console-clear';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import cssnext from 'postcss-cssnext';
 import discardComments from 'postcss-discard-comments';
-import Zip from 'adm-zip';
 import { crossPlatformPathRegex } from './util';
 
 export default function run(args, callback) {
-
-	//if it is just package, then package appropriately
-	if (args.package) {
-		return packageZimlet(args, callback);
-	}
 
 	let config = configure(args);
 
@@ -338,50 +332,6 @@ export function configure(env) {
 
 	transformConfig(env, webpackConfig);
 	return webpackConfig;
-}
-
-function packageZimlet(args, callback) {
-
-	// normalize built files source directory and desination package dir
-	let cwd = process.cwd();
-	let builddir = path.resolve(cwd, args.builddir || 'build');
-	let dest = path.resolve(cwd, args.dest || 'pkg', `${args.name}.zip`);
-
-	//Create the xml descriptor file for the zimlet
-	let xmlFile = `${args.name}.xml`;
-
-	let zimletXML = `<zimlet name="${args.name}" version="${args['pkg-version']}" description="${args.description}">`;
-
-	fs.readdir(builddir, (err, files) => {
-		files.forEach(file => {
-			if (file.match(/\.js$/)) {
-				zimletXML += `\n\t<include>${file}</include>`;
-			}
-			else if (file.match(/\.css$/)) {
-				zimletXML += `\n\t<includeCSS>${file}</includeCSS>`;
-			}
-			else if (file !== xmlFile) {
-				zimletXML += `\n\t<resource>${file}</resource>`;
-			}
-		});
-
-		zimletXML += '\n</zimlet>';
-
-		fs.writeFile(path.resolve(builddir, xmlFile), zimletXML,
-			(err) => {
-				if (err) {
-					return callback('Failed to write XML file: ' + err);
-				}
-
-				//Zip up the contents of the build dir along with the xml file as the final zimlet deliverable
-				let zipFile = new Zip();
-				zipFile.addLocalFolder(builddir, '');
-				zipFile.writeZip(dest);
-
-				return callback(null, `Successfully packaged zimlet to: ${dest}\n`);
-			});
-	});
-
 }
 
 function isDir(filepath) {
