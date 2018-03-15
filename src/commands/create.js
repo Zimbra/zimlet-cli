@@ -13,6 +13,10 @@ import asyncCommand from '../lib/async-command';
 // https://github.com/developit/preact-cli
 
 const ORG = 'zimbra';
+
+//repo we want as an alias for 'default'?
+const DEFAULT_REPO = 'billneff79/zimlet-default-template';
+
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
 const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
@@ -70,6 +74,7 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
+
 		// Prompt if incomplete data
 		if (!argv.dest || !argv.template) {
 			warn('Insufficient command arguments! Prompting...');
@@ -77,8 +82,13 @@ export default asyncCommand({
 
 			let questions = isMissing(argv);
 			let response = await prompt(questions);
+			//trim all args to prevent accidental extra whitespace in user prompted values from messing things up
+			Object.keys(response).forEach(k => response[k] && response[k].trim && (response[k] = response[k].trim()));
 			Object.assign(argv, response);
 		}
+
+		//default is a special keyword that will use the predefiend default repo
+		if (argv.template === 'default') argv.template = DEFAULT_REPO;
 
 		let cwd = resolve(argv.cwd);
 		argv.dest = argv.dest || dirname(cwd);
@@ -152,7 +162,7 @@ export default asyncCommand({
 			['name'].forEach(str => {
 				// if value is defined
 				if (argv[str] !== void 0) {
-					dict.set(new RegExp(`{{\\s?${str}\\s}}`, 'g'), argv[str]);
+					dict.set(new RegExp(`{{\\s*${str}\\s*}}`, 'g'), argv[str]);
 				}
 			});
 
@@ -197,7 +207,7 @@ export default asyncCommand({
 
 		// Update `package.json` key
 		if (pkgData) {
-			spinner.succeed().start('Updating `name` within `package.json` file');
+			spinner.succeed().start('Updating `name` to `' + argv.name + '` within `package.json` file');
 			pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
 		}
 
@@ -246,15 +256,15 @@ function isMissing(argv) {
 	let out = [];
 
 	const ask = (name, message, val) => {
-		let type = val === void 0 ? 'input' : 'confirm';
+		let type = (typeof val === 'boolean') ? 'confirm' : 'input';
 		out.push({ name, message, type, default: val });
 	};
 
 	// Required data
-	!argv.template && ask('template', templateDesc);
+	!argv.template && ask('template', templateDesc, 'default');
 	!argv.dest && ask('dest', destDesc);
 	// Extra data / flags
-	!argv.name && ask('name', nameDesc);
+	!argv.name && ask('name', nameDesc,({ dest }) => dest); //use the current answer for 'dest' as the default
 	!argv.force && ask('force', forceDesc, false);
 	ask('install', installDesc, true); // defaults `true`, ask anyway
 	!argv.yarn && ask('yarn', yarnDesc, false);
