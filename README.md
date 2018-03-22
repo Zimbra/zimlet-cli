@@ -45,9 +45,6 @@ The `ZimletSlot`s will remain visible until the page is refreshed without the `z
 
 The Zimlet will call functions over the course of it's lifecycle, at times such as loading and unloading. `context` is passed into the Zimlet, allowing the Zimlet to interact with the main app; see the [Zimlet Context documentation](https://github.com/pl12133/zimlet-cli/tree/docs/first-draft/docs/zimlet-context.md#TODOChange+Repo+To+Zimbra) for more details.
 
-<details>
-	<summary>Click to see ExampleZimlet</summary>
-
 ```js
 export default function ExampleZimlet(context) {
 	// Create a basic App
@@ -93,7 +90,6 @@ export default function ExampleZimlet(context) {
 	}
 }
 ```
-</details>
 
 Lifecycle methods allow the Zimlet to set itself up, add content to the page, and clean itself up when it is unloaded.
 
