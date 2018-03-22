@@ -10,7 +10,7 @@ zimlet create
 
 This will prompt you for any options needed to create a new Zimlet.
 
-For extra control over the Zimlet you create, try choosing from a list of [custom Zimlet templates](https://github.com/pl12133/zimlet-cli/tree/master/docs/zimlet-templates.md#TODOChange+Repo+To+Zimbra) or creating your own.
+For extra control over the Zimlet you create, try choosing from a list of [custom Zimlet templates](https://github.com/pl12133/zimlet-cli/tree/docs/first-draft/docs/zimlet-templates.md#TODOChange+Repo+To+Zimbra) or creating your own.
 
 #### Options
 ```sh

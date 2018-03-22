@@ -18,7 +18,7 @@ zimlet
 
 Run the `zimlet` command by itself to see all available options. ZimletCLI makes it easy to get help via the `--help` option available for all commands.
 
-For more help with the available commands, see the [commands documentation](https://github.com/pl12133/zimlet-cli/tree/master/docs/commands.md#TODOChange+Repo+To+Zimbra)
+For more help with the available commands, see the [commands documentation](https://github.com/pl12133/zimlet-cli/tree/docs/first-draft/docs/commands.md#TODOChange+Repo+To+Zimbra)
 
 ---
 
