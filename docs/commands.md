@@ -12,7 +12,7 @@ This will prompt you for any options needed to create a new Zimlet.
 
 For extra control over the Zimlet you create, try choosing from a list of [custom Zimlet templates](https://github.com/pl12133/zimlet-cli/tree/docs/first-draft/docs/zimlet-templates.md#TODOChange+Repo+To+Zimbra) or creating your own.
 
-#### Options
+###### Options
 ```sh
 zimlet create [template] [dest]
 
@@ -35,7 +35,7 @@ Options:
 
 Run `zimlet watch` to start live development on your Zimlet. `watch` will output a URL you can paste into `/sdk/zimlets` in the email app.
 
-#### Options
+###### Options
 ```sh
 zimlet watch
 
@@ -55,7 +55,7 @@ Options:
 
 Production build, create a `bundle.js` file to be added to the page running the Zimbra X app.
 
-#### Options
+###### Options
 
 ```sh
 zimlet build
@@ -78,7 +78,7 @@ Package for deployment to Zimbra server.
 zimlet package --name com_mycompany_myzimlet -v 1.0.0 --description "My zimlet"
 ```
 
-#### Options
+###### Options
 
 ```sh
 zimlet package
