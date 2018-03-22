@@ -5,7 +5,7 @@
 The easiest way to create a Zimlet is using the interactive `zimlet create` command:
 
 ```sh
-$: zimlet create
+zimlet create
 ```
 
 This will prompt you for any options needed to create a new Zimlet.
@@ -14,7 +14,7 @@ For extra control over the Zimlet you create, try choosing from a list of [custo
 
 #### Options
 ```sh
-$: zimlet create [template] [dest]
+zimlet create [template] [dest]
 
 Create a new zimlet.
 
@@ -37,7 +37,7 @@ Run `zimlet watch` to start live development on your Zimlet. `watch` will output
 
 #### Options
 ```sh
-$: zimlet watch
+zimlet watch
 
 Start a development server
 
@@ -58,7 +58,7 @@ Production build, create a `bundle.js` file to be added to the page running the 
 #### Options
 
 ```sh
-$: zimlet build
+zimlet build
 
 Compile a zimlet
 
@@ -75,13 +75,13 @@ Options:
 Package for deployment to Zimbra server.
 
 ```sh
-$: zimlet package --name com_mycompany_myzimlet -v 1.0.0 --description "My zimlet"
+zimlet package --name com_mycompany_myzimlet -v 1.0.0 --description "My zimlet"
 ```
 
 #### Options
 
 ```sh
-$: zimlet package
+zimlet package
 
 Package a zimlet for deployment
 

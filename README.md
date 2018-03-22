@@ -7,13 +7,13 @@ A command-line build tool for next generation Zimlets, powered by Webpack.
 ### Install
 
 ```sh
-$: npm install -g @zimbra/zimlet-cli
+npm install -g @zimbra/zimlet-cli
 ```
 
 ### Usage
 
 ```
-$: zimlet
+zimlet
 ```
 
 Run the `zimlet` command by itself to see all available options. ZimletCLI makes it easy to get help via the `--help` option available for all commands.
