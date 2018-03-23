@@ -22,7 +22,7 @@ All official project templates are repos in the [zimbra organization]. When a ne
 
 Current official templates include:
 
-- [billneff79/zimlet-default-template] - Default template with minimal example code.  You can specify `default` as the template on the command line to get this template.
+- [billneff79/zimlet-default-template](https://github.com/billneff79/zimlet-default-template) - Default template with minimal example code.  You can specify `default` as the template on the command line to get this template.
 
 ### Community Templates
 
