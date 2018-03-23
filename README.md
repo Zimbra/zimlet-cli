@@ -97,6 +97,10 @@ Lifecycle methods allow the Zimlet to set itself up, add content to the page, an
 
 The Zimlet is evaluated in a seperate window with a clean environment. This means common global values like `window.location` will not be available. Instead, many global values are available in the Redux store.
 
+### Styling Zimlets
+
+The [`@zimbra/zm-x-ui`](https://github.com/Zimbra/zm-x-ui) package has many styles and mixins for styling Zimlets.
+
 ## Hacking on the CLI
 
 Want to work on the CLI? It's easy:
