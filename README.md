@@ -22,7 +22,7 @@ Example:
 $ zimlet create default my-project
 ```
 
-The above command pulls the template from [billneff79/zimlet-default-template] as our defined default template and generates the project at `./my-project/`.
+The above command pulls the template from [zimbra/zm-x-zimlet-default-template] as our defined default template and generates the project at `./my-project/`.
 
 Example:
 ```sh
@@ -40,7 +40,7 @@ All official project templates are repos in the [zimbra organization]. When a ne
 
 Current available templates include:
 
-- [billneff79/zimlet-default-template] - Default template with minimal example code.  You can specify `default` as the template on the command line to get this template.
+- [zimbra/zm-x-zimlet-default-template] - Default template with minimal example code.  You can specify `default` as the template on the command line to get this template.
 
 > 💁 Tip: Any Github repo with a `'/template'` folder can be used as a custom template: <br /> `zimlet create <username>/<repository> <project-name>`
 
