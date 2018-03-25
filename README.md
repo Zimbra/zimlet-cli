@@ -1,4 +1,6 @@
 [![CircleCI](https://circleci.com/gh/Zimbra/zimlet-cli.svg?style=shield&circle-token=770fdb94c5adb3ca436855b59c752a77fc4e7fed)](https://circleci.com/gh/Zimbra/zimlet-cli)
+[![NPM Downloads](https://img.shields.io/npm/dm/@zimbra/zimlet-cli.svg?style=flat)](https://www.npmjs.com/package/@zimbra/zimlet-cli) [![NPM Version](https://img.shields.io/npm/v/@zimbra/zimlet-cli.svg?style=flat)](https://www.npmjs.com/package/@zimbra/zimlet-cli)
+
 
 # Zimlet CLI
 
