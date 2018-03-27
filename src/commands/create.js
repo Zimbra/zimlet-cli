@@ -15,7 +15,7 @@ import asyncCommand from '../lib/async-command';
 const ORG = 'zimbra';
 
 //repo we want as an alias for 'default'?
-const DEFAULT_REPO = 'billneff79/zimlet-default-template';
+const DEFAULT_REPO = 'zimbra/zm-x-zimlet-template-default';
 
 const RGX = /\.(woff2?|ttf|eot|jpe?g|ico|png|gif|mp4|mov|ogg|webm)(\?.*)?$/i;
 const isMedia = str => RGX.test(str);
