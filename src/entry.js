@@ -4,8 +4,8 @@
 ( () => {
 	function init() {
 		zimlet( context => {
-			let { zimbra, config, plugins, h, createElement, cloneElement, Component, components } = context;
-			global.preact = { h, createElement, cloneElement, Component };
+			let { zimbra, config, plugins, components, preact } = context;
+			global.preact = preact;
 			global.zimbra = zimbra;
 			global.config = config;
 			global.plugins = plugins;
