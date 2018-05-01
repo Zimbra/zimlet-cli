@@ -154,7 +154,7 @@ export function configure(env) {
 
 			alias: {
 				preact: path.resolve(__dirname, 'preact.js'),
-				react: 'preact',
+				react: 'preact-compat',
 				'react-dom': 'preact-compat',
 				style: path.resolve(context, 'style'),
 				'zimlet-cli-entrypoint': path.resolve(context, entry)
