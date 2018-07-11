@@ -3,7 +3,5 @@
  *  Zimbra passed down when it called the factory provided to zimlet().
  */
 
-const { route, Link, Match } = global.shims.preactRouter;
-
-export { route, Link, Match };
+export const { route, Link, Match } = global.shims.preactRouter;
 export default global.shims.preactRouter;

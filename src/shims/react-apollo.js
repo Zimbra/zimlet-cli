@@ -1,4 +1,4 @@
-const {
+export const {
 	ApolloConsumer,
 	ApolloProvider,
 	Query,
@@ -8,16 +8,5 @@ const {
 	withApollo,
 	compose
 } = global.shims.reactApollo;
-
-export {
-	ApolloConsumer,
-	ApolloProvider,
-	Query,
-	Mutation,
-	Subscription,
-	graphql,
-	withApollo,
-	compose
-};
 
 export default global.shims.reactApollo;

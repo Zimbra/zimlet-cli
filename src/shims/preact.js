@@ -3,7 +3,5 @@
  *  Zimbra passed down when it called the factory provided to zimlet().
  */
 
-const { h, createElement, cloneElement, Component } = global.shims.preact;
-
-export { h, createElement, cloneElement, Component };
+export const { h, createElement, cloneElement, Component, options } = global.shims.preact;
 export default global.shims.preact;
