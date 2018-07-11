@@ -7,7 +7,7 @@
 			let { zimbra, config, plugins, shims, components } = context;
 
 			// Add shims to the global scope to expose dependencies to Zimlets
-			// Shimmed dependencies include preact, preact-router.
+			// Shimmed dependencies include preact, preact-router, react-apollo
 			global.shims = shims;
 
 			global.zimbra = zimbra;

@@ -155,6 +155,7 @@ export function configure(env) {
 			alias: {
 				preact: path.resolve(__dirname, 'shims/preact.js'),
 				'preact-router': path.resolve(__dirname, 'shims/preact-router.js'),
+				'react-apollo': path.resolve(__dirname, 'shims/react-apollo.js'),
 				react: 'preact',
 				'react-dom': 'preact-compat',
 				style: path.resolve(context, 'style'),
