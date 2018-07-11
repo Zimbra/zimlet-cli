@@ -4,8 +4,12 @@
 ( () => {
 	function init() {
 		zimlet( context => {
-			let { zimbra, config, plugins, h, createElement, cloneElement, Component, components } = context;
-			global.preact = { h, createElement, cloneElement, Component };
+			let { zimbra, config, plugins, shims, components } = context;
+
+			// Add shims to the global scope to expose dependencies to Zimlets
+			// Shimmed dependencies include preact, preact-router.
+			global.shims = shims;
+
 			global.zimbra = zimbra;
 			global.config = config;
 			global.plugins = plugins;

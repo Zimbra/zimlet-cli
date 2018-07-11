@@ -3,7 +3,7 @@
  *  Zimbra passed down when it called the factory provided to zimlet().
  */
 
-const { h, createElement, cloneElement, Component } = global.preact;
+const { graphql } = global.apollo;
 
-export { h, createElement, cloneElement, Component };
-export default global.preact;
+export { graphql };
+export default global.apollo;
