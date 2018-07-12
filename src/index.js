@@ -156,6 +156,7 @@ export function configure(env) {
 			alias: {
 				preact: getShimPath('preact'),
 				'preact-router': getShimPath('preact-router'),
+				'preact-redux': getShimPath('preact-redux'),
 				'preact-compat': getShimPath('preact-compat'),
 				'react-apollo': getShimPath('react-apollo'),
 				react: getShimPath('preact-compat'),
