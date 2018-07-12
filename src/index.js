@@ -12,6 +12,7 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import cssnext from 'postcss-cssnext';
 import discardComments from 'postcss-discard-comments';
 import { crossPlatformPathRegex } from './util';
+import { getShimPath } from './shims';
 
 export default function run(args, callback) {
 
@@ -153,12 +154,12 @@ export function configure(env) {
 			],
 
 			alias: {
-				preact: path.resolve(__dirname, 'shims/preact.js'),
-				'preact-router': path.resolve(__dirname, 'shims/preact-router.js'),
-				'preact-compat': path.resolve(__dirname, 'shims/preact-compat.js'),
-				'react-apollo': path.resolve(__dirname, 'shims/react-apollo.js'),
-				react: path.resolve(__dirname, 'shims/preact-compat.js'),
-				'react-dom': path.resolve(__dirname, 'shims/preact-compat.js'),
+				preact: getShimPath('preact'),
+				'preact-router': getShimPath('preact-router'),
+				'preact-compat': getShimPath('preact-compat'),
+				'react-apollo': getShimPath('react-apollo'),
+				react: getShimPath('preact-compat'),
+				'react-dom': getShimPath('preact-compat'),
 				style: path.resolve(context, 'style'),
 				'zimlet-cli-entrypoint': path.resolve(context, entry)
 			}
