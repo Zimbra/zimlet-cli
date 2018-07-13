@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs, { access } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import ip from 'ip';
 import chalk from 'chalk';
