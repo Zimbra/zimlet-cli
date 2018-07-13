@@ -2,6 +2,8 @@
 *  When components import 'preact-redux', we want to give them back the copy
 *  Zimbra passed down when it called the factory provided to zimlet().
 */
+
+/* eslint-disable camelcase */
 import { warnOnMissingExport } from '.';
 const wrap = warnOnMissingExport.bind(null, global.shims.preactRedux, 'preact-redux');
 
