@@ -26,7 +26,7 @@ exports.getShimPath =  function(module) {
  * @param {Object} e the `exports` object from a module
  */
 exports.warnOnMissingExport = function(m, moduleName, namedExport) {
-	return typeof m[namedExport] !== 'undefined' ?
+	return m && typeof m[namedExport] !== 'undefined' ?
 		m[namedExport] :
 		function() {
 			throw new Error(`[ZimletCli]: Export ${moduleName}.${namedExport} was not found in the ${moduleName} instance passed down from ZimbraX.`);
