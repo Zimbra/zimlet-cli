@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
+import fs, { access } from 'fs';
 import path from 'path';
 import ip from 'ip';
 import chalk from 'chalk';
@@ -12,7 +12,7 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import cssnext from 'postcss-cssnext';
 import discardComments from 'postcss-discard-comments';
 import { crossPlatformPathRegex } from './util';
-import { getShimPath } from './shims';
+import { getShimPath, SHIMMED_MODULES } from './shims';
 
 export default function run(args, callback) {
 
@@ -154,11 +154,10 @@ export function configure(env) {
 			],
 
 			alias: {
-				preact: getShimPath('preact'),
-				'preact-router': getShimPath('preact-router'),
-				'preact-redux': getShimPath('preact-redux'),
-				'preact-compat': getShimPath('preact-compat'),
-				'react-apollo': getShimPath('react-apollo'),
+				...SHIMMED_MODULES.reduce((shimAliases, name) => {
+					shimAliases[name] = getShimPath(name);
+					return shimAliases;
+				}, {}),
 				react: getShimPath('preact-compat'),
 				'react-dom': getShimPath('preact-compat'),
 				style: path.resolve(context, 'style'),

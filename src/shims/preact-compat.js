@@ -2,6 +2,23 @@
 *  When components import 'preact-compat', we want to give them back the copy
 *  Zimbra passed down when it called the factory provided to zimlet().
 */
+import { warnOnMissingExport } from '.';
+const wrap = warnOnMissingExport.bind(null, global.shims.preactCompat, 'preact-compat');
 
-export const { version, DOM, PropTypes, Children, render, createClass, createFactory, createElement, cloneElement, isValidElement, findDOMNode, unmountComponentAtNode, Component, PureComponent, unstable_renderSubtreeIntoContainer, __spread } = global.shims.preactCompat;
+export const version = wrap('version');
+export const DOM = wrap('DOM');
+export const PropTypes = wrap('PropTypes');
+export const Children = wrap('Children');
+export const render = wrap('render');
+export const createClass = wrap('createClass');
+export const createFactory = wrap('createFactory');
+export const createElement = wrap('createElement');
+export const cloneElement = wrap('cloneElement');
+export const isValidElement = wrap('isValidElement');
+export const findDOMNode = wrap('findDOMNode');
+export const unmountComponentAtNode = wrap('unmountComponentAtNode');
+export const Component = wrap('Component');
+export const PureComponent = wrap('PureComponent');
+export const unstable_renderSubtreeIntoContainer = wrap('unstable_renderSubtreeIntoContainer');
+export const __spread = wrap('__spread');
 export default global.shims.preactCompat;

@@ -40,6 +40,7 @@
     "mockery": "^2.1.0",
     "preact": "^8.2.9",
     "preact-compat": "^3.18.0",
+    "preact-redux": "^2.0.3",
     "preact-router": "^2.6.1",
     "react-apollo": "^2.1.9"
   },
