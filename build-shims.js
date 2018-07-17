@@ -12,6 +12,7 @@ mockery.enable({
 mockery.registerSubstitute('react', 'preact-compat');
 mockery.registerSubstitute('react-dom', 'preact-compat');
 mockery.registerSubstitute('react-dom/server', 'preact-compat');
+mockery.registerMock('preact-router/match', { Match: 1 });
 mockery.registerMock('apollo-client', {}); //doesn't really matter
 mockery.registerMock('redux', {}); //doesn't really matter
 

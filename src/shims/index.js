@@ -16,7 +16,7 @@
  */
 exports.SHIMMED_MODULES = [
 	'preact',
-	'preact-router',
+	[ 'preact-router', 'match' ],
 	'preact-compat',
 	'preact-redux',
 	'react-apollo',
