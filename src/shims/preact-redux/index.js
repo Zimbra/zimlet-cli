@@ -3,11 +3,11 @@
 *  Zimbra passed down when it called the factory provided to zimlet().
 */
 
-/* eslint-disable camelcase */
-import { warnOnMissingExport } from '.';
-const wrap = warnOnMissingExport.bind(null, global.shims.preactRedux, 'preact-redux');
+/* eslint-disable camelcase, dot-notation */
+import { warnOnMissingExport } from '../';
+const wrap = warnOnMissingExport.bind(null, global.shims['preactRedux'], 'preact-redux');
 
 export const Provider = wrap('Provider');
 export const connect = wrap('connect');
 export const connectAdvanced = wrap('connectAdvanced');
-export default global.shims.preactRedux;
+export default global.shims['preactRedux'];

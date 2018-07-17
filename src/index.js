@@ -155,6 +155,10 @@ export function configure(env) {
 
 			alias: {
 				...SHIMMED_MODULES.reduce((shimAliases, name) => {
+					if (Array.isArray(name)) {
+						// If module name is an Array, the first element is the root name of the module
+						[ name ] = name;
+					}
 					shimAliases[name] = getShimPath(name);
 					return shimAliases;
 				}, {}),

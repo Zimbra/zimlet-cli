@@ -3,9 +3,9 @@
 *  Zimbra passed down when it called the factory provided to zimlet().
 */
 
-/* eslint-disable camelcase */
-import { warnOnMissingExport } from '.';
-const wrap = warnOnMissingExport.bind(null, global.shims.preact, 'preact');
+/* eslint-disable camelcase, dot-notation */
+import { warnOnMissingExport } from '../';
+const wrap = warnOnMissingExport.bind(null, global.shims['preact'], 'preact');
 
 export const h = wrap('h');
 export const createElement = wrap('createElement');
@@ -14,4 +14,4 @@ export const Component = wrap('Component');
 export const render = wrap('render');
 export const rerender = wrap('rerender');
 export const options = wrap('options');
-export default global.shims.preact;
+export default global.shims['preact'];

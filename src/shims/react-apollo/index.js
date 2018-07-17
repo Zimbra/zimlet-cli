@@ -3,9 +3,9 @@
 *  Zimbra passed down when it called the factory provided to zimlet().
 */
 
-/* eslint-disable camelcase */
-import { warnOnMissingExport } from '.';
-const wrap = warnOnMissingExport.bind(null, global.shims.reactApollo, 'react-apollo');
+/* eslint-disable camelcase, dot-notation */
+import { warnOnMissingExport } from '../';
+const wrap = warnOnMissingExport.bind(null, global.shims['reactApollo'], 'react-apollo');
 
 export const renderToStringWithData = wrap('renderToStringWithData');
 export const compose = wrap('compose');
@@ -18,4 +18,4 @@ export const Subscription = wrap('Subscription');
 export const graphql = wrap('graphql');
 export const withApollo = wrap('withApollo');
 export const walkTree = wrap('walkTree');
-export default global.shims.reactApollo;
+export default global.shims['reactApollo'];

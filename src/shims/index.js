@@ -1,21 +1,30 @@
 // KEEP THIS AS NON-ES-6 MODULE so build-shims.js can use it
 
-exports.SHIMMED_MODULES = [
-	'preact',
-	'preact-router',
-	'preact-compat',
-	'preact-redux',
-	'react-apollo'
-];
-
 /**
  * A shimmed module is injected into the global object by the parent app.
  * The shimmed module is then aliased as the real module, and Zimlet consumers
  * will not need to duplicate libraries used by the main app.
  */
 
+/**
+ * @constant
+ * For strings: each string will create an alias to `src/shims/${shim}/`
+ *   and one shim file `src/shims/${shim}/index.js`
+ * For arrays: the first string is the alias and the rest are paths,
+ *   creating an alias to `src/shims/${shim}`; and shim files
+ *   at `src/shims/${shim}/index.js` and `src/shims/${shim}/${path}/index.js`
+ */
+exports.SHIMMED_MODULES = [
+	'preact',
+	'preact-router',
+	'preact-compat',
+	'preact-redux',
+	'react-apollo',
+	[ '@zimbra/util', 'redux', 'contacts' ] // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
+];
+
 exports.getShimPath =  function(module) {
-	return require.resolve(`./${module}`);
+	return require.resolve(`./${module}`).replace(/index\.js$/, '');
 };
 
 /**
