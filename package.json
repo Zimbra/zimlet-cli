@@ -7,7 +7,7 @@
     "zimlet": "./dist/cli.js"
   },
   "scripts": {
-    "build": "npm run build:shims && babel src -d dist -s --copy-files",
+    "build": "npm run build:shims && npm run build:src",
     "build:src": "babel src -d dist -s --copy-files",
     "build:shims": "node ./build-shims.js",
     "prebuild": "rimraf dist && mkdirp dist",
