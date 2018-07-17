@@ -30,8 +30,8 @@ export default asyncCommand({
 			requiresArg: true
 		},
 		zimbraXVersion: {
-			description: 'Minimum required version of Zimbra X that the Zimlet is compatible with.',
-			demandOption: true,
+			description: 'https://semver.org version range of Zimbra X that the Zimlet is compatible with.',
+			default: '>=1.0.0',
 			requiresArg: true
 		},
 		builddir: {
