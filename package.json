@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "babel src -d dist -s --copy-files",
-    "prebuild": "mkdirp dist",
+    "prebuild": "rimraf dist && mkdirp dist",
     "test": "npm run lint && npm run build",
     "lint": "eslint src",
     "prepublishOnly": "npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags",
@@ -34,7 +34,8 @@
     "babel-eslint": "^7.2.2",
     "eslint": "^4.17.0",
     "eslint-config-synacor": "^3.0.0",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.2"
   },
   "license": "GPL-3.0",
   "dependencies": {
