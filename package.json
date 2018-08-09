@@ -7,7 +7,9 @@
     "zimlet": "./dist/cli.js"
   },
   "scripts": {
-    "build": "babel src -d dist -s --copy-files",
+    "build": "npm run build:shims && npm run build:src",
+    "build:src": "babel src -d dist -s --copy-files",
+    "build:shims": "node ./build-shims.js",
     "prebuild": "rimraf dist && mkdirp dist",
     "test": "npm run lint && npm run build",
     "lint": "eslint src",
@@ -35,6 +37,12 @@
     "eslint": "^4.17.0",
     "eslint-config-synacor": "^3.0.0",
     "mkdirp": "^0.5.1",
+    "mockery": "^2.1.0",
+    "preact": "^8.2.9",
+    "preact-compat": "^3.18.0",
+    "preact-redux": "^2.0.3",
+    "preact-router": "^2.6.1",
+    "react-apollo": "^2.1.9",
     "rimraf": "^2.6.2"
   },
   "license": "GPL-3.0",

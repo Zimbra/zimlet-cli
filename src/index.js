@@ -12,6 +12,7 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import cssnext from 'postcss-cssnext';
 import discardComments from 'postcss-discard-comments';
 import { crossPlatformPathRegex } from './util';
+import { getShimPath, SHIMMED_MODULES } from './shims';
 
 export default function run(args, callback) {
 
@@ -153,9 +154,16 @@ export function configure(env) {
 			],
 
 			alias: {
-				preact: path.resolve(__dirname, 'preact.js'),
-				react: 'preact',
-				'react-dom': 'preact-compat',
+				...SHIMMED_MODULES.reduce((shimAliases, name) => {
+					if (Array.isArray(name)) {
+						// If module name is an Array, the first element is the root name of the module
+						[ name ] = name;
+					}
+					shimAliases[name] = getShimPath(name);
+					return shimAliases;
+				}, {}),
+				react: getShimPath('preact-compat'),
+				'react-dom': getShimPath('preact-compat'),
 				style: path.resolve(context, 'style'),
 				'zimlet-cli-entrypoint': path.resolve(context, entry)
 			}
@@ -184,7 +192,7 @@ export function configure(env) {
 						plugins: [
 							require.resolve('babel-plugin-transform-decorators-legacy'),
 							require.resolve('babel-plugin-transform-object-assign'),
-							[require.resolve('babel-plugin-transform-react-jsx'), { pragma: 'preact.h' }]
+							[require.resolve('babel-plugin-transform-react-jsx'), { pragma: 'h' }]
 						]
 					}
 				},
