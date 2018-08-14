@@ -10,4 +10,5 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra/util'], '@zimb
 export const array = wrap('array');
 export const getDataTransferJSON = wrap('getDataTransferJSON');
 export const setDataTransferJSON = wrap('setDataTransferJSON');
+export const breakpoints = wrap('breakpoints');
 export default global.shims['@zimbra/util'];

@@ -22,7 +22,8 @@ mockery.registerMock('redux', {}); //doesn't really matter
 mockery.registerMock('@zimbra/util', {
 	array: 1,
 	getDataTransferJSON: 1,
-	setDataTransferJSON: 1
+	setDataTransferJSON: 1,
+	breakpoints: 1
 });
 mockery.registerMock('@zimbra/util/contacts', {
 	getName: 1
@@ -33,6 +34,14 @@ mockery.registerMock('@zimbra/util/redux', {
 	pendingAction: 1,
 	fulfilledAction: 1,
 	rejectedAction: 1
+});
+mockery.registerMock('@zimbra/graphql', {
+	CalendarsAndAppointmentsQuery: 1,
+	withCreateAppointment: 1,
+	withCalendars: 1
+});
+mockery.registerMock('@zimbra/enhancers', {
+	withMediaQuery: 1
 });
 
 function createShim(shimModule) {
