@@ -5,7 +5,7 @@
 
 /* eslint-disable camelcase, dot-notation */
 import { warnOnMissingExport } from '../../';
-const wrap = warnOnMissingExport.bind(null, global.shims['preactRouter/match'], 'preact-router/match');
+const wrap = warnOnMissingExport.bind(null, global.shims['preact-router/match'], 'preact-router/match');
 
 export const Match = wrap('Match');
-export default global.shims['preactRouter/match'];
+export default global.shims['preact-router/match'];

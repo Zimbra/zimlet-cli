@@ -5,7 +5,7 @@
 
 /* eslint-disable camelcase, dot-notation */
 import { warnOnMissingExport } from '../';
-const wrap = warnOnMissingExport.bind(null, global.shims['preactCompat'], 'preact-compat');
+const wrap = warnOnMissingExport.bind(null, global.shims['preact-compat'], 'preact-compat');
 
 export const version = wrap('version');
 export const DOM = wrap('DOM');
@@ -23,4 +23,4 @@ export const Component = wrap('Component');
 export const PureComponent = wrap('PureComponent');
 export const unstable_renderSubtreeIntoContainer = wrap('unstable_renderSubtreeIntoContainer');
 export const __spread = wrap('__spread');
-export default global.shims['preactCompat'];
+export default global.shims['preact-compat'];
