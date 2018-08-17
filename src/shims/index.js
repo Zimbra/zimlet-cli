@@ -20,9 +20,10 @@ exports.SHIMMED_MODULES = [
 	'preact-compat',
 	'preact-redux',
 	'react-apollo',
-	[ '@zimbra/util', 'redux', 'contacts' ], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
-	'@zimbra/graphql',
-	'@zimbra/enhancers'
+	[ '@zimbra-client/util', 'redux', 'contacts' ], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
+	'@zimbra-client/graphql',
+	'@zimbra-client/enhancers',
+	'@zimbra-client/constants'
 ];
 
 exports.getShimPath =  function(module) {

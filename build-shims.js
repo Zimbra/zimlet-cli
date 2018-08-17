@@ -19,29 +19,33 @@ mockery.registerMock('redux', {}); //doesn't really matter
 /* @zimbra/util is a psuedo-module: it is built from the many library
  * functions contained in `zm-x-web`.
  */
-mockery.registerMock('@zimbra/util', {
+mockery.registerMock('@zimbra-client/util', {
 	array: 1,
 	getDataTransferJSON: 1,
 	setDataTransferJSON: 1,
 	breakpoints: 1
 });
-mockery.registerMock('@zimbra/util/contacts', {
+mockery.registerMock('@zimbra-client/util/contacts', {
 	getName: 1
 });
-mockery.registerMock('@zimbra/util/redux', {
+mockery.registerMock('@zimbra-client/util/redux', {
 	paginate: 1,
 	createAsyncAction: 1,
 	pendingAction: 1,
 	fulfilledAction: 1,
 	rejectedAction: 1
 });
-mockery.registerMock('@zimbra/graphql', {
+mockery.registerMock('@zimbra-client/graphql', {
 	CalendarsAndAppointmentsQuery: 1,
 	withCreateAppointment: 1,
 	withCalendars: 1
 });
-mockery.registerMock('@zimbra/enhancers', {
+mockery.registerMock('@zimbra-client/enhancers', {
 	withMediaQuery: 1
+});
+mockery.registerMock('@zimbra-client/constants', {
+	ATTENDEE_ROLE: 1,
+	PARTICIPATION_STATUS: 1
 });
 
 function createShim(shimModule) {
@@ -51,7 +55,6 @@ function createShim(shimModule) {
 	}
 	// console.log('require.cache', require.cache);
 	//turn snake case into camelCase, e.g. preact-router into preactRouter
-	let shimName = shimModule.replace(/-([a-z])/g, ([,m]) => m.toUpperCase());
 	let dirName = path.resolve(`src/shims/${shimModule}`);
 
 	mkdirp(dirName, (err) => {
@@ -64,13 +67,13 @@ function createShim(shimModule) {
 */
 
 /* eslint-disable camelcase, dot-notation */
-import { warnOnMissingExport } from '.${shimName.split('/').map((pathpart, index) => !index ? './' : '../').join('')}';
-const wrap = warnOnMissingExport.bind(null, global.shims['${shimName}'], '${shimModule}');
+import { warnOnMissingExport } from '.${shimModule.split('/').map((pathpart, index) => !index ? './' : '../').join('')}';
+const wrap = warnOnMissingExport.bind(null, global.shims['${shimModule}'], '${shimModule}');
 
 ${Object.keys(require(shimModule)).map(exportName =>
 		`export const ${exportName} = wrap('${exportName}');`).join('\n')
 }
-export default global.shims['${shimName}'];
+export default global.shims['${shimModule}'];
 `
 		);
 	});

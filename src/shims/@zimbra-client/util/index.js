@@ -1,14 +1,14 @@
-/** This file is an auto-generated shim, aliased in for "@zimbra/util" in the webpack config.
-*  When components import '@zimbra/util', we want to give them back the copy
+/** This file is an auto-generated shim, aliased in for "@zimbra-client/util" in the webpack config.
+*  When components import '@zimbra-client/util', we want to give them back the copy
 *  Zimbra passed down when it called the factory provided to zimlet().
 */
 
 /* eslint-disable camelcase, dot-notation */
 import { warnOnMissingExport } from '../../';
-const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra/util'], '@zimbra/util');
+const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/util'], '@zimbra-client/util');
 
 export const array = wrap('array');
 export const getDataTransferJSON = wrap('getDataTransferJSON');
 export const setDataTransferJSON = wrap('setDataTransferJSON');
 export const breakpoints = wrap('breakpoints');
-export default global.shims['@zimbra/util'];
+export default global.shims['@zimbra-client/util'];
