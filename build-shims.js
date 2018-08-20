@@ -23,7 +23,8 @@ mockery.registerMock('@zimbra-client/util', {
 	array: 1,
 	getDataTransferJSON: 1,
 	setDataTransferJSON: 1,
-	breakpoints: 1
+	breakpoints: 1,
+	callWith: 1
 });
 mockery.registerMock('@zimbra-client/util/contacts', {
 	getName: 1
