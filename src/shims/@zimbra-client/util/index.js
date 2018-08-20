@@ -11,4 +11,5 @@ export const array = wrap('array');
 export const getDataTransferJSON = wrap('getDataTransferJSON');
 export const setDataTransferJSON = wrap('setDataTransferJSON');
 export const breakpoints = wrap('breakpoints');
+export const callWith = wrap('callWith');
 export default global.shims['@zimbra-client/util'];
