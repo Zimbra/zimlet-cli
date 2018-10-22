@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import 'babel-polyfill';
+import '@babel/polyfill';
 import yargs from 'yargs';
 import create from './commands/create';
 import packageCommand from './commands/package';

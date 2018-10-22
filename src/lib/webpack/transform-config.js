@@ -14,8 +14,8 @@ export default function transformConfig(env, config) {
 		return;
 	}
 
-	require('babel-register')({
-		presets: [require.resolve('babel-preset-env')]
+	require('@babel/register')({
+		presets: [require.resolve('@babel/preset-env')]
 	});
 
 	const m = require(transformerPath);
