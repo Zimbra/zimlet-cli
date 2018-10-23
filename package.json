@@ -42,7 +42,6 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
-    "@babel/register": "^7.0.0",
     "babel-eslint": "^9.0.0",
     "eslint": "^4.17.0",
     "eslint-config-synacor": "^3.0.0",
@@ -67,6 +66,7 @@
     "@babel/plugin-transform-react-jsx": "^7.0.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.0.0",
     "adm-zip": "^0.4.7",
     "babel-loader": "^8.0.0",
