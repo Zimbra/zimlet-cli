@@ -186,13 +186,16 @@ export function configure(env) {
 						babelrc: false,
 						comments: false,
 						presets: [
-							[require.resolve('babel-preset-env'), { loose: true, modules: false }],
-							require.resolve('babel-preset-stage-0')
+							[require.resolve('@babel/preset-env'), { loose: true, modules: false }]
 						],
 						plugins: [
-							require.resolve('babel-plugin-transform-decorators-legacy'),
-							require.resolve('babel-plugin-transform-object-assign'),
-							[require.resolve('babel-plugin-transform-react-jsx'), { pragma: 'h' }]
+							require.resolve('@babel/plugin-syntax-dynamic-import'),
+							require.resolve('@babel/plugin-proposal-class-properties'),
+							[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+							require.resolve('@babel/plugin-proposal-export-namespace-from'),
+							require.resolve('@babel/plugin-proposal-export-default-from'),
+							require.resolve('@babel/plugin-transform-object-assign'),
+							[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'h' }]
 						]
 					}
 				},
