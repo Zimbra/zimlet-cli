@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "npm run build:shims && npm run build:src",
-    "build:src": "babel src -d dist -s --copy-files",
+    "build:src": "babel src -d dist --copy-files",
     "build:shims": "node ./build-shims.js",
     "prebuild": "rimraf dist && mkdirp dist",
     "test": "npm run lint && npm run build",
