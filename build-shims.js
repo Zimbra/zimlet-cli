@@ -16,6 +16,28 @@ mockery.registerMock('preact-router/match', { Match: 1 });
 mockery.registerMock('apollo-client', {}); //doesn't really matter
 mockery.registerMock('redux', {}); //doesn't really matter
 
+mockery.registerMock('@zimbra-client/blocks', {
+	Dialog: 1,
+	FixedDialog: 1,
+	ModalDialog: 1,
+	Button: 1,
+	Select: 1,
+	Option: 1,
+	Tabs: 1,
+	Tab: 1,
+	Icon: 1,
+	FontAwesome: 1,
+	Spinner: 1,
+	ClickOutsideDetector: 1,
+	ContainerSize: 1,
+	Popover: 1,
+	Tooltip: 1,
+	Scrim: 1,
+	Card: 1,
+	AffixBottom: 1,
+	KeyCodes: 1,
+	Label: 1
+});
 /* @zimbra/util is a psuedo-module: it is built from the many library
  * functions contained in `zm-x-web`.
  */
