@@ -24,7 +24,8 @@ mockery.registerMock('@zimbra-client/util', {
 	getDataTransferJSON: 1,
 	setDataTransferJSON: 1,
 	breakpoints: 1,
-	callWith: 1
+	callWith: 1,
+	pruneEmpty: 1
 });
 mockery.registerMock('@zimbra-client/util/contacts', {
 	getName: 1
@@ -39,7 +40,13 @@ mockery.registerMock('@zimbra-client/util/redux', {
 mockery.registerMock('@zimbra-client/graphql', {
 	CalendarsAndAppointmentsQuery: 1,
 	withCreateAppointment: 1,
-	withCalendars: 1
+	withCalendars: 1,
+	withSearch: 1,
+	withCreateContact: 1,
+	withModifyContact: 1,
+	withContactAction: 1,
+	withFilters: 1,
+	withModifyFilters: 1
 });
 mockery.registerMock('@zimbra-client/enhancers', {
 	withMediaQuery: 1
