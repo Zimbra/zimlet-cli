@@ -190,8 +190,8 @@ export function configure(env) {
 						],
 						plugins: [
 							require.resolve('@babel/plugin-syntax-dynamic-import'),
-							require.resolve('@babel/plugin-proposal-class-properties'),
 							[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+							[require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
 							require.resolve('@babel/plugin-proposal-export-namespace-from'),
 							require.resolve('@babel/plugin-proposal-export-default-from'),
 							require.resolve('@babel/plugin-transform-object-assign'),
