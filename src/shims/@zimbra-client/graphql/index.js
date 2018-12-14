@@ -10,4 +10,7 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/graphql
 export const CalendarsAndAppointmentsQuery = wrap('CalendarsAndAppointmentsQuery');
 export const withCreateAppointment = wrap('withCreateAppointment');
 export const withCalendars = wrap('withCalendars');
+export const withSearch = wrap('withSearch');
+export const withCreateContact = wrap('withCreateContact');
+export const withContactAction = wrap('withContactAction');
 export default global.shims['@zimbra-client/graphql'];
