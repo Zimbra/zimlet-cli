@@ -43,10 +43,7 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withCalendars: 1,
 	withSearch: 1,
 	withCreateContact: 1,
-	withModifyContact: 1,
-	withContactAction: 1,
-	withFilters: 1,
-	withModifyFilters: 1
+	withContactAction: 1
 });
 mockery.registerMock('@zimbra-client/enhancers', {
 	withMediaQuery: 1
