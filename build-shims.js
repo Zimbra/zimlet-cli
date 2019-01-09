@@ -46,7 +46,8 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withContactAction: 1
 });
 mockery.registerMock('@zimbra-client/enhancers', {
-	withMediaQuery: 1
+	withMediaQuery: 1,
+	registerTab: 1
 });
 mockery.registerMock('@zimbra-client/constants', {
 	ATTENDEE_ROLE: 1,

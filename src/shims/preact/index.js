@@ -10,7 +10,6 @@ const wrap = warnOnMissingExport.bind(null, global.shims['preact'], 'preact');
 export const h = wrap('h');
 export const createElement = wrap('createElement');
 export const cloneElement = wrap('cloneElement');
-export const createRef = wrap('createRef');
 export const Component = wrap('Component');
 export const render = wrap('render');
 export const rerender = wrap('rerender');
