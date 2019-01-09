@@ -17,7 +17,5 @@ export const Mutation = wrap('Mutation');
 export const Subscription = wrap('Subscription');
 export const graphql = wrap('graphql');
 export const withApollo = wrap('withApollo');
-export const RenderPromises = wrap('RenderPromises');
-export const getMarkupFromTree = wrap('getMarkupFromTree');
 export const walkTree = wrap('walkTree');
 export default global.shims['react-apollo'];
