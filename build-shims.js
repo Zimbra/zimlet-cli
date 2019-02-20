@@ -27,9 +27,11 @@ mockery.registerMock('@zimbra-client/util', {
 	callWith: 1,
 	pruneEmpty: 1
 });
+
 mockery.registerMock('@zimbra-client/util/contacts', {
 	getName: 1
 });
+
 mockery.registerMock('@zimbra-client/util/redux', {
 	paginate: 1,
 	createAsyncAction: 1,
@@ -37,6 +39,7 @@ mockery.registerMock('@zimbra-client/util/redux', {
 	fulfilledAction: 1,
 	rejectedAction: 1
 });
+
 mockery.registerMock('@zimbra-client/graphql', {
 	CalendarsAndAppointmentsQuery: 1,
 	withCreateAppointment: 1,
@@ -45,10 +48,12 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withCreateContact: 1,
 	withContactAction: 1
 });
+
 mockery.registerMock('@zimbra-client/enhancers', {
 	withMediaQuery: 1,
 	registerTab: 1
 });
+
 mockery.registerMock('@zimbra-client/constants', {
 	ATTENDEE_ROLE: 1,
 	PARTICIPATION_STATUS: 1
