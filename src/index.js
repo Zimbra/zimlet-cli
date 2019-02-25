@@ -270,8 +270,7 @@ export function configure(env) {
 
 		plugins: [].concat(
 			PROD ? [
-				new webpack.HashedModuleIdsPlugin(),
-				new webpack.optimize.ModuleConcatenationPlugin()
+				new webpack.HashedModuleIdsPlugin()
 			] : [
 				new webpack.HotModuleReplacementPlugin()
 			],
