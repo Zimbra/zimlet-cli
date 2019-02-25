@@ -20,12 +20,12 @@ export default function run(args, callback) {
 
 	let compiler = webpack(config);
 
-	compiler.plugin('failed', err => {
+	compiler.hooks.failed.tap('zimlet-cli', err => {
 		console.error(err.stack || err);
 		if (err.details) console.error(err.details);
 	});
 
-	compiler.plugin('done', stats => {
+	compiler.hooks.done.tap('zimlet-cli', stats => {
 		let info = stats.toJson();
 
 		if (stats.hasErrors()) {
@@ -117,6 +117,7 @@ export function configure(env) {
 	};
 
 	let postCssLoaderOptions = {
+		sourceMap: true,
 		plugins: [
 			cssnext({
 				browsers: ['last 2 versions', 'not ie > 0', 'iOS >= 8'] ,
@@ -132,6 +133,7 @@ export function configure(env) {
 	let cssModulesRegexp = crossPlatformPathRegex(/(?:([^/@]+?)(?:-(?:pages?|components?|screens?))?\/)?src\/(?:pages|components|screens)\/(.+?)(\/[a-z0-9._-]+[.](less|css))?$/);
 
 	let webpackConfig = {
+		mode: PROD ? 'production' : 'development',
 		context,
 		entry: path.resolve(__dirname, 'entry.js'),
 
@@ -146,7 +148,7 @@ export function configure(env) {
 		},
 
 		resolve: {
-			extensions: ['.jsx', '.js', '.json', '.css', '.less'],
+			extensions: ['.mjs', '.jsx', '.js', '.json', '.css', '.less'],
 			mainFields: ['browser', 'module', 'jsnext:main', 'main'],
 			modules: [
 				path.resolve(cwd, 'node_modules'),
@@ -268,12 +270,9 @@ export function configure(env) {
 
 		plugins: [].concat(
 			PROD ? [
-				new webpack.NoEmitOnErrorsPlugin(),
 				new webpack.HashedModuleIdsPlugin(),
-				new webpack.optimize.ModuleConcatenationPlugin(),
-				new webpack.optimize.UglifyJsPlugin()
+				new webpack.optimize.ModuleConcatenationPlugin()
 			] : [
-				new webpack.NamedModulesPlugin(),
 				new webpack.HotModuleReplacementPlugin()
 			],
 
