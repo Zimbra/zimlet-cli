@@ -21,6 +21,8 @@ exports.SHIMMED_MODULES = [
 	'preact-redux',
 	'react-apollo',
 	[ '@zimbra-client/util', 'redux', 'contacts' ], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
+	'@zimbra-client/blocks',
+	'@zimbra-client/errors',
 	'@zimbra-client/graphql',
 	'@zimbra-client/enhancers',
 	'@zimbra-client/constants'
