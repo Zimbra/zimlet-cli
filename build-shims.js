@@ -16,6 +16,49 @@ mockery.registerMock('preact-router/match', { Match: 1 });
 mockery.registerMock('apollo-client', {}); //doesn't really matter
 mockery.registerMock('redux', {}); //doesn't really matter
 
+/* @zimbra/util is a psuedo-module: it is built from the many library
+ * functions contained in `zm-x-web`.
+ */
+mockery.registerMock('@zimbra-client/util', {
+	array: 1,
+	getDataTransferJSON: 1,
+	setDataTransferJSON: 1,
+	breakpoints: 1,
+	callWith: 1,
+	pruneEmpty: 1
+});
+
+mockery.registerMock('@zimbra-client/util/contacts', {
+	getName: 1
+});
+
+mockery.registerMock('@zimbra-client/util/redux', {
+	paginate: 1,
+	createAsyncAction: 1,
+	pendingAction: 1,
+	fulfilledAction: 1,
+	rejectedAction: 1
+});
+
+mockery.registerMock('@zimbra-client/graphql', {
+	CalendarsAndAppointmentsQuery: 1,
+	withCreateAppointment: 1,
+	withCalendars: 1,
+	withSearch: 1,
+	withCreateContact: 1,
+	withContactAction: 1,
+	CalendarCreateMutation: 1
+});
+
+mockery.registerMock('@zimbra-client/enhancers', {
+	withMediaQuery: 1,
+	registerTab: 1
+});
+
+mockery.registerMock('@zimbra-client/constants', {
+	ATTENDEE_ROLE: 1,
+	PARTICIPATION_STATUS: 1
+});
 mockery.registerMock('@zimbra-client/blocks', {
 	Dialog: 1,
 	FixedDialog: 1,
@@ -38,37 +81,8 @@ mockery.registerMock('@zimbra-client/blocks', {
 	KeyCodes: 1,
 	Label: 1
 });
-/* @zimbra/util is a psuedo-module: it is built from the many library
- * functions contained in `zm-x-web`.
- */
-mockery.registerMock('@zimbra-client/util', {
-	array: 1,
-	getDataTransferJSON: 1,
-	setDataTransferJSON: 1,
-	breakpoints: 1,
-	callWith: 1
-});
-mockery.registerMock('@zimbra-client/util/contacts', {
-	getName: 1
-});
-mockery.registerMock('@zimbra-client/util/redux', {
-	paginate: 1,
-	createAsyncAction: 1,
-	pendingAction: 1,
-	fulfilledAction: 1,
-	rejectedAction: 1
-});
-mockery.registerMock('@zimbra-client/graphql', {
-	CalendarsAndAppointmentsQuery: 1,
-	withCreateAppointment: 1,
-	withCalendars: 1
-});
-mockery.registerMock('@zimbra-client/enhancers', {
-	withMediaQuery: 1
-});
-mockery.registerMock('@zimbra-client/constants', {
-	ATTENDEE_ROLE: 1,
-	PARTICIPATION_STATUS: 1
+mockery.registerMock('@zimbra-client/errors', {
+	errorMessage: 1
 });
 
 function createShim(shimModule) {

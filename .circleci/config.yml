@@ -1,26 +1,83 @@
-version: 2
-jobs:
-  build:
-    docker:
-      - image: circleci/node:8
+version: 2.1
 
-    working_directory: ~/repo
+################# Jobs #########################
+
+jobs:
+  prepare-npm-deps:
+    executor: default-executor
 
     steps:
       - checkout
 
-      # Download and cache dependencies
+      # Download cached dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
+            # fallback to using the cache from the same branch
+            - v1-dependencies-{{ .Branch }}-
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
-      - run: npm install
+      # install dependencies
+      - run: npm install --no-audit
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
+
+  test:
+    executor: default-executor
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
       - run: npm test
+
+  security-audit:
+    executor: default-executor
+
+    steps:
+      - attach_workspace:
+          at: ~/
+
+      - run: npm run security:audit
+
+
+################################################
+
+################# Executors ####################
+
+executors:
+  default-executor:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:10
+
+################################################
+
+
+################# Workflows ####################
+
+workflows:
+  version: 2
+
+  commit-workflow:
+    jobs:
+      - prepare-npm-deps
+
+      - test:
+          requires:
+            - prepare-npm-deps
+
+      - security-audit:
+          requires:
+            - prepare-npm-deps
+
+################################################
