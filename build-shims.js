@@ -60,10 +60,26 @@ mockery.registerMock('@zimbra-client/constants', {
 	PARTICIPATION_STATUS: 1
 });
 mockery.registerMock('@zimbra-client/blocks', {
-	Icon: 1,
+	Dialog: 1,
+	FixedDialog: 1,
+	ModalDialog: 1,
 	Button: 1,
+	Select: 1,
+	Option: 1,
+	Tabs: 1,
+	Tab: 1,
+	Icon: 1,
+	FontAwesome: 1,
 	Spinner: 1,
-	ModalDialog: 1
+	ClickOutsideDetector: 1,
+	ContainerSize: 1,
+	Popover: 1,
+	Tooltip: 1,
+	Scrim: 1,
+	Card: 1,
+	AffixBottom: 1,
+	KeyCodes: 1,
+	Label: 1
 });
 mockery.registerMock('@zimbra-client/errors', {
 	errorMessage: 1
