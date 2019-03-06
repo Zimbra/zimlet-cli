@@ -81,6 +81,13 @@ mockery.registerMock('@zimbra-client/blocks', {
 	KeyCodes: 1,
 	Label: 1
 });
+
+mockery.registerMock('@zimbra-client/components', {
+	ModalDrawer: 1,
+	ModalDrawerToolbar: 1,
+	BackArrow: 1
+});
+
 mockery.registerMock('@zimbra-client/errors', {
 	errorMessage: 1
 });
