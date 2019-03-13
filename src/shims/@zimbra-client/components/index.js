@@ -10,4 +10,5 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/compone
 export const ModalDrawer = wrap('ModalDrawer');
 export const ModalDrawerToolbar = wrap('ModalDrawerToolbar');
 export const BackArrow = wrap('BackArrow');
+export const Select = wrap('Select');
 export default global.shims['@zimbra-client/components'];
