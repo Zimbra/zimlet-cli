@@ -45,6 +45,7 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withCreateAppointment: 1,
 	withCalendars: 1,
 	withSearch: 1,
+	withSessions: 1,
 	withCreateContact: 1,
 	withContactAction: 1,
 	CalendarCreateMutation: 1
