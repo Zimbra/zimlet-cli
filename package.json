@@ -84,7 +84,7 @@
     "console-clear": "^1.1.1",
     "cors": "^2.8.5",
     "cross-spawn-promise": "^0.10.1",
-    "css-loader": "^2.1.1",
+    "css-loader": "^0.28.11",
     "file-loader": "^3.0.1",
     "gittar": "^0.1.1",
     "inquirer": "^5.2.0",
