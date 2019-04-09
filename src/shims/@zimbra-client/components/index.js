@@ -11,4 +11,5 @@ export const ModalDrawer = wrap('ModalDrawer');
 export const ModalDrawerToolbar = wrap('ModalDrawerToolbar');
 export const BackArrow = wrap('BackArrow');
 export const Select = wrap('Select');
+export const NakedButton = wrap('NakedButton');
 export default global.shims['@zimbra-client/components'];
