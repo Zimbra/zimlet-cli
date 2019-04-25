@@ -112,7 +112,6 @@ export function configure(env) {
 	];
 
 	let cssLoaderOptions = {
-		autoprefixer: false,
 		sourceMap: watch && !PROD
 	};
 
