@@ -304,12 +304,6 @@ export function configure(env) {
 	};
 
 	if (watch) {
-		webpackConfig.entry = [
-			webpackConfig.entry,
-			`webpack-dev-server/client?${https ? 'https' : 'http'}://${host}:${port}/`,
-			`webpack/hot/dev-server?${https ? 'https' : 'http'}://${host}:${port}/`
-		];
-
 		webpackConfig.devServer = {
 			host,
 			port,

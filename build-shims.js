@@ -87,7 +87,8 @@ mockery.registerMock('@zimbra-client/components', {
 	ModalDrawerToolbar: 1,
 	BackArrow: 1,
 	Select: 1,
-	NakedButton: 1
+	NakedButton: 1,
+	TextInput: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
