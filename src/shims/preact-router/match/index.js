@@ -8,4 +8,5 @@ import { warnOnMissingExport } from '../../';
 const wrap = warnOnMissingExport.bind(null, global.shims['preact-router/match'], 'preact-router/match');
 
 export const Match = wrap('Match');
+
 export default global.shims['preact-router/match'];
