@@ -40,7 +40,7 @@ yargs
 			defaultDescription: './build',
 			description: 'Directory for build artifacts'
 		},
-		publicpath: {			
+		publicpath: {
 			type: 'string',
 			defaultDescription: '/',
 			description: 'Public path you would like to download resources from, e.g. "/@zimbra/service/zimlet/com_example_zimlet/"'
