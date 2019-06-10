@@ -13,4 +13,5 @@ export const BackArrow = wrap('BackArrow');
 export const Select = wrap('Select');
 export const NakedButton = wrap('NakedButton');
 export const TextInput = wrap('TextInput');
+
 export default global.shims['@zimbra-client/components'];

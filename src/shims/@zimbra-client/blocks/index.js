@@ -27,4 +27,5 @@ export const Card = wrap('Card');
 export const AffixBottom = wrap('AffixBottom');
 export const KeyCodes = wrap('KeyCodes');
 export const Label = wrap('Label');
+
 export default global.shims['@zimbra-client/blocks'];

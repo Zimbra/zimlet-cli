@@ -15,4 +15,5 @@ export const Component = wrap('Component');
 export const render = wrap('render');
 export const rerender = wrap('rerender');
 export const options = wrap('options');
+
 export default global.shims['preact'];

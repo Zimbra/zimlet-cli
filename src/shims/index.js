@@ -20,6 +20,7 @@ exports.SHIMMED_MODULES = [
 	'preact-compat',
 	'preact-redux',
 	'react-apollo',
+	'graphql-tag',
 	[ '@zimbra-client/util', 'redux', 'contacts' ], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
 	'@zimbra-client/blocks',
 	'@zimbra-client/components',
