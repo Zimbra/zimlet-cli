@@ -14,5 +14,6 @@ export const withSearch = wrap('withSearch');
 export const withCreateContact = wrap('withCreateContact');
 export const withContactAction = wrap('withContactAction');
 export const CalendarCreateMutation = wrap('CalendarCreateMutation');
+export const withCreateSignature = wrap('withCreateSignature');
 
 export default global.shims['@zimbra-client/graphql'];
