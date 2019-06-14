@@ -8,4 +8,5 @@ import { warnOnMissingExport } from '../../../';
 const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/util/contacts'], '@zimbra-client/util/contacts');
 
 export const getName = wrap('getName');
+
 export default global.shims['@zimbra-client/util/contacts'];

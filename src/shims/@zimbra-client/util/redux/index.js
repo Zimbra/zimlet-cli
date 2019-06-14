@@ -12,4 +12,5 @@ export const createAsyncAction = wrap('createAsyncAction');
 export const pendingAction = wrap('pendingAction');
 export const fulfilledAction = wrap('fulfilledAction');
 export const rejectedAction = wrap('rejectedAction');
+
 export default global.shims['@zimbra-client/util/redux'];

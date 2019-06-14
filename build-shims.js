@@ -40,6 +40,10 @@ mockery.registerMock('@zimbra-client/util/redux', {
 	rejectedAction: 1
 });
 
+mockery.registerMock('graphql-tag', {
+	default: 1
+});
+
 mockery.registerMock('@zimbra-client/graphql', {
 	CalendarsAndAppointmentsQuery: 1,
 	withCreateAppointment: 1,
@@ -118,9 +122,10 @@ import { warnOnMissingExport } from '.${shimModule.split('/').map((pathpart, ind
 const wrap = warnOnMissingExport.bind(null, global.shims['${shimModule}'], '${shimModule}');
 
 ${Object.keys(require(shimModule)).map(exportName =>
-		`export const ${exportName} = wrap('${exportName}');`).join('\n')
+		`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`).join('\n')
 }
-export default global.shims['${shimModule}'];
+${'default' in require(shimModule) ? '' : `
+export default global.shims['${shimModule}'];`}
 `
 		);
 	});
