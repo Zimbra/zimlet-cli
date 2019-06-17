@@ -39,6 +39,11 @@ yargs
 			type: 'string',
 			defaultDescription: './build',
 			description: 'Directory for build artifacts'
+		},
+		publicpath: {
+			type: 'string',
+			defaultDescription: '/',
+			description: 'Public path you would like to download resources from, e.g. "/@zimbra/service/zimlet/com_example_zimlet/"'
 		}
 	}, (argv ) => {
 		argv.production = true;

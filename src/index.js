@@ -143,7 +143,7 @@ export function configure(env) {
 			// NOTE: Explicit public path is required in order to make HMR work within an sourceless iframe.
 			// This is due to a bug in webpack-dev-server that uses the document protocol for all https pages:
 			// https://github.com/webpack/webpack-dev-server/blob/c490b245ad65f315762e03e51710f7f7177b1e7b/client/index.js#L188-L190
-			publicPath: watch ? `http${https?'s':''}://${host}:${port}/` : '/'
+			publicPath: watch ? `http${https?'s':''}://${host}:${port}/` : env.publicpath || '/'
 		},
 
 		resolve: {
