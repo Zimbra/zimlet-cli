@@ -51,8 +51,7 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withSearch: 1,
 	withCreateContact: 1,
 	withContactAction: 1,
-	CalendarCreateMutation: 1,
-	withCreateSignature: 1
+	CalendarCreateMutation: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
@@ -93,7 +92,8 @@ mockery.registerMock('@zimbra-client/components', {
 	BackArrow: 1,
 	Select: 1,
 	NakedButton: 1,
-	TextInput: 1
+	TextInput: 1,
+	MiniComposer: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
