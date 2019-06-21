@@ -27,4 +27,5 @@ export const PureComponent = wrap('PureComponent');
 export const unstable_renderSubtreeIntoContainer = wrap('unstable_renderSubtreeIntoContainer');
 export const unstable_batchedUpdates = wrap('unstable_batchedUpdates');
 export const __spread = wrap('__spread');
+
 export default global.shims['preact-compat'];

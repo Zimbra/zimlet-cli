@@ -10,4 +10,5 @@ const wrap = warnOnMissingExport.bind(null, global.shims['preact-redux'], 'preac
 export const Provider = wrap('Provider');
 export const connect = wrap('connect');
 export const connectAdvanced = wrap('connectAdvanced');
+
 export default global.shims['preact-redux'];

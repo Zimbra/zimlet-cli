@@ -9,4 +9,5 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/enhance
 
 export const withMediaQuery = wrap('withMediaQuery');
 export const registerTab = wrap('registerTab');
+
 export default global.shims['@zimbra-client/enhancers'];

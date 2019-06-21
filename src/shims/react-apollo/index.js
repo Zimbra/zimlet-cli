@@ -23,4 +23,5 @@ export const withApollo = wrap('withApollo');
 export const withMutation = wrap('withMutation');
 export const withQuery = wrap('withQuery');
 export const withSubscription = wrap('withSubscription');
+
 export default global.shims['react-apollo'];

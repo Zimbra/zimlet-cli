@@ -9,4 +9,5 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/constan
 
 export const ATTENDEE_ROLE = wrap('ATTENDEE_ROLE');
 export const PARTICIPATION_STATUS = wrap('PARTICIPATION_STATUS');
+
 export default global.shims['@zimbra-client/constants'];
