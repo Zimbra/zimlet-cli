@@ -44,6 +44,10 @@ mockery.registerMock('graphql-tag', {
 	default: 1
 });
 
+mockery.registerMock('preact-pwa-install', {
+	default: 1
+});
+
 mockery.registerMock('@zimbra-client/graphql', {
 	CalendarsAndAppointmentsQuery: 1,
 	withCreateAppointment: 1,
