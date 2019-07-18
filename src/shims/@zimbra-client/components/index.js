@@ -37,6 +37,6 @@ export const BackArrow = wrap('BackArrow');
 export const Select = wrap('Select');
 export const NakedButton = wrap('NakedButton');
 export const TextInput = wrap('TextInput');
-export const MiniComposer = wrap('MiniComposer');
+export const TinyMceComposer = wrap('TinyMceComposer');
 
 export default global.shims['@zimbra-client/components'];
