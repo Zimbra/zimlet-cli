@@ -38,5 +38,6 @@ export const Select = wrap('Select');
 export const NakedButton = wrap('NakedButton');
 export const TextInput = wrap('TextInput');
 export const TinyMceComposer = wrap('TinyMceComposer');
+export const ErrorBar = wrap('ErrorBar');
 
 export default global.shims['@zimbra-client/components'];
