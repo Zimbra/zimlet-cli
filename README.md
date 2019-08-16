@@ -42,7 +42,7 @@ npm install
 
 # now any time you change src/ in the CLI package,
 # (re-)link your build of the CLI globally:
-npm link
+npm run build && npm link
 ```
 
 Doing the above (and repeating the last step for any change to the CLI's source) will introduce a `zimlet` command globally.
