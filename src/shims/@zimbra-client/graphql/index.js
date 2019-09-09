@@ -11,6 +11,7 @@ export const CalendarsAndAppointmentsQuery = wrap('CalendarsAndAppointmentsQuery
 export const withCreateAppointment = wrap('withCreateAppointment');
 export const withCalendars = wrap('withCalendars');
 export const withSearch = wrap('withSearch');
+export const withAccountInfo = wrap('withAccountInfo');
 export const withCreateContact = wrap('withCreateContact');
 export const withContactAction = wrap('withContactAction');
 export const CalendarCreateMutation = wrap('CalendarCreateMutation');
