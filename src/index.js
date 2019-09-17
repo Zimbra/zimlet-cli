@@ -185,7 +185,7 @@ export function configure(env) {
 					loader: 'babel-loader',
 					options: {
 						babelrc: false,
-						comments: false,
+						comments: true,
 						presets: [
 							[require.resolve('@babel/preset-env'), { loose: true, modules: false }]
 						],
@@ -256,16 +256,6 @@ export function configure(env) {
 					test: /\.(svg|ttf|woff2?|eot|otf|jpe?g|png|gif)$/i,
 					loader: watch ? 'url-loader' : 'file-loader'
 				}
-				// {
-				// 	test: /\.(json)$/,
-				// 	loader: require.resolve('babel-loader'),
-				// 	options: {
-				// 		plugins: [
-				// 			'syntax-dynamic-import',
-				// 			'remove-webpack'
-				// 		]
-				// 	}
-				// }
 			]
 		},
 
@@ -297,9 +287,6 @@ export function configure(env) {
 
 			new webpack.DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify(PROD?'production':'development')
-			}),
-			new webpack.optimize.LimitChunkCountPlugin({
-				maxChunks: 1
 			})
 		),
 
