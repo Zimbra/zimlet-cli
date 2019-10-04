@@ -185,7 +185,7 @@ export function configure(env) {
 					loader: 'babel-loader',
 					options: {
 						babelrc: false,
-						comments: false,
+						comments: true,
 						presets: [
 							[require.resolve('@babel/preset-env'), { loose: true, modules: false }]
 						],
