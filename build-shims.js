@@ -123,7 +123,9 @@ mockery.registerMock('@zimbra-client/components', {
 	Select: 1,
 	NakedButton: 1,
 	TextInput: 1,
-	TinyMceComposer: 1
+	TinyMceComposer: 1,
+	AddMore: 1
+
 });
 
 mockery.registerMock('@zimbra-client/errors', {
@@ -153,8 +155,8 @@ import { warnOnMissingExport } from '.${shimModule.split('/').map((pathpart, ind
 const wrap = warnOnMissingExport.bind(null, global.shims['${shimModule}'], '${shimModule}');
 
 ${Object.keys(require(shimModule)).map(exportName =>
-		`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`).join('\n')
-}
+				`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`).join('\n')
+			}
 ${'default' in require(shimModule) ? '' : `
 export default global.shims['${shimModule}'];`}
 `
