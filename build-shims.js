@@ -125,7 +125,9 @@ mockery.registerMock('@zimbra-client/components', {
 	NakedButton: 1,
 	TextInput: 1,
 	TinyMceComposer: 1,
-	TextArea: 1
+	TextArea: 1,
+	FormGroup: 1,
+	AlignedLabel: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
