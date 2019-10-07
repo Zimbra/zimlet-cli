@@ -40,5 +40,6 @@ export const TextInput = wrap('TextInput');
 export const TinyMceComposer = wrap('TinyMceComposer');
 export const FormGroup = wrap('FormGroup');
 export const AlignedLabel = wrap('AlignedLabel');
+export const TextArea = wrap('TextArea');
 
 export default global.shims['@zimbra-client/components'];
