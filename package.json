@@ -18,6 +18,10 @@
     "release": "npm publish",
     "release-beta": "npm publish --tag beta"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zimbra/zimlet-cli.git"
+  },
   "babel": {
     "presets": [
       "@babel/preset-env"
