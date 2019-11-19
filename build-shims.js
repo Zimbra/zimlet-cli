@@ -89,7 +89,8 @@ mockery.registerMock('@zimbra-client/blocks', {
 	Card: 1,
 	AffixBottom: 1,
 	KeyCodes: 1,
-	Label: 1
+	Label: 1,
+	ChoiceInput: 1
 });
 
 mockery.registerMock('@zimbra-client/components', {
@@ -124,6 +125,7 @@ mockery.registerMock('@zimbra-client/components', {
 	NakedButton: 1,
 	TextInput: 1,
 	TinyMceComposer: 1,
+	TextArea: 1,
 	AddMore: 1,
 	FormGroup: 1,
 	AlignedLabel: 1,
