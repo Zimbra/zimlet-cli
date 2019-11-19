@@ -4,7 +4,7 @@
 ( () => {
 	function init() {
 		zimlet( context => {
-			let { zimbra, config, plugins, shims, components, meta } = context;
+			let { zimbra, config, plugins, shims, components, store, meta } = context;
 
 			// Add shims to the global scope to expose dependencies to Zimlets
 			// Shimmed dependencies include preact, preact-router, react-apollo
@@ -14,6 +14,7 @@
 			global.config = config;
 			global.plugins = plugins;
 			global.components = components;
+			global.store = store;
 
 			global.ZIMLET_STYLES = [];
 
