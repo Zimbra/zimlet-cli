@@ -38,8 +38,10 @@ export const Select = wrap('Select');
 export const NakedButton = wrap('NakedButton');
 export const TextInput = wrap('TextInput');
 export const TinyMceComposer = wrap('TinyMceComposer');
+export const TextArea = wrap('TextArea');
 export const AddMore = wrap('AddMore');
 export const FormGroup = wrap('FormGroup');
 export const AlignedLabel = wrap('AlignedLabel');
+export const AttachmentItem = wrap('AttachmentItem');
 
 export default global.shims['@zimbra-client/components'];
