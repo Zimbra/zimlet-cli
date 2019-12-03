@@ -1,6 +1,6 @@
 {
   "name": "@zimbra/zimlet-cli",
-  "version": "5.13.0",
+  "version": "6.0.0",
   "description": "Develop, Build, and Package Zimbra X compatible zimlets for development and production.",
   "main": "dist/index.js",
   "bin": {
