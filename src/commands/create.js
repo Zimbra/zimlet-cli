@@ -74,9 +74,12 @@ export default asyncCommand({
 	},
 
 	async handler(argv) {
+		let destArg = argv.dest;
+		let templateArg = argv.template;
+		let nameArg = argv.name;
 
 		// Prompt if incomplete data
-		if (!argv.dest || !argv.template) {
+		if (!destArg || !templateArg) {
 			warn('Insufficient command arguments! Prompting...');
 			info('Alternatively, run `zimlet create --help` for usage info.');
 
@@ -88,12 +91,12 @@ export default asyncCommand({
 		}
 
 		//default is a special keyword that will use the predefiend default repo
-		if (argv.template === 'default') argv.template = DEFAULT_REPO;
+		if (templateArg === 'default') templateArg = DEFAULT_REPO;
 
 		let cwd = resolve(argv.cwd);
-		argv.dest = argv.dest || dirname(cwd);
+		destArg = destArg || dirname(cwd);
 		let isYarn = argv.yarn && hasCommand('yarn');
-		let target = resolve(cwd, argv.dest);
+		let target = resolve(cwd, destArg);
 		let exists = isDir(target);
 
 		if (exists && !argv.force) {
@@ -111,18 +114,18 @@ export default asyncCommand({
 			}
 		}
 
-		let repo = argv.template;
+		let repo = templateArg;
 		if (!repo.includes('/')) {
 			repo = `${ORG}/${repo}`;
-			info(`Fetching ${argv.template} template from ${repo}...`);
+			info(`Fetching ${templateArg} template from ${repo}...`);
 		}
 
 		// Use `--name` value or `dest` dir's name
-		argv.name = argv.name || argv.dest;
+		nameArg = nameArg || destArg;
 
-		let { errors } = isValidName(argv.name);
+		let { errors } = isValidName(nameArg);
 		if (errors) {
-			errors.unshift(`Invalid package name: ${argv.name}`);
+			errors.unshift(`Invalid package name: ${nameArg}`);
 			return error(errors.map(capitalize).join('\n  ~ '), 1);
 		}
 
@@ -207,8 +210,8 @@ export default asyncCommand({
 
 		// Update `package.json` key
 		if (pkgData) {
-			spinner.succeed().start('Updating `name` to `' + argv.name + '` within `package.json` file');
-			pkgData.name = argv.name.toLowerCase().replace(/\s+/g, '_');
+			spinner.succeed().start('Updating `name` to `' + nameArg + '` within `package.json` file');
+			pkgData.name = nameArg.toLowerCase().replace(/\s+/g, '_');
 		}
 
 		if (pkgData) {
@@ -237,7 +240,7 @@ export default asyncCommand({
 
 		return trim(`
 			To get started, cd into the new directory:
-			  ${ green('cd ' + argv.dest) }
+			  ${ green('cd ' + destArg) }
 
 			To start a development live-reload server:
 			  ${ green(pfx + ' watch') }
