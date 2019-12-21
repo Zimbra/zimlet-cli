@@ -15,10 +15,9 @@
  *   at `src/shims/${shim}/index.js` and `src/shims/${shim}/${path}/index.js`
  */
 exports.SHIMMED_MODULES = [
-	'preact',
+	[ 'preact', 'compat' ],
 	[ 'preact-router', 'match' ],
-	'preact-compat',
-	'preact-redux',
+	'react-redux',
 	'react-apollo',
 	'graphql-tag',
 	'preact-pwa-install',

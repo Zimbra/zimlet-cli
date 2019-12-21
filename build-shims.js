@@ -9,9 +9,9 @@ mockery.enable({
 	warnOnUnregistered: false
 });
 
-mockery.registerSubstitute('react', 'preact-compat');
-mockery.registerSubstitute('react-dom', 'preact-compat');
-mockery.registerSubstitute('react-dom/server', 'preact-compat');
+mockery.registerSubstitute('react', 'preact/compat');
+mockery.registerSubstitute('react-dom', 'preact/compat');
+mockery.registerSubstitute('react-dom/server', 'preact/compat');
 mockery.registerMock('preact-router/match', { Match: 1 });
 mockery.registerMock('apollo-client', {}); //doesn't really matter
 mockery.registerMock('redux', {}); //doesn't really matter
@@ -159,7 +159,7 @@ function createShim(shimModule) {
 import { warnOnMissingExport } from '.${shimModule.split('/').map((pathpart, index) => !index ? './' : '../').join('')}';
 const wrap = warnOnMissingExport.bind(null, global.shims['${shimModule}'], '${shimModule}');
 
-${Object.keys(require(shimModule)).map(exportName =>
+${Object.keys(require(shimModule)).filter(exportName => exportName !== '__esModule').map(exportName =>
 				`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`).join('\n')
 			}
 ${'default' in require(shimModule) ? '' : `
