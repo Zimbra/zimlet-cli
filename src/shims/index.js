@@ -15,13 +15,14 @@
  *   at `src/shims/${shim}/index.js` and `src/shims/${shim}/${path}/index.js`
  */
 exports.SHIMMED_MODULES = [
-	[ 'preact', 'compat' ],
-	[ 'preact-router', 'match' ],
+	['preact', 'compat'],
+	['preact-router', 'match'],
 	'react-redux',
 	'react-apollo',
 	'graphql-tag',
 	'preact-pwa-install',
-	[ '@zimbra-client/util', 'redux', 'contacts' ], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
+	'preact-i18n',
+	['@zimbra-client/util', 'redux', 'contacts'], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
 	'@zimbra-client/blocks',
 	'@zimbra-client/components',
 	'@zimbra-client/errors',
@@ -30,7 +31,7 @@ exports.SHIMMED_MODULES = [
 	'@zimbra-client/constants'
 ];
 
-exports.getShimPath =  function(module) {
+exports.getShimPath = function(module) {
 	return require.resolve(`./${module}`).replace(/index\.js$/, '');
 };
 
@@ -42,9 +43,11 @@ exports.getShimPath =  function(module) {
  * @param {Object} e the `exports` object from a module
  */
 exports.warnOnMissingExport = function(m, moduleName, namedExport) {
-	return m && typeof m[namedExport] !== 'undefined' ?
-		m[namedExport] :
-		function() {
-			throw new Error(`[ZimletCli]: Export ${moduleName}.${namedExport} was not found in the ${moduleName} instance passed down from ZimbraX.`);
-		};
+	return m && typeof m[namedExport] !== 'undefined'
+		? m[namedExport]
+		: function() {
+			throw new Error(
+				`[ZimletCli]: Export ${moduleName}.${namedExport} was not found in the ${moduleName} instance passed down from ZimbraX.`
+			);
+		  };
 };
