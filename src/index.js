@@ -212,10 +212,9 @@ export function configure(env) {
 							loader: 'css-loader',
 							options: {
 								...cssLoaderOptions,
-								modules: {
-									localIdentRegExp: cssModulesRegexp,
-									localIdentName: '[1]_[2]_[local]'
-								},
+								modules: true,
+								localIdentRegExp: cssModulesRegexp,
+								localIdentName: '[1]_[2]_[local]',
 								importLoaders: 1
 							}
 						},
