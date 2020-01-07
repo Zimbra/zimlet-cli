@@ -8,5 +8,6 @@ import { warnOnMissingExport } from '../../';
 const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/errors'], '@zimbra-client/errors');
 
 export const errorMessage = wrap('errorMessage');
+export const faultCode = wrap('faultCode');
 
 export default global.shims['@zimbra-client/errors'];

@@ -43,5 +43,6 @@ export const AddMore = wrap('AddMore');
 export const FormGroup = wrap('FormGroup');
 export const AlignedLabel = wrap('AlignedLabel');
 export const AttachmentItem = wrap('AttachmentItem');
+export const ResponsiveModal = wrap('ResponsiveModal');
 
 export default global.shims['@zimbra-client/components'];
