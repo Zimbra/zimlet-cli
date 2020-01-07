@@ -133,7 +133,8 @@ mockery.registerMock('@zimbra-client/components', {
 	FormGroup: 1,
 	AlignedLabel: 1,
 	AttachmentItem: 1,
-	ResponsiveModal: 1
+	ResponsiveModal: 1,
+	NestedActionMenuItem: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
