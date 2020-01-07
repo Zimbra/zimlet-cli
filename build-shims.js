@@ -58,7 +58,8 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withIdentities: 1,
 	withCreateContact: 1,
 	withContactAction: 1,
-	CalendarCreateMutation: 1
+	CalendarCreateMutation: 1,
+	withCreateCalendar: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
@@ -131,11 +132,13 @@ mockery.registerMock('@zimbra-client/components', {
 	AddMore: 1,
 	FormGroup: 1,
 	AlignedLabel: 1,
-	AttachmentItem: 1
+	AttachmentItem: 1,
+	ResponsiveModal: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
-	errorMessage: 1
+	errorMessage: 1,
+	faultCode: 1
 });
 
 function createShim(shimModule) {
