@@ -15,8 +15,9 @@
  *   at `src/shims/${shim}/index.js` and `src/shims/${shim}/${path}/index.js`
  */
 exports.SHIMMED_MODULES = [
-	['preact', 'compat'],
+	['preact', 'compat', 'hooks'],
 	['preact-router', 'match'],
+	'@apollo/react-hooks',
 	'react-redux',
 	'react-apollo',
 	'graphql-tag',
