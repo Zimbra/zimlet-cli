@@ -163,8 +163,8 @@ export function configure(env) {
 					shimAliases[name] = getShimPath(name);
 					return shimAliases;
 				}, {}),
-				react: getShimPath('preact-compat'),
-				'react-dom': getShimPath('preact-compat'),
+				react: getShimPath('preact/compat'),
+				'react-dom': getShimPath('preact/compat'),
 				style: path.resolve(context, 'style'),
 				'zimlet-cli-entrypoint': path.resolve(context, entry)
 			}
@@ -196,7 +196,7 @@ export function configure(env) {
 							require.resolve('@babel/plugin-proposal-export-namespace-from'),
 							require.resolve('@babel/plugin-proposal-export-default-from'),
 							require.resolve('@babel/plugin-transform-object-assign'),
-							[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'h' }]
+							[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'createElement' }]
 						]
 					}
 				},
@@ -213,9 +213,9 @@ export function configure(env) {
 							options: {
 								...cssLoaderOptions,
 								modules: true,
-								importLoaders: 1,
 								localIdentRegExp: cssModulesRegexp,
-								localIdentName: '[1]_[2]_[local]'
+								localIdentName: '[1]_[2]_[local]',
+								importLoaders: 1
 							}
 						},
 						{
