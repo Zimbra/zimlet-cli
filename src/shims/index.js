@@ -22,6 +22,7 @@ exports.SHIMMED_MODULES = [
 	'react-apollo',
 	'graphql-tag',
 	'recompose',
+	'preact-context-provider',
 	'preact-pwa-install',
 	'preact-i18n',
 	'preact-render-to-string',
