@@ -21,6 +21,7 @@ exports.SHIMMED_MODULES = [
 	'react-redux',
 	'react-apollo',
 	'graphql-tag',
+	'preact-context-provider',
 	'preact-pwa-install',
 	'preact-i18n',
 	'preact-render-to-string',
