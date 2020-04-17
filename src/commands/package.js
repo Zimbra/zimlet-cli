@@ -62,7 +62,8 @@ export default asyncCommand({
 		//Create the xml descriptor file for the zimlet
 		let xmlFile = `${argv.name}.xml`;
 
-		let zimletXML = `<zimlet name="${argv.name}" version="${argv.pkgVersion}" description="${argv.description}" label="${argv.label}" zimbraXZimletCompatibleSemVer="${argv.zimbraXVersion}">`;
+		// eslint-disable-next-line no-useless-escape
+		let zimletXML = `<zimlet name="${argv.name}" version="${argv.pkgVersion}" description="\$\{msg.description\}" label="\$\{msg.label\}" zimbraXZimletCompatibleSemVer="${argv.zimbraXVersion}">`;
 
 		let files;
 		try {
@@ -91,6 +92,19 @@ export default asyncCommand({
 		}
 		catch (err) {
 			return error(`Failed to write XML file: ${err}`, 1);
+		}
+
+		// Add properties file for description and label
+		let propertiesFile = `${argv.name}.properties`;
+		let zimletProperties = '\n';
+		zimletProperties += `label = ${argv.label}\n`;
+		zimletProperties += `description = ${argv.description}\n`;
+
+		try {
+			fs.writeFileSync(path.resolve(builddir, propertiesFile), zimletProperties);
+		}
+		catch (err) {
+			return error(`Failed to write properties file: ${err}`, 1);
 		}
 
 		//Zip up the contents of the build dir along with the xml file as the final zimlet deliverable
