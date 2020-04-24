@@ -55,6 +55,7 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withCalendars: 1,
 	withSearch: 1,
 	withAccountInfo: 1,
+	withPreference: 1,
 	withIdentities: 1,
 	withCreateContact: 1,
 	withContactAction: 1,
@@ -134,7 +135,8 @@ mockery.registerMock('@zimbra-client/components', {
 	AlignedLabel: 1,
 	AttachmentItem: 1,
 	ResponsiveModal: 1,
-	NestedActionMenuItem: 1
+	NestedActionMenuItem: 1,
+	PdfjsViewer: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
