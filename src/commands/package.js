@@ -29,6 +29,11 @@ export default asyncCommand({
 			demandOption: true,
 			requiresArg: true
 		},
+		label: {
+			alias: 'l',
+			description: 'Display name for your zimlet',
+			demandOption: true
+		},
 		zimbraXVersion: {
 			description: 'https://semver.org version range of Zimbra X that the Zimlet is compatible with.',
 			default: '>=1.0.0',
@@ -57,7 +62,7 @@ export default asyncCommand({
 		//Create the xml descriptor file for the zimlet
 		let xmlFile = `${argv.name}.xml`;
 
-		let zimletXML = `<zimlet name="${argv.name}" version="${argv.pkgVersion}" description="${argv.description}" zimbraXZimletCompatibleSemVer="${argv.zimbraXVersion}">`;
+		let zimletXML = `<zimlet name="${argv.name}" version="${argv.pkgVersion}" description="${argv.description}" label="${argv.label}" zimbraXZimletCompatibleSemVer="${argv.zimbraXVersion}">`;
 
 		let files;
 		try {
