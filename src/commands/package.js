@@ -59,11 +59,10 @@ export default asyncCommand({
 		let builddir = path.resolve(cwd, argv.builddir || 'build');
 		let dest = path.resolve(cwd, argv.dest || 'pkg', `${argv.name}.zip`);
 
-		//Create the xml descriptor file for the zimlet
+		// Create the xml descriptor file for the zimlet
 		let xmlFile = `${argv.name}.xml`;
 
-		// eslint-disable-next-line no-useless-escape
-		let zimletXML = `<zimlet name="${argv.name}" version="${argv.pkgVersion}" description="\$\{msg.description\}" label="\$\{msg.label\}" zimbraXZimletCompatibleSemVer="${argv.zimbraXVersion}">`;
+		let zimletXML = `<zimlet name="${argv.name}" version="${argv.pkgVersion}" description="${argv.description}" label="${argv.label}" zimbraXZimletCompatibleSemVer="${argv.zimbraXVersion}">`;
 
 		let files;
 		try {
@@ -95,6 +94,7 @@ export default asyncCommand({
 		}
 
 		// Add properties file for description and label
+		// As admin console requires properties file to display label and desciption
 		let propertiesFile = `${argv.name}.properties`;
 		let zimletProperties = '\n';
 		zimletProperties += `label = ${argv.label}\n`;
