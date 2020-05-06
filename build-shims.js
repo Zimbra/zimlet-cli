@@ -60,7 +60,9 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withCreateContact: 1,
 	withContactAction: 1,
 	CalendarCreateMutation: 1,
-	withCreateCalendar: 1
+	withCreateCalendar: 1,
+	withSetCustomMetaData: 1,
+	withGetCustomMetaData: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
