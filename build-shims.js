@@ -28,6 +28,10 @@ mockery.registerMock('@zimbra-client/util', {
 	pruneEmpty: 1
 });
 
+mockery.registerMock('@zimbra-client/browser', {
+	openExternalBrowser: 1
+});
+
 mockery.registerMock('@zimbra-client/util/contacts', {
 	getName: 1
 });
