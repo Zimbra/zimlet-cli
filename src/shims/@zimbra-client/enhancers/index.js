@@ -8,7 +8,7 @@ import { warnOnMissingExport } from '../../';
 const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/enhancers'], '@zimbra-client/enhancers');
 
 export const withMediaQuery = wrap('withMediaQuery');
-export const registerTab = wrap('registerTab');
+export const withTabManager = wrap('withTabManager');
 export const withIntlWrapper = wrap('withIntlWrapper');
 
 export default global.shims['@zimbra-client/enhancers'];
