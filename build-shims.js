@@ -70,7 +70,8 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withActionMutation: 1,
 	withTags: 1,
 	withTagCreate: 1,
-	withTagAction: 1
+	withTagAction: 1,
+	useFoldersQuery: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
@@ -147,7 +148,8 @@ mockery.registerMock('@zimbra-client/components', {
 	AttachmentItem: 1,
 	ResponsiveModal: 1,
 	NestedActionMenuItem: 1,
-	PdfjsViewer: 1
+	PdfjsViewer: 1,
+	FolderListLight: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
