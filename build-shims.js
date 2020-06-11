@@ -77,7 +77,8 @@ mockery.registerMock('@zimbra-client/enhancers', {
 
 mockery.registerMock('@zimbra-client/constants', {
 	ATTENDEE_ROLE: 1,
-	PARTICIPATION_STATUS: 1
+	PARTICIPATION_STATUS: 1,
+	supportedMimes: 1
 });
 mockery.registerMock('@zimbra-client/blocks', {
 	Dialog: 1,
