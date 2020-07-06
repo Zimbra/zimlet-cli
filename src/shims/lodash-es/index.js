@@ -3,8 +3,10 @@
 *  Zimbra passed down when it called the factory provided to zimlet().
 */
 
-/* eslint-disable camelcase, dot-notation, no-unused-vars */
+/* eslint-disable camelcase, dot-notation */
 import { warnOnMissingExport } from '../';
 const wrap = warnOnMissingExport.bind(null, global.shims['lodash-es'], 'lodash-es');
+
+
 
 export default global.shims['lodash-es'];
