@@ -15,7 +15,6 @@ mockery.registerSubstitute('react-dom/server', 'preact/compat');
 mockery.registerMock('preact-router/match', { Match: 1 });
 mockery.registerMock('apollo-client', {}); //doesn't really matter
 mockery.registerMock('redux', {}); //doesn't really matter
-mockery.registerMock('lodash-es', {}); //doesn't really matter
 
 /* @zimbra/util is a psuedo-module: it is built from the many library
  * functions contained in `zm-x-web`.
