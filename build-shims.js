@@ -149,7 +149,8 @@ mockery.registerMock('@zimbra-client/components', {
 	ResponsiveModal: 1,
 	NestedActionMenuItem: 1,
 	PdfjsViewer: 1,
-	FolderListLight: 1
+	FolderListLight: 1,
+	ZimletSlot: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
