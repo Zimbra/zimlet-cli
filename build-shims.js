@@ -85,6 +85,11 @@ mockery.registerMock('@zimbra-client/constants', {
 	PARTICIPATION_STATUS: 1,
 	supportedMimes: 1
 });
+
+mockery.registerMock('@zimbra-client/hooks', {
+	useClientConfig: 1
+});
+
 mockery.registerMock('@zimbra-client/blocks', {
 	Dialog: 1,
 	FixedDialog: 1,
