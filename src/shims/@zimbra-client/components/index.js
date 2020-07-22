@@ -47,5 +47,6 @@ export const ResponsiveModal = wrap('ResponsiveModal');
 export const NestedActionMenuItem = wrap('NestedActionMenuItem');
 export const PdfjsViewer = wrap('PdfjsViewer');
 export const FolderListLight = wrap('FolderListLight');
+export const ZimletSlot = wrap('ZimletSlot');
 
 export default global.shims['@zimbra-client/components'];
