@@ -77,7 +77,8 @@ mockery.registerMock('@zimbra-client/graphql', {
 mockery.registerMock('@zimbra-client/enhancers', {
 	withMediaQuery: 1,
 	withTabManager: 1,
-	withIntlWrapper: 1
+	withIntlWrapper: 1,
+	clientConfiguration: 1
 });
 
 mockery.registerMock('@zimbra-client/constants', {
