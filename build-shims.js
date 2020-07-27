@@ -77,7 +77,8 @@ mockery.registerMock('@zimbra-client/graphql', {
 mockery.registerMock('@zimbra-client/enhancers', {
 	withMediaQuery: 1,
 	withTabManager: 1,
-	withIntlWrapper: 1
+	withIntlWrapper: 1,
+	clientConfiguration: 1
 });
 
 mockery.registerMock('@zimbra-client/constants', {
@@ -85,6 +86,11 @@ mockery.registerMock('@zimbra-client/constants', {
 	PARTICIPATION_STATUS: 1,
 	supportedMimes: 1
 });
+
+mockery.registerMock('@zimbra-client/hooks', {
+	useClientConfig: 1
+});
+
 mockery.registerMock('@zimbra-client/blocks', {
 	Dialog: 1,
 	FixedDialog: 1,
