@@ -34,7 +34,7 @@ exports.SHIMMED_MODULES = [
 	'@zimbra-client/graphql',
 	'@zimbra-client/enhancers',
 	'@zimbra-client/constants',
-	'@zimbra-client/hooks'
+	['@zimbra-client/hooks', 'graphql']
 ];
 
 exports.getShimPath = function(module) {
