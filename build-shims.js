@@ -55,6 +55,7 @@ mockery.registerMock('preact-pwa-install', {
 mockery.registerMock('@zimbra-client/graphql', {
 	AppointmentsQuery: 1,
 	CalendarsAndAppointmentsQuery: 1,
+	GetDocumentShareURLQuery: 1,
 	withCreateAppointment: 1,
 	withCalendars: 1,
 	withSearch: 1,
@@ -70,8 +71,7 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withActionMutation: 1,
 	withTags: 1,
 	withTagCreate: 1,
-	withTagAction: 1,
-	useFoldersQuery: 1
+	withTagAction: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
@@ -89,6 +89,10 @@ mockery.registerMock('@zimbra-client/constants', {
 
 mockery.registerMock('@zimbra-client/hooks', {
 	useClientConfig: 1
+});
+
+mockery.registerMock('@zimbra-client/hooks/graphql', {
+	useFoldersQuery: 1
 });
 
 mockery.registerMock('@zimbra-client/blocks', {
