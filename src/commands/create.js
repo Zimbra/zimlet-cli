@@ -164,8 +164,8 @@ export default asyncCommand({
 			//globally replace instances of {{name}} with value of name arg
 			['name'].forEach(str => {
 				// if value is defined
-				if (argv[str] !== void 0) {
-					dict.set(new RegExp(`{{\\s*${str}\\s*}}`, 'g'), argv[str]);
+				if (nameArg !== void 0) {
+					dict.set(new RegExp(`{{\\s*${str}\\s*}}`, 'g'), nameArg);
 				}
 			});
 
