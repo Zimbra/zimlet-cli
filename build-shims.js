@@ -94,7 +94,8 @@ mockery.registerMock('@zimbra-client/hooks', {
 });
 
 mockery.registerMock('@zimbra-client/hooks/graphql', {
-	useFoldersQuery: 1
+	useFoldersQuery: 1,
+	useAccountInfo: 1
 });
 
 mockery.registerMock('@zimbra-client/blocks', {
