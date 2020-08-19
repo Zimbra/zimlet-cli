@@ -13,6 +13,7 @@ import cssnext from 'postcss-cssnext';
 import discardComments from 'postcss-discard-comments';
 import { crossPlatformPathRegex } from './util';
 import { getShimPath, SHIMMED_MODULES } from './shims';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 export default function run(args, callback) {
 
@@ -287,8 +288,17 @@ export function configure(env) {
 
 			new webpack.DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify(PROD?'production':'development')
+			}),
+
+			isFile(path.resolve(cwd, 'config_template.xml')) && new CopyWebpackPlugin({
+				patterns: [
+					{
+						from: path.join(cwd, 'config_template.xml'),
+						to: path.join(dest, 'config_template.xml')
+					}
+				]
 			})
-		),
+		).filter(Boolean),
 
 		watchOptions: {
 			ignored: [
@@ -341,4 +351,11 @@ function isDir(filepath) {
 		return !!fs.statSync(filepath).isDirectory();
 	}
 	catch (err) { }
+}
+
+function isFile(filepath) {
+	try {
+		return !!fs.statSync(filepath).isFile();
+	}
+	catch (err) {}
 }

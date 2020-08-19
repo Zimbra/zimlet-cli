@@ -8,5 +8,6 @@ import { warnOnMissingExport } from '../../../';
 const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/hooks/graphql'], '@zimbra-client/hooks/graphql');
 
 export const useFoldersQuery = wrap('useFoldersQuery');
+export const useAccountInfo = wrap('useAccountInfo');
 
 export default global.shims['@zimbra-client/hooks/graphql'];
