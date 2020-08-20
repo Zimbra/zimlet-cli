@@ -11,5 +11,6 @@ export const withMediaQuery = wrap('withMediaQuery');
 export const withTabManager = wrap('withTabManager');
 export const withIntlWrapper = wrap('withIntlWrapper');
 export const clientConfiguration = wrap('clientConfiguration');
+export const withTracking = wrap('withTracking');
 
 export default global.shims['@zimbra-client/enhancers'];

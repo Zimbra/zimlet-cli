@@ -8,5 +8,6 @@ import { warnOnMissingExport } from '../../';
 const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/hooks'], '@zimbra-client/hooks');
 
 export const useClientConfig = wrap('useClientConfig');
+export const useTracking = wrap('useTracking');
 
 export default global.shims['@zimbra-client/hooks'];
