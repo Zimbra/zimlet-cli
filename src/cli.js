@@ -43,7 +43,7 @@ yargs
 		publicpath: {
 			type: 'string',
 			defaultDescription: '/',
-			description: 'Public path you would like to download resources from, e.g. "/@zimbra/service/zimlet/com_example_zimlet/"'
+			description: 'Public path you would like to download resources from, e.g. "/service/zimlet/com_example_zimlet/"'
 		}
 	}, (argv ) => {
 		argv.production = true;
