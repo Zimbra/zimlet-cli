@@ -10,7 +10,7 @@ import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import clearConsole from 'console-clear';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
-import cssnext from 'postcss-cssnext';
+import postcssPresetEnv from 'postcss-preset-env';
 import discardComments from 'postcss-discard-comments';
 import { crossPlatformPathRegex } from './util';
 import { getShimPath, SHIMMED_MODULES } from './shims';
@@ -129,16 +129,22 @@ export function configure(env) {
 
 	let postCssLoaderOptions = {
 		sourceMap: true,
-		plugins: [
-			cssnext({
-				browsers: ['last 2 versions', 'not ie > 0', 'iOS >= 8'] ,
-				features: {
-					//disable customProperties plugin so css variables and :root blocks are preserved
-					customProperties: false
-				}
-			}),
-			discardComments({ removeAll: true })
-		]
+		postcssOptions: {
+			config: false,
+			plugins: [
+				postcssPresetEnv({
+					browsers: ['last 2 versions', 'not ie > 0', 'iOS >= 8'],
+					stage: 3,
+					autoprefixer: true,
+					features: {
+						'nesting-rules': true,
+						// disable customProperties plugin so css variables and :root blocks are preserved
+						'custom-properties': false
+					}
+				}),
+				discardComments({ removeAll: true })
+			]
+		}
 	};
 
 	let cssModulesRegexp = crossPlatformPathRegex(/(?:([^/@]+?)(?:-(?:pages?|components?|screens?))?\/)?src\/(?:pages|components|screens)\/(.+?)(\/[a-z0-9._-]+[.](less|css))?$/);
@@ -224,9 +230,10 @@ export function configure(env) {
 							loader: 'css-loader',
 							options: {
 								...cssLoaderOptions,
-								modules: true,
-								localIdentRegExp: cssModulesRegexp,
-								localIdentName: '[1]_[2]_[local]',
+								modules: {
+									localIdentRegExp: cssModulesRegexp,
+									localIdentName: '[1]_[2]_[local]'
+								},
 								importLoaders: 1
 							}
 						},
