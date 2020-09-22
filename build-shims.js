@@ -192,9 +192,7 @@ function createShim(shimModule) {
 	//turn snake case into camelCase, e.g. preact-router into preactRouter
 	let dirName = path.resolve(`src/shims/${shimModule}`);
 
-	mkdirp(dirName, (err) => {
-		if (err) { console.error(`Unable to mkdir ${dirName}`); return; }
-
+	mkdirp(dirName).then(() => {
 		fs.writeFileSync(`${dirName}/index.js`,
 			`/** This file is an auto-generated shim, aliased in for "${shimModule}" in the webpack config.
 *  When components import '${shimModule}', we want to give them back the copy
@@ -212,6 +210,8 @@ ${'default' in require(shimModule) ? '' : `
 export default global.shims['${shimModule}'];`}
 `
 		);
+	}).catch(() => {
+		console.error(`Unable to mkdir ${dirName}`);
 	});
 }
 

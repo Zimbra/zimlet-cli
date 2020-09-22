@@ -14,7 +14,7 @@ ZimletStyleLoader.pitch = function(request) {
 
 	// Add the styles to global.ZIMLET_STYLES and then return the generated classnames.
 	return `
-		var styles = require(${stringified});
+		var styles = require(${stringified}).default;
 		ZIMLET_STYLES.push(styles);
 		module.exports = styles.locals;
 	`;
