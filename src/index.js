@@ -5,6 +5,7 @@ import path from 'path';
 import ip from 'ip';
 import chalk from 'chalk';
 import transformConfig from './lib/webpack/transform-config';
+import getPort, { makeRange as getPortMakeRange } from 'get-port';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import clearConsole from 'console-clear';
@@ -20,6 +21,8 @@ export default function run(args, callback) {
 	let config = configure(args);
 
 	let compiler = webpack(config);
+
+	const preferredPort = config.devServer.port;
 
 	compiler.hooks.failed.tap('zimlet-cli', err => {
 		console.error(err.stack || err);
@@ -49,6 +52,9 @@ export default function run(args, callback) {
 				let serverAddr = `${protocol}://${host}:${chalk.bold(port)}/index.js`;
 				let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}/index.js`;
 
+				if (preferredPort !== config.devServer.port) {
+					process.stdout.write(`NOTE: Port ${preferredPort} is not available, using ${port} instead.\n\n`);
+				}
 				process.stdout.write('You can view the application in browser.\n\n');
 				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
 				process.stdout.write(`${chalk.bold('On Your Network:')}  ${localIpAddr}\n`);
@@ -57,7 +63,12 @@ export default function run(args, callback) {
 	});
 
 	if (config.devServer) {
-		new WebpackDevServer(compiler, config.devServer).listen(config.devServer.port);
+		getPort({ port: getPortMakeRange(preferredPort, preferredPort + 100) }).then(port => {
+			if (config.devServer.port !== port) {
+				config.devServer.port = port;
+			}
+			new WebpackDevServer(compiler, config.devServer).listen(config.devServer.port);
+		});
 	}
 	else {
 		compiler.run( (err, stats) => {

@@ -92,6 +92,7 @@
     "cross-spawn-promise": "^0.10.1",
     "css-loader": "^2.1.1",
     "file-loader": "^5.0.2",
+    "get-port": "^5.1.1",
     "gittar": "^0.1.1",
     "inquirer": "^7.0.1",
     "ip": "^1.1.5",
