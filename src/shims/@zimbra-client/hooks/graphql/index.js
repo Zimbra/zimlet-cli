@@ -9,5 +9,7 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/hooks/g
 
 export const useFoldersQuery = wrap('useFoldersQuery');
 export const useAccountInfo = wrap('useAccountInfo');
+export const useDocumentAction = wrap('useDocumentAction');
+export const useBriefcaseFoldersQuery = wrap('useBriefcaseFoldersQuery');
 
 export default global.shims['@zimbra-client/hooks/graphql'];

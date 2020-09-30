@@ -26,5 +26,7 @@ export const withActionMutation = wrap('withActionMutation');
 export const withTags = wrap('withTags');
 export const withTagCreate = wrap('withTagCreate');
 export const withTagAction = wrap('withTagAction');
+export const SearchFragment = wrap('SearchFragment');
+export const SendShareNotificationMutation = wrap('SendShareNotificationMutation');
 
 export default global.shims['@zimbra-client/graphql'];

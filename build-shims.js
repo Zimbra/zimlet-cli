@@ -52,6 +52,10 @@ mockery.registerMock('preact-pwa-install', {
 	default: 1
 });
 
+mockery.registerMock('clipboard-polyfill', {
+	writeText: 1
+});
+
 mockery.registerMock('@zimbra-client/graphql', {
 	AppointmentsQuery: 1,
 	CalendarsAndAppointmentsQuery: 1,
@@ -71,7 +75,9 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withActionMutation: 1,
 	withTags: 1,
 	withTagCreate: 1,
-	withTagAction: 1
+	withTagAction: 1,
+	SearchFragment: 1,
+	SendShareNotificationMutation: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
@@ -95,7 +101,9 @@ mockery.registerMock('@zimbra-client/hooks', {
 
 mockery.registerMock('@zimbra-client/hooks/graphql', {
 	useFoldersQuery: 1,
-	useAccountInfo: 1
+	useAccountInfo: 1,
+	useDocumentAction: 1,
+	useBriefcaseFoldersQuery: 1
 });
 
 mockery.registerMock('@zimbra-client/blocks', {
@@ -165,7 +173,8 @@ mockery.registerMock('@zimbra-client/components', {
 	FolderListLight: 1,
 	GenericMobileUIToolbar: 1,
 	GenericMobileUISidebar: 1,
-	ZimletSlot: 1
+	ZimletSlot: 1,
+	AddressField: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
