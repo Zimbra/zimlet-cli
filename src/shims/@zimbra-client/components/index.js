@@ -50,5 +50,6 @@ export const FolderListLight = wrap('FolderListLight');
 export const GenericMobileUIToolbar = wrap('GenericMobileUIToolbar');
 export const GenericMobileUISidebar = wrap('GenericMobileUISidebar');
 export const ZimletSlot = wrap('ZimletSlot');
+export const AddressField = wrap('AddressField');
 
 export default global.shims['@zimbra-client/components'];
