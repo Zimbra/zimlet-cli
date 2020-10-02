@@ -22,7 +22,7 @@ export default function run(args, callback) {
 
 	let compiler = webpack(config);
 
-	const preferredPort = config.devServer && config.devServer.port;
+	const preferredPort = config.devServer && +config.devServer.port;
 
 	compiler.hooks.failed.tap('zimlet-cli', err => {
 		console.error(err.stack || err);
