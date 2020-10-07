@@ -103,7 +103,8 @@ mockery.registerMock('@zimbra-client/hooks/graphql', {
 	useFoldersQuery: 1,
 	useAccountInfo: 1,
 	useDocumentAction: 1,
-	useBriefcaseFoldersQuery: 1
+	useBriefcaseFoldersQuery: 1,
+	useSaveDocumentMutation: 1
 });
 
 mockery.registerMock('@zimbra-client/blocks', {
