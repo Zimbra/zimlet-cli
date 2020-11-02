@@ -13,7 +13,6 @@ mockery.registerSubstitute('react', 'preact/compat');
 mockery.registerSubstitute('react-dom', 'preact/compat');
 mockery.registerSubstitute('react-dom/server', 'preact/compat');
 mockery.registerMock('preact-router/match', { Match: 1 });
-mockery.registerMock('apollo-client', {}); //doesn't really matter
 mockery.registerMock('redux', {}); //doesn't really matter
 
 /* @zimbra/util is a psuedo-module: it is built from the many library
@@ -42,10 +41,6 @@ mockery.registerMock('@zimbra-client/util/redux', {
 	pendingAction: 1,
 	fulfilledAction: 1,
 	rejectedAction: 1
-});
-
-mockery.registerMock('graphql-tag', {
-	default: 1
 });
 
 mockery.registerMock('preact-pwa-install', {

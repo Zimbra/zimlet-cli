@@ -17,10 +17,8 @@
 exports.SHIMMED_MODULES = [
 	['preact', 'compat', 'hooks'],
 	['preact-router', 'match'],
-	'@apollo/react-hooks',
+	['@apollo/client', 'react/hoc'],
 	'react-redux',
-	'react-apollo',
-	'graphql-tag',
 	'recompose',
 	'preact-context-provider',
 	'preact-pwa-install',
