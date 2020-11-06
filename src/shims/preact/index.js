@@ -18,7 +18,7 @@ export const Component = wrap('Component');
 export const cloneElement = wrap('cloneElement');
 export const createContext = wrap('createContext');
 export const toChildArray = wrap('toChildArray');
-export const _e = wrap('_e');
+export const __u = wrap('__u');
 export const options = wrap('options');
 
 export default global.shims['preact'];

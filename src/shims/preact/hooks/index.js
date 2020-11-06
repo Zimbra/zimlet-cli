@@ -17,5 +17,6 @@ export const useMemo = wrap('useMemo');
 export const useCallback = wrap('useCallback');
 export const useContext = wrap('useContext');
 export const useDebugValue = wrap('useDebugValue');
+export const useErrorBoundary = wrap('useErrorBoundary');
 
 export default global.shims['preact/hooks'];
