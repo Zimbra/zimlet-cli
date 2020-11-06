@@ -17,7 +17,7 @@
 exports.SHIMMED_MODULES = [
 	['preact', 'compat', 'hooks'],
 	['preact-router', 'match'],
-	['@apollo/client', 'react/hoc'],
+	['@apollo/client', 'react/hoc', 'react/components'],
 	'react-redux',
 	'recompose',
 	'preact-context-provider',
