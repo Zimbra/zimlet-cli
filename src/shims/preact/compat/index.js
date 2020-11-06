@@ -17,6 +17,7 @@ export const useMemo = wrap('useMemo');
 export const useCallback = wrap('useCallback');
 export const useContext = wrap('useContext');
 export const useDebugValue = wrap('useDebugValue');
+export const useErrorBoundary = wrap('useErrorBoundary');
 export const createElement = wrap('createElement');
 export const createContext = wrap('createContext');
 export const createRef = wrap('createRef');
@@ -36,8 +37,10 @@ export const PureComponent = wrap('PureComponent');
 export const memo = wrap('memo');
 export const forwardRef = wrap('forwardRef');
 export const unstable_batchedUpdates = wrap('unstable_batchedUpdates');
+export const StrictMode = wrap('StrictMode');
 export const Suspense = wrap('Suspense');
 export const SuspenseList = wrap('SuspenseList');
 export const lazy = wrap('lazy');
+export const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = wrap('__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED');
 export default wrap('default');
 
