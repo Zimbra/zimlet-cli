@@ -28,5 +28,6 @@ export const AffixBottom = wrap('AffixBottom');
 export const KeyCodes = wrap('KeyCodes');
 export const Label = wrap('Label');
 export const ChoiceInput = wrap('ChoiceInput');
+export const LoaderBar = wrap('LoaderBar');
 
 export default global.shims['@zimbra-client/blocks'];
