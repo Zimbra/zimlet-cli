@@ -123,7 +123,8 @@ mockery.registerMock('@zimbra-client/blocks', {
 	AffixBottom: 1,
 	KeyCodes: 1,
 	Label: 1,
-	ChoiceInput: 1
+	ChoiceInput: 1,
+	LoaderBar: 1
 });
 
 mockery.registerMock('@zimbra-client/components', {
