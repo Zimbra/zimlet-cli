@@ -23,9 +23,7 @@ Run the `zimlet` command by itself to see all available options. ZimletCLI makes
 ### Documentation
 
 An extensive getting started guide on how to create Zimlets and Java extensions can be found at:
-- https://github.com/Zimbra/zm-extension-guide
-- https://github.com/Zimbra/zm-zimlet-guide
-- https://github.com/Zimbra/zimbra-zimlet-sticky-notes (internationalization and use of metadata)
+- https://wiki.zimbra.com/wiki/DevelopersGuide
 
 Zimlet CLI command options can be found in:
 - https://github.com/Zimbra/zimlet-cli/wiki/CLI-Commands
