@@ -7,11 +7,14 @@
 import { warnOnMissingExport } from '../';
 const wrap = warnOnMissingExport.bind(null, global.shims['preact-i18n'], 'preact-i18n');
 
+export const IntlContext = wrap('IntlContext');
 export const IntlProvider = wrap('IntlProvider');
 export const Localizer = wrap('Localizer');
 export const MarkupText = wrap('MarkupText');
 export const Text = wrap('Text');
 export default wrap('default');
 export const intl = wrap('intl');
+export const translate = wrap('translate');
+export const useText = wrap('useText');
 export const withText = wrap('withText');
 
