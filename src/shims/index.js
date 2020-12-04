@@ -20,6 +20,7 @@ exports.SHIMMED_MODULES = [
 	['@apollo/client', 'react/hoc', 'react/components'],
 	'react-redux',
 	'recompose',
+	'moment',
 	'preact-context-provider',
 	'preact-pwa-install',
 	'preact-i18n',
