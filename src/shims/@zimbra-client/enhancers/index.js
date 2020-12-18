@@ -10,6 +10,7 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/enhance
 export const withMediaQuery = wrap('withMediaQuery');
 export const withTabManager = wrap('withTabManager');
 export const withIntlWrapper = wrap('withIntlWrapper');
+export const withZimletIntlWrapper = wrap('withZimletIntlWrapper');
 export const clientConfiguration = wrap('clientConfiguration');
 export const withTracking = wrap('withTracking');
 
