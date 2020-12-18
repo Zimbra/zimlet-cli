@@ -13,5 +13,6 @@ export const setDataTransferJSON = wrap('setDataTransferJSON');
 export const breakpoints = wrap('breakpoints');
 export const callWith = wrap('callWith');
 export const pruneEmpty = wrap('pruneEmpty');
+export const PageVisibility = wrap('PageVisibility');
 
 export default global.shims['@zimbra-client/util'];

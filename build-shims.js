@@ -24,7 +24,8 @@ mockery.registerMock('@zimbra-client/util', {
 	setDataTransferJSON: 1,
 	breakpoints: 1,
 	callWith: 1,
-	pruneEmpty: 1
+	pruneEmpty: 1,
+	PageVisibility: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -55,6 +56,7 @@ mockery.registerMock('@zimbra-client/graphql', {
 	AppointmentsQuery: 1,
 	CalendarsAndAppointmentsQuery: 1,
 	GetDocumentShareURLQuery: 1,
+	GetMailboxMetadataQuery: 1,
 	withCreateAppointment: 1,
 	withCalendars: 1,
 	withSearch: 1,
@@ -72,13 +74,15 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withTagCreate: 1,
 	withTagAction: 1,
 	SearchFragment: 1,
-	SendShareNotificationMutation: 1
+	SendShareNotificationMutation: 1,
+	SetMailboxMetadataMutation: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
 	withMediaQuery: 1,
 	withTabManager: 1,
 	withIntlWrapper: 1,
+	withZimletIntlWrapper: 1,
 	clientConfiguration: 1,
 	withTracking: 1
 });

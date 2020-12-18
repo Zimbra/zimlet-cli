@@ -10,6 +10,7 @@ const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra-client/graphql
 export const AppointmentsQuery = wrap('AppointmentsQuery');
 export const CalendarsAndAppointmentsQuery = wrap('CalendarsAndAppointmentsQuery');
 export const GetDocumentShareURLQuery = wrap('GetDocumentShareURLQuery');
+export const GetMailboxMetadataQuery = wrap('GetMailboxMetadataQuery');
 export const withCreateAppointment = wrap('withCreateAppointment');
 export const withCalendars = wrap('withCalendars');
 export const withSearch = wrap('withSearch');
@@ -28,5 +29,6 @@ export const withTagCreate = wrap('withTagCreate');
 export const withTagAction = wrap('withTagAction');
 export const SearchFragment = wrap('SearchFragment');
 export const SendShareNotificationMutation = wrap('SendShareNotificationMutation');
+export const SetMailboxMetadataMutation = wrap('SetMailboxMetadataMutation');
 
 export default global.shims['@zimbra-client/graphql'];
