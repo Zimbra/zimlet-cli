@@ -19,6 +19,7 @@ export const Icon = wrap('Icon');
 export const FontAwesome = wrap('FontAwesome');
 export const Spinner = wrap('Spinner');
 export const ClickOutsideDetector = wrap('ClickOutsideDetector');
+export const CloseOnClickOrKeydown = wrap('CloseOnClickOrKeydown');
 export const ContainerSize = wrap('ContainerSize');
 export const Popover = wrap('Popover');
 export const Tooltip = wrap('Tooltip');
@@ -29,5 +30,7 @@ export const KeyCodes = wrap('KeyCodes');
 export const Label = wrap('Label');
 export const ChoiceInput = wrap('ChoiceInput');
 export const LoaderBar = wrap('LoaderBar');
+export const AnimatedButton = wrap('AnimatedButton');
+export const ProgressButton = wrap('ProgressButton');
 
 export default global.shims['@zimbra-client/blocks'];
