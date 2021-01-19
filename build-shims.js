@@ -119,6 +119,7 @@ mockery.registerMock('@zimbra-client/blocks', {
 	FontAwesome: 1,
 	Spinner: 1,
 	ClickOutsideDetector: 1,
+	CloseOnClickOrKeydown: 1,
 	ContainerSize: 1,
 	Popover: 1,
 	Tooltip: 1,
@@ -128,7 +129,9 @@ mockery.registerMock('@zimbra-client/blocks', {
 	KeyCodes: 1,
 	Label: 1,
 	ChoiceInput: 1,
-	LoaderBar: 1
+	LoaderBar: 1,
+	AnimatedButton: 1,
+	ProgressButton: 1
 });
 
 mockery.registerMock('@zimbra-client/components', {
