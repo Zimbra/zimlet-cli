@@ -45,13 +45,15 @@
   "devDependencies": {
     "@apollo/client": "^3.2.5",
     "@babel/cli": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "audit-ci": "^3.1.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.12.1",
     "eslint-config-synacor": "^3.0.5",
-    "mkdirp": "^1.0.4",
     "graphql": "^15.4.0",
+    "mkdirp": "^1.0.4",
     "mockery": "^2.1.0",
+    "moment": "^2.29.1",
     "preact": "^10.5.5",
     "preact-context-provider": "^2.0.0-preactx.2",
     "preact-i18n": "^2.3.0-preactx",
@@ -59,8 +61,7 @@
     "preact-router": "github:zimbra/preact-router#3.1.0_base_path_support",
     "react-redux": "^7.2.2",
     "recompose": "^0.30.0",
-    "rimraf": "^3.0.2",
-    "moment": "^2.29.1"
+    "rimraf": "^3.0.2"
   },
   "license": "GPL-3.0",
   "dependencies": {
