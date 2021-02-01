@@ -214,6 +214,7 @@ export function configure(env) {
 							require.resolve('@babel/plugin-proposal-export-namespace-from'),
 							require.resolve('@babel/plugin-proposal-export-default-from'),
 							require.resolve('@babel/plugin-transform-object-assign'),
+							require.resolve('@babel/plugin-proposal-optional-chaining'),
 							[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'createElement' }]
 						]
 					}
