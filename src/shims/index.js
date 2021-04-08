@@ -30,6 +30,7 @@ exports.SHIMMED_MODULES = [
 	'@zimbra-client/blocks',
 	'@zimbra-client/components',
 	'@zimbra-client/browser',
+	'@zimbra-client/platform',
 	'@zimbra-client/errors',
 	'@zimbra-client/graphql',
 	'@zimbra-client/enhancers',

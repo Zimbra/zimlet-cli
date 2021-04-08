@@ -32,6 +32,11 @@ mockery.registerMock('@zimbra-client/browser', {
 	openExternalBrowser: 1
 });
 
+mockery.registerMock('@zimbra-client/platform', {
+	getPlatformType: 1,
+	PLATFORM_TYPES: 1
+});
+
 mockery.registerMock('@zimbra-client/util/contacts', {
 	getName: 1
 });
