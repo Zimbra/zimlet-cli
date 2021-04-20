@@ -60,6 +60,7 @@
     "preact-render-to-string": "^5.1.11",
     "preact-router": "github:zimbra/preact-router#3.1.0_base_path_support",
     "react-redux": "^7.2.2",
+    "redux-actions": "^2.6.5",
     "recompose": "^0.30.0",
     "rimraf": "^3.0.2"
   },
