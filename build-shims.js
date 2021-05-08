@@ -25,7 +25,8 @@ mockery.registerMock('@zimbra-client/util', {
 	breakpoints: 1,
 	callWith: 1,
 	pruneEmpty: 1,
-	PageVisibility: 1
+	PageVisibility: 1,
+	zimletEventEmitter: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -95,7 +96,8 @@ mockery.registerMock('@zimbra-client/enhancers', {
 mockery.registerMock('@zimbra-client/constants', {
 	ATTENDEE_ROLE: 1,
 	PARTICIPATION_STATUS: 1,
-	supportedMimes: 1
+	supportedMimes: 1,
+	ZIMBRA_ZIMLET_EVENTS: 1,
 });
 
 mockery.registerMock('@zimbra-client/hooks', {
