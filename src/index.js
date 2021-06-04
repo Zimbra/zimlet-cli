@@ -8,7 +8,6 @@ import transformConfig from './lib/webpack/transform-config';
 import getPort, { makeRange as getPortMakeRange } from 'get-port';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
-import clearConsole from 'console-clear';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import postcssPresetEnv from 'postcss-preset-env';
 import discardComments from 'postcss-discard-comments';
@@ -37,8 +36,6 @@ export default function run(args, callback) {
 			info.errors.forEach(err => console.error(err));
 		}
 		else {
-			clearConsole();
-
 			if (stats.hasWarnings()) {
 				info.warnings.forEach(err => console.warn(err));
 			}

@@ -83,7 +83,6 @@
     "babel-plugin-add-module-exports": "^1.0.4",
     "bundle-loader": "^0.5.6",
     "chalk": "^4.1.0",
-    "console-clear": "^1.1.1",
     "copy-webpack-plugin": "^6.3.0",
     "cors": "^2.8.5",
     "cross-spawn-promise": "^0.10.2",
