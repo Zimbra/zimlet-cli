@@ -16,8 +16,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "prepublishOnly": "npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags",
-    "release": "npm publish",
-    "release-beta": "npm publish --tag beta"
+    "prepare": "is-ci || husky install"
   },
   "babel": {
     "presets": [
@@ -42,15 +41,23 @@
       "@babel/plugin-proposal-export-default-from"
     ]
   },
+  "lint-staged": {
+    "*.js": [
+      "eslint"
+    ]
+  },
   "devDependencies": {
     "@apollo/client": "^3.2.5",
     "@babel/cli": "^7.12.1",
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
-    "audit-ci": "^3.1.1",
+    "audit-ci": "^4.1.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.12.1",
+    "eslint": "^7.29.0",
     "eslint-config-synacor": "^3.0.5",
     "graphql": "^15.4.0",
+    "husky": "^6.0.0",
+    "is-ci": "^3.0.0",
+    "lint-staged": "^11.0.0",
     "mkdirp": "^1.0.4",
     "mockery": "^2.1.0",
     "moment": "^2.29.1",
@@ -60,8 +67,8 @@
     "preact-render-to-string": "^5.1.11",
     "preact-router": "github:zimbra/preact-router#3.1.0_base_path_support",
     "react-redux": "^7.2.2",
-    "redux-actions": "^2.6.5",
     "recompose": "^0.30.0",
+    "redux-actions": "^2.6.5",
     "rimraf": "^3.0.2"
   },
   "license": "GPL-3.0",
