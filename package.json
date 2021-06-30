@@ -61,7 +61,7 @@
     "mkdirp": "^1.0.4",
     "mockery": "^2.1.0",
     "moment": "^2.29.1",
-    "preact": "^10.5.5",
+    "preact": "^10.5.13",
     "preact-context-provider": "^2.0.0-preactx.2",
     "preact-i18n": "^2.3.0-preactx",
     "preact-render-to-string": "^5.1.11",
