@@ -43,4 +43,11 @@ export const SuspenseList = wrap('SuspenseList');
 export const lazy = wrap('lazy');
 export const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = wrap('__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED');
 export default wrap('default');
+export const unstable_ImmediatePriority = wrap('unstable_ImmediatePriority');
+export const unstable_UserBlockingPriority = wrap('unstable_UserBlockingPriority');
+export const unstable_NormalPriority = wrap('unstable_NormalPriority');
+export const unstable_LowPriority = wrap('unstable_LowPriority');
+export const unstable_IdlePriority = wrap('unstable_IdlePriority');
+export const unstable_runWithPriority = wrap('unstable_runWithPriority');
+export const unstable_now = wrap('unstable_now');
 
