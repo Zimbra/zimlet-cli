@@ -51,5 +51,7 @@ export const GenericMobileUIToolbar = wrap('GenericMobileUIToolbar');
 export const GenericMobileUISidebar = wrap('GenericMobileUISidebar');
 export const ZimletSlot = wrap('ZimletSlot');
 export const AddressField = wrap('AddressField');
+export const Avatar = wrap('Avatar');
+export const ContactHoverCardWrapper = wrap('ContactHoverCardWrapper');
 
 export default global.shims['@zimbra-client/components'];

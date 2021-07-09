@@ -186,7 +186,9 @@ mockery.registerMock('@zimbra-client/components', {
 	GenericMobileUIToolbar: 1,
 	GenericMobileUISidebar: 1,
 	ZimletSlot: 1,
-	AddressField: 1
+	AddressField: 1,
+	Avatar: 1,
+	ContactHoverCardWrapper: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
