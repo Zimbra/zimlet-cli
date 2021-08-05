@@ -30,5 +30,8 @@ export const withTagAction = wrap('withTagAction');
 export const SearchFragment = wrap('SearchFragment');
 export const SendShareNotificationMutation = wrap('SendShareNotificationMutation');
 export const SetMailboxMetadataMutation = wrap('SetMailboxMetadataMutation');
+export const withDataSources = wrap('withDataSources');
+export const withGetSmimeCertificateInfo = wrap('withGetSmimeCertificateInfo');
+export const withSaveSmimeCertificate = wrap('withSaveSmimeCertificate');
 
 export default global.shims['@zimbra-client/graphql'];
