@@ -53,5 +53,6 @@ export const ZimletSlot = wrap('ZimletSlot');
 export const AddressField = wrap('AddressField');
 export const Avatar = wrap('Avatar');
 export const ContactHoverCardWrapper = wrap('ContactHoverCardWrapper');
+export const CertificateModal = wrap('CertificateModal');
 
 export default global.shims['@zimbra-client/components'];
