@@ -26,7 +26,8 @@ mockery.registerMock('@zimbra-client/util', {
 	callWith: 1,
 	pruneEmpty: 1,
 	PageVisibility: 1,
-	zimletEventEmitter: 1
+	zimletEventEmitter: 1,
+	smimeHandler: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -81,7 +82,10 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withTagAction: 1,
 	SearchFragment: 1,
 	SendShareNotificationMutation: 1,
-	SetMailboxMetadataMutation: 1
+	SetMailboxMetadataMutation: 1,
+	withDataSources: 1,
+	withGetSmimeCertificateInfo: 1,
+	withSaveSmimeCertificate: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
@@ -191,7 +195,8 @@ mockery.registerMock('@zimbra-client/components', {
 	ZimletSlot: 1,
 	AddressField: 1,
 	Avatar: 1,
-	ContactHoverCardWrapper: 1
+	ContactHoverCardWrapper: 1,
+	CertificateModal: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
