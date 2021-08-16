@@ -13,5 +13,6 @@ export const withIntlWrapper = wrap('withIntlWrapper');
 export const withZimletIntlWrapper = wrap('withZimletIntlWrapper');
 export const clientConfiguration = wrap('clientConfiguration');
 export const withTracking = wrap('withTracking');
+export const withIntlConsumer = wrap('withIntlConsumer');
 
 export default global.shims['@zimbra-client/enhancers'];

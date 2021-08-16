@@ -90,7 +90,8 @@ mockery.registerMock('@zimbra-client/enhancers', {
 	withIntlWrapper: 1,
 	withZimletIntlWrapper: 1,
 	clientConfiguration: 1,
-	withTracking: 1
+	withTracking: 1,
+	withIntlConsumer: 1
 });
 
 mockery.registerMock('@zimbra-client/constants', {
