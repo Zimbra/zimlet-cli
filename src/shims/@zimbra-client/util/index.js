@@ -15,5 +15,6 @@ export const callWith = wrap('callWith');
 export const pruneEmpty = wrap('pruneEmpty');
 export const PageVisibility = wrap('PageVisibility');
 export const zimletEventEmitter = wrap('zimletEventEmitter');
+export const flattenFolders = wrap('flattenFolders');
 
 export default global.shims['@zimbra-client/util'];
