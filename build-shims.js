@@ -26,7 +26,8 @@ mockery.registerMock('@zimbra-client/util', {
 	callWith: 1,
 	pruneEmpty: 1,
 	PageVisibility: 1,
-	zimletEventEmitter: 1
+	zimletEventEmitter: 1,
+	flattenFolders: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -112,7 +113,8 @@ mockery.registerMock('@zimbra-client/hooks/graphql', {
 	useAccountInfo: 1,
 	useDocumentAction: 1,
 	useBriefcaseFoldersQuery: 1,
-	useSaveDocumentMutation: 1
+	useSaveDocumentMutation: 1,
+	useLazyReminders: 1
 });
 
 mockery.registerMock('@zimbra-client/blocks', {
