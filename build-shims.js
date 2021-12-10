@@ -27,7 +27,8 @@ mockery.registerMock('@zimbra-client/util', {
 	pruneEmpty: 1,
 	PageVisibility: 1,
 	zimletEventEmitter: 1,
-	smimeHandler: 1
+	smimeHandler: 1,
+	isServerSMIMEFeatureAvailable: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -196,7 +197,8 @@ mockery.registerMock('@zimbra-client/components', {
 	AddressField: 1,
 	Avatar: 1,
 	ContactHoverCardWrapper: 1,
-	CertificateModal: 1
+	CertificateModal: 1,
+	SMIMEOperationDropDown: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
