@@ -116,7 +116,7 @@
     "validate-npm-package-name": "^3.0.0",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0",
+    "webpack-dev-server": "^3.11.3",
     "which": "^2.0.2",
     "yargs": "^16.1.0"
   }
