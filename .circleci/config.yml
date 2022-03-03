@@ -40,15 +40,6 @@ jobs:
 
       - run: npm test
 
-  security-audit:
-    executor: default-executor
-
-    steps:
-      - attach_workspace:
-          at: ~/
-
-      - run: npm run security:audit
-
 
 ################################################
 
@@ -73,10 +64,6 @@ workflows:
       - prepare-npm-deps
 
       - test:
-          requires:
-            - prepare-npm-deps
-
-      - security-audit:
           requires:
             - prepare-npm-deps
 
