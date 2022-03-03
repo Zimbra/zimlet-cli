@@ -130,7 +130,6 @@ export function configure(env) {
 			config: false,
 			plugins: [
 				postcssPresetEnv({
-					browsers: ['last 2 versions', 'not ie > 0', 'iOS >= 8'],
 					stage: 3,
 					autoprefixer: true,
 					features: {
@@ -202,7 +201,11 @@ export function configure(env) {
 						babelrc: false,
 						comments: true,
 						presets: [
-							[require.resolve('@babel/preset-env'), { loose: true, modules: false }]
+							[require.resolve('@babel/preset-env'), {
+								loose: true,
+								modules: false,
+								bugfixes: true
+							}]
 						],
 						plugins: [
 							require.resolve('@babel/plugin-syntax-dynamic-import'),

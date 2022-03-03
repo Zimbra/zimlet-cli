@@ -17,7 +17,7 @@ export const useSelector = wrap('useSelector');
 export const createSelectorHook = wrap('createSelectorHook');
 export const useStore = wrap('useStore');
 export const createStoreHook = wrap('createStoreHook');
-export const batch = wrap('batch');
 export const shallowEqual = wrap('shallowEqual');
+export const batch = wrap('batch');
 
 export default global.shims['react-redux'];
