@@ -49,7 +49,7 @@ executors:
   default-executor:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:10
+      - image: cimg/node:14.18
 
 ################################################
 
