@@ -17,5 +17,6 @@ export const PageVisibility = wrap('PageVisibility');
 export const zimletEventEmitter = wrap('zimletEventEmitter');
 export const smimeHandler = wrap('smimeHandler');
 export const isServerSMIMEFeatureAvailable = wrap('isServerSMIMEFeatureAvailable');
+export const htmlToText = wrap('htmlToText');
 
 export default global.shims['@zimbra-client/util'];
