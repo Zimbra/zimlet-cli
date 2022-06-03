@@ -55,5 +55,6 @@ export const Avatar = wrap('Avatar');
 export const ContactHoverCardWrapper = wrap('ContactHoverCardWrapper');
 export const CertificateModal = wrap('CertificateModal');
 export const SMIMEOperationDropDown = wrap('SMIMEOperationDropDown');
+export const ErrorAlert = wrap('ErrorAlert');
 
 export default global.shims['@zimbra-client/components'];

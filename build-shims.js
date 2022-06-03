@@ -199,7 +199,8 @@ mockery.registerMock('@zimbra-client/components', {
 	Avatar: 1,
 	ContactHoverCardWrapper: 1,
 	CertificateModal: 1,
-	SMIMEOperationDropDown: 1
+	SMIMEOperationDropDown: 1,
+	ErrorAlert: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
