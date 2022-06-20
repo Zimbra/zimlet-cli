@@ -19,7 +19,7 @@ jobs:
             - v1-dependencies-
 
       # install dependencies
-      - run: npm install --no-audit
+      - run: npm install --no-audit --legacy-peer-deps
 
       - save_cache:
           paths:
@@ -49,7 +49,7 @@ executors:
   default-executor:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:14.18
+      - image: cimg/node:16.15
 
 ################################################
 
