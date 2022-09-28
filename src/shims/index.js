@@ -22,6 +22,7 @@ exports.SHIMMED_MODULES = [
 	'redux-actions',
 	'recompose',
 	'moment',
+	'dompurify',
 	'preact-context-provider',
 	'preact-pwa-install',
 	'preact-i18n',
