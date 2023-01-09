@@ -26,7 +26,6 @@ exports.SHIMMED_MODULES = [
 	'preact-context-provider',
 	'preact-pwa-install',
 	'preact-i18n',
-	'clipboard-polyfill',
 	'preact-render-to-string',
 	['@zimbra-client/util', 'redux', 'contacts'], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)
 	'@zimbra-client/blocks',

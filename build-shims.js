@@ -57,10 +57,6 @@ mockery.registerMock('preact-pwa-install', {
 	default: 1
 });
 
-mockery.registerMock('clipboard-polyfill', {
-	writeText: 1
-});
-
 mockery.registerMock('@zimbra-client/graphql', {
 	AppointmentsQuery: 1,
 	CalendarsAndAppointmentsQuery: 1,
