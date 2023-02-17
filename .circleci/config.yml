@@ -32,7 +32,7 @@ jobs:
             - repo
 
   test:
-    executor: default-executor
+    executor: nano-executor
 
     steps:
       - attach_workspace:
@@ -50,6 +50,13 @@ executors:
     working_directory: ~/repo
     docker:
       - image: cimg/node:14.18
+    resource_class: medium
+
+  nano-executor:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/node:14.18
+    resource_class: small
 
 ################################################
 
