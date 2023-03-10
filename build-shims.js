@@ -200,7 +200,8 @@ mockery.registerMock('@zimbra-client/components', {
 	CertificateModal: 1,
 	SMIMEOperationDropDown: 1,
 	ErrorAlert: 1,
-	SignatureBox: 1
+	SignatureBox: 1,
+	DeleteWrapper: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
