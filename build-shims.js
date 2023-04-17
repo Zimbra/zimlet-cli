@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const mkdirp = require('mkdirp');
+const { mkdirp } = require('mkdirp');
 const mockery = require('mockery');
 const shimmedModules = require('./src/shims/index.js').SHIMMED_MODULES;
 

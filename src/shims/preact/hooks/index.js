@@ -7,16 +7,17 @@
 import { warnOnMissingExport } from '../../';
 const wrap = warnOnMissingExport.bind(null, global.shims['preact/hooks'], 'preact/hooks');
 
-export const useState = wrap('useState');
-export const useReducer = wrap('useReducer');
-export const useEffect = wrap('useEffect');
-export const useLayoutEffect = wrap('useLayoutEffect');
-export const useRef = wrap('useRef');
-export const useImperativeHandle = wrap('useImperativeHandle');
-export const useMemo = wrap('useMemo');
 export const useCallback = wrap('useCallback');
 export const useContext = wrap('useContext');
 export const useDebugValue = wrap('useDebugValue');
+export const useEffect = wrap('useEffect');
 export const useErrorBoundary = wrap('useErrorBoundary');
+export const useId = wrap('useId');
+export const useImperativeHandle = wrap('useImperativeHandle');
+export const useLayoutEffect = wrap('useLayoutEffect');
+export const useMemo = wrap('useMemo');
+export const useReducer = wrap('useReducer');
+export const useRef = wrap('useRef');
+export const useState = wrap('useState');
 
 export default global.shims['preact/hooks'];

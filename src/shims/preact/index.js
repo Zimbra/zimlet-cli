@@ -7,17 +7,17 @@
 import { warnOnMissingExport } from '../';
 const wrap = warnOnMissingExport.bind(null, global.shims['preact'], 'preact');
 
-export const render = wrap('render');
-export const hydrate = wrap('hydrate');
-export const createElement = wrap('createElement');
-export const h = wrap('h');
-export const Fragment = wrap('Fragment');
-export const createRef = wrap('createRef');
-export const isValidElement = wrap('isValidElement');
 export const Component = wrap('Component');
+export const Fragment = wrap('Fragment');
 export const cloneElement = wrap('cloneElement');
 export const createContext = wrap('createContext');
-export const toChildArray = wrap('toChildArray');
+export const createElement = wrap('createElement');
+export const createRef = wrap('createRef');
+export const h = wrap('h');
+export const hydrate = wrap('hydrate');
+export const isValidElement = wrap('isValidElement');
 export const options = wrap('options');
+export const render = wrap('render');
+export const toChildArray = wrap('toChildArray');
 
 export default global.shims['preact'];
