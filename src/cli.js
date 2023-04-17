@@ -57,9 +57,14 @@ yargs
 
 function runCli(argv) {
 	run(argv, (err, result) => {
-		if (err) process.stderr.write(err);
-		else if (result) process.stdout.write(result);
-		setTimeout( () => {
+		if (err) {
+			process.stderr.write(err);
+		}
+		else if (result) {
+			process.stdout.write(result);
+		}
+
+		setTimeout(() => {
 			process.exit(err ? 1 : 0);
 		}, 10);
 	});

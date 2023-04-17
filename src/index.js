@@ -64,7 +64,10 @@ export default function run(args, callback) {
 			if (config.devServer.port !== port) {
 				config.devServer.port = port;
 			}
-			new WebpackDevServer(compiler, config.devServer).listen(config.devServer.port);
+
+			(async () => {
+				await new WebpackDevServer(config.devServer, compiler).start();
+			})();
 		});
 	}
 	else {
@@ -81,6 +84,7 @@ export function configure(env) {
 	env = env || {};
 	const watch = env.watch || env.w || process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development';
 	const PROD = !watch;
+	const CIRCLECI = process.env.CIRCLECI === 'true';
 
 	let https = !(process.env.HTTPS === 'false' || env.https === false),
 		host = process.env.HOST || env.host || 'localhost',
@@ -97,16 +101,18 @@ export function configure(env) {
 
 	if (!pkg) {
 		pkg = { main: 'index.js' };
-
 	}
 
 	// entry point (initial file to load)
 	let entry = path.resolve(cwd, pkg.module || pkg['jsnext:main'] || pkg.main);
-	if (isDir(entry)) entry = path.resolve(entry, 'index.js');
+	if (isDir(entry)) {
+		entry = path.resolve(entry, 'index.js');
+	}
 
 	// attempt to use ./src dir if present:
-	if (isDir(path.resolve(cwd, 'src'))) context = path.resolve(context, 'src');
-
+	if (isDir(path.resolve(cwd, 'src'))) {
+		context = path.resolve(context, 'src');
+	}
 
 	// normalize desination dir
 	let dest = path.resolve(cwd, env.dest || 'build');
@@ -153,7 +159,7 @@ export function configure(env) {
 		output: {
 			path: dest,
 			filename: `index.js`,
-			chunkFilename: '[name].[chunkhash:8].chunk.js',
+			chunkFilename: 'scripts/[name].[chunkhash:8].chunk.js',
 			// NOTE: Explicit public path is required in order to make HMR work within an sourceless iframe.
 			// This is due to a bug in webpack-dev-server that uses the document protocol for all https pages:
 			// https://github.com/webpack/webpack-dev-server/blob/c490b245ad65f315762e03e51710f7f7177b1e7b/client/index.js#L188-L190
@@ -215,7 +221,15 @@ export function configure(env) {
 							require.resolve('@babel/plugin-proposal-export-default-from'),
 							require.resolve('@babel/plugin-transform-object-assign'),
 							require.resolve('@babel/plugin-proposal-optional-chaining'),
-							[require.resolve('@babel/plugin-transform-react-jsx'), { pragma: 'createElement' }]
+							[
+								require.resolve('@babel/plugin-transform-react-jsx'),
+								{
+									pragma: 'createElement'
+									// @TODO this is breaking change, so we will introduce in future
+									//runtime: 'automatic',
+									//importSource: 'preact'
+								}
+							]
 						]
 					}
 				},
@@ -270,83 +284,47 @@ export function configure(env) {
 				},
 				{
 					test: /\.(xml|html|txt|md)$/,
-					loader: 'raw-loader'
+					type: 'asset/resource'
 				},
 				{
 					test: /\.(svg|ttf|woff2?|eot|otf|jpe?g|png|gif)$/i,
-					loader: watch ? 'url-loader' : 'file-loader'
+					type: 'asset/resource',
+					generator: {
+						filename: 'fonts/[name]_[contenthash:8].[ext]'
+					}
 				}
 			]
 		},
 
-		node: PROD ? {
-			console: false,
-			Buffer: false,
-			__filename: false,
-			__dirname: false,
-			setImmediate: false
-		} : {},
-
 		plugins: [].concat(
-			PROD ? [
-				new webpack.HashedModuleIdsPlugin()
-			] : [
-				new webpack.HotModuleReplacementPlugin()
-			],
-
-			new webpack.LoaderOptionsPlugin({
-				minimize: PROD,
-				debug: !PROD
-			}),
-
-			new ProgressBarPlugin({
-				format: '\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
-				renderThrottle: 100,
-				summary: false
-			}),
+			// Remove progress plugin in cirleci for improving performance
+			!CIRCLECI &&
+				new ProgressBarPlugin({
+					format: '\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
+					renderThrottle: 100,
+					summary: false
+				}),
 
 			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(PROD?'production':'development')
+				'process.env.NODE_ENV': JSON.stringify(PROD ? 'production' : 'development')
 			}),
 
-			isFile(path.resolve(cwd, 'config_template.xml')) && new CopyWebpackPlugin({
-				patterns: [
-					{
-						from: path.join(cwd, 'config_template.xml'),
-						to: path.join(dest, 'config_template.xml')
-					}
-				]
-			})
+			isFile(path.resolve(cwd, 'config_template.xml')) &&
+				new CopyWebpackPlugin({
+					patterns: [
+						{
+							from: path.join(cwd, 'config_template.xml'),
+							to: path.join(dest, 'config_template.xml')
+						}
+					]
+				})
 		).filter(Boolean),
-
-		watchOptions: {
-			ignored: [
-				'build',
-				dest,
-				path.resolve(cwd, 'node_modules')
-			]
-		},
 
 		stats: 'errors-only',
 
-		devtool: watch ? 'cheap-module-eval-source-map' : 'source-map'
-	};
+		//devtool: watch ? 'cheap-module-eval-source-map' : 'source-map',
 
-	if (watch) {
-		webpackConfig.devServer = {
-			host,
-			port,
-			hot: !process.env.DISABLE_HOT,
-			https,
-			compress: true,
-			publicPath: '/',
-			contentBase: context,
-			disableHostCheck: true,
-			before(app) {
-				app.use(require('cors')({
-					maxAge: 3600
-				}));
-			},
+		...(watch && {
 			watchOptions: {
 				ignored: [
 					'build',
@@ -354,12 +332,37 @@ export function configure(env) {
 					path.resolve(cwd, 'node_modules')
 				]
 			},
-			overlay: false,
-			noInfo: true,
-			quiet: true,
-			stats: 'errors-only'
-		};
-	}
+			devtool: 'inline-source-map',
+
+			devServer: {
+				host,
+				port,
+				hot: !process.env.DISABLE_HOT,
+				server: {
+					type: https ? 'https' : 'http'
+				},
+				devMiddleware: {
+					publicPath: '/'
+				},
+				static: {
+					directory: context,
+					watch: true
+				},
+				allowedHosts: 'all',
+				setupMiddlewares: middlewares => {
+					middlewares.unshift(
+						require('cors')({
+							maxAge: 3600
+						})
+					);
+
+					return middlewares;
+				},
+				client: false,
+				open: true
+			}
+		})
+	};
 
 	transformConfig(env, webpackConfig);
 	return webpackConfig;
