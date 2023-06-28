@@ -11,5 +11,6 @@ export const ATTENDEE_ROLE = wrap('ATTENDEE_ROLE');
 export const PARTICIPATION_STATUS = wrap('PARTICIPATION_STATUS');
 export const supportedMimes = wrap('supportedMimes');
 export const ZIMBRA_ZIMLET_EVENTS = wrap('ZIMBRA_ZIMLET_EVENTS');
+export const USER_FOLDER_IDS = wrap('USER_FOLDER_IDS');
 
 export default global.shims['@zimbra-client/constants'];

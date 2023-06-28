@@ -31,6 +31,7 @@ export const withTags = wrap('withTags');
 export const withTagCreate = wrap('withTagCreate');
 export const withTagAction = wrap('withTagAction');
 export const SearchFragment = wrap('SearchFragment');
+export const GetFolder = wrap('GetFolder');
 export const SendShareNotificationMutation = wrap('SendShareNotificationMutation');
 export const SetMailboxMetadataMutation = wrap('SetMailboxMetadataMutation');
 export const withDataSources = wrap('withDataSources');

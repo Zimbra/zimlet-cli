@@ -58,5 +58,6 @@ export const SMIMEOperationDropDown = wrap('SMIMEOperationDropDown');
 export const ErrorAlert = wrap('ErrorAlert');
 export const SignatureBox = wrap('SignatureBox');
 export const DeleteWrapper = wrap('DeleteWrapper');
+export const ToolbarActionButton = wrap('ToolbarActionButton');
 
 export default global.shims['@zimbra-client/components'];

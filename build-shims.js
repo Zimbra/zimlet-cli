@@ -29,7 +29,8 @@ mockery.registerMock('@zimbra-client/util', {
 	zimletEventEmitter: 1,
 	smimeHandler: 1,
 	isServerSMIMEFeatureAvailable: 1,
-	htmlToText: 1
+	htmlToText: 1,
+	flattenFolders: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -82,6 +83,7 @@ mockery.registerMock('@zimbra-client/graphql', {
 	withTagCreate: 1,
 	withTagAction: 1,
 	SearchFragment: 1,
+	GetFolder: 1,
 	SendShareNotificationMutation: 1,
 	SetMailboxMetadataMutation: 1,
 	withDataSources: 1,
@@ -104,6 +106,7 @@ mockery.registerMock('@zimbra-client/constants', {
 	PARTICIPATION_STATUS: 1,
 	supportedMimes: 1,
 	ZIMBRA_ZIMLET_EVENTS: 1,
+	USER_FOLDER_IDS: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks', {
@@ -119,7 +122,8 @@ mockery.registerMock('@zimbra-client/hooks/graphql', {
 	useAccountInfo: 1,
 	useDocumentAction: 1,
 	useBriefcaseFoldersQuery: 1,
-	useSaveDocumentMutation: 1
+	useSaveDocumentMutation: 1,
+	useCreateFolderMutation: 1
 });
 
 mockery.registerMock('@zimbra-client/blocks', {
@@ -201,7 +205,8 @@ mockery.registerMock('@zimbra-client/components', {
 	SMIMEOperationDropDown: 1,
 	ErrorAlert: 1,
 	SignatureBox: 1,
-	DeleteWrapper: 1
+	DeleteWrapper: 1,
+	ToolbarActionButton: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
