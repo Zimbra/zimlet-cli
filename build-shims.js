@@ -198,7 +198,7 @@ mockery.registerMock('@zimbra-client/components', {
 	Avatar: 1,
 	ContactHoverCardWrapper: 1,
 	CertificateModal: 1,
-	SMIMEOperationDropDown: 1,
+	SMIMEOptions: 1,
 	ErrorAlert: 1,
 	SignatureBox: 1,
 	DeleteWrapper: 1
