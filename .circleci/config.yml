@@ -18,6 +18,10 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
+      #install npm version 6
+      # TODO PREAPPS-7520
+      - run: sudo npm install -g npm@6 
+
       # install dependencies
       - run: npm install --no-audit
 
@@ -49,13 +53,13 @@ executors:
   default-executor:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:14.18
+      - image: cimg/node:18.18
     resource_class: medium
 
   nano-executor:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:14.18
+      - image: cimg/node:18.18
     resource_class: small
 
 ################################################
