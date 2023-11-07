@@ -14,7 +14,7 @@
     "test": "npm run lint && npm run build",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "prepublishOnly": "npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags",
+    "prepublishOnly": "npm run -s test && git commit -am 16.1.0 && git tag 16.1.0 && git push && git push --tags",
     "prepare": "is-ci || husky install"
   },
   "babel": {
