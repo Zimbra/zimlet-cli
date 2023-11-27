@@ -93,7 +93,7 @@
     "cors": "^2.8.5",
     "cross-spawn-promise": "^0.10.2",
     "css-loader": "^6.7.3",
-    "get-port": "^5.1.1",
+    "get-port": "^7.0.0",
     "gittar": "^0.1.1",
     "inquirer": "^8.2.3",
     "ip": "^1.1.8",
