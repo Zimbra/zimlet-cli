@@ -108,7 +108,9 @@ mockery.registerMock('@zimbra-client/constants', {
 	PARTICIPATION_STATUS: 1,
 	supportedMimes: 1,
 	ZIMBRA_ZIMLET_EVENTS: 1,
-	EMAIL_SEPARATOR_TAG_ID: 1
+	EMAIL_SEPARATOR_TAG_ID: 1,
+	USER_FOLDER_IDS: 1,
+	FLAGS: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks', {
