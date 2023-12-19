@@ -12,5 +12,7 @@ export const PARTICIPATION_STATUS = wrap('PARTICIPATION_STATUS');
 export const supportedMimes = wrap('supportedMimes');
 export const ZIMBRA_ZIMLET_EVENTS = wrap('ZIMBRA_ZIMLET_EVENTS');
 export const EMAIL_SEPARATOR_TAG_ID = wrap('EMAIL_SEPARATOR_TAG_ID');
+export const USER_FOLDER_IDS = wrap('USER_FOLDER_IDS');
+export const FLAGS = wrap('FLAGS');
 
 export default global.shims['@zimbra-client/constants'];
