@@ -186,7 +186,8 @@ export function configure(env) {
 				react: getShimPath('preact/compat'),
 				'react-dom': getShimPath('preact/compat'),
 				style: path.resolve(context, 'style'),
-				'zimlet-cli-entrypoint': path.resolve(context, entry)
+				'zimlet-cli-entrypoint': path.resolve(context, entry),
+				'zimlet-cli-entrypoint-package': path.resolve(context, path.resolve(cwd, 'package.json'))
 			}
 		},
 
