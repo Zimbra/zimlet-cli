@@ -12,5 +12,7 @@ export const useAccountInfo = wrap('useAccountInfo');
 export const useDocumentAction = wrap('useDocumentAction');
 export const useBriefcaseFoldersQuery = wrap('useBriefcaseFoldersQuery');
 export const useSaveDocumentMutation = wrap('useSaveDocumentMutation');
+export const useCreateFolderMutation = wrap('useCreateFolderMutation');
+export const useFolderActionMutation = wrap('useFolderActionMutation');
 
 export default global.shims['@zimbra-client/hooks/graphql'];
