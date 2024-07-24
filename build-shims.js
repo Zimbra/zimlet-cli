@@ -29,6 +29,7 @@ mockery.registerMock('@zimbra-client/util', {
 	zimletEventEmitter: 1,
 	smimeHandler: 1,
 	isServerSMIMEFeatureAvailable: 1,
+	startAttachmentDownloadProcess: 1,
 	htmlToText: 1,
 	clipboard: 1
 });

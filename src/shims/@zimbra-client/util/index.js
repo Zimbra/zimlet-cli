@@ -17,6 +17,7 @@ export const PageVisibility = wrap('PageVisibility');
 export const zimletEventEmitter = wrap('zimletEventEmitter');
 export const smimeHandler = wrap('smimeHandler');
 export const isServerSMIMEFeatureAvailable = wrap('isServerSMIMEFeatureAvailable');
+export const startAttachmentDownloadProcess = wrap('startAttachmentDownloadProcess');
 export const htmlToText = wrap('htmlToText');
 export const clipboard = wrap('clipboard');
 
