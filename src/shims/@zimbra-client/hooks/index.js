@@ -12,5 +12,8 @@ export const useTracking = wrap('useTracking');
 export const useMediaQuery = wrap('useMediaQuery');
 export const usePreferences = wrap('usePreferences');
 export const useSendMessageMutation = wrap('useSendMessageMutation');
+export const useZimletProperty = wrap('useZimletProperty');
+export const useGetCustomMetaData = wrap('useGetCustomMetaData');
+export const useSetCustomMetaData = wrap('useSetCustomMetaData');
 
 export default global.shims['@zimbra-client/hooks'];
