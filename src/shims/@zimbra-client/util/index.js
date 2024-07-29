@@ -20,5 +20,6 @@ export const isServerSMIMEFeatureAvailable = wrap('isServerSMIMEFeatureAvailable
 export const startAttachmentDownloadProcess = wrap('startAttachmentDownloadProcess');
 export const htmlToText = wrap('htmlToText');
 export const clipboard = wrap('clipboard');
+export const filterNonInsertableCalendars = wrap('filterNonInsertableCalendars');
 
 export default global.shims['@zimbra-client/util'];
