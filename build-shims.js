@@ -31,7 +31,8 @@ mockery.registerMock('@zimbra-client/util', {
 	isServerSMIMEFeatureAvailable: 1,
 	startAttachmentDownloadProcess: 1,
 	htmlToText: 1,
-	clipboard: 1
+	clipboard: 1,
+	filterNonInsertableCalendars: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -123,7 +124,8 @@ mockery.registerMock('@zimbra-client/hooks/graphql', {
 	useBriefcaseFoldersQuery: 1,
 	useSaveDocumentMutation: 1,
 	useCreateFolderMutation: 1,
-	useFolderActionMutation: 1
+	useFolderActionMutation: 1,
+	useCalendarsData: 1
 });
 
 mockery.registerMock('@zimbra-client/blocks', {
@@ -205,7 +207,8 @@ mockery.registerMock('@zimbra-client/components', {
 	SMIMEOperationDropDown: 1,
 	ErrorAlert: 1,
 	SignatureBox: 1,
-	DeleteWrapper: 1
+	DeleteWrapper: 1,
+	CalendarOptionItem: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
