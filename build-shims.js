@@ -112,7 +112,8 @@ mockery.registerMock('@zimbra-client/hooks', {
 	useTracking: 1,
 	useMediaQuery: 1,
 	usePreferences: 1,
-	useSendMessageMutation: 1
+	useSendMessageMutation: 1,
+	useOriginalMsgHeader: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks/graphql', {
