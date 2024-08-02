@@ -59,5 +59,6 @@ export const ErrorAlert = wrap('ErrorAlert');
 export const SignatureBox = wrap('SignatureBox');
 export const DeleteWrapper = wrap('DeleteWrapper');
 export const CalendarOptionItem = wrap('CalendarOptionItem');
+export const HelpTooltip = wrap('HelpTooltip');
 
 export default global.shims['@zimbra-client/components'];

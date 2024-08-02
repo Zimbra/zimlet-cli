@@ -107,6 +107,7 @@ mockery.registerMock('@zimbra-client/constants', {
 	PARTICIPATION_STATUS: 1,
 	supportedMimes: 1,
 	ZIMBRA_ZIMLET_EVENTS: 1,
+	EMAIL_SEPARATOR_TAG_ID: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks', {
@@ -114,7 +115,8 @@ mockery.registerMock('@zimbra-client/hooks', {
 	useTracking: 1,
 	useMediaQuery: 1,
 	usePreferences: 1,
-	useSendMessageMutation: 1
+	useSendMessageMutation: 1,
+	useOriginalMsgHeader: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks/graphql', {
@@ -208,7 +210,8 @@ mockery.registerMock('@zimbra-client/components', {
 	ErrorAlert: 1,
 	SignatureBox: 1,
 	DeleteWrapper: 1,
-	CalendarOptionItem: 1
+	CalendarOptionItem: 1,
+	HelpTooltip: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
