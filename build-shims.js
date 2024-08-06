@@ -32,7 +32,8 @@ mockery.registerMock('@zimbra-client/util', {
 	startAttachmentDownloadProcess: 1,
 	htmlToText: 1,
 	clipboard: 1,
-	filterNonInsertableCalendars: 1
+	filterNonInsertableCalendars: 1,
+	startAttachmentDownloadProcess: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
