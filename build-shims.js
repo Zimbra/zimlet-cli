@@ -105,6 +105,7 @@ mockery.registerMock('@zimbra-client/constants', {
 	PARTICIPATION_STATUS: 1,
 	supportedMimes: 1,
 	ZIMBRA_ZIMLET_EVENTS: 1,
+	EMAIL_SEPARATOR_TAG_ID: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks', {
@@ -205,7 +206,8 @@ mockery.registerMock('@zimbra-client/components', {
 	SMIMEOperationDropDown: 1,
 	ErrorAlert: 1,
 	SignatureBox: 1,
-	DeleteWrapper: 1
+	DeleteWrapper: 1,
+	HelpTooltip: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
