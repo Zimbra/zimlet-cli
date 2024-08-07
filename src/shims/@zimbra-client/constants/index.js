@@ -11,5 +11,6 @@ export const ATTENDEE_ROLE = wrap('ATTENDEE_ROLE');
 export const PARTICIPATION_STATUS = wrap('PARTICIPATION_STATUS');
 export const supportedMimes = wrap('supportedMimes');
 export const ZIMBRA_ZIMLET_EVENTS = wrap('ZIMBRA_ZIMLET_EVENTS');
+export const EMAIL_SEPARATOR_TAG_ID = wrap('EMAIL_SEPARATOR_TAG_ID');
 
 export default global.shims['@zimbra-client/constants'];
