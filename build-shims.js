@@ -32,7 +32,8 @@ mockery.registerMock('@zimbra-client/util', {
 	startAttachmentDownloadProcess: 1,
 	htmlToText: 1,
 	clipboard: 1,
-	filterNonInsertableCalendars: 1
+	filterNonInsertableCalendars: 1,
+	closeEventTabThunk: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -211,7 +212,9 @@ mockery.registerMock('@zimbra-client/components', {
 	SignatureBox: 1,
 	DeleteWrapper: 1,
 	CalendarOptionItem: 1,
-	HelpTooltip: 1
+	HelpTooltip: 1,
+	DateInput: 1,
+	CustomTimePicker: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
