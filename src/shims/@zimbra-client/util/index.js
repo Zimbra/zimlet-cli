@@ -21,5 +21,6 @@ export const startAttachmentDownloadProcess = wrap('startAttachmentDownloadProce
 export const htmlToText = wrap('htmlToText');
 export const clipboard = wrap('clipboard');
 export const filterNonInsertableCalendars = wrap('filterNonInsertableCalendars');
+export const closeEventTabThunk = wrap('closeEventTabThunk');
 
 export default global.shims['@zimbra-client/util'];
