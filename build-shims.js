@@ -155,7 +155,9 @@ mockery.registerMock('@zimbra-client/blocks', {
 	ChoiceInput: 1,
 	LoaderBar: 1,
 	AnimatedButton: 1,
-	ProgressButton: 1
+	ProgressButton: 1,
+	FormGroup: 1,
+	ErrorAlert: 1
 });
 
 mockery.registerMock('@zimbra-client/components', {
@@ -192,7 +194,6 @@ mockery.registerMock('@zimbra-client/components', {
 	TinyMceComposer: 1,
 	TextArea: 1,
 	AddMore: 1,
-	FormGroup: 1,
 	AlignedLabel: 1,
 	AttachmentItem: 1,
 	ResponsiveModal: 1,
@@ -207,7 +208,6 @@ mockery.registerMock('@zimbra-client/components', {
 	ContactHoverCardWrapper: 1,
 	CertificateModal: 1,
 	SMIMEOperationDropDown: 1,
-	ErrorAlert: 1,
 	SignatureBox: 1,
 	DeleteWrapper: 1,
 	CalendarOptionItem: 1,
