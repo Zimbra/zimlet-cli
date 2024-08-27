@@ -32,5 +32,7 @@ export const ChoiceInput = wrap('ChoiceInput');
 export const LoaderBar = wrap('LoaderBar');
 export const AnimatedButton = wrap('AnimatedButton');
 export const ProgressButton = wrap('ProgressButton');
+export const FormGroup = wrap('FormGroup');
+export const ErrorAlert = wrap('ErrorAlert');
 
 export default global.shims['@zimbra-client/blocks'];
