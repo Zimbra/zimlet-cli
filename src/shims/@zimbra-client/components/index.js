@@ -62,5 +62,7 @@ export const CalendarOptionItem = wrap('CalendarOptionItem');
 export const HelpTooltip = wrap('HelpTooltip');
 export const DateInput = wrap('DateInput');
 export const CustomTimePicker = wrap('CustomTimePicker');
+export const ClientLogo = wrap('ClientLogo');
+export const CloseButton = wrap('CloseButton');
 
 export default global.shims['@zimbra-client/components'];

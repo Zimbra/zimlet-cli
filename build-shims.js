@@ -214,7 +214,9 @@ mockery.registerMock('@zimbra-client/components', {
 	CalendarOptionItem: 1,
 	HelpTooltip: 1,
 	DateInput: 1,
-	CustomTimePicker: 1
+	CustomTimePicker: 1,
+	ClientLogo: 1,
+	CloseButton: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
