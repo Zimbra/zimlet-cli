@@ -211,7 +211,9 @@ mockery.registerMock('@zimbra-client/components', {
 	SignatureBox: 1,
 	DeleteWrapper: 1,
 	CalendarOptionItem: 1,
-	HelpTooltip: 1
+	HelpTooltip: 1,
+	ClientLogo: 1,
+	CloseButton: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
