@@ -125,6 +125,8 @@ mockery.registerMock('@zimbra-client/hooks/graphql', {
 	useAccountInfo: 1,
 	useDocumentAction: 1,
 	useBriefcaseFoldersQuery: 1,
+	useCustomMetaData: 1,
+	useCustomMetaDataMutation: 1,
 	useSaveDocumentMutation: 1,
 	useCreateFolderMutation: 1,
 	useFolderActionMutation: 1,
