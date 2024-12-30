@@ -22,5 +22,7 @@ export const htmlToText = wrap('htmlToText');
 export const clipboard = wrap('clipboard');
 export const filterNonInsertableCalendars = wrap('filterNonInsertableCalendars');
 export const closeEventTabThunk = wrap('closeEventTabThunk');
+export const htmlEncode = wrap('htmlEncode');
+export const getElectron = wrap('getElectron');
 
 export default global.shims['@zimbra-client/util'];
