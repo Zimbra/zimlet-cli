@@ -33,7 +33,9 @@ mockery.registerMock('@zimbra-client/util', {
 	htmlToText: 1,
 	clipboard: 1,
 	filterNonInsertableCalendars: 1,
-	closeEventTabThunk: 1
+	closeEventTabThunk: 1,
+	htmlEncode: 1,
+	getElectron: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
