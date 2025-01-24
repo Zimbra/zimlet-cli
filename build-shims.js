@@ -205,6 +205,7 @@ mockery.registerMock('@zimbra-client/components', {
 	ResponsiveModal: 1,
 	NestedActionMenuItem: 1,
 	PdfjsViewer: 1,
+	Picker: 1,
 	FolderListLight: 1,
 	GenericMobileUIToolbar: 1,
 	GenericMobileUISidebar: 1,
