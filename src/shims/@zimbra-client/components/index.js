@@ -46,6 +46,7 @@ export const AttachmentItem = wrap('AttachmentItem');
 export const ResponsiveModal = wrap('ResponsiveModal');
 export const NestedActionMenuItem = wrap('NestedActionMenuItem');
 export const PdfjsViewer = wrap('PdfjsViewer');
+export const Picker = wrap('Picker');
 export const FolderListLight = wrap('FolderListLight');
 export const GenericMobileUIToolbar = wrap('GenericMobileUIToolbar');
 export const GenericMobileUISidebar = wrap('GenericMobileUISidebar');
