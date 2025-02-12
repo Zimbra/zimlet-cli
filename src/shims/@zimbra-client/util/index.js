@@ -24,5 +24,6 @@ export const filterNonInsertableCalendars = wrap('filterNonInsertableCalendars')
 export const closeEventTabThunk = wrap('closeEventTabThunk');
 export const htmlEncode = wrap('htmlEncode');
 export const getElectron = wrap('getElectron');
+export const closeNotification = wrap('closeNotification');
 
 export default global.shims['@zimbra-client/util'];
