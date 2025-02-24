@@ -35,7 +35,8 @@ mockery.registerMock('@zimbra-client/util', {
 	filterNonInsertableCalendars: 1,
 	closeEventTabThunk: 1,
 	htmlEncode: 1,
-	getElectron: 1
+	getElectron: 1,
+	closeNotification: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -66,6 +67,7 @@ mockery.registerMock('preact-pwa-install', {
 mockery.registerMock('@zimbra-client/graphql', {
 	AppointmentsQuery: 1,
 	CalendarsAndAppointmentsQuery: 1,
+	GetCustomMetadataQuery: 1,
 	GetDocumentShareURLQuery: 1,
 	GetMailboxMetadataQuery: 1,
 	GetFilterRules: 1,
