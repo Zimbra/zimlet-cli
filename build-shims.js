@@ -36,7 +36,8 @@ mockery.registerMock('@zimbra-client/util', {
 	closeEventTabThunk: 1,
 	htmlEncode: 1,
 	getElectron: 1,
-	closeNotification: 1
+	closeNotification: 1,
+	csrfStorage: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
