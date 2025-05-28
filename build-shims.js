@@ -95,7 +95,8 @@ mockery.registerMock('@zimbra-client/graphql', {
 	SetMailboxMetadataMutation: 1,
 	withDataSources: 1,
 	withGetSmimeCertificateInfo: 1,
-	withSaveSmimeCertificate: 1
+	withSaveSmimeCertificate: 1,
+	getSMimeCertInfoQuery: 1
 });
 
 mockery.registerMock('@zimbra-client/enhancers', {
@@ -124,7 +125,8 @@ mockery.registerMock('@zimbra-client/hooks', {
 	useMediaQuery: 1,
 	usePreferences: 1,
 	useSendMessageMutation: 1,
-	useOriginalMsgHeader: 1
+	useOriginalMsgHeader: 1,
+	useItemActionMutation: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks/graphql', {

@@ -37,5 +37,6 @@ export const SetMailboxMetadataMutation = wrap('SetMailboxMetadataMutation');
 export const withDataSources = wrap('withDataSources');
 export const withGetSmimeCertificateInfo = wrap('withGetSmimeCertificateInfo');
 export const withSaveSmimeCertificate = wrap('withSaveSmimeCertificate');
+export const getSMimeCertInfoQuery = wrap('getSMimeCertInfoQuery');
 
 export default global.shims['@zimbra-client/graphql'];
