@@ -13,5 +13,6 @@ export const useMediaQuery = wrap('useMediaQuery');
 export const usePreferences = wrap('usePreferences');
 export const useSendMessageMutation = wrap('useSendMessageMutation');
 export const useOriginalMsgHeader = wrap('useOriginalMsgHeader');
+export const useItemActionMutation = wrap('useItemActionMutation');
 
 export default global.shims['@zimbra-client/hooks'];
