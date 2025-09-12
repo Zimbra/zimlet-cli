@@ -30,7 +30,6 @@ export const ContactList = wrap('ContactList');
 export const ContactEditor = wrap('ContactEditor');
 export const HelpButton = wrap('HelpButton');
 export const AppointmentEdit = wrap('AppointmentEdit');
-export const ColorPicker = wrap('ColorPicker');
 export const ModalDrawer = wrap('ModalDrawer');
 export const ModalDrawerToolbar = wrap('ModalDrawerToolbar');
 export const BackArrow = wrap('BackArrow');

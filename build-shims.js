@@ -165,6 +165,10 @@ mockery.registerMock('@zimbra-client/blocks', {
 	KeyCodes: 1,
 	Label: 1,
 	ChoiceInput: 1,
+	StyledChoiceInput: 1,
+	ColorPicker: 1,
+	COLORS: 1,
+	TAG_COLORS: 1,
 	LoaderBar: 1,
 	AnimatedButton: 1,
 	ProgressButton: 1
@@ -194,7 +198,6 @@ mockery.registerMock('@zimbra-client/components', {
 	ContactEditor: 1,
 	HelpButton: 1,
 	AppointmentEdit: 1,
-	ColorPicker: 1,
 	ModalDrawer: 1,
 	ModalDrawerToolbar: 1,
 	BackArrow: 1,
