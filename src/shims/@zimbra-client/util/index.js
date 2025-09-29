@@ -26,5 +26,7 @@ export const htmlEncode = wrap('htmlEncode');
 export const getElectron = wrap('getElectron');
 export const closeNotification = wrap('closeNotification');
 export const csrfStorage = wrap('csrfStorage');
+export const isEmpty = wrap('isEmpty');
+export const debounce = wrap('debounce');
 
 export default global.shims['@zimbra-client/util'];

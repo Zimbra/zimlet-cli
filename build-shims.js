@@ -37,7 +37,9 @@ mockery.registerMock('@zimbra-client/util', {
 	htmlEncode: 1,
 	getElectron: 1,
 	closeNotification: 1,
-	csrfStorage: 1
+	csrfStorage: 1,
+	isEmpty: 1,
+	debounce: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
