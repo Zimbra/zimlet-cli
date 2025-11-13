@@ -233,7 +233,8 @@ mockery.registerMock('@zimbra-client/components', {
 	DateInput: 1,
 	CustomTimePicker: 1,
 	ClientLogo: 1,
-	CloseButton: 1
+	CloseButton: 1,
+	FolderListGroup: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
