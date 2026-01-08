@@ -4,7 +4,7 @@ module.exports = {
 		'eslint-config-synacor'
 	],
 	globals: {
-		zimlet: true
+		getZimlet: true
 	},
 	rules: {
 		indent: ['error', 'tab', {
