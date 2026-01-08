@@ -9,7 +9,10 @@ const wrap = warnOnMissingExport.bind(null, global.shims['preact/jsx-runtime'], 
 
 export const Fragment = wrap('Fragment');
 export const jsx = wrap('jsx');
+export const jsxAttr = wrap('jsxAttr');
 export const jsxDEV = wrap('jsxDEV');
+export const jsxEscape = wrap('jsxEscape');
+export const jsxTemplate = wrap('jsxTemplate');
 export const jsxs = wrap('jsxs');
 
 export default global.shims['preact/jsx-runtime'];

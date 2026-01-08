@@ -28,6 +28,7 @@ export const forwardRef = wrap('forwardRef');
 export const hydrate = wrap('hydrate');
 export const isElement = wrap('isElement');
 export const isFragment = wrap('isFragment');
+export const isMemo = wrap('isMemo');
 export const isValidElement = wrap('isValidElement');
 export const lazy = wrap('lazy');
 export const memo = wrap('memo');
