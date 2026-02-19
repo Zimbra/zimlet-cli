@@ -173,7 +173,8 @@ mockery.registerMock('@zimbra-client/blocks', {
 	TAG_COLORS: 1,
 	LoaderBar: 1,
 	AnimatedButton: 1,
-	ProgressButton: 1
+	ProgressButton: 1,
+	WarningBanner: 1
 });
 
 mockery.registerMock('@zimbra-client/components', {

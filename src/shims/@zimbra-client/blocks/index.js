@@ -36,5 +36,6 @@ export const TAG_COLORS = wrap('TAG_COLORS');
 export const LoaderBar = wrap('LoaderBar');
 export const AnimatedButton = wrap('AnimatedButton');
 export const ProgressButton = wrap('ProgressButton');
+export const WarningBanner = wrap('WarningBanner');
 
 export default global.shims['@zimbra-client/blocks'];
