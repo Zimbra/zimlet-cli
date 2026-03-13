@@ -65,5 +65,6 @@ export const CustomTimePicker = wrap('CustomTimePicker');
 export const ClientLogo = wrap('ClientLogo');
 export const CloseButton = wrap('CloseButton');
 export const FolderListGroup = wrap('FolderListGroup');
+export const InfoBar = wrap('InfoBar');
 
 export default global.shims['@zimbra-client/components'];
