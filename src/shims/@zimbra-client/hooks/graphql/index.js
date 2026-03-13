@@ -11,6 +11,7 @@ export const useFoldersQuery = wrap('useFoldersQuery');
 export const useAccountInfo = wrap('useAccountInfo');
 export const useDocumentAction = wrap('useDocumentAction');
 export const useBriefcaseFoldersQuery = wrap('useBriefcaseFoldersQuery');
+export const useAvailableLocalesQuery = wrap('useAvailableLocalesQuery');
 export const useCustomMetaData = wrap('useCustomMetaData');
 export const useCustomMetaDataMutation = wrap('useCustomMetaDataMutation');
 export const useSaveDocumentMutation = wrap('useSaveDocumentMutation');

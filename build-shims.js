@@ -136,6 +136,7 @@ mockery.registerMock('@zimbra-client/hooks/graphql', {
 	useAccountInfo: 1,
 	useDocumentAction: 1,
 	useBriefcaseFoldersQuery: 1,
+	useAvailableLocalesQuery: 1,
 	useCustomMetaData: 1,
 	useCustomMetaDataMutation: 1,
 	useSaveDocumentMutation: 1,
@@ -235,7 +236,8 @@ mockery.registerMock('@zimbra-client/components', {
 	CustomTimePicker: 1,
 	ClientLogo: 1,
 	CloseButton: 1,
-	FolderListGroup: 1
+	FolderListGroup: 1,
+	InfoBar: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
@@ -264,8 +266,8 @@ import { warnOnMissingExport } from '.${shimModule.split('/').map((pathpart, ind
 const wrap = warnOnMissingExport.bind(null, global.shims['${shimModule}'], '${shimModule}');
 
 ${Object.keys(require(shimModule)).filter(exportName => exportName !== '__esModule').map(exportName =>
-		`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`).join('\n')
-}
+				`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`).join('\n')
+			}
 ${'default' in require(shimModule) ? '' : `
 export default global.shims['${shimModule}'];`}
 `
