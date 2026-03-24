@@ -12,8 +12,8 @@
     "build:shims": "node ./build-shims.js",
     "prebuild": "rimraf dist && mkdirp dist",
     "test": "npm run lint && npm run build",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
+    "lint": "ESLINT_DISABLE_INTL=true eslint --config eslint.config.mjs .",
+    "lint:fix": "npm run lint -- --fix",
     "prepublishOnly": "npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags",
     "prepare": "husky || true"
   },
@@ -46,15 +46,16 @@
     ]
   },
   "engines": {
-    "node": ">=18.12.0"
+    "node": "^18.20.0",
+    "npm": "^6"
   },
   "devDependencies": {
     "@apollo/client": "^3.14.0",
     "@babel/cli": "^7.21.0",
     "@babel/eslint-parser": "^7.21.3",
+    "@zimbra/eslint-config": "^1.0.0",
     "dompurify": "^3.3.2",
-    "eslint": "^8.57.1",
-    "eslint-config-synacor": "^3.0.5",
+    "eslint": "^9.39.4",
     "graphql": "^16.9.0",
     "husky": "^9.1.7",
     "lint-staged": "^13.2.1",

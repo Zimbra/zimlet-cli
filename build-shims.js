@@ -247,34 +247,49 @@ mockery.registerMock('@zimbra-client/errors', {
 
 function createShim(shimModule) {
 	if (Array.isArray(shimModule)) {
-		shimModule.map((name, index) => !index ? name : `${shimModule[0]}/${name}`).forEach(createShim);
+		shimModule
+			.map((name, index) => (!index ? name : `${shimModule[0]}/${name}`))
+			.forEach(createShim);
 		return;
 	}
 	// console.log('require.cache', require.cache);
 	//turn snake case into camelCase, e.g. preact-router into preactRouter
 	let dirName = path.resolve(`src/shims/${shimModule}`);
 
-	mkdirp(dirName).then(() => {
-		fs.writeFileSync(`${dirName}/index.js`,
-			`/** This file is an auto-generated shim, aliased in for "${shimModule}" in the webpack config.
-*  When components import '${shimModule}', we want to give them back the copy
-*  Zimbra passed down when it called the factory provided to zimlet().
-*/
+	mkdirp(dirName)
+		.then(() => {
+			fs.writeFileSync(
+				`${dirName}/index.js`,
+				`/** This file is an auto-generated shim, aliased in for "${shimModule}" in the webpack config.
+ *  When components import '${shimModule}', we want to give them back the copy
+ *  Zimbra passed down when it called the factory provided to zimlet().
+ */
 
-/* eslint-disable camelcase, dot-notation */
-import { warnOnMissingExport } from '.${shimModule.split('/').map((pathpart, index) => !index ? './' : '../').join('')}';
+import { warnOnMissingExport } from '.${shimModule
+					.split('/')
+					.map((pathpart, index) => (!index ? './' : '../'))
+					.join('')}';
 const wrap = warnOnMissingExport.bind(null, global.shims['${shimModule}'], '${shimModule}');
 
-${Object.keys(require(shimModule)).filter(exportName => exportName !== '__esModule').map(exportName =>
-				`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`).join('\n')
-			}
-${'default' in require(shimModule) ? '' : `
-export default global.shims['${shimModule}'];`}
+${Object.keys(require(shimModule))
+	.filter(exportName => exportName !== '__esModule')
+	.map(
+		exportName =>
+			`export ${exportName === 'default' ? 'default' : `const ${exportName} =`} wrap('${exportName}');`
+	)
+	.join('\n')}
+${
+	'default' in require(shimModule)
+		? ''
+		: `
+export default global.shims['${shimModule}'];`
+}
 `
-		);
-	}).catch(() => {
-		console.error(`Unable to mkdir ${dirName}`);
-	});
+			);
+		})
+		.catch(() => {
+			console.error(`Unable to mkdir ${dirName}`);
+		});
 }
 
 shimmedModules.forEach(createShim);
