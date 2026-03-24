@@ -1,11 +1,14 @@
 /** This file is an auto-generated shim, aliased in for "@apollo/client/react" in the webpack config.
-*  When components import '@apollo/client/react', we want to give them back the copy
-*  Zimbra passed down when it called the factory provided to zimlet().
-*/
+ *  When components import '@apollo/client/react', we want to give them back the copy
+ *  Zimbra passed down when it called the factory provided to zimlet().
+ */
 
-/* eslint-disable camelcase, dot-notation */
 import { warnOnMissingExport } from '../../../';
-const wrap = warnOnMissingExport.bind(null, global.shims['@apollo/client/react'], '@apollo/client/react');
+const wrap = warnOnMissingExport.bind(
+	null,
+	global.shims['@apollo/client/react'],
+	'@apollo/client/react'
+);
 
 export const useApolloClient = wrap('useApolloClient');
 export const useLazyQuery = wrap('useLazyQuery');

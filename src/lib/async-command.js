@@ -2,8 +2,7 @@ function done(err, result) {
 	if (err) {
 		process.stderr.write(String(err) + '\n');
 		process.exit(err.exitCode || 1);
-	}
-	else {
+	} else {
 		if (result) process.stdout.write(result + '\n');
 		process.exit(0);
 	}

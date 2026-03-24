@@ -40,7 +40,7 @@ exports.SHIMMED_MODULES = [
 	['@zimbra-client/hooks', 'graphql']
 ];
 
-exports.getShimPath = function(module) {
+exports.getShimPath = function (module) {
 	return require.resolve(`./${module}`).replace(/index\.js$/, '');
 };
 
@@ -51,12 +51,12 @@ exports.getShimPath = function(module) {
  * @param {String} moduleName The name of the module to be used in the error log
  * @param {Object} e the `exports` object from a module
  */
-exports.warnOnMissingExport = function(m, moduleName, namedExport) {
+exports.warnOnMissingExport = function (m, moduleName, namedExport) {
 	return m && typeof m[namedExport] !== 'undefined'
 		? m[namedExport]
-		: function() {
-			throw new Error(
-				`[ZimletCli]: Export ${moduleName}.${namedExport} was not found in the ${moduleName} instance passed down from ZimbraX.`
-			);
-		  };
+		: function () {
+				throw new Error(
+					`[ZimletCli]: Export ${moduleName}.${namedExport} was not found in the ${moduleName} instance passed down from ZimbraX.`
+				);
+			};
 };
