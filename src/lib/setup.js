@@ -6,7 +6,7 @@ export function install(cwd, isYarn) {
 	return spawn(cmd, ['install'], { cwd, stdio: 'ignore' });
 }
 
-export async function addScripts(obj, cwd, isYarn) {
+export async function addScripts(/*obj, cwd, isYarn*/) {
 	return {
 		build: 'zimlet build',
 		watch: 'zimlet watch',
@@ -31,17 +31,19 @@ export async function initGit(target) {
 
 		try {
 			gitUser = (await spawn('git', ['config', 'user.name'])).toString();
-		}
-		catch (e) {
-			warn(`Git config value of user.name not defined.  Defaulting to ${defaultGitUser} for initial commit message.`);
+		} catch (e) {
+			warn(
+				`Git config value of user.name not defined.  Defaulting to ${defaultGitUser} for initial commit message.`
+			);
 			gitUser = defaultGitUser;
 		}
 
 		try {
 			gitEmail = (await spawn('git', ['config', 'user.email'])).toString();
-		}
-		catch (e) {
-			warn(`Git config value of user.email not defined.  Defaulting to ${defaultGitEmail} for initial commit message.`);
+		} catch (e) {
+			warn(
+				`Git config value of user.email not defined.  Defaulting to ${defaultGitEmail} for initial commit message.`
+			);
 			gitEmail = defaultGitEmail;
 		}
 
@@ -55,13 +57,10 @@ export async function initGit(target) {
 					GIT_AUTHOR_EMAIL: gitEmail
 				}
 			});
-		}
-		catch (e) {
+		} catch (e) {
 			warn(`could not make initial git commit: ${e}`);
 		}
-	}
-	else {
+	} else {
 		warn('Could not locate `git` binary in `$PATH`. Skipping!');
 	}
 }
-
