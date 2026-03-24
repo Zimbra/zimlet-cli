@@ -7,16 +7,15 @@ import chalk from 'chalk';
 import transformConfig from './lib/webpack/transform-config';
 import getPort, { makeRange as getPortMakeRange } from 'get-port';
 import webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
+import { Server as WebpackDevServer } from 'webpack-dev-server';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import postcssPresetEnv from 'postcss-preset-env';
 import discardComments from 'postcss-discard-comments';
 import { crossPlatformPathRegex } from './util';
 import { getShimPath, SHIMMED_MODULES } from './shims';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
+import { CopyWebpackPlugin } from 'copy-webpack-plugin';
 
 export default function run(args, callback) {
-
 	let config = configure(args);
 
 	let compiler = webpack(config);
@@ -34,8 +33,7 @@ export default function run(args, callback) {
 		if (stats.hasErrors()) {
 			process.stdout.write(chalk.red('Build failed!\n\n'));
 			info.errors.forEach(err => console.error(err));
-		}
-		else {
+		} else {
 			if (stats.hasWarnings()) {
 				info.warnings.forEach(err => console.warn(err));
 			}
@@ -50,7 +48,9 @@ export default function run(args, callback) {
 				let localIpAddr = `${protocol}://${ip.address()}:${chalk.bold(port)}/index.js`;
 
 				if (preferredPort !== config.devServer.port) {
-					process.stdout.write(`NOTE: Port ${preferredPort} is not available, using ${port} instead.\n\n`);
+					process.stdout.write(
+						`NOTE: Port ${preferredPort} is not available, using ${port} instead.\n\n`
+					);
 				}
 				process.stdout.write('You can view the application in browser.\n\n');
 				process.stdout.write(`${chalk.bold('Local:')}            ${serverAddr}\n`);
@@ -69,9 +69,8 @@ export default function run(args, callback) {
 				await new WebpackDevServer(config.devServer, compiler).start();
 			})();
 		});
-	}
-	else {
-		compiler.run( (err, stats) => {
+	} else {
+		compiler.run((err, stats) => {
 			if (!err && stats.hasErrors()) {
 				err = `${stats.toJson().errors.length} errors`;
 			}
@@ -82,7 +81,8 @@ export default function run(args, callback) {
 
 export function configure(env) {
 	env = env || {};
-	const watch = env.watch || env.w || process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development';
+	const watch =
+		env.watch || env.w || process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development';
 	const PROD = !watch;
 	const CIRCLECI = process.env.CIRCLECI === 'true';
 
@@ -90,14 +90,13 @@ export function configure(env) {
 		host = process.env.HOST || env.host || 'localhost',
 		port = process.env.PORT || env.port || 8081;
 
-	let cwd = env.cwd = process.cwd(),
+	let cwd = (env.cwd = process.cwd()),
 		context = cwd,
 		pkg;
 
 	try {
-		pkg	= require(path.resolve(cwd, 'package.json'));
-	}
-	catch (e) {}
+		pkg = require(path.resolve(cwd, 'package.json'));
+	} catch (e) {}
 
 	if (!pkg) {
 		pkg = { main: 'index.js' };
@@ -149,7 +148,9 @@ export function configure(env) {
 		}
 	};
 
-	let cssModulesRegexp = crossPlatformPathRegex(/(?:([^/@]+?)(?:-(?:pages?|components?|screens?))?\/)?src\/(?:pages|components|screens)\/(.+?)(\/[a-z0-9._-]+[.](less|css))?$/);
+	let cssModulesRegexp = crossPlatformPathRegex(
+		/(?:([^/@]+?)(?:-(?:pages?|components?|screens?))?\/)?src\/(?:pages|components|screens)\/(.+?)(\/[a-z0-9._-]+[.](less|css))?$/
+	);
 
 	let webpackConfig = {
 		mode: PROD ? 'production' : 'development',
@@ -163,22 +164,19 @@ export function configure(env) {
 			// NOTE: Explicit public path is required in order to make HMR work within an sourceless iframe.
 			// This is due to a bug in webpack-dev-server that uses the document protocol for all https pages:
 			// https://github.com/webpack/webpack-dev-server/blob/c490b245ad65f315762e03e51710f7f7177b1e7b/client/index.js#L188-L190
-			publicPath: watch ? `http${https?'s':''}://${host}:${port}/` : env.publicpath || '/'
+			publicPath: watch ? `http${https ? 's' : ''}://${host}:${port}/` : env.publicpath || '/'
 		},
 
 		resolve: {
 			extensions: ['.mjs', '.jsx', '.js', '.json', '.css', '.less'],
 			mainFields: ['browser', 'module', 'jsnext:main', 'main'],
-			modules: [
-				path.resolve(cwd, 'node_modules'),
-				'node_modules'
-			],
+			modules: [path.resolve(cwd, 'node_modules'), 'node_modules'],
 
 			alias: {
 				...SHIMMED_MODULES.reduce((shimAliases, name) => {
 					if (Array.isArray(name)) {
 						// If module name is an Array, the first element is the root name of the module
-						[ name ] = name;
+						[name] = name;
 					}
 					shimAliases[name] = getShimPath(name);
 					return shimAliases;
@@ -207,11 +205,14 @@ export function configure(env) {
 						babelrc: false,
 						comments: true,
 						presets: [
-							[require.resolve('@babel/preset-env'), {
-								loose: true,
-								modules: false,
-								bugfixes: true
-							}]
+							[
+								require.resolve('@babel/preset-env'),
+								{
+									loose: true,
+									modules: false,
+									bugfixes: true
+								}
+							]
 						],
 						plugins: [
 							require.resolve('@babel/plugin-syntax-dynamic-import'),
@@ -294,29 +295,32 @@ export function configure(env) {
 			]
 		},
 
-		plugins: [].concat(
-			// Remove progress plugin in cirleci for improving performance
-			!CIRCLECI &&
-				new ProgressBarPlugin({
-					format: '\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
-					renderThrottle: 100,
-					summary: false
+		plugins: []
+			.concat(
+				// Remove progress plugin in cirleci for improving performance
+				!CIRCLECI &&
+					new ProgressBarPlugin({
+						format:
+							'\u001b[90m\u001b[44mBuild\u001b[49m\u001b[39m [:bar] \u001b[32m\u001b[1m:percent\u001b[22m\u001b[39m (:elapseds) \u001b[2m:msg\u001b[22m',
+						renderThrottle: 100,
+						summary: false
+					}),
+
+				new webpack.DefinePlugin({
+					'process.env.NODE_ENV': JSON.stringify(PROD ? 'production' : 'development')
 				}),
 
-			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify(PROD ? 'production' : 'development')
-			}),
-
-			isFile(path.resolve(cwd, 'config_template.xml')) &&
-				new CopyWebpackPlugin({
-					patterns: [
-						{
-							from: path.join(cwd, 'config_template.xml'),
-							to: path.join(dest, 'config_template.xml')
-						}
-					]
-				})
-		).filter(Boolean),
+				isFile(path.resolve(cwd, 'config_template.xml')) &&
+					new CopyWebpackPlugin({
+						patterns: [
+							{
+								from: path.join(cwd, 'config_template.xml'),
+								to: path.join(dest, 'config_template.xml')
+							}
+						]
+					})
+			)
+			.filter(Boolean),
 
 		stats: 'errors-only',
 
@@ -324,11 +328,7 @@ export function configure(env) {
 
 		...(watch && {
 			watchOptions: {
-				ignored: [
-					'build',
-					dest,
-					path.resolve(cwd, 'node_modules')
-				]
+				ignored: ['build', dest, path.resolve(cwd, 'node_modules')]
 			},
 			devtool: 'inline-source-map',
 
@@ -369,13 +369,11 @@ export function configure(env) {
 function isDir(filepath) {
 	try {
 		return !!fs.statSync(filepath).isDirectory();
-	}
-	catch (err) { }
+	} catch (err) {}
 }
 
 function isFile(filepath) {
 	try {
 		return !!fs.statSync(filepath).isFile();
-	}
-	catch (err) {}
+	} catch (err) {}
 }

@@ -12,16 +12,17 @@ const dropBoxKeyBindings = {
 	}
 };
 
-export default (context) => {
+export default context => {
 	let { plugins, components, keyBindings, shortcutCommandHandler, route } = context;
 	console.log('dropbox: construct', context, style);
 
 	let exports = {};
 
-	const globalShortcutHandlers = [{ context: 'all', command: 'GO_TO_DROPBOX', handler: () => route('/dropbox') }];
+	const globalShortcutHandlers = [
+		{ context: 'all', command: 'GO_TO_DROPBOX', handler: () => route('/dropbox') }
+	];
 
 	exports.init = function () {
-
 		console.log('In Dropbox zimlet.  route is:', route);
 
 		// console.log('dropbox: init');
@@ -44,9 +45,7 @@ export default (context) => {
 	};
 
 	function Router() {
-		return [
-			<Page path="/dropbox" />
-		];
+		return [<Page path="/dropbox" />];
 	}
 
 	function MenuItem() {

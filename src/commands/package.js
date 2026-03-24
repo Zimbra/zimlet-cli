@@ -34,7 +34,8 @@ export default asyncCommand({
 			default: null
 		},
 		zimbraXVersion: {
-			description: 'https://semver.org version range of Zimbra X that the Zimlet is compatible with.',
+			description:
+				'https://semver.org version range of Zimbra X that the Zimlet is compatible with.',
 			default: '>=1.0.0',
 			requiresArg: true
 		},
@@ -50,9 +51,7 @@ export default asyncCommand({
 		}
 	},
 
-
 	async handler(argv) {
-
 		// normalize built files source directory and desination package dir
 		let cwd = process.cwd();
 		let builddir = path.resolve(cwd, argv.builddir || 'build');
@@ -73,8 +72,7 @@ export default asyncCommand({
 		let files;
 		try {
 			files = fs.readdirSync(builddir);
-		}
-		catch (err) {
+		} catch (err) {
 			return error(`Failed to read ${builddir}: ${err}`, 1);
 		}
 
@@ -83,11 +81,9 @@ export default asyncCommand({
 			.forEach(file => {
 				if (file.match(/\.js$/)) {
 					zimletXML += `\n\t<include>${file}</include>`;
-				}
-				else if (file.match(/\.css$/)) {
+				} else if (file.match(/\.css$/)) {
 					zimletXML += `\n\t<includeCSS>${file}</includeCSS>`;
-				}
-				else if (file !== xmlFile) {
+				} else if (file !== xmlFile) {
 					zimletXML += `\n\t<resource>${file}</resource>`;
 				}
 			});
@@ -96,8 +92,7 @@ export default asyncCommand({
 
 		try {
 			fs.writeFileSync(path.resolve(builddir, xmlFile), zimletXML);
-		}
-		catch (err) {
+		} catch (err) {
 			return error(`Failed to write XML file: ${err}`, 1);
 		}
 
@@ -112,14 +107,11 @@ export default asyncCommand({
 	}
 });
 
-
 function getZimletLabelDescription() {
 	const intlDir = path.resolve(process.cwd(), 'src', 'intl');
 
 	try {
-		const content = JSON.parse(
-			fs.readFileSync(path.resolve(intlDir, 'en_US.json'))
-		);
+		const content = JSON.parse(fs.readFileSync(path.resolve(intlDir, 'en_US.json')));
 
 		if (!(content.zimlet?.label && content.zimlet?.description)) {
 			throw new Error('label or description not found');
@@ -128,8 +120,7 @@ function getZimletLabelDescription() {
 			label: content.zimlet.label,
 			description: content.zimlet.description
 		};
-	}
-	catch (err) {
+	} catch (err) {
 		warn(`Failed to read src/intl/en_US.json file: ${err}. \nMake sure below content present in src/intl/en_US.json file \n
 		"zimlet": {
 			"label": "<zimlet label>",
@@ -137,7 +128,6 @@ function getZimletLabelDescription() {
 		} \nAs a fallback we are using strings from package.json which is deprecated.\n`);
 		return null;
 	}
-
 }
 
 // Add properties file for description and label
@@ -151,8 +141,7 @@ function createLocalizationFiles(zimletName, label, description) {
 
 	try {
 		intlFiles = fs.readdirSync(intlDir);
-	}
-	catch (err) {
+	} catch (err) {
 		console.error(`Failed to read ${intlDir}: ${err}`, 1);
 	}
 
@@ -160,19 +149,13 @@ function createLocalizationFiles(zimletName, label, description) {
 		.filter(file => file.match(/\.json$/) && !file.includes('en_US'))
 		.forEach(intl => {
 			try {
-				const content = JSON.parse(
-					fs.readFileSync(path.resolve(intlDir, intl))
-				);
-				const propertiesFileName = `${zimletName}_${intl.replace(
-					'.json',
-					''
-				)}`;
+				const content = JSON.parse(fs.readFileSync(path.resolve(intlDir, intl)));
+				const propertiesFileName = `${zimletName}_${intl.replace('.json', '')}`;
 				const labelValue = getUnicode(content.zimlet?.label || '');
 				const descriptionValue = getUnicode(content.zimlet?.description || '');
 
 				createPropertyFile(propertiesFileName, labelValue, descriptionValue);
-			}
-			catch (ex) {
+			} catch (ex) {
 				error(`Error while reading file: ${ex}`, 1);
 			}
 		});
@@ -187,8 +170,7 @@ function createPropertyFile(fileName, label, description) {
 
 	try {
 		fs.writeFileSync(path.resolve(builddir, propertiesFile), zimletProperties);
-	}
-	catch (err) {
+	} catch (err) {
 		return error(`Failed to write properties file: ${err}`, 1);
 	}
 }

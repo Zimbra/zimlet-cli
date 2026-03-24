@@ -23,7 +23,7 @@ const capitalize = str => str.charAt(0).toUpperCase() + str.substring(1);
 
 const templateDesc = 'Remote template to clone (user/repo#tag)',
 	destDesc = 'Directory to create the zimlet',
-	nameDesc = 'The zimlet\'s name',
+	nameDesc = "The zimlet's name",
 	forceDesc = 'Force `dest` directory to created if it already exists; will overwrite!',
 	installDesc = 'Install dependencies',
 	yarnDesc = 'Install with `yarn` instead of `npm`',
@@ -86,7 +86,9 @@ export default asyncCommand({
 			let questions = isMissing(argv);
 			let response = await prompt(questions);
 			//trim all args to prevent accidental extra whitespace in user prompted values from messing things up
-			Object.keys(response).forEach(k => response[k] && response[k].trim && (response[k] = response[k].trim()));
+			Object.keys(response).forEach(
+				k => response[k] && response[k].trim && (response[k] = response[k].trim())
+			);
 			Object.assign(argv, response);
 		}
 
@@ -100,16 +102,21 @@ export default asyncCommand({
 		let exists = isDir(target);
 
 		if (exists && !argv.force) {
-			return error('Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag', 1);
+			return error(
+				'Refusing to overwrite current directory! Please specify a different destination or use the `--force` flag',
+				1
+			);
 		}
 
 		if (exists && argv.force) {
-			if (! await prompt({
-				type: 'confirm',
-				name: 'enableForce',
-				message: `You are using '--force'. Do you wish to continue and overwrite ${target}?`,
-				default: false
-			})) {
+			if (
+				!(await prompt({
+					type: 'confirm',
+					name: 'enableForce',
+					message: `You are using '--force'. Do you wish to continue and overwrite ${target}?`,
+					default: false
+				}))
+			) {
 				return error('Refusing to overwrite current directory!', 1);
 			}
 		}
@@ -142,7 +149,7 @@ export default asyncCommand({
 
 		// Extract files from `archive` to `target`
 		// TODO: read & respond to meta/hooks
-		let keeps=[];
+		let keeps = [];
 		await gittar.extract(archive, target, {
 			strip: 2,
 			filter(path, obj) {
@@ -170,7 +177,9 @@ export default asyncCommand({
 			});
 
 			// Update each file's contents
-			let buf, entry, enc='utf8';
+			let buf,
+				entry,
+				enc = 'utf8';
 			for (entry of keeps) {
 				buf = fs.readFileSync(entry, enc);
 				dict.forEach((v, k) => {
@@ -178,33 +187,29 @@ export default asyncCommand({
 				});
 				try {
 					fs.writeFileSync(entry, buf, enc);
-				}
-				catch (err) {
+				} catch (err) {
 					return error(`Couldn't write ${entry}: ${err}`);
 				}
-
 			}
-		}
-		else {
-			return error(`No \`template\` directory found within ${ repo }!`, 1);
+		} else {
+			return error(`No \`template\` directory found within ${repo}!`, 1);
 		}
 
 		spinner.succeed().start('Parsing `package.json` file');
 
 		// Validate user's `package.json` file
-		let pkgData, pkgFile=resolve(target, 'package.json');
+		let pkgData,
+			pkgFile = resolve(target, 'package.json');
 
 		if (pkgFile) {
 			try {
 				pkgData = JSON.parse(fs.readFileSync(pkgFile));
-			}
-			catch (err) {
+			} catch (err) {
 				return error(`Could not reach package.json file: ${err}`);
 			}
 			// Write default "scripts" if none found
 			pkgData.scripts = pkgData.scripts || (await addScripts(pkgData, target, isYarn));
-		}
-		else {
+		} else {
 			warn('Could not locate `package.json` file!');
 		}
 
@@ -218,8 +223,7 @@ export default asyncCommand({
 			// Assume changes were made
 			try {
 				fs.writeFileSync(pkgFile, JSON.stringify(pkgData, null, 2));
-			}
-			catch (err) {
+			} catch (err) {
 				return error(`Unable to write back package.json file: ${err}`);
 			}
 		}
@@ -238,19 +242,21 @@ export default asyncCommand({
 
 		let pfx = isYarn ? 'yarn' : 'npm run';
 
-		return trim(`
+		return (
+			trim(`
 			To get started, cd into the new directory:
-			  ${ green('cd ' + destArg) }
+			  ${green('cd ' + destArg)}
 
 			To start a development live-reload server:
-			  ${ green(pfx + ' watch') }
+			  ${green(pfx + ' watch')}
 
 			To create a production build (in ./build):
-			  ${ green(pfx + ' build') }
+			  ${green(pfx + ' build')}
 
 			To create the official zimlet package (in ./pkg)
-			  ${ green(pfx + ' package') }
-		`) + '\n';
+			  ${green(pfx + ' package')}
+		`) + '\n'
+		);
 	}
 });
 
@@ -259,7 +265,7 @@ function isMissing(argv) {
 	let out = [];
 
 	const ask = (name, message, val) => {
-		let type = (typeof val === 'boolean') ? 'confirm' : 'input';
+		let type = typeof val === 'boolean' ? 'confirm' : 'input';
 		out.push({ name, message, type, default: val });
 	};
 
@@ -267,7 +273,7 @@ function isMissing(argv) {
 	!argv.template && ask('template', templateDesc, 'default');
 	!argv.dest && ask('dest', destDesc);
 	// Extra data / flags
-	!argv.name && ask('name', nameDesc,({ dest }) => dest); //use the current answer for 'dest' as the default
+	!argv.name && ask('name', nameDesc, ({ dest }) => dest); //use the current answer for 'dest' as the default
 	!argv.force && ask('force', forceDesc, false);
 	ask('install', installDesc, true); // defaults `true`, ask anyway
 	!argv.yarn && ask('yarn', yarnDesc, false);
@@ -275,4 +281,3 @@ function isMissing(argv) {
 
 	return out;
 }
-
