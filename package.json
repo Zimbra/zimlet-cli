@@ -53,7 +53,7 @@
     "@apollo/client": "^3.14.0",
     "@babel/cli": "^7.21.0",
     "@babel/eslint-parser": "^7.21.3",
-    "@zimbra/eslint-config": "^1.0.0",
+    "@zimbra/eslint-config": "^1.2.0",
     "dompurify": "^3.3.2",
     "eslint": "^9.39.4",
     "graphql": "^16.9.0",
