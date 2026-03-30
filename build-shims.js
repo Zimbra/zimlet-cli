@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { mkdirp } = require('mkdirp');
 const mockery = require('mockery');
 const shimmedModules = require('./src/shims/index.js').SHIMMED_MODULES;

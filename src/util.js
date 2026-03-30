@@ -1,8 +1,8 @@
 import chalk from 'chalk';
-import { statSync, existsSync } from 'fs';
+import { statSync, existsSync } from 'node:fs';
 import logSymbols from 'log-symbols';
 import which from 'which';
-import path from 'path';
+import path from 'node:path';
 
 export function crossPlatformPathRegex(regexp) {
 	if (path.sep === '\\') {
