@@ -1,9 +1,9 @@
 import ora from 'ora';
 import gittar from 'gittar';
 import { green } from 'chalk';
-import fs from 'fs';
+import fs from 'node:fs';
 import { prompt } from 'inquirer';
-import { resolve, dirname } from 'path';
+import { resolve, dirname } from 'node:path';
 import isValidName from 'validate-npm-package-name';
 import { info, isDir, hasCommand, error, trim, warn } from '../util';
 import { install, initGit, addScripts } from './../lib/setup';

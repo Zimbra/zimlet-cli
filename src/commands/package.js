@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import Zip from 'adm-zip';
 import { error, warn } from '../util';
 import asyncCommand from '../lib/async-command';
