@@ -1,52 +1,5 @@
 version: 2.1
 
-################# Jobs #########################
-
-jobs:
-  prepare-npm-deps:
-    executor: default-executor
-
-    steps:
-      - checkout
-
-      # Download cached dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-            # fallback to using the cache from the same branch
-            - v1-dependencies-{{ .Branch }}-
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      #install npm version 6
-      # TODO PREAPPS-7520
-      - run: sudo npm install -g npm@6 
-
-      # install dependencies
-      - run: npm install --no-audit
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - repo
-
-  test:
-    executor: nano-executor
-
-    steps:
-      - attach_workspace:
-          at: ~/
-
-      - run: npm test
-
-
-################################################
-
 ################# Executors ####################
 
 executors:
@@ -62,10 +15,126 @@ executors:
       - image: cimg/node:18.18
     resource_class: small
 
-################################################
+env-context: &env-context
+  context:
+    - npm-js
+
+feature-branch: &feature-branch
+  filters:
+    branches:
+      ignore:
+        - /(custom_)?release\/.*/
+
+############################################################################
+# COMMANDS
+############################################################################
+
+commands:
+  remove-node-modules:
+    description: Remove node_modules before workspace persist
+
+    steps:
+      - run:
+          name: Remove node_modules before workspace persist
+          command: |
+            rm -rf node_modules
+
+############################################################################
+# Cache node_modules
+restore-dependencies-cache: &restore-dependencies-cache
+  restore_cache:
+    keys:
+      - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
+      # fallback to using the cache from the same branch
+      - v1-dependencies-{{ .Branch }}-
+      # fallback to using the latest cache if no exact match is found
+      - v1-dependencies-
+
+save-dependencies-cache: &save-dependencies-cache
+  save_cache:
+    paths:
+      - node_modules
+    key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
+
+persist-workspace: &persist-workspace
+  persist_to_workspace:
+    root: ~/
+    paths:
+      - repo
+
+attach-workspace: &attach-workspace
+  attach_workspace:
+    at: ~/
+
+################# Jobs #########################
+
+jobs:
+  prepare-npm-deps:
+    executor: default-executor
+
+    steps:
+      - checkout
+
+      # Download cached dependencies
+      - *restore-dependencies-cache
+
+      #install npm version 6
+      # TODO PREAPPS-7520
+      - run: sudo npm install -g npm@6 
+
+      # install dependencies
+      - run: npm install --no-audit
+
+      - *save-dependencies-cache
+
+      - remove-node-modules
+
+      - *persist-workspace
+
+  test:
+    executor: nano-executor
+
+    steps:
+      - *attach-workspace
+      - *restore-dependencies-cache
+      - run: npm test
+      - remove-node-modules
+      - *persist-workspace
+
+  publish:
+    executor: nano-executor
+    steps:
+      - *attach-workspace
+
+      - run:
+          name: Setup npm authentication
+          command: |
+            echo "//registry.npmjs.org/:_authToken=${NPM_PUBLISH_TOKEN}" > ~/.npmrc
+
+      - run:
+          name: Set dynamic prerelease version (no git tag)
+          command: |
+            SAFE_BRANCH=$(echo "$CIRCLE_BRANCH" | sed 's/\//-/g')
+            SHORT_SHA=$(echo "$CIRCLE_SHA1" | cut -c1-7)
+
+            npm version prerelease \
+              --preid="${SAFE_BRANCH}.${SHORT_SHA}" \
+              --no-git-tag-version
+
+      - run:
+          name: Publish to npm
+          command: |
+            SAFE_BRANCH=$(echo "$CIRCLE_BRANCH" | sed 's/\//-/g')
+            if [ "$SAFE_BRANCH" = "master" ]; then
+              npm publish --access public --tag beta
+            else
+              npm publish --access public --tag next
+            fi
 
 
-################# Workflows ####################
+############################################################################
+# WORKFLOWS
+############################################################################
 
 workflows:
   version: 2
@@ -77,5 +146,17 @@ workflows:
       - test:
           requires:
             - prepare-npm-deps
+
+      - publish-approval:
+          <<: *feature-branch
+          type: approval
+          requires:
+            - test
+
+      - publish:
+          <<: *feature-branch
+          <<: *env-context
+          requires:
+            - publish-approval
 
 ################################################

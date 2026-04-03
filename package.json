@@ -14,7 +14,7 @@
     "test": "npm run lint && npm run build",
     "lint": "eslint --cache --config eslint.config.mjs .",
     "lint:fix": "npm run lint -- --fix",
-    "prepublishOnly": "npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags",
+    "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags; fi",
     "prepare": "husky || true"
   },
   "babel": {
