@@ -7,13 +7,15 @@ import chalk from 'chalk';
 import transformConfig from './lib/webpack/transform-config';
 import getPort, { makeRange as getPortMakeRange } from 'get-port';
 import webpack from 'webpack';
-import { Server as WebpackDevServer } from 'webpack-dev-server';
+// eslint-disable-next-line import/default
+import WebpackDevServer from 'webpack-dev-server';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import postcssPresetEnv from 'postcss-preset-env';
 import discardComments from 'postcss-discard-comments';
 import { crossPlatformPathRegex } from './util';
 import { getShimPath, SHIMMED_MODULES } from './shims';
-import { CopyWebpackPlugin } from 'copy-webpack-plugin';
+// eslint-disable-next-line import/default
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 export default function run(args, callback) {
 	let config = configure(args);
