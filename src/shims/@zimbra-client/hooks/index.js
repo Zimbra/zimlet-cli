@@ -14,5 +14,6 @@ export const useSendMessageMutation = wrap('useSendMessageMutation');
 export const useOriginalMsgHeader = wrap('useOriginalMsgHeader');
 export const useItemActionMutation = wrap('useItemActionMutation');
 export const useMessageSearchQuery = wrap('useMessageSearchQuery');
+export const useZimbraContext = wrap('useZimbraContext');
 
 export default global.shims['@zimbra-client/hooks'];

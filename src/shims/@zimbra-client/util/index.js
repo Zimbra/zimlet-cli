@@ -27,5 +27,7 @@ export const closeNotification = wrap('closeNotification');
 export const csrfStorage = wrap('csrfStorage');
 export const isEmpty = wrap('isEmpty');
 export const debounce = wrap('debounce');
+export const getContext = wrap('getContext');
+export const contextProvide = wrap('contextProvide');
 
 export default global.shims['@zimbra-client/util'];

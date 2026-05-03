@@ -39,7 +39,9 @@ mockery.registerMock('@zimbra-client/util', {
 	closeNotification: 1,
 	csrfStorage: 1,
 	isEmpty: 1,
-	debounce: 1
+	debounce: 1,
+	getContext: 1,
+	contextProvide: 1
 });
 
 mockery.registerMock('@zimbra-client/browser', {
@@ -129,7 +131,8 @@ mockery.registerMock('@zimbra-client/hooks', {
 	useSendMessageMutation: 1,
 	useOriginalMsgHeader: 1,
 	useItemActionMutation: 1,
-	useMessageSearchQuery: 1
+	useMessageSearchQuery: 1,
+	useZimbraContext: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks/graphql', {
@@ -238,7 +241,8 @@ mockery.registerMock('@zimbra-client/components', {
 	ClientLogo: 1,
 	CloseButton: 1,
 	FolderListGroup: 1,
-	InfoBar: 1
+	InfoBar: 1,
+	ZimbraProvider: 1
 });
 
 mockery.registerMock('@zimbra-client/errors', {
