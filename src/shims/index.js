@@ -23,7 +23,6 @@ exports.SHIMMED_MODULES = [
 	'recompose',
 	'moment',
 	'dompurify',
-	'preact-context-provider',
 	'preact-pwa-install',
 	'preact-i18n',
 	'preact-render-to-string',

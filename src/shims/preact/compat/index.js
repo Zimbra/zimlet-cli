@@ -8,12 +8,12 @@ const wrap = warnOnMissingExport.bind(null, global.shims['preact/compat'], 'prea
 
 export const Component = wrap('Component');
 export const Fragment = wrap('Fragment');
+export const StrictMode = wrap('StrictMode');
 export const createContext = wrap('createContext');
 export const createElement = wrap('createElement');
 export const createRef = wrap('createRef');
 export const Children = wrap('Children');
 export const PureComponent = wrap('PureComponent');
-export const StrictMode = wrap('StrictMode');
 export const Suspense = wrap('Suspense');
 export const SuspenseList = wrap('SuspenseList');
 export const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = wrap('__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED');
