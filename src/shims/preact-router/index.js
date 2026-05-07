@@ -12,5 +12,7 @@ export const route = wrap('route');
 export const Router = wrap('Router');
 export const Route = wrap('Route');
 export const Link = wrap('Link');
+export const exec = wrap('exec');
+export const useRouter = wrap('useRouter');
 
 export default global.shims['preact-router'];
