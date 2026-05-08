@@ -23,7 +23,14 @@ feature-branch: &feature-branch
   filters:
     branches:
       ignore:
+        - master
         - /(custom_)?release\/.*/
+
+master-branch: &master-branch
+  filters:
+    branches:
+      only:
+        - master
 
 ############################################################################
 # COMMANDS
@@ -141,9 +148,11 @@ workflows:
 
   commit-workflow:
     jobs:
-      - prepare-npm-deps
+      - prepare-npm-deps:
+          <<: *feature-branch
 
       - test:
+          <<: *feature-branch
           requires:
             - prepare-npm-deps
 
@@ -158,5 +167,15 @@ workflows:
           <<: *env-context
           requires:
             - publish-approval
+
+  master-branch-workflow:
+    jobs:
+      - prepare-npm-deps:
+          <<: *master-branch
+
+      - test:
+          <<: *master-branch
+          requires:
+            - prepare-npm-deps
 
 ################################################
