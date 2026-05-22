@@ -128,7 +128,8 @@ mockery.registerMock('@zimbra-client/hooks', {
 	usePreferences: 1,
 	useSendMessageMutation: 1,
 	useOriginalMsgHeader: 1,
-	useItemActionMutation: 1
+	useItemActionMutation: 1,
+	useMessageSearchQuery: 1
 });
 
 mockery.registerMock('@zimbra-client/hooks/graphql', {
