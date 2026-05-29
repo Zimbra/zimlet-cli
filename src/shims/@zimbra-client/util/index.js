@@ -29,5 +29,7 @@ export const isEmpty = wrap('isEmpty');
 export const debounce = wrap('debounce');
 export const getContext = wrap('getContext');
 export const contextProvide = wrap('contextProvide');
+export const branch = wrap('branch');
+export const withProps = wrap('withProps');
 
 export default global.shims['@zimbra-client/util'];
