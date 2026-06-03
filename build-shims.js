@@ -41,7 +41,6 @@ mockery.registerMock('@zimbra-client/util', {
 	isEmpty: 1,
 	debounce: 1,
 	getContext: 1,
-	contextProvide: 1,
 	branch: 1,
 	withProps: 1
 });
