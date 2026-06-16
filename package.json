@@ -63,7 +63,7 @@
     "mockery": "^2.1.0",
     "moment": "^2.29.4",
     "preact": "^10.28.2",
-    "preact-i18n": "^2.4.0-preactx",
+    "@zimbra/preact-i18n": "beta",
     "preact-render-to-string": "^5.2.0",
     "preact-router": "github:zimbra/preact-router#4.1.2_base_path_support",
     "react-redux": "^8.0.5",
