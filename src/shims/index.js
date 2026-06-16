@@ -23,7 +23,7 @@ exports.SHIMMED_MODULES = [
 	'moment',
 	'dompurify',
 	'preact-pwa-install',
-	'preact-i18n',
+	'@zimbra/preact-i18n',
 	'preact-render-to-string',
 	'preact-markup',
 	['@zimbra-client/util', 'redux', 'contacts'], // Multiple shim files under one alias (@zimbra/util, @zimbra/util/redux, @zimbra/util/contacts)

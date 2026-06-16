@@ -1,10 +1,10 @@
-/** This file is an auto-generated shim, aliased in for "preact-i18n" in the webpack config.
- *  When components import 'preact-i18n', we want to give them back the copy
+/** This file is an auto-generated shim, aliased in for "@zimbra/preact-i18n" in the webpack config.
+ *  When components import '@zimbra/preact-i18n', we want to give them back the copy
  *  Zimbra passed down when it called the factory provided to zimlet().
  */
 
-import { warnOnMissingExport } from '../';
-const wrap = warnOnMissingExport.bind(null, global.shims['preact-i18n'], 'preact-i18n');
+import { warnOnMissingExport } from '../../';
+const wrap = warnOnMissingExport.bind(null, global.shims['@zimbra/preact-i18n'], '@zimbra/preact-i18n');
 
 export const IntlContext = wrap('IntlContext');
 export const IntlProvider = wrap('IntlProvider');
