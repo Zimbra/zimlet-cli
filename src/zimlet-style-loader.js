@@ -3,7 +3,7 @@
  *  this loader injects them into a global array called `ZIMLET_STYLES`.
  *  That array of string stylesheets is automatically passed to `styles.add()` by zimlet-cli's entrypoint.
  */
-export default function ZimletStyleLoader() {}
+function ZimletStyleLoader() {}
 
 ZimletStyleLoader.pitch = function (request) {
 	const stringified = JSON.stringify(
@@ -17,3 +17,5 @@ ZimletStyleLoader.pitch = function (request) {
 		module.exports = styles.locals;
 	`;
 };
+
+module.exports = ZimletStyleLoader;
