@@ -83,9 +83,8 @@ export default function run(args, callback) {
 
 export function configure(env) {
 	env = env || {};
-	const watch =
-		env.watch || env.w || process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development';
-	const PROD = !watch;
+	const watch = env.watch || env.w;
+	const PROD = env.production || !watch;
 	const CIRCLECI = process.env.CIRCLECI === 'true';
 
 	let https = !(process.env.HTTPS === 'false' || env.https === false),
@@ -202,36 +201,21 @@ export function configure(env) {
 			rules: [
 				{
 					test: /\.jsx?$/,
-					loader: 'babel-loader',
+					loader: require.resolve('esbuild-loader'),
 					options: {
-						babelrc: false,
-						comments: true,
-						presets: [
-							[
-								require.resolve('@babel/preset-env'),
-								{
-									loose: true,
-									modules: false,
-									bugfixes: true
-								}
-							]
-						],
-						plugins: [
-							require.resolve('@babel/plugin-syntax-dynamic-import'),
-							[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-							[require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }],
-							require.resolve('@babel/plugin-proposal-export-namespace-from'),
-							require.resolve('@babel/plugin-proposal-export-default-from'),
-							[
-								require.resolve('@babel/plugin-transform-react-jsx'),
-								{
-									pragma: 'createElement'
-									// @TODO this is breaking change, so we will introduce in future
-									//runtime: 'automatic',
-									//importSource: 'preact'
-								}
-							]
-						]
+						loader: 'jsx', // Automatically parses both JS and JSX
+						target: 'es2022', // Match your target Node 24 ecosystem
+						
+						// Replaces @babel/plugin-transform-react-jsx settings
+						jsxFactory: 'createElement', 
+						
+						// Replaces Babel's loose/legacy class & decorator settings
+						tsconfigRaw: {
+							compilerOptions: {
+								experimentalDecorators: true, // Legacy decorators
+								useDefineForClassFields: false // Equivalent to loose: true
+							}
+						}
 					}
 				},
 				{
@@ -243,7 +227,7 @@ export function configure(env) {
 							loader: path.resolve(__dirname, 'zimlet-style-loader.js')
 						},
 						{
-							loader: 'css-loader',
+							loader: require.resolve('css-loader'),
 							options: {
 								...cssLoaderOptions,
 								modules: {
@@ -254,11 +238,11 @@ export function configure(env) {
 							}
 						},
 						{
-							loader: 'postcss-loader',
+							loader: require.resolve('postcss-loader'),
 							options: postCssLoaderOptions
 						},
 						{
-							loader: 'less-loader'
+							loader: require.resolve('less-loader')
 						}
 					]
 				},
@@ -271,15 +255,15 @@ export function configure(env) {
 							loader: path.resolve(__dirname, 'zimlet-style-loader.js')
 						},
 						{
-							loader: 'css-loader',
+							loader: require.resolve('css-loader'),
 							options: cssLoaderOptions
 						},
 						{
-							loader: 'postcss-loader',
+							loader: require.resolve('postcss-loader'),
 							options: postCssLoaderOptions
 						},
 						{
-							loader: 'less-loader'
+							loader: require.resolve('less-loader')
 						}
 					]
 				},
@@ -365,6 +349,7 @@ export function configure(env) {
 	};
 
 	transformConfig(env, webpackConfig);
+
 	return webpackConfig;
 }
 

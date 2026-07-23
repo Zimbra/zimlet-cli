@@ -1,28 +1,34 @@
 import path from 'node:path';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
 
 const defaultConfig = './zimlet.config.js';
 
 export default function transformConfig(env, config) {
 	let transformerPath = path.resolve(env.cwd, env.config || defaultConfig);
-	try {
-		require.resolve(transformerPath);
-	} catch (err) {
+
+	if (!fs.existsSync(transformerPath)) {
 		if (env.config && env.config !== defaultConfig) {
 			console.warn(`zimlet-cli config could not be loaded!\nFile ${env.config} not found.`);
 		}
 		return;
 	}
 
-	require('@babel/register')({
-		presets: [require.resolve('@babel/preset-env')]
-	});
-
-	const m = require(transformerPath);
-	const transformer = (m && m.default) || m;
+	const requireSync = createRequire(import.meta.url);
 
 	try {
-		transformer(config, Object.assign({}, env));
+		const resolvedPath = requireSync.resolve(transformerPath);
+		if (requireSync.cache[resolvedPath]) {
+			delete requireSync.cache[resolvedPath];
+		}
+		
+		const m = requireSync(transformerPath);
+		const transformer = (m && m.default) || m;
+
+		if (typeof transformer === 'function') {
+			transformer(config, Object.assign({}, env));
+		}
 	} catch (err) {
-		console.error(`Error at ${transformerPath}: \n` + err);
+		console.error(`Error executing transformer at ${transformerPath}: \n` + err);
 	}
 }
