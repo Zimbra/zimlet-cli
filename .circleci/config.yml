@@ -6,13 +6,13 @@ executors:
   default-executor:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:18.18
+      - image: cimg/node:24.18
     resource_class: medium
 
   nano-executor:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:18.18
+      - image: cimg/node:24.18
     resource_class: small
 
 env-context: &env-context
@@ -83,16 +83,16 @@ jobs:
       - checkout
 
       # Download cached dependencies
-      - *restore-dependencies-cache
+      # - *restore-dependencies-cache
 
       #install npm version 6
       # TODO PREAPPS-7520
-      - run: sudo npm install -g npm@6 
+      # - run: sudo npm install -g npm@6 
 
       # install dependencies
       - run: npm install --no-audit
 
-      - *save-dependencies-cache
+      # - *save-dependencies-cache
 
       - remove-node-modules
 
@@ -103,7 +103,7 @@ jobs:
 
     steps:
       - *attach-workspace
-      - *restore-dependencies-cache
+      # - *restore-dependencies-cache
       - run: npm test
       - remove-node-modules
       - *persist-workspace

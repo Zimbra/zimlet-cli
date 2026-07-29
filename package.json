@@ -46,14 +46,15 @@
     ]
   },
   "engines": {
-    "node": "^18.20.0",
-    "npm": "^6"
+    "node": "^24.18.0",
+    "npm": "^11"
   },
   "devDependencies": {
     "@apollo/client": "^3.14.0",
     "@babel/cli": "^7.21.0",
     "@babel/eslint-parser": "^7.21.3",
-    "@zimbra/eslint-config": "^2.0.0",
+    "@zimbra/eslint-config": "2.1.1-PREAPPS-9557.8e1d3e2.0",
+    "@zimbra/preact-i18n": "2.4.1-PREAPPS-9557.25a994a.0",
     "dompurify": "^3.3.2",
     "eslint": "^9.39.4",
     "graphql": "^16.9.0",
@@ -63,9 +64,8 @@
     "mockery": "^2.1.0",
     "moment": "^2.29.4",
     "preact": "^10.28.2",
-    "@zimbra/preact-i18n": "beta",
     "preact-render-to-string": "^5.2.0",
-    "preact-router": "github:zimbra/preact-router#4.1.2_base_path_support",
+    "preact-router": "github:zimbra/preact-router#PREAPPS-9557",
     "react-redux": "^8.0.5",
     "redux-actions": "^3.0.3",
     "rimraf": "^5.0.0"
