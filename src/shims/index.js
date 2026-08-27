@@ -22,7 +22,6 @@ exports.SHIMMED_MODULES = [
 	'redux-actions',
 	'moment',
 	'dompurify',
-	'preact-pwa-install',
 	'@zimbra/preact-i18n',
 	'preact-render-to-string',
 	'preact-markup',
@@ -35,6 +34,7 @@ exports.SHIMMED_MODULES = [
 	'@zimbra-client/graphql',
 	'@zimbra-client/enhancers',
 	'@zimbra-client/constants',
+	'@zimbra-client/pwa-utils',
 	['@zimbra-client/hooks', 'graphql']
 ];
 

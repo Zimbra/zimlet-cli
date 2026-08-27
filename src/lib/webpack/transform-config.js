@@ -1,6 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
 
 const defaultConfig = './zimlet.config.js';
 
@@ -14,7 +15,11 @@ export default function transformConfig(env, config) {
 		return;
 	}
 
-	const requireSync = createRequire(import.meta.url);
+	const contextUrl = typeof import.meta !== 'undefined' && import.meta.url
+		? import.meta.url
+		: pathToFileURL(__filename).href;
+
+	const requireSync = createRequire(contextUrl);
 
 	try {
 		const resolvedPath = requireSync.resolve(transformerPath);
