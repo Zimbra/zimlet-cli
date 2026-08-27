@@ -45,6 +45,11 @@ mockery.registerMock('@zimbra-client/util', {
 	withProps: 1
 });
 
+mockery.registerMock('@zimbra-client/pwa-utils', {
+	awaitInstallPrompt: 1,
+	isStandalone: 1
+});
+
 mockery.registerMock('@zimbra-client/browser', {
 	openExternalBrowser: 1
 });
