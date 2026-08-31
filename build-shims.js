@@ -205,7 +205,6 @@ mockery.registerMock('@zimbra-client/components', {
 	AppointmentEdit: 1,
 	ModalDrawer: 1,
 	ModalDrawerToolbar: 1,
-	BackArrow: 1,
 	Select: 1,
 	NakedButton: 1,
 	TextInput: 1,
