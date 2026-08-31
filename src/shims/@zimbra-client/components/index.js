@@ -31,7 +31,6 @@ export const HelpButton = wrap('HelpButton');
 export const AppointmentEdit = wrap('AppointmentEdit');
 export const ModalDrawer = wrap('ModalDrawer');
 export const ModalDrawerToolbar = wrap('ModalDrawerToolbar');
-export const BackArrow = wrap('BackArrow');
 export const Select = wrap('Select');
 export const NakedButton = wrap('NakedButton');
 export const TextInput = wrap('TextInput');
