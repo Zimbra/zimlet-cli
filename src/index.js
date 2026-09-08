@@ -193,6 +193,7 @@ export function configure(env) {
 			modules: [
 				path.resolve(__dirname, 'loaders'),
 				path.resolve(__dirname, '..', 'node_modules'),
+				path.resolve(__dirname, '../..', 'node_modules'),
 				path.resolve(cwd, 'node_modules')
 			]
 		},
