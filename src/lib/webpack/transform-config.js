@@ -26,7 +26,7 @@ export default function transformConfig(env, config) {
 		if (requireSync.cache[resolvedPath]) {
 			delete requireSync.cache[resolvedPath];
 		}
-		
+
 		const m = requireSync(transformerPath);
 		const transformer = (m && m.default) || m;
 
