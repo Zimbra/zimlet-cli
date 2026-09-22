@@ -51,17 +51,17 @@ commands:
 restore-dependencies-cache: &restore-dependencies-cache
   restore_cache:
     keys:
-      - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
+      - v2-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
       # fallback to using the cache from the same branch
-      - v1-dependencies-{{ .Branch }}-
+      - v2-dependencies-{{ .Branch }}-
       # fallback to using the latest cache if no exact match is found
-      - v1-dependencies-
+      - v2-dependencies-
 
 save-dependencies-cache: &save-dependencies-cache
   save_cache:
     paths:
       - node_modules
-    key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
+    key: v2-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
 
 persist-workspace: &persist-workspace
   persist_to_workspace:
@@ -83,12 +83,12 @@ jobs:
       - checkout
 
       # # Download cached dependencies
-      # - *restore-dependencies-cache
+      - *restore-dependencies-cache
 
       # install dependencies
       - run: npm install --no-audit
 
-      # - *save-dependencies-cache
+      - *save-dependencies-cache
 
       - *persist-workspace
 
@@ -97,7 +97,7 @@ jobs:
 
     steps:
       - *attach-workspace
-      # - *restore-dependencies-cache
+      - *restore-dependencies-cache
       - run: npm test
       - remove-node-modules
       - *persist-workspace
