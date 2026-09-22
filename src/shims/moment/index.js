@@ -11,6 +11,7 @@ export const suppressDeprecationWarnings = wrap('suppressDeprecationWarnings');
 export const deprecationHandler = wrap('deprecationHandler');
 export const parseTwoDigitYear = wrap('parseTwoDigitYear');
 export const createFromInputFallback = wrap('createFromInputFallback');
+export const _getDefaultDateParts = wrap('_getDefaultDateParts');
 export const ISO_8601 = wrap('ISO_8601');
 export const RFC_2822 = wrap('RFC_2822');
 export const updateOffset = wrap('updateOffset');
