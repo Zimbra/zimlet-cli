@@ -14,6 +14,7 @@ export const Text = wrap('Text');
 export default wrap('default');
 export const intl = wrap('intl');
 export const translate = wrap('translate');
+export const unsafeHtml = wrap('unsafeHtml');
 export const useText = wrap('useText');
 export const withText = wrap('withText');
 
