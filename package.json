@@ -4,7 +4,7 @@
   "description": "Develop, Build, and Package Zimbra X compatible zimlets for development and production.",
   "main": "dist/index.js",
   "bin": {
-    "zimlet": "./dist/cli.js"
+    "zimlet": "dist/cli.js"
   },
   "scripts": {
     "build": "npm run build:shims && npm run build:src",
@@ -29,7 +29,7 @@
   "devDependencies": {
     "@apollo/client": "^3.14.0",
     "@zimbra/eslint-config": "^3.0.0",
-    "@zimbra/preact-i18n": "^3.0.0",
+    "@zimbra/preact-i18n": "^4.0.0",
     "dompurify": "^3.3.2",
     "eslint": "^9.39.4",
     "graphql": "^16.9.0",
