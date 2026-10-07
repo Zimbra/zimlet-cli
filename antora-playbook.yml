@@ -1,0 +1,22 @@
+site:
+  title: Local Docs Preview
+  url: 'https://zimbra.github.io/zimlet-cli' # For SEO
+  start_page: documentation::home.adoc
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: documentation
+      worktrees: true
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+
+antora:
+  extensions:
+    - require: '@antora/lunr-extension' #
+      index_latest_only: true
+      index_by_heading: true
+
+output:
+  dir: ./docs

@@ -3,3 +3,10 @@ dist
 npm-debug.log
 /node_modules
 .DS_Store
+*.pdf
+Zimbra Zimlet Development Guide.docx
+~$mbra Zimlet Development Guide.docx
+old-docs
+local-docs
+docs
+*.md

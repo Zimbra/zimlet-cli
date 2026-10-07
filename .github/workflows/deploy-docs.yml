@@ -1,0 +1,71 @@
+name: Build and deploy documentation
+run-name: Build and deploy documentation
+
+on:
+  push:
+    paths:
+      - 'antora-playbook.yml'
+      - '**/antora.yml'
+      - 'documentation/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-docs.yml'
+  pull_request:
+    paths:
+      - 'antora-playbook.yml'
+      - '**/antora.yml'
+      - 'documentation/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Antora site
+        run: npx antora antora-playbook.yml
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

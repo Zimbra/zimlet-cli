@@ -1,0 +1,12 @@
+zimlet watch
+
+Start a development server
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --config   Path to a custom config file
+                                        [string] [default: "./zimlet.config.js"]
+  --port     Port of dev server                         [number] [default: 8081]
+  --https    Protocol of dev server. https if true, http if false
+                                                       [boolean] [default: true]

@@ -1,0 +1,9 @@
+// :drift-kind: navigation
+// :drift-topics: page listing and navigation labels
+// :drift-evidence: docs/modules/ROOT/pages/home.adoc, docs/modules/ROOT/pages/cli-commands.adoc, docs/modules/ROOT/pages/routing.adoc
+// :drift-manual-review: confirm navigation labels and ordering match the intended documentation structure
+
+* xref:home.adoc[Home]
+* xref:cli-commands.adoc[CLI commands]
+* xref:routing.adoc[Routing]
+* xref:zimlet-slots.adoc[Zimlet Slots]

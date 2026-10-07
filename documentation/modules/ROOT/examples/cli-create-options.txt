@@ -1,0 +1,15 @@
+zimlet create [template] [dest]
+
+Create a new zimlet.
+
+Options:
+  --help         Show help                                             [boolean]
+  --cwd          A directory to use instead of $PWD.              [default: "."]
+  --name         The zimlet's name
+  --force, -f    Force `dest` directory to created if it already exists; will
+                 overwrite!                           [boolean] [default: false]
+  --yarn         Install with `yarn` instead of `npm` [boolean] [default: false]
+  --git          Initialize a `git` repository        [boolean] [default: false]
+  --install, -i  Install dependencies                  [boolean] [default: true]
+  --template     Remote template to clone (user/repo#tag)
+  --dest         Directory to create the zimlet

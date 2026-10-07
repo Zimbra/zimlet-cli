@@ -27,6 +27,9 @@
     "npm": "^11"
   },
   "devDependencies": {
+    "@antora/cli": "^3.2.1",
+    "@antora/lunr-extension": "^1.0.0-alpha.13",
+    "@antora/site-generator-default": "^3.2.1",
     "@apollo/client": "^3.14.0",
     "@zimbra/eslint-config": "^3.0.0",
     "@zimbra/preact-i18n": "^3.0.0",

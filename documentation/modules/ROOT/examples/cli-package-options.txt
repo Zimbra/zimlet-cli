@@ -1,0 +1,16 @@
+zimlet package
+
+Package a zimlet for deployment
+
+Options:
+  --version              Show version number                           [boolean]
+  --help                 Show help                                     [boolean]
+  --name, -n             Globally unique name for your zimlet, e.g.
+                         "com_mycompany_examplezimlet"                [required]
+  --pkg-version, -v      Version for your zimlet, e.g. "1.0.1"        [required]
+  --description, --desc  Description for your zimlet                  [required]
+  --zimbraXVersion       https://semver.org version range of Zimbra X that the
+                         Zimlet is compatible with.         [default: ">=1.0.0"]
+  --builddir, -b         Source directory of built artifacts to publish
+                                                            [default: "./build"]
+  --dest, -d             Directory for packaged artifacts       [default: ./pkg]

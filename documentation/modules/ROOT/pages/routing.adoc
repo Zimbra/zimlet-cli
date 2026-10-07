@@ -1,0 +1,25 @@
+= Routing
+:drift-kind: content-page
+:drift-topics: preact-router shim, URL navigation, slot::routes registration
+:drift-evidence: package.json, src/shims/preact-router/index.js, docs/modules/ROOT/examples/routing.js, docs/modules/ROOT/examples/routing-register.jsx
+:drift-manual-review: runtime route registration and URL behavior in the Zimbra host app, linked external guide accuracy
+
+The `preact-router` shim exposes the routing library from Zimbra to Zimlets. The idea of Router is to keep the UI in sync with the URL.
+
+Here is an example that mimics an HTML Link in Preact:
+
+New code
+
+[source,js]
+----
+include::example$routing.js[tag=zimlet-routing]
+----
+
+To add the `/helloworld` location and load a component into it, register it like this:
+
+[source,jsx]
+----
+include::example$routing-register.jsx[]
+----
+
+See https://github.com/Zimbra/zm-zimlet-guide for a full example.

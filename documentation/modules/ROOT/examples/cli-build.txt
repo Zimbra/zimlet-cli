@@ -1,0 +1,10 @@
+zimlet build
+
+Compile a zimlet
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --config   Path to a custom config file
+                                        [string] [default: "./zimlet.config.js"]
+  --dest     Directory for build artifacts           [string] [default: ./build]

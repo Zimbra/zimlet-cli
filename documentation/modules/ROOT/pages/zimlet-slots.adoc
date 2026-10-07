@@ -1,0 +1,2236 @@
+= Zimlet Extension Point Developer Guide
+:toc:
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+
+This guide describes the named `ZimletSlot` extension points and direct `invokePlugin` calls available to Zimlets in the Modern Web client. Each extension point has a stable section link, a concise placement description, and a shared description of its plugin-facing contract.
+
+The former JSON inventory at `zimlet-slot-catalog.json` has not yet been migrated. Until that migration is requested, this AsciiDoc guide is the format for new and updated extension-point documentation; do not infer missing contracts from the legacy inventory.
+
+The source scanner can scaffold sections from statically discovered callsites. Scanner-created sections are explicitly marked incomplete until their plugin contract and placement have been traced.
+
+== Host integration model
+
+`ZimletSlot` obtains the Zimlets manager from context and invokes the registry key `slot::<name>`. The public slot name in this guide omits the `slot::` prefix. Unless the host supplies an explicit `props` object, the remaining slot props are the plugin payload. Function-valued handler results are rendered as Preact elements with that payload; other results are rendered as results. A function child receives the complete result array and replaces default rendering. Handler results are not awaited.
+
+Direct `invokePlugin` calls are separate extension points. Their exact first argument is the invocation name; subsequent arguments and result use are documented in order.
+
+For further host implementation detail, see the link:../rules/zimlet-slot-catalog.md[ZimletSlot and invokePlugin contract].
+
+== Using this guide
+
+Each named slot or direct invocation has its own section. Use the section's stable anchor to link directly to it. The section metadata identifies its exact public name, extension kind, source location or locations, feature/root component, and direct rendering/calling parent.
+
+Slot sections explain the meaning of each shared plugin prop once. They do not list every placement's runtime prop value. When a placement adds a prop or has a materially different contract, the placement description calls out that difference. Source paths use repository-relative locations and 1-based line numbers.
+
+== Named ZimletSlot extension points
+
+The inventory from the legacy JSON file has not been migrated yet.
+
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: compose-attachment-action-menu
+:source-locations: src/components/action-menu-compose-attachments/index.js:221
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-compose-attachment-action-menu]]
+=== Slot: `compose-attachment-action-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: action-menu-contacts-more
+:source-locations: src/components/action-menu-contact-overflow/index.js:46
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-action-menu-contacts-more]]
+=== Slot: `action-menu-contacts-more`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-recall-menu-option
+:source-locations: src/components/action-menu-mail-more/index.js:128; src/components/action-menu-mail-overflow/index.js:222; src/components/context-menus/index.js:567
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-recall-menu-option]]
+=== Slot: `mail-recall-menu-option`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-overflow-menu-option
+:source-locations: src/components/action-menu-mail-overflow/index.js:227
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-overflow-menu-option]]
+=== Slot: `mail-overflow-menu-option`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: settings-dropdown-item
+:source-locations: src/components/action-menu-settings/index.js:41
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-settings-dropdown-item]]
+=== Slot: `settings-dropdown-item`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: settings-dropdown-item-end
+:source-locations: src/components/action-menu-settings/index.js:72
+:placement-area: Settings & More menu
+[[zimlet-slot-settings-dropdown-item-end]]
+=== Slot: `settings-dropdown-item-end`
+
+==== Behavior
+Adds Zimlet content after the Help item in the Settings & More dropdown, before the divider separating it from theme controls. The contribution appears when the dropdown is open and is available whether or not the optional Settings and Language items are shown.
+
+==== Plugin props
+* `url` (string, inferred) — the resolved Help destination, shared with the adjacent Help item. It uses the Modern Help URL when available, otherwise the configured help path, and falls back to `/`.
+
+==== Placement
+Settings > Settings & More menu.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: gear-menu
+:source-locations: src/components/action-menu-settings/index.js:82
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-gear-menu]]
+=== Slot: `gear-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-300-250-top
+:source-locations: src/components/ad-slots/index.js:21
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-300-250-top]]
+=== Slot: `adSlot-300-250-top`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-300-250-bottom
+:source-locations: src/components/ad-slots/index.js:22
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-300-250-bottom]]
+=== Slot: `adSlot-300-250-bottom`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-news
+:source-locations: src/components/ad-slots/index.js:23
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-news]]
+=== Slot: `adSlot-news`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-160-600
+:source-locations: src/components/ad-slots/index.js:24
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-160-600]]
+=== Slot: `adSlot-160-600`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-300-600
+:source-locations: src/components/ad-slots/index.js:25
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-300-600]]
+=== Slot: `adSlot-300-600`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-left-300-250
+:source-locations: src/components/ad-slots/index.js:38
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-left-300-250]]
+=== Slot: `adSlot-left-300-250`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-left-180-150
+:source-locations: src/components/ad-slots/index.js:43
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-left-180-150]]
+=== Slot: `adSlot-left-180-150`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-left-120-90
+:source-locations: src/components/ad-slots/index.js:48
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-left-120-90]]
+=== Slot: `adSlot-left-120-90`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-adhesion-320-50
+:source-locations: src/components/ad-slots/index.js:66
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-adhesion-320-50]]
+=== Slot: `adSlot-adhesion-320-50`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: adSlot-adhesion-728-90
+:source-locations: src/components/ad-slots/index.js:70
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-adslot-adhesion-728-90]]
+=== Slot: `adSlot-adhesion-728-90`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: action-menu-mail-more
+:source-locations: src/components/additional-context-menu-zimlet.js:14
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-action-menu-mail-more]]
+=== Slot: `action-menu-mail-more`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: address-pill
+:source-locations: src/components/address-field/recipient-address.js:74; src/components/address-list/sender.js:64
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-address-pill]]
+=== Slot: `address-pill`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: sender-list-item
+:source-locations: src/components/address-field/recipient-address.js:74; src/components/address-list/recipient.js:17
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-sender-list-item]]
+=== Slot: `sender-list-item`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: contact-input-token:button-inner-content
+:source-locations: src/components/address-field/recipient-address.js:91
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-contact-input-token-button-inner-content]]
+=== Slot: `contact-input-token:button-inner-content`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: vertical-menu-item
+:source-locations: src/components/app-navigation/index.js:178
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-vertical-menu-item]]
+=== Slot: `vertical-menu-item`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: menu
+:source-locations: src/components/app-navigation/tab-navigation.js:120; src/components/sidebar/index.js:214
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-menu]]
+=== Slot: `menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: app
+:source-locations: src/components/app/app.js:900
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-app]]
+=== Slot: `app`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: email-attachment-action
+:source-locations: src/components/attachment-grid/item.js:223
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-email-attachment-action]]
+=== Slot: `email-attachment-action`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: attachment-single-action
+:source-locations: src/components/attachment-grid/save-to-modal-dialog.js:32
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-attachment-single-action]]
+=== Slot: `attachment-single-action`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: attachment-multi-action
+:source-locations: src/components/attachment-grid/save-to-modal-dialog.js:41
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-attachment-multi-action]]
+=== Slot: `attachment-multi-action`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: attachment-viewer
+:source-locations: src/components/attachment-viewer/viewer.js:180
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-attachment-viewer]]
+=== Slot: `attachment-viewer`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: action-menu-briefcase-more
+:source-locations: src/components/briefcase/pane/action-menu-more.js:85
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-action-menu-briefcase-more]]
+=== Slot: `action-menu-briefcase-more`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: briefcase-document-header-action
+:source-locations: src/components/briefcase/pane/header-actions.js:147; src/components/briefcase/pane/header-actions.js:167
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-briefcase-document-header-action]]
+=== Slot: `briefcase-document-header-action`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: briefcase-upload-button
+:source-locations: src/components/briefcase/sidebar/upload-button/index.js:172
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-briefcase-upload-button]]
+=== Slot: `briefcase-upload-button`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: top-mail-ad-item
+:source-locations: src/components/calendar-pane/index.js:11; src/components/calendar/index.js:2909; src/components/calendar/index.js:2965; src/components/smart-list/index.js:473; src/components/smart-list/index.js:577; src/screens/mail/index.js:1748
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-top-mail-ad-item]]
+=== Slot: `top-mail-ad-item`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: attendees-chooser-attendees
+:source-locations: src/components/calendar/appointment-edit/components/attendees-availability-panel.js:136
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-attendees-chooser-attendees]]
+=== Slot: `attendees-chooser-attendees`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-appointment-edit-location
+:source-locations: src/components/calendar/appointment-edit/components/resource-chooser.js:173
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-appointment-edit-location]]
+=== Slot: `calendar-appointment-edit-location`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-appointment-edit-video-call
+:source-locations: src/components/calendar/appointment-edit/components/resource-chooser.js:224; src/components/calendar/quick-add-event-form/index.js:315
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-appointment-edit-video-call]]
+=== Slot: `calendar-appointment-edit-video-call`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-subscription-list
+:source-locations: src/components/calendar/calendar-list/index.js:106
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-subscription-list]]
+=== Slot: `calendar-subscription-list`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-folder-list-end
+:source-locations: src/components/calendar/calendar-list/index.js:440
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-folder-list-end]]
+=== Slot: `calendar-folder-list-end`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: action-menu-event-context-menu
+:source-locations: src/components/calendar/event-action-group.js:113
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-action-menu-event-context-menu]]
+=== Slot: `action-menu-event-context-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: action-menu-event-more
+:source-locations: src/components/calendar/event-action-group.js:115
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-action-menu-event-more]]
+=== Slot: `action-menu-event-more`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-body-end
+:source-locations: src/components/calendar/index.js:3006
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-body-end]]
+=== Slot: `calendar-body-end`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-subscription-modal-flow
+:source-locations: src/components/calendar/index.js:3011
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-subscription-modal-flow]]
+=== Slot: `calendar-subscription-modal-flow`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-context-add-holiday
+:source-locations: src/components/calendar/toolbar/index.js:195
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-context-add-holiday]]
+=== Slot: `calendar-context-add-holiday`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-composer-toolbar-send
+:source-locations: src/components/composer-toolbar/index.js:63; src/components/composer/footer/index.js:58
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-composer-toolbar-send]]
+=== Slot: `mail-composer-toolbar-send`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: from-options
+:source-locations: src/components/composer/from-wrapper/index.js:45
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-from-options]]
+=== Slot: `from-options`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-header-wrapper
+:source-locations: src/components/composer/header-wrapper/index.js:53; src/components/composer/header-wrapper/read-only-header.js:34
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-header-wrapper]]
+=== Slot: `mail-header-wrapper`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: compose-sender-options-menu
+:source-locations: src/components/composer/sender-options-wrapper/sender-options/index.js:223
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-compose-sender-options-menu]]
+=== Slot: `compose-sender-options-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-composer-smime-dropdown
+:source-locations: src/components/composer/smime-wrapper/index.js:98
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-composer-smime-dropdown]]
+=== Slot: `mail-composer-smime-dropdown`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: contact-hover-card-details
+:source-locations: src/components/contact-hover-card/index.js:295
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-contact-hover-card-details]]
+=== Slot: `contact-hover-card-details`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: contact-card-item
+:source-locations: src/components/contacts/contact-card.js:329
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-contact-card-item]]
+=== Slot: `contact-card-item`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: contact-card-messages-and-files
+:source-locations: src/components/contacts/contact-details.js:160
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-contact-card-messages-and-files]]
+=== Slot: `contact-card-messages-and-files`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: contact-add-server-smime-cert
+:source-locations: src/components/contacts/editor/index.js:932
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-contact-add-server-smime-cert]]
+=== Slot: `contact-add-server-smime-cert`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: action-menu-contact-list
+:source-locations: src/components/contacts/list.js:388
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-action-menu-contact-list]]
+=== Slot: `action-menu-contact-list`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: action-menu-restore-contacts
+:source-locations: src/components/contacts/list.js:389
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-action-menu-restore-contacts]]
+=== Slot: `action-menu-restore-contacts`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-folder-context-menu
+:source-locations: src/components/context-menus/index.js:843
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-folder-context-menu]]
+=== Slot: `mail-folder-context-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-shared-folder-context-menu
+:source-locations: src/components/context-menus/index.js:848
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-shared-folder-context-menu]]
+=== Slot: `mail-shared-folder-context-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-subscription-menu
+:source-locations: src/components/context-menus/index.js:870; src/components/context-menus/index.js:1147
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-subscription-menu]]
+=== Slot: `calendar-subscription-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: briefcase-document-context-menu
+:source-locations: src/components/context-menus/index.js:1638; src/components/context-menus/index.js:1659
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-briefcase-document-context-menu]]
+=== Slot: `briefcase-document-context-menu`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: custom-fonts
+:source-locations: src/components/custom-fonts-wrapper/index.js:11
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-custom-fonts]]
+=== Slot: `custom-fonts`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: additional-filter-settings
+:source-locations: src/components/filters/filter-modal/index.js:414; src/components/settings/filters-settings/index.js:685
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-additional-filter-settings]]
+=== Slot: `additional-filter-settings`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: folder-list-middle
+:source-locations: src/components/folder-list/index.js:974
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-folder-list-middle]]
+=== Slot: `folder-list-middle`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: folder-group
+:source-locations: src/components/folder-list/index.js:1021
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-folder-group]]
+=== Slot: `folder-group`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: folder-list-end
+:source-locations: src/components/folder-list/index.js:1149
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-folder-list-end]]
+=== Slot: `folder-list-end`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: top-mail-generic-slot
+:source-locations: src/components/group-by-wrapper/index.js:152; src/screens/mail/index.js:1749
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-top-mail-generic-slot]]
+=== Slot: `top-mail-generic-slot`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: header-menu-item
+:source-locations: src/components/header-actions/index.js:321
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-header-menu-item]]
+=== Slot: `header-menu-item`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: change-password-description
+:source-locations: src/components/login/change-password-form.js:289
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-change-password-description]]
+=== Slot: `change-password-description`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: header-action-menu-item
+:source-locations: src/components/mail-actions/index.js:350
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-header-action-menu-item]]
+=== Slot: `header-action-menu-item`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-sender
+:source-locations: src/components/mail-list-item/list-item-email-addresses/index.js:12
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-sender]]
+=== Slot: `mail-sender`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-pane
+:source-locations: src/components/mail-pane/index.js:2278
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-pane]]
+=== Slot: `mail-pane`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-preview-pane
+:source-locations: src/components/mail-pane/index.js:2503
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-preview-pane]]
+=== Slot: `mail-preview-pane`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: mail-sidebar-footer
+:source-locations: src/components/mail-sidebar/index.js:632
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-mail-sidebar-footer]]
+=== Slot: `mail-sidebar-footer`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: rightbar-50px
+:source-locations: src/components/right-bar-slot/index.js:13
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-rightbar-50px]]
+=== Slot: `rightbar-50px`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: rightside-zimlet-slot
+:source-locations: src/components/right-side-zimlet-slot/index.js:11
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-rightside-zimlet-slot]]
+=== Slot: `rightside-zimlet-slot`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: searchInputPlaceholder
+:source-locations: src/components/search-input/index.js:424
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-searchinputplaceholder]]
+=== Slot: `searchInputPlaceholder`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: web-search-toggle
+:source-locations: src/components/search/index.js:338
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-web-search-toggle]]
+=== Slot: `web-search-toggle`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: web-search
+:source-locations: src/components/search/index.js:344
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-web-search]]
+=== Slot: `web-search`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: calendar-and-reminders-video-call-preferences
+:source-locations: src/components/settings/calendar-and-reminders-settings/index.js:381
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-calendar-and-reminders-video-call-preferences]]
+=== Slot: `calendar-and-reminders-video-call-preferences`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: filter-options
+:source-locations: src/components/settings/filters-settings/index.js:516
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-filter-options]]
+=== Slot: `filter-options`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: set-default-client
+:source-locations: src/components/settings/general-settings/index.js:75
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-set-default-client]]
+=== Slot: `set-default-client`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: general-setting-bottom
+:source-locations: src/components/settings/general-settings/index.js:90
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-general-setting-bottom]]
+=== Slot: `general-setting-bottom`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: additional-signature-settings
+:source-locations: src/components/settings/signatures-settings/index.js:162
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-additional-signature-settings]]
+=== Slot: `additional-signature-settings`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: writing-email-post-composer-settings
+:source-locations: src/components/settings/writing-email-settings/index.js:327
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-writing-email-post-composer-settings]]
+=== Slot: `writing-email-post-composer-settings`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: writting-email-additional-settings
+:source-locations: src/components/settings/writing-email-settings/index.js:415
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-writting-email-additional-settings]]
+=== Slot: `writting-email-additional-settings`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: composer
+:source-locations: src/components/tinymce-composer/tinymce-composer.js:805
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-composer]]
+=== Slot: `composer`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: message-smime-status
+:source-locations: src/components/viewer/responsive-viewer/index.js:331
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-message-smime-status]]
+=== Slot: `message-smime-status`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: message-body-top
+:source-locations: src/components/viewer/responsive-viewer/index.js:473
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-message-body-top]]
+=== Slot: `message-body-top`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: desktop-viewer-footer
+:source-locations: src/components/viewer/responsive-viewer/index.js:550
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-desktop-viewer-footer]]
+=== Slot: `desktop-viewer-footer`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: message-header-additional-buttons
+:source-locations: src/components/viewer/responsive-viewer/index.js:643
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-message-header-additional-buttons]]
+=== Slot: `message-header-additional-buttons`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: composer-toolbar-start
+:source-locations: src/components/zmeditor-toolbar/index.js:14
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-composer-toolbar-start]]
+=== Slot: `composer-toolbar-start`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: composer-toolbar-end
+:source-locations: src/components/zmeditor-toolbar/index.js:20
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-composer-toolbar-end]]
+=== Slot: `composer-toolbar-end`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: zimlet-slot
+:zimlet-slot-name: routes
+:source-locations: src/routes/index.js:121
+:placement-area: unclassified
+:contract-status: incomplete
+[[zimlet-slot-routes]]
+=== Slot: `routes`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Plugin props
+Trace the host payload and explain the meaning and type of each plugin-facing prop.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+== Direct invokePlugin extension points
+
+The inventory from the legacy JSON file has not been migrated yet.
+
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:eventExcerptProcessor
+:source-locations: src/components/calendar/event-details/event-details.js:138
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-eventexcerptprocessor]]
+=== Direct invocation: `messageProcessors:eventExcerptProcessor`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:eventLocationProcessor
+:source-locations: src/components/calendar/event-details/event-details.js:153; src/components/event-invitation/index.js:273
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-eventlocationprocessor]]
+=== Direct invocation: `messageProcessors:eventLocationProcessor`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:eventNotesProcessor
+:source-locations: src/components/event-invitation/index.js:259
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-eventnotesprocessor]]
+=== Direct invocation: `messageProcessors:eventNotesProcessor`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:attachPopover
+:source-locations: src/components/html-viewer/index.js:40
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-attachpopover]]
+=== Direct invocation: `messageProcessors:attachPopover`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:dateInfoPopover
+:source-locations: src/components/html-viewer/index.js:119
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-dateinfopopover]]
+=== Direct invocation: `messageProcessors:dateInfoPopover`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:emailProcessor
+:source-locations: src/components/html-viewer/index.js:197; src/components/viewer/responsive-viewer/index.js:452
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-emailprocessor]]
+=== Direct invocation: `messageProcessors:emailProcessor`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:mailPrintProcessor
+:source-locations: src/components/mail-print/index.js:118
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-mailprintprocessor]]
+=== Direct invocation: `messageProcessors:mailPrintProcessor`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: settings
+:source-locations: src/components/settings-modal/settings-modal.js:807
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-settings]]
+=== Direct invocation: `settings`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+:extension-kind: invoke-plugin
+:plugin-invocation-name: messageProcessors:composerProcessor
+:source-locations: src/hooks/composer/body-wrapper/index.js:84
+:placement-area: unclassified
+:contract-status: incomplete
+[[plugin-invocation-messageprocessors-composerprocessor]]
+=== Direct invocation: `messageProcessors:composerProcessor`
+
+[NOTE]
+====
+**Contract status: Incomplete.** The source scanner found callsite locations but does not trace the plugin contract or user-facing placement. Replace this notice after reviewing the host behavior and product context.
+====
+
+==== Behavior
+Not yet traced. Describe the extension behavior; add only a brief high-level UI context here if it helps orient the reader.
+
+==== Arguments and result
+Trace the ordered arguments after the invocation name and explain their meanings, types, and result use.
+
+==== Placement
+Not yet classified. Identify the user-facing product area or processing context (for example, Settings menu), not implementation component names or ancestry.
+
+== Section template
+
+Use this structure when adding a fully traced slot. Use `plugin-invocation-name`, an anchor prefixed with `plugin-invocation-`, and a direct caller as `direct-parent` for a direct invocation.
+
+[source,asciidoc]
+----
+:extension-kind: zimlet-slot
+:zimlet-slot-name: exact-public-slot-name
+:source-locations: src/path/to/host.js:42
+:feature-component: FeatureOrScreen
+:direct-parent: ComponentThatRendersZimletSlot
+[[zimlet-slot-exact-public-slot-name]]
+=== `exact-public-slot-name`
+
+=== Purpose and placement behavior
+Explain what the slot contributes, where it appears, and any availability conditions.
+
+=== Plugin props
+* `propName` (declared or inferred type) — Explain its meaning to a Zimlet consumer.
+
+=== Placement
+* `FeatureOrScreen` > `ComponentThatRendersZimletSlot`: link:../../src/path/to/host.js#L42[source].
+
+=== Consumer notes
+Describe only custom render-prop children or other non-default behavior that affects consumers.
+----
+
+Do not leave template placeholders in a published extension section. If source evidence is incomplete, mark that section as incomplete and identify what remains to be traced.
