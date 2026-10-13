@@ -15,7 +15,9 @@
     "lint": "eslint --cache --config eslint.config.mjs .",
     "lint:fix": "npm run lint -- --fix",
     "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags; fi",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "build:docs": "antora --clean documentation/antora-playbook.yml",
+    "preview:docs": "serve documentation/build"
   },
   "lint-staged": {
     "*": [
@@ -27,6 +29,8 @@
     "npm": "^11"
   },
   "devDependencies": {
+    "@antora/cli": "^3.2.1",
+    "@antora/site-generator-default": "^3.2.1",
     "@apollo/client": "^3.14.0",
     "@zimbra/eslint-config": "^3.0.0",
     "@zimbra/preact-i18n": "^4.0.0",
@@ -43,7 +47,8 @@
     "preact-router": "github:zimbra/preact-router#4.1.2_base_path_support",
     "react-redux": "^8.0.5",
     "redux-actions": "^3.0.3",
-    "rimraf": "^5.0.0"
+    "rimraf": "^5.0.0",
+    "serve": "^14.2.6"
   },
   "license": "GPL-3.0",
   "dependencies": {
