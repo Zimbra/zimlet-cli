@@ -1,0 +1,19 @@
+site:
+  title: Zimlet Documentation
+  url: 'https://zimbra.github.io/zimlet-cli'
+  start_page: documentation::index.adoc
+content:
+  edit_url: ~
+  sources:
+    - url: ./../
+      branches: HEAD
+      start_path: documentation
+      edit_url: ~
+      #worktrees: true # Used for local testing
+ui:
+  bundle:
+    url: ./ui-bundle.zip
+  supplemental_files: ./supplemental-ui
+
+output:
+  dir: ./build
