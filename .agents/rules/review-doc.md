@@ -6,7 +6,7 @@ These rules say how to judge a page and how to report. The writing rules are in 
 
 - Check whether the page is true, first. A page that reads well and is wrong fails.
 - Do not trust the writer's summary, ledger or evidence. Audit the claims yourself.
-- Do not edit the page, its examples or its images. Report findings; the writer fixes them. The only file you may change is the plan, to set the page status (section 5).
+- Do not edit the page, its examples or its images. Report findings; the writer fixes them. The only files you may change are the plan, to set the page status (section 1), and [unverified-claims.md](../plans/unverified-claims.md), to add or update rows as section 2 describes.
 - Review the whole page, or only the sections you are given, and anything those sections depend on.
 - Report only what you confirmed. Say what you could not check instead of guessing.
 
@@ -16,14 +16,16 @@ Audit every claim on the page with the method in [write-doc.md](./write-doc.md) 
 
 - List every claim in a ledger: claim, kind, evidence, status.
 - Read the code for each statement about behaviour. Run each command and example with the skill.
-- Compare each `Unverified` admonition with the ledger. A claim you could run must not be marked `Unverified`. A claim you could not run needs its own admonition with a `To verify:` step (write-doc.md section 2).
+- Compare each row in [unverified-claims.md](../plans/unverified-claims.md) for the page with the ledger. A claim you could run must not stay `Unverified`: run it and set the row to `Verified` or `Disproved`, with the evidence. A claim you could not run needs its own row with a section id, a `To verify` step and a severity (write-doc.md section 2). Add a row when you find an unverifiable claim that has none.
+- Check that the page has no `Unverified` admonition or other verification note, and that each row's section id exists in the page.
 
 | Ledger result | Severity |
 |---|---|
 | `Contradicted`: the code or a run shows the page is wrong | Blocking |
-| `Cannot verify` and no `Unverified` admonition on the page | Blocking |
-| `Cannot verify` with its own admonition and `To verify:` step | None. List it in the report. |
-| `Verified (run)` or `Verified (code)`, but the page marks that same claim `Unverified` | Minor |
+| `Cannot verify` and no row in `unverified-claims.md` | Blocking |
+| `Cannot verify` with its own complete row (section id, `To verify`, severity) | None. List it in the report. |
+| `Verified (run)` or `Verified (code)`, but its row is still `Unverified` | Minor |
+| A row with a missing or wrong section id, or an `Unverified` admonition left in the page | Minor |
 | An example that fails, or is not the file the page shows | Blocking |
 
 ## 3. Other checks
@@ -37,7 +39,8 @@ Judge the page against these sections of [write-doc.md](./write-doc.md). Each po
 | Diagrams and images follow the layout, size and alt text rules, and are readable in the rendered page | section 5 |
 | The page meets the accessibility rules | section 6 |
 | Writing, terms, scope, links, the next-step link, and no secrets, private names or estimates | section 2 |
-| The page matches its section list and brief in [zimlet-documentation-plan.md](../plans/zimlet-documentation-plan.md), and the purpose of its part | section 2 ("Match the page to its part") |
+| The page follows the style rules: outcome first, no talk about the page, no prose restating a diagram or example, no internal names, short sentences, at most one admonition per section, concept pages about one screen | section 9 |
+| The page matches its entry (sections and brief) in [zimlet-documentation-plan.md](../plans/zimlet-documentation-plan.md), and the purpose of its part | section 2 ("Match the page to its part") |
 
 Site checks, done in the preview:
 
@@ -49,7 +52,7 @@ Site checks, done in the preview:
 
 | Level | Meaning | Examples |
 |---|---|---|
-| Blocking | The page must not be marked `Reviewed` with this present. | A contradicted or unflagged unverifiable claim; a failing example; a build error or warning; a broken, redirecting or local link; an unreadable diagram; a failed accessibility rule; content from a later part; a secret or a private name. |
+| Blocking | The page must not be marked `Reviewed` with this present. | A contradicted claim, or an unverifiable claim with no row in the tracker; a failing example; a build error or warning; a broken, redirecting or local link; an unreadable diagram; a failed accessibility rule; content from a later part; a secret or a private name. |
 | Minor | The page works but a rule is not fully met. | Wording, a missing caption, an overlong example, a term used two ways. |
 
 When unsure between the two levels, choose Blocking.
@@ -61,11 +64,12 @@ Give the report in this order:
 1. A header line: page id, scope, date and the verdict (`Pass` or `Fail`).
 2. The claim ledger.
 3. What you ran: each command with its result, and the checks you could not run and why.
-4. A table of findings: number, severity, location (file and section heading), what is wrong, evidence and the fix to apply. Write "None" if there are none.
+4. The unverified claims found or touched in this review: the rows you added, closed or left open, with claim id, section id, severity and status.
+5. A table of findings: number, severity, location (file and section heading), what is wrong, evidence and the fix to apply. Write "None" if there are none.
 
 Verdict and status:
 
 - `Pass` means no Blocking finding. Set the page to `Reviewed` in section 1 of the plan. Minor findings stay in the report.
 - `Fail` means at least one Blocking finding. Leave the page as `Drafted`. If it was `Reviewed`, set it back to `Drafted`.
 - Only a review sets `Reviewed`. A writer never does.
-- Do not set a phase to `Done`; phase status follows the plan's section 7.
+- Do not set a phase to `Done`; phase status follows the plan's section 6.
