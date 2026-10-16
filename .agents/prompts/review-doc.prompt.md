@@ -16,5 +16,5 @@ The plan is `.agents/plans/zimlet-documentation-plan.md`. The review rules are i
 5. Start `npm run preview:docs` (use the address it prints). Open the home page, find the page's navigation entry, follow every link on the page, and check the changed text, the included examples and the images. Screenshot each diagram and image at normal zoom.
 6. Check the page against the other checks in `review-doc.md` section 3.
 7. Stop the preview and delete the scratch project.
-8. Update `.agents/plans/unverified-claims.md` for the page as `review-doc.md` section 2 describes.
+8. Update `.agents/plans/claims.md` for the page as `review-doc.md` section 2 describes.
 9. Write the report in the format of `review-doc.md` section 5, and set the status as it says. After the report, print the unverified claims found or touched in this session as a table of claim id, page and section id, claim, severity and status (added, closed or left open). Write "None" if there are none.

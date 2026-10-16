@@ -6,7 +6,7 @@ These rules say how to judge a page and how to report. The writing rules are in 
 
 - Check whether the page is true, first. A page that reads well and is wrong fails.
 - Do not trust the writer's summary, ledger or evidence. Audit the claims yourself.
-- Do not edit the page, its examples or its images. Report findings; the writer fixes them. The only files you may change are the plan, to set the page status (section 1), and [unverified-claims.md](../plans/unverified-claims.md), to add or update rows as section 2 describes.
+- Do not edit the page, its examples or its images. Report findings; the writer fixes them. The only files you may change are the plan, to set the page status (section 1), and [claims.md](../plans/claims.md), to add or update rows as section 2 describes.
 - Review the whole page, or only the sections you are given, and anything those sections depend on.
 - Report only what you confirmed. Say what you could not check instead of guessing.
 
@@ -16,13 +16,13 @@ Audit every claim on the page with the method in [write-doc.md](./write-doc.md) 
 
 - List every claim in a ledger: claim, kind, evidence, status.
 - Read the code for each statement about behaviour. Run each command and example with the skill.
-- Compare each row in [unverified-claims.md](../plans/unverified-claims.md) for the page with the ledger. A claim you could run must not stay `Unverified`: run it and set the row to `Verified` or `Disproved`, with the evidence. A claim you could not run needs its own row with a section id, a `To verify` step and a severity (write-doc.md section 2). Add a row when you find an unverifiable claim that has none.
+- Compare each row in [claims.md](../plans/claims.md) for the page with the ledger. A claim you could run must not stay `Unverified`: run it and set the row to `Verified` or `Disproved`, with the evidence. A claim you could not run needs its own row with a section id, a `To verify` step and a severity (write-doc.md section 2). Add a row when you find an unverifiable claim that has none.
 - Check that the page has no `Unverified` admonition or other verification note, and that each row's section id exists in the page.
 
 | Ledger result | Severity |
 |---|---|
 | `Contradicted`: the code or a run shows the page is wrong | Blocking |
-| `Cannot verify` and no row in `unverified-claims.md` | Blocking |
+| `Cannot verify` and no row in `claims.md` | Blocking |
 | `Cannot verify` with its own complete row (section id, `To verify`, severity) | None. List it in the report. |
 | `Verified (run)` or `Verified (code)`, but its row is still `Unverified` | Minor |
 | A row with a missing or wrong section id, or an `Unverified` admonition left in the page | Minor |

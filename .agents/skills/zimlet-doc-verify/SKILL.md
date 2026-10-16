@@ -59,4 +59,4 @@ To change what the boilerplate does, edit files in the scratch folder, not in th
 - Use a scratch folder outside the repository. Delete it when you are done. Never commit it.
 - Run on Node 24. On another version the skill returns `Cannot verify`.
 - If a result differs from the page, the reference files or the CLI's own messages, report the difference as a gap.
-- Do not record an item in `plans/unverified-claims.md` before you have tried it here.
+- Do not record an item in `plans/claims.md` before you have tried it here.

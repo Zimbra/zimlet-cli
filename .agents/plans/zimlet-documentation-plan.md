@@ -318,7 +318,7 @@ For each page, in the order of section 6:
 2. Read the page's entry in section 1: its part purpose, sections, brief and the sources it names. Follow [write-doc.md](../rules/write-doc.md) for structure, examples, diagrams and images. Apply the "one home per topic" convention (section 1.2): link to the page that owns a topic instead of repeating it.
 3. Write the page in `modules/ROOT/pages/`. Put examples in `modules/ROOT/examples/`, images in `modules/ROOT/images/` and diagrams in `modules/ROOT/images/diagrams/`.
 4. Add the page to `modules/ROOT/nav.adoc`, grouped by the parts of section 1.
-5. Verify each claim while you write, section by section, and keep the claim ledger ([write-doc.md](../rules/write-doc.md) section 7). Record what cannot be run or confirmed in [unverified-claims.md](./unverified-claims.md), one row per claim mapped to a section id; do not put verification notes in the page.
+5. Verify each claim while you write, section by section, and keep the claim ledger ([write-doc.md](../rules/write-doc.md) section 7). Record what cannot be run or confirmed in [claims.md](./claims.md), one row per claim mapped to a section id; do not put verification notes in the page.
 6. Update the page's status in section 1 to `Drafted`.
 7. Optionally run the independent `review-doc` prompt. Only a review that finds no Blocking issue sets `Reviewed`.
 
