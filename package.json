@@ -17,7 +17,7 @@
     "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then npm run -s test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags; fi",
     "prepare": "husky || true",
     "build:docs": "antora --clean documentation/antora-playbook.yml",
-    "preview:docs": "serve documentation/build"
+    "preview:docs": "serve --config ../serve.json documentation/build"
   },
   "lint-staged": {
     "*": [

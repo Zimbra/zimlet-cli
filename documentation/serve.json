@@ -1,0 +1,15 @@
+{
+  "cleanUrls": false,
+  "directoryListing": false,
+  "redirects": [
+    { "source": "/", "destination": "/documentation/index.html", "type": 302 },
+    { "source": "/documentation", "destination": "/documentation/index.html", "type": 302 },
+    { "source": "/documentation/", "destination": "/documentation/index.html", "type": 302 }
+  ],
+  "headers": [
+    {
+      "source": "**",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    }
+  ]
+}
