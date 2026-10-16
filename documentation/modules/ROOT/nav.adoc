@@ -1,1 +1,9 @@
 * xref:index.adoc[Home]
+* Getting started
+** xref:concepts.adoc[How Zimlets work]
+** xref:prerequisites.adoc[What you need before you start]
+** xref:setup-environment.adoc[Set up your machine]
+* Reference
+** xref:reference-shims.adoc[Modules, components and enhancers]
+** xref:reference-apis-hooks.adoc[APIs and hooks]
+** xref:glossary.adoc[Glossary]

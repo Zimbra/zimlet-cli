@@ -1,0 +1,247 @@
+= APIs and hooks
+
+Look up the ready-made hooks, helpers and constants that the Modern UI gives to a Zimlet. Each entry has its name, how to call it and when to use it.
+
+All names on this page come from modules that the Modern UI provides. Import them in your source files and do not add them to `package.json`. For the full list of modules, UI components and enhancers, see xref:reference-shims.adoc#module-table[Modules, components and enhancers].
+
+[#call-the-server]
+== Call the server
+
+Choose the first option that covers your need. For how to use them in a Zimlet, see xref:data-and-state.adoc[Data and state].
+
+[cols="2,3,4"]
+|===
+|Option |Use it when |How
+
+|A ready-made hook
+|A hook below already reads or changes the data you need.
+|Import the hook and call it in a component. Start here.
+
+|`context.zimbraBatchClient.jsonRequest({ name, body })`
+|No hook covers the Zimbra operation you need.
+|Pass the request `name` (for example `GetInfo`) and its `body`. The call returns a promise. Add `namespace` for a request outside the mail namespace. Calls made at about the same time are sent as one batch; add `singleRequest: true` to send one alone.
+
+|`fetch` to your own or a REST endpoint
+|The endpoint is not a Zimbra SOAP operation.
+|Build the URL from `context.zimbraOrigin`. Set `credentials: 'include'` and send the token from `csrfStorage.get()` in the `X-Zimbra-Csrf-Token` header.
+|===
+
+NOTE: When no hook covers your need, use the batch client before you write your own query.
+
+[#hooks-general]
+== Hooks for the UI and the host
+
+Import from `@zimbra-client/hooks`.
+
+[[use-client-config]]pass:[<a class="anchor" href="#use-client-config"></a>]`useClientConfig(paths)`::
+Read the client configuration. Pass a comma-separated string of dot paths. It returns an object keyed by the last part of each path. Use it instead of `context.config`, which is normally `undefined`.
+
+[[use-media-query]]pass:[<a class="anchor" href="#use-media-query"></a>]`useMediaQuery(query, propName)`::
+Find out whether a CSS media query matches, and re-render when it changes. It returns `{ matchesMediaQuery }`, or the name you give in `propName`. Use it to change a function component for narrow or wide screens. For a class component, use xref:reference-shims.adoc#with-media-query[`withMediaQuery`].
+
+[[use-tracking]]pass:[<a class="anchor" href="#use-tracking"></a>]`useTracking()`::
+Get the host tracking object. Use it to report usage, such as a page view, through the host tracker.
+
+[[use-zimbra-context]]pass:[<a class="anchor" href="#use-zimbra-context"></a>]`useZimbraContext()`::
+Get the host's own context object inside a component, without passing it down. It is `null` outside the host.
+
+[[use-preferences]]pass:[<a class="anchor" href="#use-preferences"></a>]`usePreferences(query, options)`::
+Read the user's preferences. Returns the result of an Apollo query. Data is read from the cache first. Use it to adapt your Zimlet to the user's settings.
+
+[[use-send-message-mutation]]pass:[<a class="anchor" href="#use-send-message-mutation"></a>]`useSendMessageMutation(options)`::
+Get a function that sends a message: `send({ message, requestReadReceipt, accountName, updateCache, sign, encrypt })`. Options are `zimbraPrefMessageViewHtmlPreferred` (default `true`) and `isOffline` (default `false`).
+
+[[use-original-msg-header]]pass:[<a class="anchor" href="#use-original-msg-header"></a>]`useOriginalMsgHeader()`::
+Get the localized "original message" separator line, wrapped in dashes, for a reply or forward body.
+
+[[use-item-action-mutation]]pass:[<a class="anchor" href="#use-item-action-mutation"></a>]`useItemActionMutation()`::
+Run an action on items, such as flagging. Returns an Apollo mutation tuple.
+
+[[use-message-search-query]]pass:[<a class="anchor" href="#use-message-search-query"></a>]`useMessageSearchQuery({ query, sortBy })`::
+Search messages. Returns `{ messages, hasMore, refetchMessages, loadMore, loading }`. Use it to show or process messages that match a search.
+
+[#hooks-data]
+== Hooks for account data
+
+Import from `@zimbra-client/hooks/graphql`. Hooks that read data return the result of an https://www.apollographql.com/docs/react/api/react/hooks[Apollo hook]: `data`, `loading` and `error`. Hooks that change data return a function or a mutation tuple.
+
+[[use-account-info]]pass:[<a class="anchor" href="#use-account-info"></a>]`useAccountInfo(query, options)`::
+Read account information, such as the account name and attributes, in `data.accountInfo`. Data is read from the cache first. Use it to show or check the name or attributes of the signed-in account.
+
+[[use-available-locales-query]]pass:[<a class="anchor" href="#use-available-locales-query"></a>]`useAvailableLocalesQuery()`::
+List the languages the user can choose. Use it to build a language choice.
+
+[[use-folders-query]]pass:[<a class="anchor" href="#use-folders-query"></a>]`useFoldersQuery({ variables, ...options })`::
+Read the folder tree. Use it to show folders or to let the user choose one.
+
+[[use-create-folder-mutation]]pass:[<a class="anchor" href="#use-create-folder-mutation"></a>]`useCreateFolderMutation()`::
+Create a folder. Returns an Apollo mutation tuple. Use it when your Zimlet creates a folder for the user.
+
+[[use-folder-action-mutation]]pass:[<a class="anchor" href="#use-folder-action-mutation"></a>]`useFolderActionMutation()`::
+Run an action on a folder. Returns an Apollo mutation tuple. Use it to rename, move or delete a folder, or to run another folder action.
+
+[[use-calendars-data]]pass:[<a class="anchor" href="#use-calendars-data"></a>]`useCalendarsData()`::
+Read the user's calendars. Returns `{ refetch, loading, folderProps, calendars, calendarsToSelect, editableCalendarsIDs }`. Use it to show calendars or to let the user choose one.
+
+[[use-briefcase-folders-query]]pass:[<a class="anchor" href="#use-briefcase-folders-query"></a>]`useBriefcaseFoldersQuery(options)`::
+Read Briefcase folders. Returns `{ folders, allFolders, sharedFolders, loading, refetch }`. Use it to show Briefcase folders or to let the user choose one.
+
+[[use-document-action]]pass:[<a class="anchor" href="#use-document-action"></a>]`useDocumentAction()`::
+Run an action on a Briefcase document. Returns an Apollo mutation tuple. Use it to move, delete or otherwise change a Briefcase document.
+
+[[use-save-document-mutation]]pass:[<a class="anchor" href="#use-save-document-mutation"></a>]`useSaveDocumentMutation()`::
+Save a Briefcase document. Returns an Apollo mutation tuple. Use it when your Zimlet creates or updates a Briefcase document.
+
+[[use-custom-meta-data]]pass:[<a class="anchor" href="#use-custom-meta-data"></a>]`useCustomMetaData(options)`::
+Read mailbox metadata that your Zimlet stored. Data is read from the cache first.
+
+[[use-custom-meta-data-mutation]]pass:[<a class="anchor" href="#use-custom-meta-data-mutation"></a>]`useCustomMetaDataMutation()`::
+Get a function that stores mailbox metadata: `save(variables, options)`.
+
+[#utilities]
+== Utilities
+
+Import from `@zimbra-client/util`, unless the table says otherwise.
+
+[[array]]pass:[<a class="anchor" href="#array"></a>]`array(value)`::
+Always get an array. It returns `[]` for an empty value and wraps a single value. Use it to loop over a value that can be a single item or a list.
+
+[[is-empty]]pass:[<a class="anchor" href="#is-empty"></a>]`isEmpty(value)`::
+Check whether an object or array is empty. Use it before you read or show data that can be missing.
+
+[[prune-empty]]pass:[<a class="anchor" href="#prune-empty"></a>]`pruneEmpty(object)`::
+Remove `null` values and empty objects from an object, in place. Use it to clean up an object before you send it to the server.
+
+[[debounce]]pass:[<a class="anchor" href="#debounce"></a>]`debounce(fn, delay)`::
+Delay calls to `fn` until `delay` milliseconds pass without another call. Use it to limit a costly call, such as a search while the user types.
+
+[[call-with]]pass:[<a class="anchor" href="#call-with"></a>]`callWith(fn, arg, passCallingArgs)`::
+Get a function that calls `fn(arg)` and is the same function on every render. Use it for event handlers in JSX.
+
+[[html-encode]]pass:[<a class="anchor" href="#html-encode"></a>]`htmlEncode(text)`::
+Escape text so it is safe to put in HTML. Use it before you put user text in an HTML string.
+
+[[html-to-text]]pass:[<a class="anchor" href="#html-to-text"></a>]`htmlToText(html, originalMessageHeader)`::
+Convert HTML to plain text. Use it to show or reuse the text of an HTML message, for example in a reply.
+
+[[get-name]]pass:[<a class="anchor" href="#get-name"></a>]`getName(contact, sanitize)`::
+Get the display name of a contact. Import it from `@zimbra-client/util/contacts`. Use it to show a contact consistently.
+
+[[clipboard]]pass:[<a class="anchor" href="#clipboard"></a>]`clipboard`::
+Copy to and paste from the clipboard. Use it instead of `navigator.clipboard`, which fails with `Document is not focused` in a Zimlet.
+
+[[csrf-storage]]pass:[<a class="anchor" href="#csrf-storage"></a>]`csrfStorage`::
+Read the CSRF token with `csrfStorage.get()` for your own `fetch` calls.
+
+[[get-context]]pass:[<a class="anchor" href="#get-context"></a>]`getContext(mapContextToProps)`::
+Wrap a component so it receives props computed from the host context. Use it in a class component that needs the host context. In a function component, use <<use-zimbra-context,`useZimbraContext`>>.
+
+[[with-props]]pass:[<a class="anchor" href="#with-props"></a>]`withProps(props)`, `branch(test, left, right)`::
+Wrap a component to add props, or to render one of two components. They work like the same-named helpers of the `recompose` library.
+
+[[page-visibility]]pass:[<a class="anchor" href="#page-visibility"></a>]`PageVisibility`::
+Check whether the browser tab is hidden (`isHidden`) and for how many minutes (`idleSince`). Use it to pause work, such as polling, while the user is away.
+
+[[set-data-transfer-json]]pass:[<a class="anchor" href="#set-data-transfer-json"></a>]`setDataTransferJSON(event, { data })`, `getDataTransferJSON(event, type)`::
+Store JSON in a drag event and read it back on drop. Use it to move your own data between a drag source and a drop target.
+
+[[start-attachment-download-process]]pass:[<a class="anchor" href="#start-attachment-download-process"></a>]`startAttachmentDownloadProcess(url, name)`::
+Start the download of a file. Use it to let the user download a file from your Zimlet.
+
+[[close-notification]]pass:[<a class="anchor" href="#close-notification"></a>]`closeNotification`::
+Close a toast notification. Pass its id. Use it to dismiss a message that your Zimlet showed.
+
+[[filter-non-insertable-calendars]]pass:[<a class="anchor" href="#filter-non-insertable-calendars"></a>]`filterNonInsertableCalendars(calendars)`::
+Keep only the calendars where the user can add appointments. Use it to build a calendar choice for a new appointment.
+
+[[close-event-tab-thunk]]pass:[<a class="anchor" href="#close-event-tab-thunk"></a>]`closeEventTabThunk(tab)`::
+Close a calendar event tab. Dispatch it on the Redux store. Use it when your Zimlet finishes with a calendar event that is open in a tab.
+
+[[is-server-smime-feature-available]]pass:[<a class="anchor" href="#is-server-smime-feature-available"></a>]`isServerSMIMEFeatureAvailable(license)`::
+Check whether the license includes S/MIME. It is `false` in the desktop app. Use it to show S/MIME controls only when the feature is available.
+
+[[smime-handler]]pass:[<a class="anchor" href="#smime-handler"></a>]`smimeHandler(params)`::
+Call the desktop app's S/MIME handler. It does nothing in the browser. Use it only for S/MIME work that the desktop app does.
+
+[[get-electron]]pass:[<a class="anchor" href="#get-electron"></a>]`getElectron()`::
+Get the desktop app bridge, or `undefined` in the browser. Use it to run code only in the desktop app.
+
+[[breakpoints]]pass:[<a class="anchor" href="#breakpoints"></a>]`breakpoints`::
+Use the host's screen-width limits, such as `screenSm`, and the helpers `minWidth(px)` and `maxWidth(px)`, which return media query strings. Use it with <<use-media-query,`useMediaQuery`>> to match the screen sizes of the Modern UI.
+
+[[zimlet-event-emitter]]pass:[<a class="anchor" href="#zimlet-event-emitter"></a>]`zimletEventEmitter`::
+Listen for host events, such as sending a message or logging out. See xref:app-events.adoc[App events].
+
+[#platform-and-browser]
+== Platform and browser
+
+[[get-platform-type]]pass:[<a class="anchor" href="#get-platform-type"></a>]`getPlatformType()`, `PLATFORM_TYPES`::
+Find out where the Modern UI runs. It returns `electron`, `android`, `ios` or `web`. Import from `@zimbra-client/platform`.
+
+[[open-external-browser]]pass:[<a class="anchor" href="#open-external-browser"></a>]`openExternalBrowser(url, name, windowOptions)`::
+Open a link in the system browser from the desktop and iOS apps, or in a new window in the browser. Import from `@zimbra-client/browser`.
+
+[[is-standalone]]pass:[<a class="anchor" href="#is-standalone"></a>]`isStandalone()`::
+Check whether the app runs as an installed web app. Import from `@zimbra-client/pwa-utils`.
+
+[[await-install-prompt]]pass:[<a class="anchor" href="#await-install-prompt"></a>]`awaitInstallPrompt(onPrompt)`::
+Get notified when the browser offers to install the web app. When you pass `onPrompt`, it returns a function that removes the listener. Import from `@zimbra-client/pwa-utils`.
+
+[#errors]
+== Errors
+
+Import from `@zimbra-client/errors`.
+
+[[error-message]]pass:[<a class="anchor" href="#error-message"></a>]`errorMessage(error)`::
+Get a readable message from an error that a hook or request returned.
+
+[[fault-code]]pass:[<a class="anchor" href="#fault-code"></a>]`faultCode(error)`::
+Get the Zimbra fault code from an error, to decide how to react to it.
+
+[#constants]
+== Constants
+
+Import from `@zimbra-client/constants`.
+
+[[zimbra-zimlet-events]]pass:[<a class="anchor" href="#zimbra-zimlet-events"></a>]`ZIMBRA_ZIMLET_EVENTS`::
+The names of the host events: `ONBEFORESEND`, `ONSEND`, `AFTERONSEND`, `ONSENDINVITEREPLY`, `LOGOUT` and `USER_ACTIVITY`. Use them as the event name in <<zimlet-event-emitter,`zimletEventEmitter`>>, instead of typing the strings.
+
+[[user-folder-ids]]pass:[<a class="anchor" href="#user-folder-ids"></a>]`USER_FOLDER_IDS`::
+The ids of the built-in folders, such as `INBOX`, `TRASH` and `CALENDAR`. Use them to refer to a folder such as the inbox without typing its id.
+
+[[flags]]pass:[<a class="anchor" href="#flags"></a>]`FLAGS`::
+The one-character message flags, such as `unread` (`u`) and `flagged` (`f`). Use them to check or set a flag on a message.
+
+[[attendee-role]]pass:[<a class="anchor" href="#attendee-role"></a>]`ATTENDEE_ROLE`, `PARTICIPATION_STATUS`::
+The values of an appointment attendee's role and reply. Use them to read or set who is required or optional, and how an attendee replied.
+
+[[supported-mimes]]pass:[<a class="anchor" href="#supported-mimes"></a>]`supportedMimes`::
+The file types that get an attachment icon. Use it to choose an icon for a file type.
+
+[[email-separator-tag-id]]pass:[<a class="anchor" href="#email-separator-tag-id"></a>]`EMAIL_SEPARATOR_TAG_ID`::
+The id of the marker that separates a new message from the quoted original in the composer. Use it to find where the quoted original starts in a reply or forward body.
+
+[#example]
+== Example: use hooks in a component
+
+This example has two files. `index.js` is the entry file. It imports the component and registers `<AccountName />` in a slot from `init()`. `components/AccountName/index.js` reads the account name with `useAccountInfo` and builds a welcome line from `data.accountInfo.name`. It then calls `getPlatformType()` and compares the result with `PLATFORM_TYPES` to choose a hint: touch wording on Android and iOS, a desktop note in the desktop app, and click wording on the web. It shows nothing until the data arrives.
+
+.index.js
+[source,js]
+----
+include::example$apis-hooks/index.js[]
+----
+
+.components/AccountName/index.js
+[source,js]
+----
+include::example$apis-hooks/components/AccountName/index.js[]
+----
+
+NOTE: The example writes its text in the code to stay short, so the text is not translated. A Zimlet shows its text through translation files. To learn how, read xref:localization.adoc[Localization].
+
+For how `init()` runs, read xref:factory-and-lifecycle.adoc[Factory and lifecycle].
+
+== Next step
+
+To see where `context` comes from, read xref:factory-and-lifecycle.adoc[Factory and lifecycle].

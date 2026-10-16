@@ -1,0 +1,29 @@
+.doc {
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+.doc dt:has(> .anchor) {
+	position: relative;
+}
+
+.doc dt > .anchor {
+	position: absolute;
+	width: 1.75ex;
+	margin-left: -1.5ex;
+	padding-top: 0.05em;
+	font-size: 1em;
+	font-weight: 400;
+	text-decoration: none;
+	/* Opacity, not visibility: a visibility:hidden link cannot receive keyboard focus. */
+	opacity: 0;
+}
+
+.doc dt > .anchor::before {
+	content: '\00a7';
+}
+
+.doc dt:hover > .anchor,
+.doc dt:focus-within > .anchor {
+	opacity: 1;
+}
