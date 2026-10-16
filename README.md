@@ -69,3 +69,9 @@ export default function (config, env) {
   /** you can change config here **/
 }
 ```
+
+#### ESLint
+
+A Zimlet created from the default template has its own ESLint config (`eslint.config.mjs`), and `npm run lint` checks the `src` folder with it. ESLint uses the nearest config file and does not merge it with one in a parent folder, so linting from inside the Zimlet always uses the Zimlet's own config.
+
+If the Zimlet is inside a parent folder that already handles linting, for example a monorepo, delete the Zimlet's `eslint.config.mjs` so ESLint uses the parent's config instead. The parent must have ESLint and the plugins its config imports installed, or linting fails because it cannot find them.
