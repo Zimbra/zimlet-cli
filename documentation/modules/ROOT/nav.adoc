@@ -1,1 +1,3 @@
 * xref:index.adoc[Home]
+* Getting started
+** xref:concepts.adoc[How Zimlets work]

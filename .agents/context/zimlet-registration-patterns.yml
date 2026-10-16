@@ -1,0 +1,2520 @@
+# Zimlet registration patterns: how Zimlets register with Modern UI (zm-x-web).
+# Entry point and conventions: ../reference/zimlet-registration-patterns.md
+#
+# Merge contract (scripts/scan-zimlet-registrations.mjs):
+# - status "scanned": mechanical output; refreshed on every run.
+# - status "complete": reviewed; the script never edits it and only reports drift.
+# - Pattern usages of a complete pattern are append-only.
+# Slot and key names are recorded as the zimlet registers them; they are not checked against
+# the zm-x-web slot catalog.
+
+version: 1
+sources:
+  repos:
+    - id: zm-modern-zimlets
+      dir: zimlets
+    - id: zm-cloudsuite-zimlets
+      dir: packages
+  slotCatalog: ../../../zm-x-web/.agents/zimlet/context/zimlet-slots.yml
+  slotCatalogRole: Reference only for the host side. Slot names here are not validated against it.
+patterns:
+  - id: slot-ui
+    kind: registration
+    name: Slot that renders UI
+    api: plugins.register('slot::<name>', handler)
+    status: complete
+    summary: Fill a host slot with UI. The handler receives the slot props and returns what to render. The host renders every handler registered for the slot.
+    usages:
+      - { zimlet: zimbra-zimlet-ads, registers: [ "slot::${adSlots}" ], unregisters: [ "slot::${slot}" ], variants: [ component-reference ], files: [ src/components/initialize-ads/index.js ] }
+      - { zimlet: zimbra-zimlet-calendar-subscription, registers: [ slot::calendar-subscription-menu, slot::calendar-subscription-modal-flow, slot::calendar-subscription-list ], variants: [ inline-handler, returns-render-function ] }
+      - { zimlet: zimbra-zimlet-chat, registers: [ slot::rightside-zimlet-slot, slot::app, slot::contact-hover-card-details, slot::contact-card-item, slot::rightbar-50px ], unregisters: [ slot::rightside-zimlet-slot ], variants: [ component-reference, inline-handler ], files: [ src/components/app/index.js ] }
+      - { zimlet: zimbra-zimlet-custom-fonts, registers: [ slot::custom-fonts ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-desktop-auto-update, registers: [ slot::app ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-disable-screen-capture, registers: [ slot::app ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-document-editor, registers: [ slot::briefcase-document-context-menu, slot::action-menu-briefcase-more, slot::briefcase-document-header-action, slot::email-attachment-action, slot::briefcase-upload-button ], variants: [ wrapper-component ] }
+      - { zimlet: zimbra-zimlet-download-email, registers: [ slot::action-menu-mail-more ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-email-defanger, registers: [ slot::message-body-top ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-email-reminder, registers: [ slot::action-menu-mail-more ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-email-templates, registers: [ slot::compose-sender-options-menu ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-external-setting-links, registers: [ slot::settings-dropdown-item-end, slot::header-menu-item ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-import-export-ics, registers: [ slot::action-menu-event-more, slot::action-menu-event-context-menu, slot::email-attachment-action ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-install-pwa, registers: [ slot::settings-dropdown-item ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-mail-recall, registers: [ slot::mail-recall-menu-option ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-mail-translate, registers: [ slot::mail-overflow-menu-option, slot::message-body-top, slot::message-header-additional-buttons ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-modern-welcometour, registers: [ slot::app ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-org-chart, registers: [ slot::web-search, slot::app ], unregisters: [ slot::web-search ], variants: [ component-reference, inline-handler ], files: [ src/components/register-search-bar/index.js ] }
+      - { zimlet: zimbra-zimlet-personal-notes, registers: [ slot::message-body-top ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-preventive-ooo, registers: [ slot::mail-header-wrapper, slot::attendees-chooser-attendees, slot::contact-input-token:button-inner-content, slot::contact-hover-card-details ], variants: [ wrapper-component, component-reference ] }
+      - { zimlet: zimbra-zimlet-privacy-protector, registers: [ slot::mail-pane ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-secure-mail, registers: [ slot::mail-composer-smime-dropdown, slot::mail-composer-toolbar-send, slot::message-smime-status, slot::contact-add-server-smime-cert ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-set-default-client, registers: [ slot::set-default-client, slot::settings-dropdown-item-end ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-sideloader, registers: [ slot::app ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-signature-template, registers: [ slot::composer ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-spy-blocker, registers: [ slot::message-body-top ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-tlp, registers: [ slot::compose-sender-options-menu ], variants: [ wrapper-component ] }
+      - { zimlet: zimbra-zimlet-user-feedback, registers: [ slot::gear-menu ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-voice-composer, registers: [ slot::app, slot::composer-toolbar-end ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-web-search, registers: [ slot::web-search, slot::web-search-toggle ], unregisters: [ slot::web-search ], variants: [ component-reference, inline-handler ], files: [ src/components/web-search/toggle.js ] }
+      - { zimlet: zimbra-zimlet-dropbox, registers: [ slot::collaboration-zimlet-collaboration-list, slot::collaboration-zimlet-collaboration-list-files, slot::attachment-items, slot::compose-attachment-action-menu, slot::attachment-single-action, slot::attachment-multi-action, slot::attachment-upload-and-link ], unregisters: [ slot::compose-attachment-action-menu, slot::attachment-single-action, slot::attachment-multi-action, slot::attachment-upload-and-link ], variants: [ component-reference, wrapper-component ] }
+      - { zimlet: zimbra-zimlet-google-drive, registers: [ slot::collaboration-zimlet-collaboration-list, slot::collaboration-zimlet-collaboration-list-files, slot::compose-attachment-action-menu, slot::attachment-upload-and-link, slot::attachment-single-action, slot::attachment-multi-action ], unregisters: [ slot::compose-attachment-action-menu, slot::attachment-upload-and-link, slot::attachment-single-action, slot::attachment-multi-action ], variants: [ wrapper-component ] }
+      - { zimlet: zimbra-zimlet-jitsi, registers: [ slot::calendar-appointment-edit-video-call, slot::collaboration-zimlet-collaboration-list-videos ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-onedrive, registers: [ slot::collaboration-zimlet-collaboration-list, slot::collaboration-zimlet-collaboration-list-files, slot::compose-attachment-action-menu, slot::attachment-single-action, slot::attachment-multi-action, slot::attachment-upload-and-link ], unregisters: [ slot::compose-attachment-action-menu, slot::attachment-single-action, slot::attachment-multi-action, slot::attachment-upload-and-link ], variants: [ component-reference, wrapper-component ] }
+      - { zimlet: zimbra-zimlet-slack, registers: [ slot::contact-hover-card-details, slot::address-pill, slot::contact-card-item, slot::action-menu-mail-more, slot::contact-card-messages-and-files, slot::collaboration-zimlet-collaboration-list, slot::collaboration-zimlet-collaboration-list-chat ], variants: [ component-reference, inline-handler ] }
+      - { zimlet: zimbra-zimlet-video-call-preferences, registers: [ slot::calendar-appointment-edit-video-call ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-zoom, registers: [ slot::calendar-body-end, slot::collaboration-zimlet-collaboration-list, slot::collaboration-zimlet-collaboration-list-videos, slot::calendar-appointment-edit-video-call ], unregisters: [ slot::calendar-appointment-edit-video-call ], variants: [ inline-handler, component-reference ] }
+    hostSide:
+      source: zm-x-web/src/components/zimlet-slot.js
+      reference: ../../../zm-x-web/.agents/zimlet/context/zimlet-slots.yml (kind zimlet-slot)
+      doc: ../../../zm-x-web/.agents/zimlet/reference/slot-behavior.md
+    recommendedExample:
+      zimlet: zimbra-zimlet-personal-notes
+      reason: "Smallest complete example: one slot, one handler, the factory shape used by the template."
+    variants:
+      - id: inline-handler
+        summary: Arrow function that receives slot props and returns an element.
+        examples: [ zimbra-zimlet-user-feedback, zimbra-zimlet-calendar-subscription, zimbra-zimlet-chat, zimbra-zimlet-desktop-auto-update ]
+      - id: component-reference
+        summary: The component itself is passed as the handler.
+        examples: [ zimbra-zimlet-ads, zimbra-zimlet-chat, zimbra-zimlet-custom-fonts, zimbra-zimlet-email-templates ]
+      - id: wrapper-component
+        summary: A local Wrapped* or Provided* component injects context, store or clients before rendering.
+        examples: [ zimbra-zimlet-document-editor, zimbra-zimlet-preventive-ooo, zimbra-zimlet-tlp, zimbra-zimlet-dropbox ]
+      - id: returns-render-function
+        summary: The handler returns a function, which the slot turns into an element with the same props.
+        examples: [ zimbra-zimlet-calendar-subscription ]
+    notes:
+      - Some slots, such as slot::app, are always mounted and receive host props; check the catalog entry for the props passed.
+  - id: settings
+    kind: registration
+    name: Settings section or fields
+    api: plugins.register('settings', { id, title, component, fields })
+    status: complete
+    summary: Add a section or fields to the Modern UI settings dialog. Uses the bare key 'settings'. The settings modal collects every registered object.
+    usages:
+      - { zimlet: zimbra-zimlet-attachment-missing-alert, registers: [ settings ], variants: [ extend-host-section ] }
+      - { zimlet: zimbra-zimlet-custom-fonts, registers: [ settings ], variants: [ new-section-with-fields ] }
+      - { zimlet: zimbra-zimlet-desktop-auto-update, registers: [ settings ], variants: [ new-section-with-fields ] }
+      - { zimlet: zimbra-zimlet-privacy-protector, registers: [ settings ], variants: [ new-section ] }
+      - { zimlet: zimbra-zimlet-secure-mail, registers: [ settings ], variants: [ new-section-with-fields ] }
+      - { zimlet: zimbra-zimlet-user-sessions-management, registers: [ settings ], variants: [ new-section ] }
+      - { zimlet: zimbra-zimlet-dropbox, registers: [ settings ], variants: [ new-section ] }
+      - { zimlet: zimbra-zimlet-google-drive, registers: [ settings ], variants: [ new-section ] }
+      - { zimlet: zimbra-zimlet-onedrive, registers: [ settings ], variants: [ new-section ] }
+      - { zimlet: zimbra-zimlet-slack, registers: [ settings ], variants: [ new-section-with-fields ] }
+      - { zimlet: zimbra-zimlet-video-call-preferences, registers: [ settings ], variants: [ extend-host-section ] }
+      - { zimlet: zimbra-zimlet-zoom, registers: [ settings ], variants: [ new-section ] }
+    hostSide:
+      source: zm-x-web/src/components/settings-modal/settings-modal.js (loadSettingsFromZimlets)
+      reference: ../../../zm-x-web/.agents/zimlet/context/zimlet-slots.yml (kind invoke-plugin, name settings)
+      hostSections: zm-x-web/src/components/settings/constants.js (ids such as writingEmail, calendarAndReminders)
+    recommendedExample:
+      zimlet: zimbra-zimlet-attachment-missing-alert
+      reason: Extends a host section with a field and also registers a companion slot, the combination most guides need.
+    variants:
+      - id: extend-host-section
+        summary: No title or component. The id matches a host section and only fields are added.
+        examples: [ zimbra-zimlet-attachment-missing-alert, zimbra-zimlet-video-call-preferences ]
+      - id: new-section-with-fields
+        summary: A new section with a title, a component and fields.
+        examples: [ zimbra-zimlet-custom-fonts, zimbra-zimlet-desktop-auto-update, zimbra-zimlet-secure-mail, zimbra-zimlet-slack ]
+      - id: new-section
+        summary: A new section with a title and a component and no fields of its own.
+        examples: [ zimbra-zimlet-privacy-protector, zimbra-zimlet-user-sessions-management, zimbra-zimlet-dropbox, zimbra-zimlet-google-drive ]
+    notes:
+      - "Field type values seen: userPref, modifyProperties, mailboxMetadata. Several zimlets build the field with a helper, recorded as helper."
+      - video-call-preferences adds fromJS and toJS converters to a modifyProperties field.
+      - Settings ids that are identifiers or member expressions are recorded as source text.
+  - id: settings-companion-slot
+    kind: registration
+    name: Slot inside a host settings section
+    api: plugins.register('slot::<settings slot>', handler)
+    status: complete
+    summary: Slot rendered inside a host settings panel. Use it to add UI to an existing section next to a settings registration.
+    usages:
+      - { zimlet: zimbra-zimlet-additional-signature-setting, registers: [ slot::additional-signature-settings ], variants: [ component-reference ] }
+      - { zimlet: zimbra-zimlet-attachment-missing-alert, registers: [ slot::writting-email-additional-settings ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-modern-welcometour, registers: [ slot::general-setting-bottom ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-voice-composer, registers: [ slot::writing-email-post-composer-settings ], variants: [ inline-handler ] }
+      - { zimlet: zimbra-zimlet-video-call-preferences, registers: [ slot::calendar-and-reminders-video-call-preferences ], variants: [ component-reference ] }
+    hostSide:
+      reference: ../../../zm-x-web/.agents/zimlet/context/zimlet-slots.yml (kind zimlet-slot)
+      hostComponents:
+        - zm-x-web/src/components/settings/writing-email-settings/index.js (writting-email-additional-settings, writing-email-post-composer-settings)
+        - zm-x-web/src/components/settings/calendar-and-reminders-settings/index.js (calendar-and-reminders-video-call-preferences)
+        - zm-x-web/src/components/settings/signatures-settings/index.js (additional-signature-settings)
+        - zm-x-web/src/components/settings/general-settings/index.js (general-setting-bottom)
+    recommendedExample:
+      zimlet: zimbra-zimlet-attachment-missing-alert
+      reason: Pairs the companion slot with the matching settings field.
+    variants:
+      - id: component-reference
+        summary: Component passed directly.
+        examples: [ zimbra-zimlet-additional-signature-setting, zimbra-zimlet-video-call-preferences ]
+      - id: inline-handler
+        summary: Arrow function returning an element.
+        examples: [ zimbra-zimlet-attachment-missing-alert, zimbra-zimlet-modern-welcometour, zimbra-zimlet-voice-composer ]
+    notes:
+      - The slot name writting-email-additional-settings is spelled that way in the host.
+      - Identified by name (setting or preferences in the slot name); check new matches by hand.
+  - id: message-processor
+    kind: registration
+    name: Message processor
+    api: plugins.register('messageProcessors:<kind>', () => processor)
+    status: complete
+    summary: Transform message or event content. Uses bare messageProcessors:<kind> keys. The handler returns the processor, and the host applies it; nothing is rendered.
+    usages:
+      - { zimlet: zimbra-zimlet-date, registers: [ messageProcessors:emailProcessor, messageProcessors:dateInfoPopover, messageProcessors:attachPopover ], variants: [ content-processor, popover-component, html-transform ] }
+      - { zimlet: zimbra-zimlet-deceptive-link-detector, registers: [ messageProcessors:emailProcessor ], variants: [ content-processor ] }
+      - { zimlet: zimbra-zimlet-email-defanger, registers: [ messageProcessors:emailProcessor, messageProcessors:eventExcerptProcessor, messageProcessors:eventLocationProcessor, messageProcessors:eventNotesProcessor ], variants: [ content-processor ] }
+      - { zimlet: zimbra-zimlet-spy-blocker, registers: [ messageProcessors:emailProcessor, messageProcessors:composerProcessor, messageProcessors:mailPrintProcessor ], variants: [ content-processor ] }
+    hostSide:
+      reference: ../../../zm-x-web/.agents/zimlet/context/zimlet-slots.yml (kind invoke-plugin, names messageProcessors:*)
+      hostFiles:
+        - zm-x-web/src/components/html-viewer/index.js
+        - zm-x-web/src/hooks/composer/body-wrapper/index.js
+        - zm-x-web/src/components/calendar/event-details/event-details.js
+    recommendedExample:
+      zimlet: zimbra-zimlet-spy-blocker
+      reason: Registers the same processor for mail, composer and print, and adds a banner slot.
+    variants:
+      - id: content-processor
+        summary: Handler returns a function that processes the document or text.
+        examples: [ zimbra-zimlet-date, zimbra-zimlet-deceptive-link-detector, zimbra-zimlet-email-defanger, zimbra-zimlet-spy-blocker ]
+      - id: popover-component
+        summary: Handler returns a component used for a date popover.
+        examples: [ zimbra-zimlet-date ]
+      - id: html-transform
+        summary: Handler receives (urlPrefix, isMobileView, sanitized) and returns HTML.
+        examples: [ zimbra-zimlet-date ]
+    notes:
+      - "Keys seen: emailProcessor, composerProcessor, mailPrintProcessor, eventExcerptProcessor, eventLocationProcessor, eventNotesProcessor, dateInfoPopover, attachPopover."
+  - id: vertical-route
+    kind: registration
+    name: Route, tab item or landing page of a vertical
+    api: plugins.register('slot::routes' | 'slot::<vertical>-tab-item', handler)
+    status: complete
+    summary: "Add a screen to Modern UI: a route, a menu item in a tab, or landing-page content."
+    usages:
+      - { zimlet: zimbra-zimlet-chat, registers: [ slot::routes, slot::chatapps-landing-page ], unregisters: [ slot::chatapps-landing-page, slot::routes ], variants: [ route, landing-page ], files: [ src/components/heartbeat/index.js ] }
+      - { zimlet: zimbra-zimlet-org-chart, registers: [ slot::contacts-tab-item, slot::routes ], variants: [ tab-item, route ] }
+      - { zimlet: zimbra-zimlet-sideloader, registers: [ slot::routes, slot::integrations-tab-item ], variants: [ route, tab-item ] }
+      - { zimlet: zimbra-zimlet-dropbox, registers: [ slot::routes, slot::cloudapps-tab-item ], variants: [ route, tab-item ] }
+      - { zimlet: zimbra-zimlet-google-drive, registers: [ slot::routes, slot::cloudapps-tab-item ], variants: [ route, tab-item ] }
+      - { zimlet: zimbra-zimlet-jitsi, registers: [ slot::routes, slot::videoapps-tab-item, slot::videoapps-landing-page-description ], variants: [ route, tab-item, landing-page ] }
+      - { zimlet: zimbra-zimlet-onedrive, registers: [ slot::routes, slot::cloudapps-tab-item ], variants: [ route, tab-item ] }
+      - { zimlet: zimbra-zimlet-slack, registers: [ slot::chatapps-landing-page-description, slot::chatapps-landing-page-videos, slot::routes, slot::chatapps-tab-item ], variants: [ landing-page, route, tab-item ] }
+      - { zimlet: zimbra-zimlet-zoom, registers: [ slot::routes, slot::videoapps-landing-page-description, slot::videoapps-tab-item ], variants: [ route, landing-page, tab-item ] }
+    hostSide:
+      doc: ../../../zm-x-web/.agents/zimlet/reference/verticals.md
+      reference: ../../../zm-x-web/.agents/zimlet/context/zimlet-slots.yml (slot routes and the <vertical>-tab-item slots)
+    recommendedExample:
+      zimlet: zimbra-zimlet-sideloader
+      reason: Route, app component and tab item in one small file.
+    variants:
+      - id: route
+        summary: slot::routes handler returns routes.
+        examples: [ zimbra-zimlet-chat, zimbra-zimlet-org-chart, zimbra-zimlet-sideloader, zimbra-zimlet-dropbox ]
+      - id: tab-item
+        summary: slot::<vertical>-tab-item handler returns a menu item.
+        examples: [ zimbra-zimlet-org-chart, zimbra-zimlet-sideloader, zimbra-zimlet-dropbox, zimbra-zimlet-google-drive ]
+      - id: landing-page
+        summary: Landing-page slots of a vertical.
+        examples: [ zimbra-zimlet-chat, zimbra-zimlet-jitsi, zimbra-zimlet-slack, zimbra-zimlet-zoom ]
+    notes:
+      - "Classified by slot name: routes, names ending in -tab-item, names containing landing-page."
+  - id: conditional-registration
+    kind: modifier
+    name: Registered only when a condition holds
+    api: ""
+    status: complete
+    summary: Register only when a condition holds. The check runs in init() before the call.
+    usages:
+      - { zimlet: zimbra-zimlet-ads, variants: [ state-or-environment-gate ] }
+      - { zimlet: zimbra-zimlet-chat, variants: [ state-or-environment-gate, account-gate ] }
+      - { zimlet: zimbra-zimlet-date, variants: [ account-gate ] }
+      - { zimlet: zimbra-zimlet-desktop-auto-update, variants: [ platform-gate ] }
+      - { zimlet: zimbra-zimlet-disable-screen-capture, variants: [ platform-gate ] }
+      - { zimlet: zimbra-zimlet-document-editor, variants: [ state-or-environment-gate ] }
+      - { zimlet: zimbra-zimlet-external-setting-links, variants: [ state-or-environment-gate, account-gate ] }
+      - { zimlet: zimbra-zimlet-mail-translate, variants: [ state-or-environment-gate ] }
+      - { zimlet: zimbra-zimlet-org-chart, variants: [ state-or-environment-gate ] }
+      - { zimlet: zimbra-zimlet-secure-mail, variants: [ platform-gate ] }
+      - { zimlet: zimbra-zimlet-set-default-client, variants: [ platform-gate ] }
+      - { zimlet: zimbra-zimlet-voice-composer, variants: [ state-or-environment-gate ] }
+      - { zimlet: zimbra-zimlet-web-search, variants: [ state-or-environment-gate ] }
+      - { zimlet: zimbra-zimlet-dropbox, variants: [ account-gate ] }
+      - { zimlet: zimbra-zimlet-google-drive, variants: [ account-gate ] }
+      - { zimlet: zimbra-zimlet-onedrive, variants: [ account-gate ] }
+      - { zimlet: zimbra-zimlet-zoom, variants: [ account-gate ] }
+    recommendedExample:
+      zimlet: zimbra-zimlet-secure-mail
+      reason: Platform and license early return before any registration.
+    variants:
+      - id: platform-gate
+        summary: Depends on web, Electron or mobile.
+        examples: [ zimbra-zimlet-desktop-auto-update, zimbra-zimlet-disable-screen-capture, zimbra-zimlet-secure-mail, zimbra-zimlet-set-default-client ]
+      - id: account-gate
+        summary: Depends on account attributes, features or license.
+        examples: [ zimbra-zimlet-chat, zimbra-zimlet-date, zimbra-zimlet-external-setting-links, zimbra-zimlet-dropbox ]
+      - id: state-or-environment-gate
+        summary: Depends on other state or the environment.
+        examples: [ zimbra-zimlet-mail-translate, zimbra-zimlet-ads, zimbra-zimlet-chat, zimbra-zimlet-document-editor ]
+    notes:
+      - Detected lexically around the call. A registration inside a function that init() calls conditionally is not detected (zoom, google-drive).
+  - id: async-registration
+    kind: modifier
+    name: Registered after an asynchronous step
+    api: ""
+    status: complete
+    summary: Register after an asynchronous step, from a promise callback.
+    usages:
+      - { zimlet: zimbra-zimlet-dropbox, variants: [ after-promise ] }
+    recommendedExample:
+      zimlet: zimbra-zimlet-dropbox
+      reason: Registers after the OAuth script lookup resolves.
+    variants:
+      - id: after-promise
+        summary: registerPlugins runs in a then callback.
+        examples: [ zimbra-zimlet-dropbox ]
+  - id: dynamic-registration
+    kind: modifier
+    name: Registered or unregistered at runtime
+    api: ""
+    status: complete
+    summary: Register and unregister at runtime. Pass the same handler reference to unregister.
+    usages:
+      - { zimlet: zimbra-zimlet-ads, variants: [ component-effect ] }
+      - { zimlet: zimbra-zimlet-chat, variants: [ component-effect ] }
+      - { zimlet: zimbra-zimlet-org-chart, variants: [ component-effect ] }
+      - { zimlet: zimbra-zimlet-web-search, variants: [ component-effect ] }
+      - { zimlet: zimbra-zimlet-dropbox, variants: [ store-subscription ] }
+      - { zimlet: zimbra-zimlet-google-drive, variants: [ store-subscription ] }
+      - { zimlet: zimbra-zimlet-onedrive, variants: [ store-subscription ] }
+      - { zimlet: zimbra-zimlet-zoom, variants: [ store-subscription ] }
+    recommendedExample:
+      zimlet: zimbra-zimlet-google-drive
+      reason: Registers and unregisters four slots from store.subscribe.
+    variants:
+      - id: store-subscription
+        summary: Driven by Redux state in store.subscribe.
+        examples: [ zimbra-zimlet-dropbox, zimbra-zimlet-google-drive, zimbra-zimlet-onedrive, zimbra-zimlet-zoom ]
+      - id: component-effect
+        summary: Driven by a component effect or callback.
+        examples: [ zimbra-zimlet-ads, zimbra-zimlet-chat, zimbra-zimlet-org-chart, zimbra-zimlet-web-search ]
+  - id: loop-registration
+    kind: modifier
+    name: Registered from a loop over configuration
+    api: ""
+    status: complete
+    summary: Register in a loop over configuration.
+    usages:
+      - { zimlet: zimbra-zimlet-ads, variants: [ config-driven ] }
+      - { zimlet: zimbra-zimlet-external-setting-links, variants: [ config-driven ] }
+    recommendedExample:
+      zimlet: zimbra-zimlet-external-setting-links
+      reason: The only zimlet that registers per configured link.
+    variants:
+      - id: config-driven
+        summary: One registration per configured entry.
+        examples: [ zimbra-zimlet-ads, zimbra-zimlet-external-setting-links ]
+  - id: multi-handler
+    kind: modifier
+    name: Several handlers for the same key
+    api: ""
+    status: complete
+    summary: More than one handler registered for the same key, or the same slot registered again for compatibility.
+    usages:
+      - { zimlet: zimbra-zimlet-chat }
+      - { zimlet: zimbra-zimlet-modern-welcometour }
+      - { zimlet: zimbra-zimlet-dropbox }
+      - { zimlet: zimbra-zimlet-google-drive }
+      - { zimlet: zimbra-zimlet-onedrive }
+      - { zimlet: zimbra-zimlet-slack }
+      - { zimlet: zimbra-zimlet-zoom }
+    recommendedExample:
+      zimlet: zimbra-zimlet-slack
+      reason: Registers slot::routes twice.
+  - id: redux-wiring
+    kind: modifier
+    name: Redux reducers, actions, selectors or dynamic slots
+    api: ""
+    status: complete
+    summary: "Companion Redux wiring through context.store.zimletRedux: injectAsyncReducer, addActions, addSelectors and the matching remove calls in destroy()."
+    usages:
+      - { zimlet: zimbra-zimlet-chat }
+      - { zimlet: zimbra-zimlet-desktop-auto-update }
+      - { zimlet: zimbra-zimlet-document-editor }
+      - { zimlet: zimbra-zimlet-mail-translate }
+      - { zimlet: zimbra-zimlet-modern-welcometour }
+      - { zimlet: zimbra-zimlet-org-chart }
+      - { zimlet: zimbra-zimlet-preventive-ooo }
+      - { zimlet: zimbra-zimlet-privacy-protector }
+      - { zimlet: zimbra-zimlet-user-sessions-management }
+      - { zimlet: zimbra-zimlet-voice-composer }
+      - { zimlet: zimbra-zimlet-web-search }
+      - { zimlet: zimbra-zimlet-dropbox }
+      - { zimlet: zimbra-zimlet-google-drive }
+      - { zimlet: zimbra-zimlet-onedrive }
+      - { zimlet: zimbra-zimlet-zoom }
+    recommendedExample:
+      zimlet: zimbra-zimlet-document-editor
+      reason: Wires reducer, actions and selectors and removes them in destroy().
+    notes:
+      - Detected from member calls only. calendar-subscription passes addSlot and removeSlot to components without calling them in the scanned files.
+  - id: factory-shape
+    kind: modifier
+    name: Shape of the zimlet factory
+    api: ""
+    status: complete
+    summary: "How the default export exposes init: assigned as exports.init, or returned in an object."
+    usages:
+      - { zimlet: zimbra-zimlet-additional-signature-setting, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-ads, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-attachment-missing-alert, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-calendar-subscription, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-chat, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-custom-fonts, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-date, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-deceptive-link-detector, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-desktop-auto-update, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-disable-screen-capture, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-document-editor, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-download-email, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-email-defanger, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-email-reminder, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-email-templates, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-emptysubject, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-external-setting-links, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-import-export-ics, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-install-pwa, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-mail-recall, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-mail-translate, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-modern-welcometour, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-org-chart, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-personal-notes, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-preventive-ooo, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-privacy-protector, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-secure-mail, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-set-default-client, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-sideloader, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-signature-template, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-spy-blocker, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-tlp, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-user-feedback, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-user-sessions-management, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-voice-composer, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-web-search, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-dropbox, variants: [ factory-returned-object ] }
+      - { zimlet: zimbra-zimlet-google-drive, variants: [ factory-returned-object ] }
+      - { zimlet: zimbra-zimlet-jitsi, variants: [ factory-init-property ] }
+      - { zimlet: zimbra-zimlet-onedrive, variants: [ factory-returned-object ] }
+      - { zimlet: zimbra-zimlet-slack, variants: [ factory-returned-object ] }
+      - { zimlet: zimbra-zimlet-video-call-preferences, variants: [ factory-returned-object ] }
+      - { zimlet: zimbra-zimlet-zoom, variants: [ factory-returned-object ] }
+    recommendedExample:
+      zimlet: zimbra-zimlet-personal-notes
+      reason: Plain exports.init factory.
+    variants:
+      - id: factory-init-property
+        summary: const exports = {}; exports.init = function init() {}; return exports.
+        examples: [ zimbra-zimlet-personal-notes ]
+      - id: factory-returned-object
+        summary: return { init() {}, destroy() {} }.
+        examples: [ zimbra-zimlet-slack ]
+  - id: slot-behavior
+    kind: registration
+    name: Slot used for behavior, not visible UI
+    api: plugins.register('slot::<name>', handler)
+    status: complete
+    summary: Register on a slot to run logic or change the host instead of showing UI of its own.
+    usages:
+      - { zimlet: zimbra-zimlet-attachment-missing-alert, registers: [ slot::mail-composer-toolbar-send ], variants: [ headless-component ] }
+      - { zimlet: zimbra-zimlet-deceptive-link-detector, registers: [ slot::mail-pane ], variants: [ headless-component ] }
+      - { zimlet: zimbra-zimlet-disable-screen-capture, registers: [ slot::print-link ], variants: [ suppress-host-item ] }
+      - { zimlet: zimbra-zimlet-emptysubject, registers: [ slot::mail-composer-toolbar-send ], variants: [ headless-component ] }
+    hostSide:
+      reference: ../../../zm-x-web/.agents/zimlet/context/zimlet-slots.yml (kind zimlet-slot)
+      doc: ../../../zm-x-web/.agents/zimlet/reference/slot-behavior.md
+    recommendedExample:
+      zimlet: zimbra-zimlet-disable-screen-capture
+      reason: Shows the suppress-host-item variant in a single registration.
+    variants:
+      - id: headless-component
+        summary: The handler renders a component that returns null and works through effects or events.
+        examples: [ zimbra-zimlet-attachment-missing-alert, zimbra-zimlet-deceptive-link-detector, zimbra-zimlet-emptysubject ]
+      - id: suppress-host-item
+        summary: The handler returns an empty object so a removable host section renders nothing.
+        examples: [ zimbra-zimlet-disable-screen-capture ]
+    notes:
+      - Only registrations whose component was checked to return null, or that return an empty object, are classified here. Others stay in slot-ui.
+zimlets:
+  - name: zimbra-zimlet-additional-signature-setting
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-additional-signature-setting/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::additional-signature-settings
+        handler: reference
+        handlerRef: App
+        file: src/index.js
+        guards: []
+        pattern: settings-companion-slot
+        variant: component-reference
+  - name: zimbra-zimlet-ads
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-ads/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, dynamic-registration, loop-registration, factory-shape ]
+    redux: []
+    registrations:
+      - op: unregister
+        key: slot::${slot}
+        handler: none
+        file: src/components/initialize-ads/index.js
+        guards: []
+        pattern: slot-ui
+      - op: register
+        key: slot::${adSlots}
+        handler: reference
+        handlerRef: ad
+        file: src/components/initialize-ads/index.js
+        guards:
+          - kind: if
+            test: adSlots
+          - kind: loop
+          - kind: if
+            test: zimlet
+        pattern: slot-ui
+        variant: component-reference
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate ]
+      dynamic-registration: [ component-effect ]
+      loop-registration: [ config-driven ]
+    notes: index.js registers nothing itself. initialize-ads registers and unregisters slots from a component at runtime; the slot names are computed (slot::${adSlots}).
+  - name: zimbra-zimlet-attachment-missing-alert
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-attachment-missing-alert/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::mail-composer-toolbar-send
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-behavior
+        variant: headless-component
+      - op: register
+        key: slot::writting-email-additional-settings
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: settings-companion-slot
+        variant: inline-handler
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: writingEmail
+          hasTitle: false
+          hasComponent: false
+          fields:
+            - name: "[SERVER_PREF_NAME]"
+              type: modifyProperties
+        guards: []
+        pattern: settings
+        variant: extend-host-section
+    notes: "Combines three styles: a slot, a settings companion slot and a settings registration that extends the host writingEmail section."
+  - name: zimbra-zimlet-calendar-subscription
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-calendar-subscription/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::calendar-subscription-menu
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::calendar-subscription-modal-flow
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::calendar-subscription-list
+        handler: reference
+        handlerRef: WrappedSubscribedCalendarList
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: returns-render-function
+    notes: Takes addSlot and removeSlot from context.store.zimletRedux.actions.zimlets and passes them to components. The list handler returns a render function.
+  - name: zimbra-zimlet-chat
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-chat/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, dynamic-registration, multi-handler, redux-wiring, factory-shape ]
+    redux: [ addActions, addSelectors, injectAsyncReducer ]
+    registrations:
+      - op: register
+        key: slot::rightside-zimlet-slot
+        handler: reference
+        handlerRef: Sidebar
+        file: src/components/app/index.js
+        guards:
+          - kind: if
+            test: showSidebar && !isRegistered.current
+          - kind: runtime-callback
+            via: useEffect
+        pattern: slot-ui
+        variant: component-reference
+      - op: unregister
+        key: slot::rightside-zimlet-slot
+        handler: reference
+        handlerRef: Sidebar
+        file: src/components/app/index.js
+        guards:
+          - kind: if
+            test: "!showSidebar && isRegistered.current"
+          - kind: if
+            test: showSidebar && !isRegistered.current
+          - kind: runtime-callback
+            via: useEffect
+        pattern: slot-ui
+      - op: unregister
+        key: slot::rightside-zimlet-slot
+        handler: reference
+        handlerRef: Sidebar
+        file: src/components/app/index.js
+        guards:
+          - kind: if
+            test: isRegistered.current
+          - kind: runtime-callback
+            via: useEffect
+        pattern: slot-ui
+      - op: unregister
+        key: slot::chatapps-landing-page
+        handler: reference
+        handlerRef: LandingPage
+        file: src/components/heartbeat/index.js
+        guards:
+          - kind: if
+            test: isLoginFailed
+          - kind: runtime-callback
+            via: useEffect
+        pattern: vertical-route
+      - op: unregister
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/components/heartbeat/index.js
+        guards:
+          - kind: if
+            test: isLoginFailed
+          - kind: runtime-callback
+            via: useEffect
+        pattern: vertical-route
+      - op: register
+        key: slot::app
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: oneToOneChatEnabled || advancedChatEnabled
+          - kind: if
+            test: chatEnabled
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::contact-hover-card-details
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: oneToOneChatEnabled || advancedChatEnabled
+          - kind: if
+            test: chatEnabled
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::contact-card-item
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: oneToOneChatEnabled || advancedChatEnabled
+          - kind: if
+            test: chatEnabled
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards:
+          - kind: if
+            test: advancedChatEnabled
+          - kind: if
+            test: chatEnabled
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::chatapps-landing-page
+        handler: reference
+        handlerRef: LandingPage
+        file: src/index.js
+        guards:
+          - kind: if
+            test: advancedChatEnabled
+          - kind: if
+            test: chatEnabled
+        pattern: vertical-route
+        variant: landing-page
+      - op: register
+        key: slot::app
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: oneToOneChatEnabled
+          - kind: if
+            test: chatEnabled
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::rightbar-50px
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: oneToOneChatEnabled
+          - kind: if
+            test: chatEnabled
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate, account-gate ]
+      dynamic-registration: [ component-effect ]
+    notes: Most registrations are in init() behind feature and license checks. Heartbeat and the app component also register and unregister slots from useEffect. The unregisters of slot::routes and slot::chatapps-landing-page in components/heartbeat undo registrations made in init() when login fails.
+  - name: zimbra-zimlet-custom-fonts
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-custom-fonts/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::custom-fonts
+        handler: reference
+        handlerRef: AddCustomFontsInTinyMCE
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: customFonts
+          hasTitle: true
+          hasComponent: true
+          fields:
+            - name: "[PERSONAL_CUSTOM_FONTS]"
+              type: helper
+            - name: "[CONFIG_PROPERTY.CUSTOM_FONTS_LIST]"
+              type: helper
+            - name: "[CONFIG_PROPERTY.ALLOW_PERSONAL_FONTS]"
+              type: helper
+        guards: []
+        pattern: settings
+        variant: new-section-with-fields
+  - name: zimbra-zimlet-date
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-date/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: messageProcessors:emailProcessor
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: account?.attrs.zimbraFeatureCalendarEnabled
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: messageProcessors:dateInfoPopover
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: popover-component
+      - op: register
+        key: messageProcessors:attachPopover
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: html-transform
+    modifierVariants:
+      conditional-registration: [ account-gate ]
+    notes: The mail processor is registered only when the account has zimbraFeatureCalendarEnabled.
+  - name: zimbra-zimlet-deceptive-link-detector
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-deceptive-link-detector/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: messageProcessors:emailProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: slot::mail-pane
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-behavior
+        variant: headless-component
+  - name: zimbra-zimlet-desktop-auto-update
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-desktop-auto-update/src/index.js
+    status: complete
+    factory: init-property
+    destroy: true
+    modifiers: [ conditional-registration, redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer, removeActions ]
+    registrations:
+      - op: register
+        key: slot::app
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: DESKTOP_PREF_FIELDS.AUTO_UPDATE
+          hasTitle: true
+          hasComponent: true
+          fields:
+            - name: "[DESKTOP_PREF_FIELDS.ZIMLET_FIELD_CHANGE]"
+              type: helper
+        guards:
+          - kind: if
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON
+        pattern: settings
+        variant: new-section-with-fields
+    modifierVariants:
+      conditional-registration: [ platform-gate ]
+    notes: Everything, including the settings section and Redux wiring, runs only on Electron.
+  - name: zimbra-zimlet-disable-screen-capture
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-disable-screen-capture/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::print-link
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON
+        pattern: slot-behavior
+        variant: suppress-host-item
+      - op: register
+        key: slot::app
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ platform-gate ]
+    notes: Registers a handler returning an empty object on slot::print-link to suppress the host item.
+  - name: zimbra-zimlet-document-editor
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-document-editor/src/index.js
+    status: complete
+    factory: init-property
+    destroy: true
+    modifiers: [ conditional-registration, redux-wiring, factory-shape ]
+    redux: [ addActions, addSelectors, injectAsyncReducer, removeActions, removeSelectors ]
+    registrations:
+      - op: register
+        key: slot::briefcase-document-context-menu
+        handler: reference
+        handlerRef: WrappedContextMenuItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::action-menu-briefcase-more
+        handler: reference
+        handlerRef: WrappedActionMenuItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::briefcase-document-header-action
+        handler: reference
+        handlerRef: WrappedToolbarActionItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::email-attachment-action
+        handler: reference
+        handlerRef: WrappedEditAction
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::briefcase-upload-button
+        handler: reference
+        handlerRef: WrappedNewDocumentAction
+        file: src/index.js
+        guards:
+          - kind: if
+            test: isEditingEnable
+        pattern: slot-ui
+        variant: wrapper-component
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate ]
+  - name: zimbra-zimlet-download-email
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-download-email/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::action-menu-mail-more
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+  - name: zimbra-zimlet-email-defanger
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-email-defanger/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: messageProcessors:emailProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: messageProcessors:eventExcerptProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: messageProcessors:eventLocationProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: messageProcessors:eventNotesProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: slot::message-body-top
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+    notes: Message processors for mail and event content plus a banner slot in the message body.
+  - name: zimbra-zimlet-email-reminder
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-email-reminder/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::action-menu-mail-more
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+  - name: zimbra-zimlet-email-templates
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-email-templates/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::compose-sender-options-menu
+        handler: reference
+        handlerRef: options
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+  - name: zimbra-zimlet-emptysubject
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-emptysubject/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::mail-composer-toolbar-send
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-behavior
+        variant: headless-component
+  - name: zimbra-zimlet-external-setting-links
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-external-setting-links/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, loop-registration, factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::settings-dropdown-item-end
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!position || position === POSITION_GEAR"
+          - kind: loop
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::header-menu-item
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: position === POSITION_ACCOUNT
+          - kind: if
+            test: "!position || position === POSITION_GEAR"
+          - kind: loop
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate, account-gate ]
+      loop-registration: [ config-driven ]
+    notes: The slot is chosen per configured link in a loop (gear menu or account menu).
+  - name: zimbra-zimlet-import-export-ics
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-import-export-ics/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::action-menu-event-more
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::action-menu-event-context-menu
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::email-attachment-action
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+  - name: zimbra-zimlet-install-pwa
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-install-pwa/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::settings-dropdown-item
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+  - name: zimbra-zimlet-mail-recall
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-mail-recall/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::mail-recall-menu-option
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+  - name: zimbra-zimlet-mail-translate
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-mail-translate/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer ]
+    registrations:
+      - op: register
+        key: slot::mail-overflow-menu-option
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "'LanguageDetector' in window"
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::message-body-top
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "'LanguageDetector' in window"
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::message-header-additional-buttons
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "'LanguageDetector' in window"
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate ]
+  - name: zimbra-zimlet-modern-welcometour
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-modern-welcometour/src/index.js
+    status: complete
+    factory: init-property
+    destroy: true
+    modifiers: [ multi-handler, redux-wiring, factory-shape ]
+    redux: [ addActions, addSelectors, injectAsyncReducer, removeActions, removeSelectors ]
+    registrations:
+      - op: register
+        key: slot::app
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::app
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::general-setting-bottom
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: settings-companion-slot
+        variant: inline-handler
+    notes: slot::app is registered twice with separate handlers.
+  - name: zimbra-zimlet-org-chart
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-org-chart/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, dynamic-registration, redux-wiring, factory-shape ]
+    redux: [ addActions, addSelectors, injectAsyncReducer ]
+    registrations:
+      - op: register
+        key: slot::web-search
+        handler: reference
+        handlerRef: SearchBar
+        file: src/components/register-search-bar/index.js
+        guards:
+          - kind: if
+            test: showSearchBar && !isOffline
+          - kind: runtime-callback
+            via: useEffect
+        pattern: slot-ui
+        variant: component-reference
+      - op: unregister
+        key: slot::web-search
+        handler: reference
+        handlerRef: SearchBar
+        file: src/components/register-search-bar/index.js
+        guards:
+          - kind: if
+            test: showSearchBar && !isOffline
+          - kind: runtime-callback
+            via: useEffect
+        pattern: slot-ui
+      - op: unregister
+        key: slot::web-search
+        handler: reference
+        handlerRef: SearchBar
+        file: src/components/register-search-bar/index.js
+        guards:
+          - kind: runtime-callback
+            via: useEffect
+        pattern: slot-ui
+      - op: register
+        key: slot::contacts-tab-item
+        handler: reference
+        handlerRef: CustomMenuItem
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: tab-item
+      - op: register
+        key: slot::app
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate ]
+      dynamic-registration: [ component-effect ]
+    notes: Registers slot::web-search from a component with useEffect, plus static tab-item, app and routes slots in init().
+  - name: zimbra-zimlet-personal-notes
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-personal-notes/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::message-body-top
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+  - name: zimbra-zimlet-preventive-ooo
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-preventive-ooo/src/index.js
+    status: complete
+    factory: init-property
+    destroy: true
+    modifiers: [ redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer, removeActions ]
+    registrations:
+      - op: register
+        key: slot::mail-header-wrapper
+        handler: reference
+        handlerRef: WrappedFetchAllRecipientsStatus
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attendees-chooser-attendees
+        handler: reference
+        handlerRef: WrappedFetchAllAttendeesStatus
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::contact-input-token:button-inner-content
+        handler: reference
+        handlerRef: RecipientIcon
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::contact-hover-card-details
+        handler: reference
+        handlerRef: WrappedHoverCardMessage
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+  - name: zimbra-zimlet-privacy-protector
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-privacy-protector/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer ]
+    registrations:
+      - op: register
+        key: slot::mail-pane
+        handler: jsx
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: SLUG
+          hasTitle: true
+          hasComponent: true
+          fields: []
+        guards: []
+        pattern: settings
+        variant: new-section
+  - name: zimbra-zimlet-secure-mail
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-secure-mail/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: zimbra-zimlet-secure-mail
+          hasTitle: true
+          hasComponent: true
+          fields:
+            - name: zimbraPrefSMIMEDefaultSetting
+              type: mailboxMetadata
+        guards:
+          - kind: early-return
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON || !isServerSmimeEnabled
+        pattern: settings
+        variant: new-section-with-fields
+      - op: register
+        key: slot::mail-composer-smime-dropdown
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: early-return
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON || !isServerSmimeEnabled
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::mail-composer-toolbar-send
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: early-return
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON || !isServerSmimeEnabled
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::message-smime-status
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: early-return
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON || !isServerSmimeEnabled
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::contact-add-server-smime-cert
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: early-return
+            test: getPlatformType() === PLATFORM_TYPES.ELECTRON || !isServerSmimeEnabled
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ platform-gate ]
+    notes: init() returns early on Electron or without the server S/MIME license, so no plugin is registered in those cases.
+  - name: zimbra-zimlet-set-default-client
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-set-default-client/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::set-default-client
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: early-return
+            test: getPlatformType() !== PLATFORM_TYPES.WEB
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::settings-dropdown-item-end
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: early-return
+            test: getPlatformType() !== PLATFORM_TYPES.WEB
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ platform-gate ]
+    notes: init() returns early unless the platform is web.
+  - name: zimbra-zimlet-sideloader
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-sideloader/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::app
+        handler: reference
+        handlerRef: SideLoader
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::integrations-tab-item
+        handler: reference
+        handlerRef: CustomMenuItem
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: tab-item
+    notes: Registers a route, an app-level component and a menu item in the integrations tab.
+  - name: zimbra-zimlet-signature-template
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-signature-template/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::composer
+        handler: reference
+        handlerRef: signatureTemplate
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+  - name: zimbra-zimlet-spy-blocker
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-spy-blocker/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: messageProcessors:emailProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: messageProcessors:composerProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: messageProcessors:mailPrintProcessor
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: message-processor
+        variant: content-processor
+      - op: register
+        key: slot::message-body-top
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+    notes: Message processors for mail, composer and print content plus a banner slot in the message body.
+  - name: zimbra-zimlet-tlp
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-tlp/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::compose-sender-options-menu
+        handler: reference
+        handlerRef: WrappedSenderActionMenu
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+  - name: zimbra-zimlet-user-feedback
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-user-feedback/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::gear-menu
+        handler: reference
+        handlerRef: GearMenuItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+  - name: zimbra-zimlet-user-sessions-management
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-user-sessions-management/src/index.js
+    status: complete
+    factory: init-property
+    destroy: true
+    modifiers: [ redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer, removeActions ]
+    registrations:
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: securityAndActivity
+          hasTitle: true
+          hasComponent: true
+          fields: []
+        guards: []
+        pattern: settings
+        variant: new-section
+  - name: zimbra-zimlet-voice-composer
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-voice-composer/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer ]
+    registrations:
+      - op: register
+        key: slot::writing-email-post-composer-settings
+        handler: jsx
+        file: src/index.js
+        guards: []
+        pattern: settings-companion-slot
+        variant: inline-handler
+      - op: register
+        key: slot::app
+        handler: jsx
+        file: src/index.js
+        guards:
+          - kind: if
+            test: isZimletSupported
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::composer-toolbar-end
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: isZimletSupported
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate ]
+  - name: zimbra-zimlet-web-search
+    repo: zm-modern-zimlets
+    index: ../../../zm-modern-zimlets/zimlets/zimbra-zimlet-web-search/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ conditional-registration, dynamic-registration, redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer ]
+    registrations:
+      - op: unregister
+        key: slot::web-search
+        handler: reference
+        handlerRef: WebSearchInput
+        file: src/components/web-search/toggle.js
+        guards:
+          - kind: if
+            test: isWebSearchActive
+          - kind: runtime-callback
+            via: useCallback
+        pattern: slot-ui
+      - op: register
+        key: slot::web-search
+        handler: reference
+        handlerRef: WebSearchInput
+        file: src/components/web-search/toggle.js
+        guards:
+          - kind: if
+            test: isWebSearchActive
+          - kind: runtime-callback
+            via: useCallback
+        pattern: slot-ui
+        variant: component-reference
+      - op: unregister
+        key: slot::web-search
+        handler: reference
+        handlerRef: WebSearchInput
+        file: src/components/web-search/toggle.js
+        guards:
+          - kind: if
+            test: (isWebSearchActive && showAdvanced) || isMobile || isOffline
+          - kind: runtime-callback
+            via: useEffect
+        pattern: slot-ui
+      - op: register
+        key: slot::web-search-toggle
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+    modifierVariants:
+      conditional-registration: [ state-or-environment-gate ]
+      dynamic-registration: [ component-effect ]
+    notes: The toggle component registers and unregisters slot::web-search at runtime; index.js registers only the toggle slot.
+  - name: zimbra-zimlet-dropbox
+    repo: zm-cloudsuite-zimlets
+    index: ../../../zm-cloudsuite-zimlets/packages/zimbra-zimlet-dropbox/src/index.js
+    status: complete
+    factory: returned-object
+    destroy: true
+    modifiers: [ conditional-registration, async-registration, dynamic-registration, multi-handler, redux-wiring, factory-shape ]
+    redux: [ addActions, addSelectors, injectAsyncReducer, removeActions, removeSelectors ]
+    registrations:
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: AuthorizeRoute
+        file: src/index.js
+        guards:
+          - kind: async
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: com_zimbra_x-dropbox
+          hasTitle: true
+          hasComponent: true
+          fields: []
+        guards:
+          - kind: async
+        pattern: settings
+        variant: new-section
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards:
+          - kind: async
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list-files
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards:
+          - kind: async
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::attachment-items
+        handler: reference
+        handlerRef: ProvidedDropboxLinkAttachments
+        file: src/index.js
+        guards:
+          - kind: async
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards:
+          - kind: async
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::cloudapps-tab-item
+        handler: reference
+        handlerRef: CustomTabItem
+        file: src/index.js
+        guards:
+          - kind: async
+        pattern: vertical-route
+        variant: tab-item
+      - op: register
+        key: slot::compose-attachment-action-menu
+        handler: reference
+        handlerRef: DropboxChooser
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::attachment-single-action
+        handler: reference
+        handlerRef: ProvidedDropboxSaver
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-multi-action
+        handler: reference
+        handlerRef: ProvidedDropboxSaveAll
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-upload-and-link
+        handler: reference
+        handlerRef: ProvidedDropboxUploadAndLink
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: unregister
+        key: slot::compose-attachment-action-menu
+        handler: reference
+        handlerRef: DropboxChooser
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.dropbox.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-single-action
+        handler: reference
+        handlerRef: ProvidedDropboxSaver
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.dropbox.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-multi-action
+        handler: reference
+        handlerRef: ProvidedDropboxSaveAll
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.dropbox.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-upload-and-link
+        handler: reference
+        handlerRef: ProvidedDropboxUploadAndLink
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.dropbox.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.dropbox.enabled"
+          - kind: runtime-callback
+            via: subscribe
+          - kind: async
+        pattern: slot-ui
+    modifierVariants:
+      conditional-registration: [ account-gate ]
+      async-registration: [ after-promise ]
+      dynamic-registration: [ store-subscription ]
+    notes: Factory returns an object. Plugins are registered after an OAuth script lookup (promise). Attachment slots are registered and unregistered from store.subscribe. Registers the collaboration-list slots again for backward compatibility.
+  - name: zimbra-zimlet-google-drive
+    repo: zm-cloudsuite-zimlets
+    index: ../../../zm-cloudsuite-zimlets/packages/zimbra-zimlet-google-drive/src/index.js
+    status: complete
+    factory: returned-object
+    destroy: true
+    modifiers: [ conditional-registration, dynamic-registration, multi-handler, redux-wiring, factory-shape ]
+    redux: [ addActions, addSelectors, injectAsyncReducer, removeActions, removeSelectors ]
+    registrations:
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: AuthorizeRoute
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: com_zimbra_x-google-drive
+          hasTitle: true
+          hasComponent: true
+          fields: []
+        guards: []
+        pattern: settings
+        variant: new-section
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list
+        handler: reference
+        handlerRef: ProvidedGoogleDriveCollabItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list-files
+        handler: reference
+        handlerRef: ProvidedGoogleDriveCollabItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::cloudapps-tab-item
+        handler: reference
+        handlerRef: CustomTabItem
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: tab-item
+      - op: register
+        key: slot::compose-attachment-action-menu
+        handler: reference
+        handlerRef: ProvidedGoogleDriveAttacher
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-upload-and-link
+        handler: reference
+        handlerRef: ProvidedGoogleDriveUploadAndLink
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-single-action
+        handler: reference
+        handlerRef: ProvidedGoogleDriveSaveOne
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-multi-action
+        handler: reference
+        handlerRef: ProvidedGoogleDriveSaveAll
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: unregister
+        key: slot::compose-attachment-action-menu
+        handler: reference
+        handlerRef: ProvidedGoogleDriveAttacher
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.googleDrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-upload-and-link
+        handler: reference
+        handlerRef: ProvidedGoogleDriveUploadAndLink
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.googleDrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-single-action
+        handler: reference
+        handlerRef: ProvidedGoogleDriveSaveOne
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.googleDrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-multi-action
+        handler: reference
+        handlerRef: ProvidedGoogleDriveSaveAll
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.googleDrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.googleDrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+    modifierVariants:
+      conditional-registration: [ account-gate ]
+      dynamic-registration: [ store-subscription ]
+    notes: Factory returns an object. registerPlugins() is called synchronously from init(). Attachment slots are registered and unregistered from store.subscribe. Keeps the collaboration-list slots for backward compatibility.
+  - name: zimbra-zimlet-jitsi
+    repo: zm-cloudsuite-zimlets
+    index: ../../../zm-cloudsuite-zimlets/packages/zimbra-zimlet-jitsi/src/index.js
+    status: complete
+    factory: init-property
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::calendar-appointment-edit-video-call
+        handler: reference
+        handlerRef: App
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::videoapps-tab-item
+        handler: reference
+        handlerRef: CustomTabItem
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: tab-item
+      - op: register
+        key: slot::videoapps-landing-page-description
+        handler: reference
+        handlerRef: LandingPageDescription
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: landing-page
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list-videos
+        handler: reference
+        handlerRef: JitsiCollabItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+  - name: zimbra-zimlet-onedrive
+    repo: zm-cloudsuite-zimlets
+    index: ../../../zm-cloudsuite-zimlets/packages/zimbra-zimlet-onedrive/src/index.js
+    status: complete
+    factory: returned-object
+    destroy: true
+    modifiers: [ conditional-registration, dynamic-registration, multi-handler, redux-wiring, factory-shape ]
+    redux: [ addActions, addSelectors, injectAsyncReducer, removeActions, removeSelectors ]
+    registrations:
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: AuthorizeRoute
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: com_zimbra_x-onedrive
+          hasTitle: true
+          hasComponent: true
+          fields: []
+        guards: []
+        pattern: settings
+        variant: new-section
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list-files
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::cloudapps-tab-item
+        handler: reference
+        handlerRef: CustomTabItem
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: tab-item
+      - op: register
+        key: slot::compose-attachment-action-menu
+        handler: reference
+        handlerRef: ProvidedOneDriveAttacher
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-single-action
+        handler: reference
+        handlerRef: ProvidedOneDriveSaver
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-multi-action
+        handler: reference
+        handlerRef: ProvidedOneDriveSaveAll
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: register
+        key: slot::attachment-upload-and-link
+        handler: reference
+        handlerRef: ProvidedOneDriveUploadAndLink
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: wrapper-component
+      - op: unregister
+        key: slot::compose-attachment-action-menu
+        handler: reference
+        handlerRef: ProvidedOneDriveAttacher
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.onedrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-single-action
+        handler: reference
+        handlerRef: ProvidedOneDriveSaver
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.onedrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-multi-action
+        handler: reference
+        handlerRef: ProvidedOneDriveSaveAll
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.onedrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+      - op: unregister
+        key: slot::attachment-upload-and-link
+        handler: reference
+        handlerRef: ProvidedOneDriveUploadAndLink
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.onedrive.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.onedrive.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+    modifierVariants:
+      conditional-registration: [ account-gate ]
+      dynamic-registration: [ store-subscription ]
+    notes: Factory returns an object. registerPlugins() is called synchronously from init(). Attachment slots are registered and unregistered from store.subscribe. Keeps the collaboration-list slots for backward compatibility.
+  - name: zimbra-zimlet-slack
+    repo: zm-cloudsuite-zimlets
+    index: ../../../zm-cloudsuite-zimlets/packages/zimbra-zimlet-slack/src/index.js
+    status: complete
+    factory: returned-object
+    destroy: false
+    modifiers: [ multi-handler, factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::contact-hover-card-details
+        handler: reference
+        handlerRef: HoverCardDetails
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::address-pill
+        handler: reference
+        handlerRef: UserPresence
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::contact-card-item
+        handler: reference
+        handlerRef: ContactCardItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::action-menu-mail-more
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::chatapps-landing-page-description
+        handler: reference
+        handlerRef: LandingPageDescription
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: landing-page
+      - op: register
+        key: slot::chatapps-landing-page-videos
+        handler: reference
+        handlerRef: Videos
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: landing-page
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: AuthorizeRoute
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: com_zimbra_x_slack_zimlet
+          hasTitle: true
+          hasComponent: true
+          fields:
+            - name: slackCalendarReminderEnabled
+              type: userPref
+        guards: []
+        pattern: settings
+        variant: new-section-with-fields
+      - op: register
+        key: slot::contact-card-messages-and-files
+        handler: reference
+        handlerRef: ContactCardMessagesAndFiles
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list-chat
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::chatapps-tab-item
+        handler: reference
+        handlerRef: CustomTabItem
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: tab-item
+    notes: slot::routes is registered twice, once for the authorize route and once for the vertical router.
+  - name: zimbra-zimlet-video-call-preferences
+    repo: zm-cloudsuite-zimlets
+    index: ../../../zm-cloudsuite-zimlets/packages/zimbra-zimlet-video-call-preferences/src/index.js
+    status: complete
+    factory: returned-object
+    destroy: false
+    modifiers: [ factory-shape ]
+    redux: []
+    registrations:
+      - op: register
+        key: slot::calendar-and-reminders-video-call-preferences
+        handler: reference
+        handlerRef: VideoCallPreferences
+        file: src/index.js
+        guards: []
+        pattern: settings-companion-slot
+        variant: component-reference
+      - op: register
+        key: slot::calendar-appointment-edit-video-call
+        handler: reference
+        handlerRef: AppointmentEditAddVideoCall
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: calendarAndReminders
+          hasTitle: false
+          hasComponent: false
+          fields:
+            - name: videoCallOptions
+              type: modifyProperties
+        guards: []
+        pattern: settings
+        variant: extend-host-section
+    notes: Settings registration extends the host calendarAndReminders section and converts values with fromJS and toJS.
+  - name: zimbra-zimlet-zoom
+    repo: zm-cloudsuite-zimlets
+    index: ../../../zm-cloudsuite-zimlets/packages/zimbra-zimlet-zoom/src/index.js
+    status: complete
+    factory: returned-object
+    destroy: true
+    modifiers: [ conditional-registration, dynamic-registration, multi-handler, redux-wiring, factory-shape ]
+    redux: [ addActions, injectAsyncReducer, removeActions, removeSelectors ]
+    registrations:
+      - op: register
+        key: settings
+        handler: object
+        file: src/index.js
+        settings:
+          id: com_zimbra_x-zoom
+          hasTitle: true
+          hasComponent: true
+          fields: []
+        guards: []
+        pattern: settings
+        variant: new-section
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: AuthorizeRoute
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::videoapps-landing-page-description
+        handler: reference
+        handlerRef: LandingPageDescription
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: landing-page
+      - op: register
+        key: slot::calendar-body-end
+        handler: inline-function
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: inline-handler
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::collaboration-zimlet-collaboration-list-videos
+        handler: reference
+        handlerRef: CollaborationItem
+        file: src/index.js
+        guards: []
+        pattern: slot-ui
+        variant: component-reference
+      - op: register
+        key: slot::routes
+        handler: reference
+        handlerRef: Router
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: route
+      - op: register
+        key: slot::videoapps-tab-item
+        handler: reference
+        handlerRef: CustomTabItem
+        file: src/index.js
+        guards: []
+        pattern: vertical-route
+        variant: tab-item
+      - op: register
+        key: slot::calendar-appointment-edit-video-call
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.zoom.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+        variant: inline-handler
+      - op: unregister
+        key: slot::calendar-appointment-edit-video-call
+        handler: inline-function
+        file: src/index.js
+        guards:
+          - kind: if
+            test: dynamicSlotsRegistered && !state.zoom.enabled
+          - kind: if
+            test: "!dynamicSlotsRegistered && state.zoom.enabled"
+          - kind: runtime-callback
+            via: subscribe
+        pattern: slot-ui
+    modifierVariants:
+      conditional-registration: [ account-gate ]
+      dynamic-registration: [ store-subscription ]
+    notes: registerPlugins() is called from activation-status callbacks in init(). slot::calendar-appointment-edit-video-call is registered and unregistered from store.subscribe.
