@@ -50,7 +50,7 @@ Working examples: the live Zimlets in [zm-modern-zimlets](../../../zm-modern-zim
 | `zimlet.config.js` | Empty webpack hook with examples (see [cli-commands.md](./cli-commands.md#customizing-webpack)). |
 | `.eslintrc.js`, `.editorconfig`, `.circleci/config.yml` | Lint, editor and CI defaults. |
 
-The template was last updated in 2022 and lags the current CLI and host; see [known-issues.md](./known-issues.md) before using it unchanged.
+The template was last updated in 2022 and lags the current CLI and host; see [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md#default-template-zm-x-zimlet-template-default) before using it unchanged.
 
 ## 2. Factory and lifecycle
 
@@ -83,7 +83,7 @@ separate from those registration patterns.
 
 | Need | How | Reference |
 |---|---|---|
-| React to app actions (send, logout, invite reply) | `zimletEventEmitter.on(ZIMBRA_ZIMLET_EVENTS.X, fn[, isAsync])` | [context and shims §4](../../../zm-x-web/.agents/zimlet/reference/context-and-shims.md) |
+| React to app actions (send, logout, invite reply) | `zimletEventEmitter.on(ZIMBRA_ZIMLET_EVENTS.X, fn[, isAsync])` | [context and shims §4](../../../zm-x-web/.agents/zimlet/reference/context-and-shims.md#4-host-events-zimleteventemitter) |
 | Modal outside own DOM | dispatch `addModal` (Redux `zimlets` slice) | [runtime.md](../../../zm-x-web/.agents/zimlet/reference/runtime.md#redux-bridge) |
 
 Handler semantics (from `ZimletSlot` and `invokePlugin`): a function handler is called with the slot props (`payload` object) and its return value is rendered; a non-function value is rendered as-is; a returned function is turned into an element with the same props; exceptions are isolated per handler. Handlers run inline while the slot renders, so any hooks inside attach to the slot. Keep hook calls unconditional, or return an element of a real component for stateful UI.
@@ -131,10 +131,10 @@ Use the host's [context and shims reference](../../../zm-x-web/.agents/zimlet/re
 
 ## 8. Data and state
 
-- Redux: `store.zimletRedux.injectAsyncReducer/addActions/addSelectors`. See [context and shims §3](../../../zm-x-web/.agents/zimlet/reference/context-and-shims.md).
+- Redux: `store.zimletRedux.injectAsyncReducer/addActions/addSelectors`. See [context and shims §3](../../../zm-x-web/.agents/zimlet/reference/context-and-shims.md#3-redux-access-storezimletredux).
 - Per-account or admin config: [config_template.xml](./packaging-deployment.md#2-config_templatexml-admin-editable-settings) or mailbox metadata hooks (`useCustomMetaData`).
 - Platform checks (web vs desktop vs mobile): `getPlatformType()` / `PLATFORM_TYPES` from `@zimbra-client/platform`.
 
 ## 9. Non-Preact UI
 
-Possible, with trade-offs. A factory can be headless (events, network calls, DOM), and React code works through the `preact/compat` alias (limits in [known-issues.md](./known-issues.md#zimlet-cli)). Mounting another framework (Vue, Svelte) or a vanilla widget imperatively into a container element returned from a handler is **unverified**: it comes from reading the host code only, and was not built or run (open claim `UC-P01-02` in [zimlet-documentation-claims.md](../plans/zimlet-documentation-claims.md)). If it works, you bundle the framework yourself, get no automatic re-render on slot prop changes, and have no shared Preact context. The runtime runs them in a **shared, same-origin iframe (no security boundary)**; the only `postMessage` use found in `zm-x-web` is the `USER_ACTIVITY` idle-timer signal.
+Possible, with trade-offs. A factory can be headless (events, network calls, DOM), and React code works through the `preact/compat` alias (limits in [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md#zimlet-cli)). Mounting another framework (Vue, Svelte) or a vanilla widget imperatively into a container element returned from a handler is **unverified**: it comes from reading the host code only, and was not built or run (open claim `UC-P01-02` in [zimlet-documentation-claims.md](../plans/zimlet-documentation-claims.md)). If it works, you bundle the framework yourself, get no automatic re-render on slot prop changes, and have no shared Preact context. The runtime runs them in a **shared, same-origin iframe (no security boundary)**; the only `postMessage` use found in `zm-x-web` is the `USER_ACTIVITY` idle-timer signal.

@@ -17,7 +17,7 @@ implementation patterns.
    [zimlet-examples.md](../../../zm-modern-zimlets/.agents/reference/zimlet-examples.md) and
    inspect a real example that uses it.
 4. For a new Zimlet, scaffold from the default template only after applying the fixes in
-   [known-issues.md](../reference/known-issues.md), or copy the closest existing
+   [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md), or copy the closest existing
    Zimlet. For an existing Zimlet, preserve its repository conventions.
 5. Implement the package and factory using the
    [authoring reference](../reference/authoring.md). Apply the rules for imports, JSX,

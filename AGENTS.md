@@ -19,7 +19,7 @@ generated data, and **scripts** and **prompts** keep that data current.
 | Package, version, or deploy a Zimlet | [packaging-deployment.md](.agents/rules/packaging-deployment.md) | [packaging-deployment.md](.agents/reference/packaging-deployment.md), [Zimlet monorepos](../zm-modern-zimlets/.agents/reference/zimlet-repositories.md) |
 
 Before relying on the default template or a fact marked unverified, check
-[known-issues.md](.agents/reference/known-issues.md).
+[zimlet-known-issues.md](../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md).
 
 ## Zimlet documentation
 Use [write-doc.prompt.md](.agents/prompts/write-doc.prompt.md) for writing documentation. Use [review-doc.prompt.md](.agents/prompts/review-doc.prompt.md) for reviewing documentation. The Zimlet [registration patterns context](../zm-modern-zimlets/.agents/context/zimlet-patterns.yml) is kept in `zm-modern-zimlets`, with its [update prompt](../zm-modern-zimlets/.agents/prompts/update-reg-patterns.prompt.md) and scanner. The documentation site is in `documentation/` (Antora). Build it with `npm run build:docs` and preview it with `npm run preview:docs`. It is published at `https://zimbra.github.io/zimlet-cli`.
@@ -55,5 +55,4 @@ repository to check out; do not guess its contents.
 | Zimlet monorepo layout, tooling, and workflows | [zm-modern-zimlets/.agents/reference/zimlet-repositories.md](../zm-modern-zimlets/.agents/reference/zimlet-repositories.md) | zm-modern-zimlets |
 | Translation of Zimlet strings | Repository `AGENTS.md` and `.agents/translation/config.yml`; the [translation skill](../zm-frontend-ai-skills/skills/zimbra-translation/SKILL.md) | zm-modern-zimlets, zm-cloudsuite-zimlets |
 | Zimlet registration patterns and real Zimlet examples | [zm-modern-zimlets/.agents/reference/zimlet-examples.md](../zm-modern-zimlets/.agents/reference/zimlet-examples.md); data in [zm-modern-zimlets/.agents/context/zimlet-patterns.yml](../zm-modern-zimlets/.agents/context/zimlet-patterns.yml), refreshed with [zm-modern-zimlets/.agents/prompts/update-reg-patterns.prompt.md](../zm-modern-zimlets/.agents/prompts/update-reg-patterns.prompt.md) | zm-modern-zimlets |
-| Known issues in the Zimlet monorepos | [zm-modern-zimlets/.agents/reference/zimlet-known-issues.md](../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md) | zm-modern-zimlets |
-| Known gaps, stale areas, and items to confirm | [.agents/reference/known-issues.md](.agents/reference/known-issues.md) | zimlet-cli |
+| Known issues, gaps and stale areas (template, host, CLI, Zimlet repos, docs sources) | [zm-modern-zimlets/.agents/reference/zimlet-known-issues.md](../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md) | zm-modern-zimlets |

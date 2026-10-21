@@ -26,4 +26,4 @@ Leave `documentation/build` in place after the build. The preview server (`npm r
 
 ### Record gaps
 
-When the code or references show a mismatch between the sources the guide relies on (for example the CLI and the host disagree, a reference file is wrong, or a documented behaviour does not happen), add or update an entry in `.agents/reference/known-issues.md` under the matching heading. Say how it was checked and the fix, and remove the entry when it is fixed. Do not record temporary problems of the session, such as a leftover scratch state or a missing local tool.
+When the code or references show a mismatch between the sources the guide relies on (for example the CLI and the host disagree, a reference file is wrong, or a documented behaviour does not happen), add or update an entry in [zimlet-known-issues.md](../../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md) in `zm-modern-zimlets` under the matching heading. Say how it was checked and the fix, and remove the entry when it is fixed. Do not record temporary problems of the session, such as a leftover scratch state or a missing local tool.

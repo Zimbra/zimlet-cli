@@ -20,7 +20,7 @@ Published in P38 in user-friendly form. Only unresolved gaps are listed. When a 
 
 **B. Known defects and staleness**
 
-Tracked in [known-issues.md](../reference/known-issues.md). Do not copy items here; update that file instead.
+Tracked in [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md). Do not copy items here; update that file instead.
 
 ## Build order
 

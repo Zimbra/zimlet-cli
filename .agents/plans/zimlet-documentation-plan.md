@@ -159,7 +159,7 @@ _Purpose: give complete, working, reusable recipes that combine the fundamentals
 - **P17 `recipe-server-data.adoc` – Show data from the server** (Not started)
   - Complete recipe: a small `fetch` helper (origin, credentials, CSRF header) and one call that uses it, plus a ready-made hook such as `useAccountInfo`, rendered in a component.
   - How to verify, and what fails when the session or token is wrong.
-  - Brief: sources `context-and-shims.md` §3, `authoring.md` §7, the `fetch` helper and SOAP call in `zimbra-zimlet-org-chart/src/api` (`FetchRequest` with `zimbraOrigin` and `csrfToken` from `context`, `credentials: 'include'`, header `X-Zimbra-Csrf-Token`, `POST /service/soap/<Request>`). Links P20 for the options. No GraphQL. Example: a helper and component written for the page from that pattern and built in a scratch Zimlet. The proxy variant (`zimbra-zimlet-chat`, an extension path) is product-specific and not needed here.
+  - Brief: sources `context-and-shims.md` §1, `authoring.md` §7, the `fetch` helper and SOAP call in `zimbra-zimlet-org-chart/src/api` (`FetchRequest` with `zimbraOrigin` and `csrfToken` from `context`, `credentials: 'include'`, header `X-Zimbra-Csrf-Token`, `POST /service/soap/<Request>`). Links P20 for the options. No GraphQL. Example: a helper and component written for the page from that pattern and built in a scratch Zimlet. The proxy variant (`zimbra-zimlet-chat`, an extension path) is product-specific and not needed here.
 - **P18 `recipe-app-events.adoc` – React to app events** (Not started)
   - Two examples: delay sending a message and delay logout, with `zimletEventEmitter`.
   - Remove the listener correctly; verify the behaviour.
@@ -177,7 +177,7 @@ _Purpose: cover the options and details of one feature area per page, for author
   - Administrator configuration with `config_template.xml` – how a setting is declared and how the Zimlet reads it.
   - Mailbox metadata – read and write.
   - Platform checks – check the platform (desktop or browser) before using a feature.
-  - Brief: sources `context-and-shims.md` §3, `authoring.md` §7, `packaging-deployment.md` §2. The guide documents ready-made hooks only, never GraphQL (rule in `write-doc.md`). The `fetch` examples follow the existing Zimlets: Zimbra SOAP over `POST /service/soap/<Request>` as in `zimbra-zimlet-org-chart`. A proxy path is not a general option: `zimbra-zimlet-chat` uses its own extension path, so mention it only as a product-specific case. To investigate: which hooks to list. Examples: short snippets per topic; hook, Redux and config examples.
+  - Brief: sources `context-and-shims.md` §2–3, `authoring.md` §7, `packaging-deployment.md` §2. The guide documents ready-made hooks only, never GraphQL (rule in `write-doc.md`). The `fetch` examples follow the existing Zimlets: Zimbra SOAP over `POST /service/soap/<Request>` as in `zimbra-zimlet-org-chart`. A proxy path is not a general option: `zimbra-zimlet-chat` uses its own extension path, so mention it only as a product-specific case. To investigate: which hooks to list. Examples: short snippets per topic; hook, Redux and config examples.
 - **P21 `app-events.adoc` – App events** (Not started)
   - `zimletEventEmitter` and `ZIMBRA_ZIMLET_EVENTS` – the event bus and the full event table (the only full event table in the guide).
   - Synchronous and asynchronous listeners – how to choose.
@@ -208,7 +208,7 @@ _Purpose: cover the options and details of one feature area per page, for author
   - Call external services through `/service/proxy`.
   - Assets and `publicPath` – load images and fonts correctly in a deployed Zimlet.
   - OAuth client – use it for services that need a login.
-  - Brief: sources `cli-commands.md` (webpack), `authoring.md` §8, `packaging-deployment.md` §3. Signatures live in P33. Example: `zimlet.config.js`.
+  - Brief: sources `cli-commands.md` (webpack), `packaging-deployment.md` §3. Signatures live in P33. Example: `zimlet.config.js`.
 
 ### Part 5 – Test, package, deploy
 
@@ -289,7 +289,7 @@ _Purpose: help a reader who is stuck, has a question, or is moving from Classic 
 - **P36 `troubleshooting.adoc` – Troubleshooting** (Not started)
   - If nothing appears – a checklist of causes, in the order to check (moved from Run and debug).
   - Symptom, cause, fix table – symptoms as the reader sees them.
-  - Brief: seed rows: Zimlet silently absent (the server leaves out Zimlets whose version range does not match the Modern UI or that are not enabled for the user), certificate not accepted, `createElement` missing, import not shimmed, missing `zimlet.label`, asset 404 (`publicPath`), disabled for the COS, `off` throws. Source: [known-issues.md](../reference/known-issues.md).
+  - Brief: seed rows: Zimlet silently absent (the server leaves out Zimlets whose version range does not match the Modern UI or that are not enabled for the user), certificate not accepted, `createElement` missing, import not shimmed, missing `zimlet.label`, asset 404 (`publicPath`), disabled for the COS, `off` throws. Source: [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md).
 - **P37 `faq-and-getting-help.adoc` – FAQ and getting help** (Not started)
   - FAQ – answers to the questions authors ask most.
   - Report a documentation or template problem.
