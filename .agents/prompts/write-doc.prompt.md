@@ -2,7 +2,7 @@
 name: write-doc
 description: Write a new page, or add or update sections of an existing page, of the Zimlet developer guide from .agents/plans/zimlet-documentation-plan.md
 agent: agent
-model: Claude Sonnet 5
+model: Claude Sonnet 5.5
 ---
 
 Work on page `${input:pageId}` of the Zimlet developer guide. Give the page as its id (`P04`), its file name (`prerequisites` or `prerequisites.adoc`) or its title (`What you need before you start`). Optional scope: `${input:scope:whole page, section names to add or update, or specific plan/reference changes to apply}`.

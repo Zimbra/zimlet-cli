@@ -2,7 +2,7 @@
 name: review-doc
 description: Independently audit a page, or sections of a page, of the Zimlet developer guide for accuracy and against the documentation rules, and set its status
 agent: agent
-model: Claude Sonnet 5
+model: Claude Sonnet 5.5
 ---
 
 Review page `${input:pageId}` (for example `P03`) of the Zimlet developer guide. Optional scope: `${input:scope:whole page, or the section names to review}`.
