@@ -38,7 +38,7 @@ For each claim you wrote or changed in the session that you did not confirm by r
   - If the user gives the correct context, change the claim in the page to match it, keep the section id, and run the rules check again. Do not add a row.
   - If the user chooses `Update it later`, leave the text in the page and add a row with status `Disproved`. Leave **Closed on** empty, and in **Evidence** say that the user found the claim wrong and that the page fix is pending. Fix the page, and remove the row, once the correct context is known.
 - `Not sure`: leave the text in the page and add a row with status `Unverified`. Give it a `To verify` step that someone with the right access can follow.
-- For a claim about what the Modern UI shows, build the example and start the dev server first, as the Modern UI preview of the `zimlet-doc-verify` skill describes, and ask with its choices (`Yes`, `No`, `Not sure`, `Verify later`). `Verify later` is recorded like `Not sure`.
+- For a claim about what the Modern UI shows, build the example and start the dev server first, as the Modern UI preview of the `zimlet-doc-verify` skill describes (the user opens the Modern UI, not the agent), and ask with its choices (`Yes`, `No`, `Not sure`, `Verify later`). `Verify later` is recorded like `Not sure`.
 - Use the next free claim id for each new row, and fill every column as section 2 above describes. In **What was checked**, say that the user was asked and what the user answered (`Not sure` or `Verify later`).
 - Record every answer in the summary.
 

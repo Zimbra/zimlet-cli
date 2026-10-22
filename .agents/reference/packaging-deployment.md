@@ -78,4 +78,4 @@ Consequences for authors:
 - **OS packages:** The Zimlet monorepos also deliver OS packages; see [OS packages](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md#os-packages).
 - **Mailbox restart:** The OS-package post-install scripts print an instruction to restart the mailbox service after installation; they do not restart it themselves. This is repository-specific guidance, not a verified requirement for command-line or Admin Console deployment, nor evidence that a restart is required specifically after a first deployment.
 
-To load a Zimlet for development without packaging (sideloader and dev server), follow the [Modern UI preview workflow](../workflow/preview-zimlet.md).
+To load a Zimlet for development without packaging (sideloader and dev server), follow the [launch workflow](../workflow/launch-zimlet.md).

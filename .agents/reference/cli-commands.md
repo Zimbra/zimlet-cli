@@ -46,7 +46,7 @@ npm run build:docs   # Antora site from documentation/ (see below)
 
 Loading a Zimlet needs a Modern UI server, test or production, with the sideloader Zimlet available; there is no stand-alone environment for partners without a server.
 
-`zimlet watch` (default port 8081) serves `https://localhost:8081/index.js`, and rebuilds when a source file changes. The dev server has no client (`client: false`), so a Modern UI page that is already open does not update: reload it to load the rebuilt Zimlet (confirmed by running it in the Modern UI with the default template). Open that URL once to accept its certificate. To load it into the Modern UI through the sideloader, follow the [Modern UI preview workflow](../workflow/preview-zimlet.md).
+`zimlet watch` (default port 8081) serves `https://localhost:8081/index.js`, and rebuilds when a source file changes. The dev server has no client (`client: false`), so a Modern UI page that is already open does not update: reload it to load the rebuilt Zimlet (confirmed by running it in the Modern UI with the default template). Open that URL once to accept its certificate. To load it into the Modern UI through the sideloader, follow the [launch workflow](../workflow/launch-zimlet.md).
 
 The sideloader calls the same `loadZimletByUrls` + `init()` path as production, but a saved file does not trigger a restart of the running Zimlet: reload the Modern UI page. *Persist on Reload* in the sideloader loads the Zimlet again after the reload. The restart mechanism itself is in [runtime.md](../../../zm-x-web/.agents/zimlet/reference/runtime.md).
 

@@ -142,17 +142,18 @@ node .agents/skills/zimlet-doc-verify/scripts/verify.mjs <command>
 A claim about what the Modern UI shows, such as a slot output or a console message, needs a person in the Modern UI. Do not drive the browser. You build the example and start the dev server. The user loads it and tells you what they see.
 
 1. List the checks. Write each as a question with one observable answer, for example "Does the text `<expected text>` appear above the message body?" or "Does the browser console print `[ZimletSideLoaderSDK "<name>"]: Loaded successfully from ...`?". Take the expected text from the example, not from memory.
-2. Build the example (Example file, then Build), then start the dev server in the scratch folder, detached so it keeps running: `cd "$SCRATCH" && npx zimlet watch --port 8081`. Confirm that `curl -sk -o /dev/null -w "%{http_code}" https://localhost:8081/index.js` prints `200`.
+2. Run the [launch workflow](../../workflow/launch-zimlet.md): serve the example from the scratch folder with the dev server, and let the user trust its certificate.
 3. Tell the user the screen or message that the checks are about.
 4. Ask the checks one at a time with `ask_user`, with the choices `Yes`, `No`, `Not sure` and `Verify later`.
    - `Yes`: the user saw it. Report it as confirmed by the user, with the question and answer as evidence.
    - `No`: ask what the user saw, and fix the page to match.
-   - `Not sure` or `Verify later`: leave the claim `Unverified`. Say what you ran (build, dev server) and that the user chose not to confirm it now. In `To verify`, give the load steps above and the expected result of the question.
-5. Clean up. Ask the user to untick "Persist on Reload" for the test entry (stored in the `localStorage` key `zimlets-persistance`). Stop the `zimlet watch` process on port 8081 with `kill <PID>`. Keep the scratch folder and tell the user its path (`../zimlet-verify`, a sibling of this repository), so they can read the code that was tested.
+   - `Not sure` or `Verify later`: leave the claim `Unverified`. Say what you ran (build, dev server) and that the user chose not to confirm it now. In `To verify`, give the load steps of the launch workflow and the expected result of the question.
+5. Clean up. Stop the dev server as the launch workflow describes. Keep the scratch folder and tell the user its path (`../zimlet-verify`, a sibling of this repository), so they can read the code that was tested.
 
 ## Rules
 
 - Run on Node 24. Check with `node -v` first. On another version, report `Cannot verify`.
-- Run the preview workflow before you ask the user whether a Modern UI claim is correct, so the user has the dev server running and knows what to look for. A stub-host check (`register-calls`) is not a substitute.
+- Never open, drive or capture the Modern UI yourself, with browser tools or a script. The user does it.
+- Run the [launch workflow](../../workflow/launch-zimlet.md) before you ask the user whether a Modern UI claim is correct, so the user has the dev server running and knows what to look for. A stub-host check (`register-calls`) is not a substitute.
 - If a result differs from the page, the reference files or the CLI's own messages, report the difference as a gap.
 - Do not record an item in the open claims file (`plans/zimlet-documentation-claims.md`) before you have tried it here. Agents record what they could not confirm as `Unverified`. Only the user confirms a claim that needs a server or a Modern UI session; a confirmed claim has no row in the open claims file.

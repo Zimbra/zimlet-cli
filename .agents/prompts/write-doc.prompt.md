@@ -38,7 +38,7 @@ Read `.agents/rules/write-doc.md` and every rules file in `.agents/rules/doc-gui
 ### Finish (steps 9 and 10)
 
 9. Update the statuses as the build order in `.agents/plans/zimlet-documentation-build.md` describes: the page status in section 1 of the plan, and the phase status in the build order. Create mode sets the page to `Drafted`. Update mode leaves `Drafted` as is, and resets `Reviewed` to `Drafted` because the page changed. Never set `Reviewed`.
-10. Run the build and preview checks as `doc-guide/finish.md` ("Build and preview") describes. Do not set `Reviewed` yourself.
+10. Run the build and preview checks as `doc-guide/finish.md` ("Build and preview") describes. Do not set `Reviewed` yourself. Then delete the staged screenshots, as "Clean up" in `doc-guide/media.md` describes.
 
 Record gaps as you find them, as `doc-guide/finish.md` ("Record gaps") describes.
 
