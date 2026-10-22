@@ -1,0 +1,12 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Keeps a list of VIP addresses and marks them."
+	},
+	"my-zimlet": {
+		"vip": "VIP",
+		"add": "Add to VIP list",
+		"remove": "Remove from VIP list",
+		"failed": "The VIP list could not be saved"
+	}
+}

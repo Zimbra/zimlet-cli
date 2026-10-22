@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "my-zimlet",
+  "version": "1.0.0",
+  "main": "build/index.js",
+  "module": "src/index.js",
+  "scripts": {
+    "build": "zimlet build",
+    "start": "zimlet watch",
+    "package": "zimlet package --name \"$npm_package_name\" --pkg-version $npm_package_version --zimbraXVersion '^4.0.0'"
+  },
+  "devDependencies": {
+    "@zimbra/zimlet-cli": "^19.0.0"
+  }
+}

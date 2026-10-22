@@ -1,0 +1,173 @@
+= Enhance the event location field
+
+This recipe adds an *Add meeting link* control to the form in which a user creates or edits an event. Choosing it writes a unique meeting address into the location of the event. Choosing it again removes the address. Use it when a feature must set a value of the event while the user fills in the form. A video call link from your own meeting service is an example. The control is a small component that a xref:reference/glossary.adoc#zimlet[Zimlet] registers for a slot of the xref:reference/glossary.adoc#modern-ui[Modern UI] calendar.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Place a control in the appointment form with `calendar-appointment-edit-video-call`.
+* Change the location of the event.
+* Keep the text that the user typed.
+* Draw a link with the `Button` component.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-slot]
+== Choose the slot
+
+The control adds a video call link to an event. The example fills the slot `calendar-appointment-edit-video-call`, which holds the meeting platform of the event.
+
+[#the-slot]
+=== The slot
+
+`slot::calendar-appointment-edit-video-call`::
+The row below the *Location* field. It appears in two places: the full appointment editor, and the quick add form that opens when the user selects a time in the calendar. The Modern UI shows the row only while a Zimlet has registered a handler for the slot. When several Zimlets register one, the row shows the content of each. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::calendar-appointment-edit-location`::
+In the *Location* field, after the location input. It is in the full appointment editor only, and not in the quick add form. It passes `locations`, `event`, `handleLocationChange`, `tabId` and `notes`. Choose it for a control that belongs to the location itself, and not to a meeting platform.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the control in `init()`. It replaces the generated file.
+** `constants/index.js` holds the address of the meeting service. It replaces the generated file.
+** `utils/meeting-link.js` finds, adds and removes the link in the list of locations.
+** `components/meeting-link-button/` is the control.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$appointment-field/intl/en_US.json[]
+----
+
+[#write-the-location]
+== Write the location
+
+A meeting link is text in the location of the event. The user sees it in the *Location* field. The functions of `utils/meeting-link.js` read the list of locations and return a new list. They keep the rooms that the user picked and the text that the user typed, and they change only the link.
+
+.constants/index.js
+[source,js]
+----
+include::example$appointment-field/constants/index.js[]
+----
+
+.utils/meeting-link.js
+[source,js]
+----
+include::example$appointment-field/utils/meeting-link.js[]
+----
+
+`findMeetingLink` returns the link that is already in the text, or nothing. `addMeetingLink` appends a new link made from 16 random characters, so that nobody can guess the room. `removeMeetingLink` takes the link out. All three split the text at commas and semicolons, because a saved event returns its text with semicolons. `withText` writes the entries back as one string separated by commas. It puts the rooms in front, which is the shape that both forms keep.
+
+NOTE: `MEETING_BASE_URL` is a placeholder. Set it to the address of your meeting service. A Zimlet that serves several servers reads the address from its configuration instead, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes.
+
+[#build-the-control]
+== Build the control
+
+The component reads the list, decides which text to show, and calls `handleLocationChange` with the new list.
+
+.components/meeting-link-button/index.js
+[source,js]
+----
+include::example$appointment-field/components/meeting-link-button/index.js[]
+----
+
+[#button-as-link]
+=== The Button as a link
+
+`Button` draws a button in the style of the Modern UI. It comes from `@zimbra-client/blocks`. The recipe xref:build-by-goal/recipe-server-data.adoc#button[Manage server data] explains it. Here it is a link, because the control is an option of a form and not the main action. The example uses these props:
+
+`styleType`::
+Set to `text`, the button looks like a link: underlined, in the link colour, with no frame.
+
+`alignLeft`::
+Removes the left margin, so the link lines up with the fields above it.
+
+`onClick`::
+Runs when the user chooses the link.
+
+A `Button` has `type="button"` unless you set another one. This matters here, because the quick add form is a `form`, and a button of another type would submit it. See xref:reference/shims/blocks/buttons-and-progress.adoc[Buttons and progress] for the rest of the props.
+
+[#register-the-control]
+== Register the control
+
+Register one handler in `init()`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The Modern UI calls the handler as a component and gives it the props of the slot. The handler passes on only the two props that the control uses.
+
+The slot passes these props to your handler. The first two are in both places.
+
+`locations`::
+The locations of the event, as an array. Each room that the user picked is an object. The text that the user typed is a string. The editor keeps the objects first and at most one string, the last, at the end. The quick add form keeps the objects first and all strings after them. When the user opens a saved event, the text of its location arrives as one string, with the entries separated by semicolons.
+
+`handleLocationChange`::
+The function that changes the location. Call it with one object, `{ value }`, where `value` is the complete new array. It replaces the whole list, so an entry that you leave out is removed.
+
+`event`::
+The event that the form shows. The example does not use it.
+
+`notes`, `isCustomRecurringEvent`, `repeatValue` and `tabId`::
+Only the full editor passes these. `notes` is the text of the notes of the event, and the slot gives no function to change it. `isCustomRecurringEvent` and `repeatValue` describe how the event repeats. `tabId` identifies the editor tab. The example does not use them.
+
+.index.js
+[source,js]
+----
+include::example$appointment-field/index.js[]
+----
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page first if the Zimlet was loaded before.
+. Open *Calendar* and choose *New event*. The link *Add meeting link* is below the *Location* field.
++
+.The Add meeting link link in the appointment editor
+image::appointment-field-add-meeting-link.png["The New event editor is open with an empty Location field. The Add meeting link link, outlined in red, is in the row below the Location field."]
++
+The outlined *Add meeting link* link is yours.
+. Choose *Add meeting link*. The *Location* field shows an address that starts with `+https://zimbra.github.io/zimlet-cli/meet/+`, and the link reads *Remove meeting link*.
++
+.The editor after the link is added
+image::appointment-field-link-added.png["The Location field of the New event editor holds a meeting address and is outlined in red. The Remove meeting link link below it is also outlined in red."]
++
+The outlined *Location* field holds the address that the control wrote. The outlined *Remove meeting link* link is yours.
+. Choose *Remove meeting link*. The *Location* field is empty again.
+. Type `Room 4` in the *Location* field, and choose *Add meeting link*. The field shows `Room 4, ` followed by the address. Your text stays.
+. Go back to the calendar and select a time to open the quick add form. It has the same link below its *Location* field, and it works the same way.
+. Save an event that has a meeting link, and open it again. The *Location* field shows the address, and the link reads *Remove meeting link*.
+
+[#expected-result]
+== Expected result
+
+* The appointment editor and the quick add form show *Add meeting link* below the *Location* field.
+* Choosing it puts a new meeting address into the location. Text that the user typed stays.
+* The link then reads *Remove meeting link*, and choosing it removes the address and keeps the other text.
+* A saved event that has the address shows *Remove meeting link* when it is opened again.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The link is not in the form.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the key is `slot::calendar-appointment-edit-video-call` and that you register in `init()`. Reload the page, and open a new event.
+
+Choosing the link does not change the location.::
+* Cause: `handleLocationChange` takes one object with a `value` array. Another argument, such as the array itself, is not accepted.
+* Fix: Call `handleLocationChange({ value })` with the complete new list.
+
+The text that the user typed disappears.::
+* Cause: The list that you pass replaces the whole location. A list that you build from nothing drops the rooms and the text.
+* Fix: Build the new list from `locations`, and change only your entry.
+
+[#next-step]
+== Next step
+
+To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

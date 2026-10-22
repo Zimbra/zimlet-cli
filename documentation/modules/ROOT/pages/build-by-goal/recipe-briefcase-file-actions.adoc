@@ -1,0 +1,250 @@
+= Add a Briefcase action
+
+This recipe adds a *Check before sharing* action for the files that the user selects in Briefcase. The action tests each selected file against a sharing policy, no executable files and nothing over 10 MB, and lists the result in a dialog. Use it when an action works on the selected files and belongs next to *Download* and *Delete*. The action is offered in two places, the context menu of a file and the toolbar above the list, and both use the same logic. Each is a small component that a xref:reference/glossary.adoc#zimlet[Zimlet] registers for a slot of the xref:reference/glossary.adoc#modern-ui[Modern UI] Briefcase.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Choose a slot for file actions.
+* Offer one action as a menu item and a toolbar button.
+* Handle a selection of folders and files.
+* Show the result in a dialog.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Files and a folder in Briefcase to select. The check in the example needs a file named `setup.exe`, of any content, to show a failed result.
+
+[#choose-the-slot]
+== Choose the slot
+
+Three slots add an action for the selected files. Choose the slot by where the user looks for the action. The example offers one action in the context menu of a file and in the toolbar, so it fills two of them. Look up each slot in the xref:reference/slots.adoc[slot index].
+
+[#the-slots]
+=== The slots
+
+`slot::briefcase-document-context-menu`::
+The context menu of a file, at its end, after *Delete*. Return a menu item. The menu opens for a file, and not when the selection holds both files and folders.
+
+`slot::briefcase-document-header-action`::
+The toolbar above the list, after *Download*, *Move* and *Delete* and before the menu with three dots. Return a button. The toolbar is shown whether or not a file is selected, so the handler also runs for an empty selection.
+
+[#other-slots]
+=== Other slots
+
+`slot::action-menu-briefcase-more`::
+The menu with three dots at the end of the toolbar, before the *Tag* item. Return a menu item. Choose it instead of the toolbar button for an action that the user needs less often. It passes `selectedList`, `disableRename`, `errorCode` and `isSelectedFolder`. The menu is off while nothing is selected, and it is not in the folder *Files shared with me*. The same menu item component works here as in the context menu.
+
+`slot::briefcase-upload-button`::
+The upload button of the sidebar. It is not for an action on selected files, and it passes `folder`, `documentRefetchQueries` and `disabled`, and not `selectedList`.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the two handlers in `init()`. It replaces the generated file.
+** `constants/index.js` holds the sharing policy and the id of the dialog.
+** `utils/get-files.js` keeps the files of the selection.
+** `utils/check-file.js` tests one file against the policy.
+** `hooks/use-sharing-check.js` runs the check and opens the dialog.
+** `components/check-menu-item/` is the menu item.
+** `components/check-button/` is the toolbar button.
+** `components/check-result-dialog/` is the dialog and its style.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$briefcase-file-actions/intl/en_US.json[]
+----
+
+[#check-the-files]
+== Check the files
+
+The policy is data, so that you change it in one place.
+
+.constants/index.js
+[source,js]
+----
+include::example$briefcase-file-actions/constants/index.js[]
+----
+
+`get-files.js` keeps the files of a selection. It drops every item that has an `absFolderPath`, so a folder in the toolbar selection is ignored.
+
+.utils/get-files.js
+[source,js]
+----
+include::example$briefcase-file-actions/utils/get-files.js[]
+----
+
+`check-file.js` returns the first problem of a file, or `null` when the file can be shared. A file without an extension has none, so its name is never read as one.
+
+.utils/check-file.js
+[source,js]
+----
+include::example$briefcase-file-actions/utils/check-file.js[]
+----
+
+[#selection]
+=== What `selectedList` holds
+
+Each slot passes the selection to your handler as the xref:fundamentals/extending-the-ui.adoc#props-and-payload[prop] `selectedList`, a list of the selected items. The context menu also passes `disableRename`, `isFileSharedFolder` and `errorCode`. The toolbar also passes `isFileSharedFolder` and `errorCode`. The items are the selected rows of the list. A file has `id`, `name`, `size` in bytes, `contentType`, `version` and `tagNames`, among others. A folder has the field `absFolderPath`, and a file does not. The Modern UI tells the two apart in the same way.
+
+* In the toolbar, `selectedList` can hold files, folders or both, because the user can select both kinds.
+* In the context menu, it holds the selected files.
+* In the menu with three dots, it holds only the files of the selection. The Modern UI removes the folders before it calls the slot.
+
+A handler for the toolbar must therefore expect folders. The example keeps the files and ignores the rest.
+
+The other props are not used by the example:
+
+`isFileSharedFolder`::
+`true` when the open folder is *Files shared with me*.
+
+`disableRename`::
+`true` when the Modern UI turns off its own *Rename* for the selection.
+
+`errorCode`::
+`404` when the preview of a file in a shared folder shows that the file no longer exists.
+
+`isSelectedFolder`::
+`true` when the first selected item is a folder.
+
+[#run-the-check]
+== Run the check and show the result
+
+The menu item and the button do the same work, so one hook holds it. It returns `hasFiles`, which tells the component whether the action applies, and `runCheck`, which checks the files and opens the dialog.
+
+.hooks/use-sharing-check.js
+[source,js]
+----
+include::example$briefcase-file-actions/hooks/use-sharing-check.js[]
+----
+
+The hook opens the dialog with the `addModal` action of the Zimlet state and closes it with `removeModal`, as xref:build-by-goal/recipe-app-events.adoc#dialogs-with-addmodal[Show and close a dialog] describes. In a component, send an action with `useDispatch` from `react-redux`, as xref:go-deeper/redux.adoc[Redux] describes. The hook gets the two actions from its caller, so that no component needs the whole store.
+
+[#dialog]
+=== The dialog
+
+The dialog lists each file with its result. A failed result is shown in the colour of errors and also says what is wrong, so the colour is not the only signal.
+
+.components/check-result-dialog/index.js
+[source,js]
+----
+include::example$briefcase-file-actions/components/check-result-dialog/index.js[]
+----
+
+.components/check-result-dialog/style.less
+[source,less]
+----
+include::example$briefcase-file-actions/components/check-result-dialog/style.less[]
+----
+
+`ModalDialog` is explained in xref:build-by-goal/recipe-app-events.adoc#modal-dialog[The ModalDialog component]. This dialog uses three props that the section does not cover:
+
+`scrollable`::
+Gives the dialog a fixed height and scrolls its content, so a long selection does not make the dialog taller than the window.
+
+`cancelButton`::
+Set to `false` to hide the *Cancel* button. The dialog only reports a result, so it has one button.
+
+`onAction`::
+Runs when the user chooses the main button, which reads *OK* because `actionLabel` keeps its default. The close button calls `onClose`. Both close the dialog here.
+
+The Modern UI draws the dialog outside your Zimlet, so wrap it with `withIntl`. The `Text` element fills the placeholder in the text `+Larger than {{limit}} MB+` from its `fields` prop, as xref:go-deeper/localization.adoc#show-texts[Localization] describes.
+
+[#add-the-action]
+== Add the menu item and the button
+
+Both components call the hook and turn themselves off when the selection holds no file.
+
+.components/check-menu-item/index.js
+[source,js]
+----
+include::example$briefcase-file-actions/components/check-menu-item/index.js[]
+----
+
+`ActionMenuItem` is explained in xref:build-by-goal/recipe-gear-and-settings-menu.adoc#action-menu-item[The ActionMenuItem component]. The item uses `onClick` to run the check and `disabled` to turn the item off.
+
+.components/check-button/index.js
+[source,js]
+----
+include::example$briefcase-file-actions/components/check-button/index.js[]
+----
+
+`ActionButton` is explained in xref:build-by-goal/recipe-server-data.adoc#action-button[The ActionButton component]. The toolbar buttons of the Modern UI show an icon with a label, so this button sets `icon` and does not set `iconOnly`. It sets `disabled` for a selection without a file, such as nothing selected or only folders.
+
+[#register-the-handlers]
+== Register the handlers
+
+Register both handlers in `init()`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. Each handler takes `addModal` and `removeModal` from the Zimlet state and passes them with `selectedList` down to a component, and not the whole store or context. The hook then runs in the component, and not in the handler, as xref:fundamentals/extending-the-ui.adoc#hooks-in-handlers[Hooks in handlers] requires.
+
+.index.js
+[source,js]
+----
+include::example$briefcase-file-actions/index.js[]
+----
+
+Both slots pass a function to the screen, so the screen shows what your handlers return. See xref:fundamentals/extending-the-ui.adoc#render-prop-slots[Render-prop slots].
+
+NOTE: A Zimbra document is a file with the content type `application/x-zimbra-doc`. When one is selected, the Modern UI shows its own *Edit* item or button only if no Zimlet returns content for the slot. A handler that always returns an element, as the handlers here do, therefore replaces *Edit* for that selection. Return `null` for it if your Zimlet must not replace *Edit*.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page first if the Zimlet was loaded before.
+. Open *Briefcase* and select a file. The toolbar shows *Check before sharing* after *Delete*.
++
+.The Check before sharing button in the toolbar
+image::briefcase-file-actions-toolbar-button.png["The Briefcase with one file selected. The Check before sharing button, with a shield icon and outlined in red, is in the toolbar after Delete and before the menu with three dots."]
++
+The outlined *Check before sharing* button is yours.
+. Right-click a file. The context menu lists *Check before sharing* after *Delete*.
++
+.The Check before sharing item in the context menu
+image::briefcase-file-actions-context-menu.png["The context menu of a file in Briefcase. The Check before sharing item, outlined in red, is the last item, after Delete."]
++
+The outlined *Check before sharing* item is yours.
+. Select `setup.exe` and one other file with the *Ctrl* key, and choose *Check before sharing* in the toolbar. The dialog *Sharing check* lists both files.
++
+.The result dialog
+image::briefcase-file-actions-result-dialog.png["The Sharing check dialog over the Briefcase with two files selected. The list of results, outlined in red, shows setup.exe with Executable files cannot be shared, and the other file with Ready to share."]
++
+The outlined list is yours. *setup.exe* shows *Executable files cannot be shared*, and the other file shows *Ready to share*.
+. Choose *OK*. The dialog closes.
+. Clear the selection. The toolbar button is turned off. Select only a folder. The button is still off.
+
+[#expected-result]
+== Expected result
+
+* *Check before sharing* is in the context menu of a file and in the toolbar, after *Delete*.
+* The action lists every selected file with *Ready to share* or the reason that it fails.
+* A file with a blocked extension, or larger than 10 MB, fails the check.
+* The toolbar button is turned off when the selection holds no file.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The action is not in the menu or in the toolbar.::
+* Cause: The Zimlet is not loaded, or a handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the keys are `slot::briefcase-document-context-menu` and `slot::briefcase-document-header-action` and that you register in `init()`. Reload the page.
+
+The context menu has no action for a selection of files and folders.::
+* Cause: The Modern UI does not open the file context menu when the selection holds both files and folders, so the slot is not called.
+* Fix: Use the toolbar button, which is shown for every selection, and ignore the folders as `get-files.js` does.
+
+The dialog shows keys such as `my-zimlet.dialogTitle`.::
+* Cause: The component is not wrapped with `withIntl`, or `en_US.json` lacks the keys. The dialog is drawn outside your Zimlet and cannot find its texts without the wrapper.
+* Fix: Wrap the component with `withIntl()` and merge the texts into `src/intl/en_US.json`.
+
+*Edit* is missing for a Zimbra document.::
+* Cause: A handler of the slot returns an element for a single Zimbra document, so the Modern UI no longer shows its own *Edit*.
+* Fix: Return `null` from the handler when `selectedList` holds one item whose `contentType` includes `application/x-zimbra-doc`.
+
+[#next-step]
+== Next step
+
+Add an action for a message in a menu with xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

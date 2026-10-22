@@ -1,0 +1,6 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Links ticket numbers in messages to the ticket tracker."
+	}
+}

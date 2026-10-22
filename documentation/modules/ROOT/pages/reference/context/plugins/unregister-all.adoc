@@ -1,0 +1,45 @@
+= unregisterAll
+
+Removes every plugin handler that your Zimlet registered, under every key. Use it to switch your whole Zimlet off at once, for example when the user signs out. To switch off one feature only, use xref:reference/context/plugins/unregister.adoc[unregister].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+plugins.unregisterAll()
+----
+
+[#parameters]
+== Parameters
+
+None.
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Use it to clean up, for example when the user signs out.
+* If you need to remove only some handlers, use xref:reference/context/plugins/unregister.adoc[unregister].
+
+WARNING: For a Zimlet that loads from the server, `unregisterAll` also removes the handlers of every other Zimlet that loads from the server. See xref:fundamentals/host-context.adoc#shared-name[the shared name].
+
+[#example]
+== Example
+
+Two handlers are registered, and both are removed when the user signs out.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/plugins/unregister-all.js[]
+----
+
+[#next-step]
+== Next step
+
+Return to xref:reference/context/plugins.adoc[Plugins] to look up another member.

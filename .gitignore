@@ -4,3 +4,4 @@ npm-debug.log
 /node_modules
 .DS_Store
 documentation/build
+.agents/tmp/

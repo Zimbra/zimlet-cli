@@ -1,0 +1,42 @@
+@import '~@zimbra/x-ui/refs.less';
+
+.section {
+	display: flex;
+	flex-direction: column;
+	align-items: baseline;
+	margin-bottom: calc(var(--spacing-lg) + var(--spacing-xs));
+	font-size: var(--font-size-base);
+	color: var(--text-color);
+
+	@media (min-width: @screen-xs-max) {
+		flex-direction: unset;
+		margin-bottom: var(--spacing-md);
+	}
+}
+
+.label {
+	min-width: 220px;
+	width: 220px;
+	margin-bottom: calc(var(--spacing-sm) + 2px);
+	padding: 2px var(--spacing-md) 0 0;
+	font-weight: 500;
+
+	@media (min-width: @screen-xs-max) {
+		margin-bottom: 0;
+		font-weight: unset;
+	}
+}
+
+.body {
+	flex-grow: 1;
+	max-width: 375px;
+}
+
+.tooltip {
+	width: 275px;
+}
+
+.tooltipTitle {
+	font-weight: bold;
+	padding-bottom: var(--spacing-sm);
+}

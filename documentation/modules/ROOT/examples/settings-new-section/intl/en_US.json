@@ -1,0 +1,14 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds a Reply reminders section to the Settings dialog."
+	},
+	"my-zimlet": {
+		"sectionTitle": "Reply reminders",
+		"intro": "Get a reminder when a message that you sent has no reply.",
+		"enable": "Remind me about messages without a reply",
+		"daysBefore": "Remind me after",
+		"daysUnit": "days",
+		"daysError": "Enter a whole number from 1 to 30."
+	}
+}

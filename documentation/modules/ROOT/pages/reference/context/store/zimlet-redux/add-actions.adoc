@@ -1,0 +1,55 @@
+= addActions
+
+Publishes your action creators, so that other code can use them through `actions`. Use it when other Zimlets, or other parts of your Zimlet, should change your state by name and not by importing your code.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.addActions(namespace, actions)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`namespace`
+|string
+|The name under which the actions are published, such as `myZimlet`.
+
+|`actions`
+|object
+|An object of action creators. Each value is a function that returns an action.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Calling it again with the same namespace replaces the earlier actions.
+* If the Modern UI has actions under the same namespace, its actions are the ones that `actions` returns.
+
+[#example]
+== Example
+
+A published action creator is read back from `actions` and its action is dispatched.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/add-actions.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to remove them in xref:reference/context/store/zimlet-redux/remove-actions.adoc[removeActions].

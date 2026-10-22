@@ -1,0 +1,11 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds help desk items to the Settings and more menu and to the account menu."
+	},
+	"my-zimlet": {
+		"helpDesk": "Help desk",
+		"manageAccount": "Manage account",
+		"reportProblem": "Report a problem"
+	}
+}

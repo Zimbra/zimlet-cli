@@ -1,0 +1,16 @@
+flowchart TB
+  subgraph load["Load"]
+    B["Modern UI calls the factory function, passing the context"]
+    B --> C["Factory returns an object with the setup method"]
+  end
+  subgraph setup["Setup"]
+    D["Calls the setup method"] --> E["Registers handlers, now or after async work"]
+  end
+  subgraph running["Running&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"]
+    F["Handlers run as the user works, for example in a slot or on an event"] -.-> G["Removes a handler it no longer needs"]
+  end
+  C -- "Enabled for account" --> D
+  C -- "Not enabled" --> S["Setup skipped"]
+  E --> F
+  B -. Error .-> W["Warning logged, later setup skipped"]
+  D -. Error .-> W

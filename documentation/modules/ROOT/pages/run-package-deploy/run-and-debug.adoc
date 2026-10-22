@@ -1,0 +1,155 @@
+= Run and debug
+
+You run a xref:reference/glossary.adoc#zimlet[Zimlet] from your machine in the xref:reference/glossary.adoc#modern-ui[Modern UI] before you package it. The development server of `zimlet watch` serves the Zimlet, and the sideloader loads it into your browser session. You also learn to see a change, read the browser console and show every xref:fundamentals/extending-the-ui.adoc[slot] in the page. Go back to these steps whenever a Zimlet does not behave as you expect. A change shows up only when you load it the right way.
+
+[#before-you-start]
+== Before you start
+
+* A Zimlet project with its dependencies installed, as xref:getting-started/quickstart.adoc#create-from-template[Create a Zimlet from the template] describes.
+* Node.js 24, as xref:getting-started/setup-environment.adoc[Set up your machine] describes.
+* The sideloader enabled for your account. See xref:getting-started/setup-environment.adoc#sideloader[Install and enable the sideloader].
+
+[#start-the-development-server]
+== Start the development server
+
+. In the Zimlet folder, run:
++
+[source,sh]
+----
+npm start
+----
+. Wait for the line `Compiled successfully!`.
+. The first time, accept the certificate of the server in your browser. Follow xref:getting-started/setup-environment.adoc#accept-certificate[Accept the development HTTPS certificate].
+
+The script runs `zimlet watch`. It builds the Zimlet, serves it at `https://localhost:8081/index.js` and rebuilds it each time you save a file. The output shows an `http://` address, but the server answers only over HTTPS. Keep the terminal open while you work.
+
+To pass an option, add it after `--`, for example `npm start -- --port 8082`. See xref:reference/cli.adoc#watch[zimlet watch] for every option and the output.
+
+[#watch-options]
+=== Options of zimlet watch
+
+`--port <number>`::
+The port of the server. The default is `8081`. Use another port when a program already uses 8081 or when you run two Zimlets at the same time. Use the same port in the sideloader address. If the port is taken, the server can stop with `Error: listen EADDRINUSE`, so choose a free port yourself.
+
+`--https <true|false>`::
+The protocol of the server. The default is `true`, which serves the Zimlet over HTTPS with a self-signed certificate. `--https false` serves it over plain HTTP only, and the sideloader address must then start with `http://`.
+
+`--config <path>`::
+The path of a custom build configuration file. The default is `./zimlet.config.js`. See xref:go-deeper/advanced.adoc[Advanced topics] for what the file can change.
+
+[#load-with-the-sideloader]
+== Load the Zimlet with the sideloader
+
+The sideloader is a Zimlet that loads another Zimlet from a web address into the Modern UI. For a first walk-through with screenshots, see xref:getting-started/quickstart.adoc#load-with-sideloader[Load it through the sideloader]. To load any Zimlet:
+
+. Sign in to the Modern UI. Choose *Integrations*, then choose the *Zimlets Sideloader* tab.
+. In the Zimlet Name field, enter the name of your Zimlet.
+. In the address field, enter `https://localhost:8081/index.js`. Use your port if it is not 8081.
+. Choose *Load Zimlet*.
+
+The table *Zimlets Loaded By Sideloader* lists the Zimlet. The status changes from *Loading* to *Running* when the Zimlet has loaded and its `init()` function has run. See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] for what `init()` does.
+
+[#persist]
+=== Keep the Zimlet loaded with Persist on Reload
+
+A new row has *Persist on Reload* ticked. Each time the Modern UI page loads, the sideloader then loads every ticked Zimlet again from its address. The setting belongs to the browser that you used, so another browser or profile starts with an empty table.
+
+Clear *Persist on Reload* when you stop the development server. Otherwise the sideloader tries to load the Zimlet on every page load and the status shows an error.
+
+[#see-a-change]
+== See a change
+
+. Save a file. The terminal prints `Compiled successfully!` again.
+. Reload the Modern UI page. The sideloader loads the rebuilt Zimlet if *Persist on Reload* is ticked.
+
+The page that is already open keeps the old code. The development server does not push updates to the browser, and the running Zimlet is not restarted when you save. If the terminal prints `Build failed!`, the server keeps running and shows the error. Fix the file, save it, and wait for `Compiled successfully!`.
+
+[#development-and-production]
+== Development and production loading
+
+A Zimlet runs the same way in both cases once it is loaded. The Modern UI runs it in a hidden frame that all Zimlets share, calls its factory and then `init()`. Because the frame is shared, every Zimlet sees the same `window`. See xref:go-deeper/security-and-best-practices.adoc[Security and best practices] for what that means for your code.
+
+The two differ in where the code comes from and how a change reaches the browser:
+
+[options="header",cols="1,2,2"]
+|===
+|Aspect |Development |Production
+
+|Code comes from
+|Your machine, served by `zimlet watch`.
+|The Zimbra server, from the deployed package.
+
+|Loaded by
+|The sideloader, in your browser only.
+|The Modern UI, for each account that has the Zimlet enabled.
+
+|Version check
+|None. The sideloader loads the address you give it.
+|The server includes the Zimlet only if its version range contains the Modern UI version.
+
+|Build
+|Readable code with a source map, so the browser tools show your source files.
+|The minified output of `zimlet build`.
+
+|A change reaches the browser
+|When you save, the server rebuilds. You then reload the page.
+|When an administrator deploys a new package. See xref:run-package-deploy/deploy.adoc[Deploy].
+|===
+
+[#browser-console]
+== Read the browser console
+
+Open the console of your browser's developer tools to see what the sideloader reports. Messages from your own `console.log` calls appear in the same console.
+
+`[ZimletSideLoaderSDK "<name>"]: Loaded successfully from <address>`::
+The Zimlet loaded and its `init()` function ran. The status in the table is *Running*.
+
+`Adding Zimlet <name>: <address>`::
+You chose *Load Zimlet*. The sideloader starts loading that address.
+
+`[ZimletSideLoaderSDK "<name>"]:` followed by an error::
+The Zimlet failed to load. The *Status* column shows the same error. `TypeError: Failed to fetch` means the server is not running, the browser has not accepted its certificate, or Chrome blocked the request. See xref:getting-started/setup-environment.adoc#allow-chrome-access[Allow Chrome to reach your development server]. A message that begins with `Failed to construct handlerObject` means the factory threw an error. Another error usually comes from your `init()` function.
+
+`[ZimletSideLoaderSDK "<name>"]: Zimlet is already running.`::
+The Zimlet is already loaded in the open Modern UI session, so the sideloader did not load it again. This is harmless. Reload the page to load a new build.
+
+`[ZimletSideLoaderSDK "<name>"]: Zimlet URL Required`::
+A row has no address. Clear *Persist on Reload* for it, reload the page and load the Zimlet again with an address.
+
+[#debug-slots]
+== Show every slot in the page
+
+Add `?zimletSlots=show` to the address of the Modern UI and reload the page. Every slot in the page then shows a label with the text `ZimletSlot name=<slot-name>`, whether or not a Zimlet has registered a handler for it. You register your handler for the key `slot::<slot-name>`.
+
+.The Mail screen opened with ?zimletSlots=show
+image::run-and-debug-slot-labels.png["The Mail screen with a label over each slot, such as ZimletSlot name=email-tab-item beside the Mail tab, ZimletSlot name=vertical-menu-item in the top bar and ZimletSlot name=header-action-menu-item above the message pane"]
+
+A slot that passes its content to a function and draws nothing of its own has no label. It writes `non-visible ZimletSlot name=<slot-name>` to the console instead. Labels can overlap where slots sit close together. The flag stays on until you reload the page without it.
+
+Find the slot you need, then see xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] to register for it. The xref:reference/slots.adoc[slot index] lists every slot and its properties.
+
+[#expected-result]
+== Expected result
+
+* `npm start` prints `Compiled successfully!` and keeps running.
+* The sideloader table shows your Zimlet with the status *Running*.
+* After you save a file and reload the page, the Modern UI runs the new code.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+Nothing from your Zimlet appears in the Modern UI.::
+* Cause: The Zimlet did not load, or it loaded but registered nothing for the place you are looking at.
+* Fix: Check the status in the sideloader table and the console messages above. Then show the slots, as <<debug-slots,Show every slot in the page>> describes, and check that the name you registered is in the page. See xref:help-and-migration/troubleshooting.adoc[Troubleshooting] for more symptoms.
+
+The page still shows the old code after you save.::
+* Cause: The Modern UI does not update a page that is already open.
+* Fix: Reload the page, and keep *Persist on Reload* ticked so that the Zimlet loads again.
+
+The terminal prints `Build failed!`.::
+* Cause: The build found an error, such as a syntax error in a source file.
+* Fix: Read the error that follows, fix the file and save it. The server keeps running and prints `Compiled successfully!` when the build works.
+
+== Next step
+
+Build and package your Zimlet in xref:run-package-deploy/build-and-package.adoc[Build and package].

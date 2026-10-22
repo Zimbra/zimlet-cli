@@ -33,7 +33,7 @@ Steps:
 
 Naming: `--name` is expected to be globally unique and equal to the npm package name (scripts pass `$npm_package_name`). Existing zimlets use `zimbra-zimlet-<feature>`; the older style is `com_<company>_<feature>`.
 
-`--zimbraXVersion` is a semver **range** (npm style, for example `^4.42.0`, `>=1.0.0`). It becomes LDAP attribute `zimbraXZimletCompatibleSemVer` (`since 8.8.9`, `max=256`). It is optional: without it, `zimlet package` writes the default `>=1.0.0`, which accepts every Modern UI version (checked by running `zimlet package` without the option, CLI 19.0.0). The compatibility filter in §3 then never leaves the Zimlet out.
+`--zimbraXVersion` is a semver **range** (npm style, for example `^4.0.0`, `>=1.0.0`). It becomes LDAP attribute `zimbraXZimletCompatibleSemVer` (`since 8.8.9`, `max=256`). It is optional: without it, `zimlet package` writes the default `>=1.0.0`, which accepts every Modern UI version (checked by running `zimlet package` without the option, CLI 19.0.0). The compatibility filter in §3 then never leaves the Zimlet out.
 
 **Finding the host version to target.** The server compares your range with the Modern UI (`zm-x-web`) version (`PKG_VERSION` in `ZimletLoader`, sent as `zimbraXZimletCompatibleWith`). In Modern UI, log in, click the settings icon (top right), then **About**. It shows "Zimbra Modern Web App Version `<version-number>` (`<commit-hash>`)" (from the `zm-x-web` README; not run here). The range has to include that version. The mapping between a Zimbra server release and its `zm-x-web` version is not documented in these files; see [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md#documentation-sources).
 
@@ -49,7 +49,7 @@ If a file named `config_template.xml` exists in the zimlet root, `zimlet build` 
 </zimletConfig>
 ```
 
-`name` and `version` are expected to match the packaged Zimlet. After deployment the values reach the client through `accountInfo.zimlets.zimlet[].zimletConfig[0].global[].property[]` (query in [account-info.graphql](../../../zm-x-web/src/graphql/queries/preferences/account-info.graphql)). Read them with `useAccountInfo` from `@zimbra-client/hooks/graphql`. Admins change values with `zmzimletctl configure <config.xml>`. Existing Zimlet repositories: [Zimlet configuration](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md#zimlet-configuration).
+`name` and `version` are expected to match the packaged Zimlet. After deployment the values reach the client through `accountInfo.zimlets.zimlet[].zimletConfig[0].global[].property[]` (query in [account-info.graphql](../../../zm-x-web/src/graphql/queries/preferences/account-info.graphql)). Read them with `useAccountInfo` from `@zimbra-client/hooks/graphql`. Users can save their own value for a Zimlet too: `ModifyProperties` stores `{ zimlet, name, _content }` in the account, and the default account query returns it as `accountInfo.props.prop[]`. A `settings` registration with a field of the type `modifyProperties` saves it from the Settings dialog (the dialog finds the value by `name` only). `zimbra-zimlet-attachment-missing-alert` reads the user value first and the `config_template.xml` default second. Admins change values with `zmzimletctl configure <config.xml>`, then run `zmprov flushCache zimlet` and reload the Modern UI; without the flush the Modern UI keeps the old values. The `version` in the file was left unchanged. Existing Zimlet repositories: [Zimlet configuration](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md#zimlet-configuration).
 
 ## 3. Server contract
 
@@ -64,7 +64,7 @@ The server side lives in [zm-mailbox](../../../zm-mailbox). Check each row below
 | Per-COS / per-user | Presence is `mandatory`, `enabled` or `disabled` per COS; users can toggle non-mandatory ones. The client receives it as `zimletContext[0].presence`. |
 | JS minify | For Modern UI requests (`zimbraXZimletCompatibleWith` set) the bundle is processed by `compile(...)`, otherwise by the YUI compressor. |
 | Labels | `GET /service/res/<n1,n2>.js?locid=<locale>` serves generated label/description snippets from the `.properties` files; the client parses them (`App.localizeZimlets`). |
-| Static assets | `/service/zimlet/<name>/…` serves files from the deployed zip. A bundle that references assets by URL is built with `--publicpath "/service/zimlet/<name>/"`. |
+| Static assets | `/service/zimlet/<name>/…` serves files from the deployed zip, but a request without `zimbraXZimletCompatibleWith=<version>` gets 403 for a Modern UI Zimlet, so a Zimlet cannot load its own images or fonts from there. See [KI-47](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md). |
 
 Consequences for authors:
 
@@ -76,6 +76,7 @@ Consequences for authors:
 - **Command line:** The Zimbra Admin Guide covers deploying and managing Zimlets from the command line. See [Managing Zimlets from the command line](https://zimbra.github.io/documentation/zimbra-10/adminguide.html#_managing_zimlets_from_the_command_line_interface).
 - **Admin Console:** The Zimbra Admin Guide covers managing Zimlets from the Admin Console. See [Managing Zimlets from the Administration Console](https://zimbra.github.io/documentation/zimbra-10/adminguide.html#_managing_zimlets_from_the_administration_console).
 - **OS packages:** The Zimlet monorepos also deliver OS packages; see [OS packages](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md#os-packages).
+- **Cache flush:** `zmzimletctl` writes to LDAP in its own process and the mailbox server keeps cached copies, so the change shows only after a flush. After `zmzimletctl enable`, `disable`, `deploy` or `configure`, run `zmprov flushCache zimlet`. After `zmzimletctl acl <zimlet> <cos> grant|deny`, run `zmprov flushCache cos`; the class of service cache otherwise lives for `ldap_cache_cos_maxage` (15 minutes by default), and `zmprov gc` through SOAP shows the cached value, while `zmzimletctl listAcls` and `zmprov -l gc` read LDAP. None of these needs a mailbox restart.
 - **Mailbox restart:** The OS-package post-install scripts print an instruction to restart the mailbox service after installation; they do not restart it themselves. This is repository-specific guidance, not a verified requirement for command-line or Admin Console deployment, nor evidence that a restart is required specifically after a first deployment.
 
-To load a Zimlet for development without packaging (sideloader and dev server), follow the [Modern UI preview workflow](../workflow/preview-zimlet.md).
+To load a Zimlet for development without packaging (sideloader and dev server), follow the [launch workflow](../workflow/launch-zimlet.md).

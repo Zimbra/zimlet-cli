@@ -1,0 +1,54 @@
+= subscribe
+
+Runs a function after every action that is dispatched to the store. Use it when your Zimlet must react to a change of the state, for example to wait until the account has loaded and then do something once.
+
+WARNING: Do not call `subscribe` while a component renders. Every render adds another listener, and nothing removes it, so listeners pile up and each one runs after every action. In a component, read the state with https://redux.js.org/react-redux/api/hooks#useselector[`useSelector`^] from `react-redux` instead. It subscribes for you and stops when the component is removed. Use `subscribe` where no component is running, such as in `init()`, for example to register or remove a handler when the state changes.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.subscribe(listener)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`listener`
+|function
+|Called with no arguments after each dispatched action. Read the state inside it with `store.getState()`.
+
+|===
+
+[#returns]
+== Returns
+
+A function. Call it to stop listening.
+
+[#usage-notes]
+== Usage notes
+
+* This is the standard Redux method.
+* The listener runs after every action, also those of other Zimlets. Keep it short, and check the part of the state that you care about.
+* Stop listening when you have what you need, so the listener does not run for the whole session.
+
+[#example]
+== Example
+
+A listener waits until the account has loaded, prints its name, and then stops.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/subscribe.js[]
+----
+
+[#next-step]
+== Next step
+
+Return to the xref:reference/context/store.adoc[Store] to look up another member.

@@ -1,0 +1,9 @@
+{
+	"zimlet": {
+		"label": "Mein Zimlet",
+		"description": "Zeigt eine Erinnerung in der Seitenleiste an."
+	},
+	"my-zimlet": {
+		"reminder": "Sie haben {{count}} ungelesene Erinnerungen."
+	}
+}

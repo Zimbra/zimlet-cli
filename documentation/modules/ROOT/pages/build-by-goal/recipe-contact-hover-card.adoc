@@ -1,0 +1,259 @@
+= Enhance contact cards
+
+This recipe keeps a personal VIP list. A star appears next to every VIP address in a message and in the composer. A link in the card that opens over an address adds the address to the list or removes it. The details of a contact in Contacts have the same link, and a star in front of it for a VIP. Use it when a feature must mark an address wherever it shows and let the user change the mark from the address itself. The list belongs to one user and is saved on the server. The handlers of a xref:reference/glossary.adoc#zimlet[Zimlet], one for the star and one for each card, share it in the xref:reference/glossary.adoc#modern-ui[Modern UI].
+
+[#what-you-will-learn]
+== What you will learn
+
+* Add a link to the contact card with `contact-hover-card-details`.
+* Add the same link to the details of a contact with `contact-card-item`.
+* Add a mark next to an address with `address-pill`.
+* Share state between handlers with Redux.
+* Save the list in mailbox metadata.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of xref:go-deeper/redux.adoc[shared state with Redux] and of xref:go-deeper/server-data/metadata.adoc[mailbox metadata], because the list lives in both.
+
+[#choose-the-slot]
+== Choose the slot
+
+The mark must show next to an address and in the cards that show it. Four slots belong to an address, and the example fills three of them.
+
+[#the-slots]
+=== The slots
+
+`slot::contact-hover-card-details`::
+In the card that opens when the user rests the pointer on an address for about a second. The slot is in the column of details, below the email address and the phone number.
+
+`slot::contact-card-item`::
+In the details of a contact in Contacts, below the phone numbers. It shows when the user selects a contact in the list.
+
+`slot::address-pill`::
+In front of the name of an address in the sender and recipient lines of an open message and of an event invitation. It is also inside the pills of the composer.
+
+Look up each slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::contact-input-token:button-inner-content`::
+Inside the pills of the composer only, in front of the name. Choose it instead of `address-pill` when the mark must not show in a message.
+
+Register one handler for one mark. The composer renders both `address-pill` and `contact-input-token:button-inner-content`, so a Zimlet that registers the same mark for both shows it twice there.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` adds the state, registers the handlers and loads the list. It replaces the generated file.
+** `constants/index.js` holds the name of the state and of the saved list.
+** `store/actions.js` and `store/reducer.js` hold the state.
+** `api/vips.js` reads and saves the list on the server.
+** `utils/normalize-address.js` makes two spellings of an address equal.
+** `hooks/use-is-vip.js` and `hooks/use-toggle-vip.js` give the components what they need.
+** `components/vip-mark/` is the star.
+** `components/vip-button/` is the link in the card.
+** `components/vip-details/` is the row in the details of a contact: the star, then the link.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$contact-hover-card/intl/en_US.json[]
+----
+
+[#keep-the-list]
+== Keep the list in one place
+
+Every address on the screen is its own component, so the stars and the card cannot hold the list themselves. The list lives in the Redux state of your Zimlet, and the components read it from there. The state has the list and a flag that tells whether the list has arrived from the server.
+
+.constants/index.js
+[source,js]
+----
+include::example$contact-hover-card/constants/index.js[]
+----
+
+.store/actions.js
+[source,js]
+----
+include::example$contact-hover-card/store/actions.js[]
+----
+
+.store/reducer.js
+[source,js]
+----
+include::example$contact-hover-card/store/reducer.js[]
+----
+
+The list is also saved in the mailbox metadata of the user, in a section that starts with `zwc:`. A value is always text, so `api/vips.js` saves the addresses as one text separated by commas. `utils/normalize-address.js` writes every address in lower case, because `Sam@<your-domain>` and `sam@<your-domain>` are the same address. See xref:go-deeper/server-data/metadata.adoc[Mailbox metadata] for the section name, the requests and the limits.
+
+.api/vips.js
+[source,js]
+----
+include::example$contact-hover-card/api/vips.js[]
+----
+
+.utils/normalize-address.js
+[source,js]
+----
+include::example$contact-hover-card/utils/normalize-address.js[]
+----
+
+[#choose-where-to-save-the-list]
+== Choose where to save the list
+
+The example saves the list in xref:go-deeper/server-data/metadata.adoc[mailbox metadata]. Your code writes the list when the user selects the link. No administrator sets a default for it, and no Settings section edits it. That is the case for which we can use metadata. See xref:go-deeper/server-data.adoc#when-to-store-which[When to use which method].
+
+You can also keep the list as a user value of xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. Save it with a `ModifyProperties` request through the batch client, and load it from the account data. The state, the hooks and the components stay the same. Only the code in `api/vips.js` that saves and loads the list changes.
+
+[#read-and-change-the-list]
+== Read and change the list
+
+Two hooks give the components what they need. `useIsVip` tells whether an address is in the list. Every star and every card that shows the address updates when the list changes.
+
+`useToggleVip` adds the address or removes it. It reads the list with `useSelector` and changes it with `useDispatch`. The component renders again whenever the list changes, so each change starts from the current list. The state changes only after the server has saved the list. A failed save shows a notification, as xref:build-by-goal/recipe-mail-action-menu.adoc#notify[The notify action] describes, and leaves the list as it was. The link is off until the list has loaded and while a save runs. A click cannot replace a list that has not arrived.
+
+.hooks/use-is-vip.js
+[source,js]
+----
+include::example$contact-hover-card/hooks/use-is-vip.js[]
+----
+
+.hooks/use-toggle-vip.js
+[source,js]
+----
+include::example$contact-hover-card/hooks/use-toggle-vip.js[]
+----
+
+[#build-the-star-and-the-link]
+== Build the star and the link
+
+`VipMark` draws the star for a VIP and nothing for any other address. The star is an icon with a text label, so that a screen reader says what it means. `VipButton` is the link in the card. Its text says what a click does: *Add to VIP list* or *Remove from VIP list*. `VipDetails` puts the two side by side in the details of a contact, so a VIP shows the star in front of the link.
+
+.components/vip-mark/index.js
+[source,js]
+----
+include::example$contact-hover-card/components/vip-mark/index.js[]
+----
+
+.components/vip-mark/style.less
+[source,less]
+----
+include::example$contact-hover-card/components/vip-mark/style.less[]
+----
+
+.components/vip-button/index.js
+[source,js]
+----
+include::example$contact-hover-card/components/vip-button/index.js[]
+----
+
+.components/vip-details/index.js
+[source,js]
+----
+include::example$contact-hover-card/components/vip-details/index.js[]
+----
+
+.components/vip-details/style.less
+[source,less]
+----
+include::example$contact-hover-card/components/vip-details/style.less[]
+----
+
+`VipMark` draws the star with `Icon` from `@zimbra-client/blocks`, and not with the `lucide-preact` component directly. Without `Icon`, you set the pixel size of every icon yourself. With it, the icon takes a named size, so it matches the other icons of the Modern UI. The example uses these props:
+
+`name`::
+The icon component, here `StarIcon` from `lucide-preact`. The build copies `lucide-preact` into your Zimlet, as xref:fundamentals/shared-libraries.adoc[Shared libraries] explains.
+
+`size`::
+`sm`, which is 16 px and suits a mark beside text. The other sizes are `xs` (12 px), `smd` (20 px), `md` (24 px), `lg` (32 px) and `xl` (40 px).
+
+`fill`::
+`currentColor`, so that the star is filled with the colour of the text. `Icon` passes it on to the icon.
+
+The link is a `Button` in the style of a link, as xref:build-by-goal/recipe-appointment-field.adoc#button-as-link[The Button as a link] describes. xref:build-by-goal/recipe-server-data.adoc#button[The Button component] explains the component. Both components load their texts with `withIntl`.
+
+[#register-the-handlers]
+== Register the handlers
+
+In `init()`, add the state first, then register the handlers and start to load the list. The star needs only the props of its slot, so the handler is the component. The card handler also needs the batch client and the `notify` action, so it passes only those on, not the whole store. One function serves both card slots.
+
+Each slot passes the address as the xref:fundamentals/extending-the-ui.adoc#props-and-payload[prop] `email`. `contact-hover-card-details` and `contact-card-item` also pass `contact`, the saved contact of the address. In the hover card, `contact` is an empty object while the contact loads and when the address is not a saved contact. The example does not use it.
+
+`contact-card-item` passes the first address of the plain *Email* field of the contact. A contact that has only a work or home address passes none, so the handler of the card slots draws nothing when `email` is empty.
+
+.index.js
+[source,js]
+----
+include::example$contact-hover-card/index.js[]
+----
+
+The list loads once, when the Zimlet starts. A failed read is logged and the link stays off, so the user cannot save over a list that was never read.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page first if the Zimlet was loaded before.
+. Open *Mail* and open a message. Rest the pointer on a name in the sender or the recipient line until the card opens. The link *Add to VIP list* is in the card, below the email address.
++
+.The Add to VIP list link in the contact card
+image::contact-hover-card-add-vip.png["A contact card is open over the message header of Mail. The Add to VIP list link in the card, outlined in red, is below the email address of the contact."]
++
+The outlined *Add to VIP list* link is yours. The picture covers the email address in the card and the sender address behind it.
+. Choose *Add to VIP list*. A star appears in front of that name in the message header, and the link in the card reads *Remove from VIP list*.
++
+.The star in front of the sender in the message header
+image::contact-hover-card-vip-in-header.png["A message is open in Mail. A star, outlined in red, is in front of the name of the sender in the message header."]
++
+The outlined star is yours.
+. Open *New message*, and enter the address and one other address in the *To* field. The VIP address shows the star in its pill. The other address shows none.
++
+.The star in the pills of the composer
+image::contact-hover-card-vip-in-composer.png["The To field of the composer holds three recipients. The pills of the first two have a star and are outlined in red. The pill of the third has none. The sender address of the From line is covered."]
++
+The outlined pills are those of the VIP addresses. The picture covers the address of the *From* line.
+. Reload the Modern UI page and open the message again. The star is still there.
+. Open the card again and choose *Remove from VIP list*. The star disappears from the message header, and the link reads *Add to VIP list* again.
+. Open *Contacts* and select a contact that has an email address. The details of the contact show the link *Add to VIP list* below the email address. Choose it. A star appears in front of the link, and the link reads *Remove from VIP list*.
++
+.The star and the link in the details of a contact
+image::contact-hover-card-contact-details-vip.png["The Contacts screen shows the details of the selected contact. The star and the Remove from VIP list link, outlined in red, are below the email address of the contact."]
++
+The outlined star and link are yours.
+
+[#expected-result]
+== Expected result
+
+* The card of every address has a link that adds the address to the VIP list or removes it.
+* The details of a contact that has an email address have the same link.
+* A VIP address shows a star in a message and in the composer. An address that is not a VIP shows none.
+* The list is the same after a reload, because the server keeps it.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The star and the link do not show.::
+* Cause: The Zimlet is not loaded, or the handlers are registered under other keys. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the keys are `slot::address-pill` and `slot::contact-hover-card-details`, and that you register in `init()`. Reload the page.
+
+The link does not respond.::
+* Cause: The list has not loaded. The read of the list failed, or the reducer was added under another name than the one that the hooks read.
+* Fix: Open the browser console and look for the error that `init()` logged. Check that `NAMESPACE` is the same in `index.js` and in the hooks, and that the section name starts with `zwc:`.
+
+A notification says that the list could not be saved.::
+* Cause: The request to the server failed.
+* Fix: Open the network tab of the browser and look at the `ModifyMailboxMetadata` request. A section name without the `zwc:` prefix is rejected.
+
+The star shows twice in the composer.::
+* Cause: The same mark is registered for `address-pill` and for `contact-input-token:button-inner-content`. The composer renders both.
+* Fix: Register the mark for one of them.
+
+[#next-step]
+== Next step
+
+Add an action for the files in Briefcase with xref:build-by-goal/recipe-briefcase-file-actions.adoc[Add a Briefcase action]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

@@ -1,0 +1,78 @@
+= Write and scope styles
+
+Your Zimlet writes its styles in Less or CSS files. The build delivers them to the xref:reference/glossary.adoc#modern-ui[Modern UI] page with the rest of the Zimlet. You decide which styles stay inside one component, which reach the whole page and how to change a value at run time. The choice matters because the Modern UI and your Zimlet share one document. A rule in the wrong place can change the look of the Modern UI.
+
+[#less-and-css]
+== Write Less or CSS
+
+Both `.less` and `.css` files build, and a style file can import another one. A Less file imports a package with a `~` before its name, as in `@import '~@zimbra/x-ui/helpers.less';`. Put the file next to the component that uses it, and import it in the component:
+
+[source,js]
+----
+import style from './style.less';
+----
+
+xref:go-deeper/styling/shared-styles.adoc[Style library] explains the `@zimbra/x-ui` package that the template already lists in `dependencies`.
+
+[#scoped-and-global]
+== Scoped and global styles
+
+Where a style file sits decides how its classes behave.
+
+Scoped styles::
+The classes of a style file in `src/components/`, `src/screens/` or `src/pages/` belong to the component that imports it. The build gives each class a unique name that starts with the project folder name, then the component folder and the class name. You use the class through the imported object: `style.meter`. Two components can both use `.title` without a clash. These style files are https://github.com/css-modules/css-modules[CSS Modules^].
+
+Global styles::
+A style file in any other folder keeps its class names as you write them. Import it for its effect, as in `import './global.less';` in `index.js`. Its rules apply to the whole page, including the Modern UI.
+
+Use scoped styles for everything that belongs to your own components. Use a global file only to reach an element that you do not render. Start each class name with the name of your Zimlet, such as `.my-zimlet-banner`. A rule on a bare element, such as `a` or `p`, changes the Modern UI too.
+
+[#host-styles]
+== Styles the Modern UI adds
+
+The Modern UI puts the styles of your Zimlet into a `<style>` element in the `<head>` of its own page. Your styles and the Modern UI styles therefore share one document, and the Modern UI also gives you two things to build on:
+
+* It defines the shared style variables, such as `--spacing-md` and `--text-color`, on the page root. Your styles read them with `var()`, and they follow the color mode that the user chose. See xref:go-deeper/styling/shared-styles.adoc[Style library].
+* It loads the Roboto font and uses it by default. A client theme can set other font variables, so read the font through a variable such as `--font-family-base` and do not write `Roboto` in your styles.
+
+A Modern UI rule can still reach one of your elements, and one of your global rules can reach the Modern UI. Scoped class names avoid both problems.
+
+[#custom-properties]
+== Custom properties and variants
+
+A custom property is a CSS variable that you define yourself, with a name that starts with `--`. Use one when a value is known only at run time, such as the width of a bar. Use a class for a small set of fixed looks, such as a normal and a warning state.
+
+A Zimlet adds a meter to the footer of the mail sidebar. The component sets `--used` on the element of the bar through the `style` prop, and the Less file reads it as `var(--used)`. A second class, `warning`, switches the color when the value reaches 80. The three files go in the folders shown in their titles.
+
+.index.js
+[source,js]
+----
+include::example$styling/scoped-styles/index.js[]
+----
+
+.components/Meter/index.js
+[source,js]
+----
+include::example$styling/scoped-styles/components/Meter/index.js[]
+----
+
+.components/Meter/style.less
+[source,less]
+----
+include::example$styling/scoped-styles/components/Meter/style.less[]
+----
+
+The component passes a name that starts with `--` in the `style` object, and Preact sets it as a custom property. Every other key of the object is an ordinary style property. The fallback in `var(--used, 0%)` applies when the property is not set.
+
+[#context-styles]
+== Do not call context.styles.set
+
+[WARNING]
+====
+Do not call `context.styles.set` in your code. The build already calls it once with all your CSS, and a second call replaces that CSS with the text you pass.
+====
+
+[#next-step]
+== Next step
+
+Use the spacing, font, color and screen size values of the Modern UI in xref:go-deeper/styling/shared-styles.adoc[Style library].

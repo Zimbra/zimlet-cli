@@ -1,0 +1,136 @@
+= Set up your machine
+
+This page gets your machine and your Zimbra server ready for development. The `zimlet` tool builds and serves your Zimlet on your machine, and the xref:run-package-deploy/run-and-debug.adoc[sideloader] loads it into the Modern UI on your server, so both sides must be ready. You do it once. It follows the prerequisites and leads into the quickstart, and a ready check at the end confirms that your machine and server are ready.
+
+== Before you start
+
+You need a computer where you can install software and a shell to run commands. You also need access to a Zimbra server that runs the xref:reference/glossary.adoc#modern-ui[Modern UI]. See xref:getting-started/prerequisites.adoc#zimbra-server[Get a Zimbra server].
+
+[#install-node]
+== Install Node 24
+
+Install Node.js 24 from the https://nodejs.org/en/download[Node.js downloads^]. The `zimlet` tool needs Node.js 24.18.0 or later. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but the tool does not support that setup. If you use nvm, a Node.js version manager, run `nvm use 24`.
+
+Check the versions:
+
+[source,sh]
+----
+node --version
+npm --version
+----
+
+Node.js prints `v24.18.0` or a later 24 version. npm prints a version that starts with 11.
+
+[#install-git-and-editor]
+== Install Git and an editor
+
+Install a code editor. Any editor works, for example https://code.visualstudio.com/docs[Visual Studio Code^].
+
+Install Git if you keep your Zimlet in version control. The `zimlet` tool does not need it. Download Git from the https://git-scm.com/downloads[Git downloads^], then check it:
+
+[source,sh]
+----
+git --version
+----
+
+[#install-zimlet-tool]
+== Install the zimlet tool
+
+The `zimlet` tool creates, runs, builds and packages a Zimlet. Install it once on your machine:
+
+[source,sh]
+----
+npm install --global @zimbra/zimlet-cli
+----
+
+Check that it runs:
+
+[source,sh]
+----
+zimlet --version
+----
+
+The command prints the installed version, for example `19.0.0`. Run `zimlet --help` to list the commands `create`, `watch`, `build` and `package`.
+
+[#note-modern-ui-version]
+== Note your Modern UI version
+
+Find the Modern UI version of your server and write it down. Follow xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version]. The number decides the `--zimbraXVersion` xref:reference/glossary.adoc#semver-range[range] that you package your Zimlet with.
+
+[#sideloader]
+== Install and enable the sideloader
+
+The xref:run-package-deploy/run-and-debug.adoc[sideloader] is a Zimlet that loads the Zimlet running on your machine into the Modern UI. Check whether it is already available to your account:
+
+. Sign in to the Modern UI with the account you develop with.
+. In the main navigation, choose *Integrations*.
+. Choose the *Zimlets Sideloader* tab.
+
+The tab shows a form to load a Zimlet. If it opens, the sideloader is ready. You use it in the xref:getting-started/quickstart.adoc#load-with-sideloader[quickstart].
+
+.The Zimlets Sideloader tab in the Modern UI
+image::setup-environment-sideloader.png["The Zimlets Sideloader tab next to the Integrations tab. It shows a Zimlet name field, a URL field that holds https://localhost:8081/index.js, a Load Zimlet button and an empty table of loaded Zimlets"]
+
+If *Integrations* or the *Zimlets Sideloader* tab is missing, the sideloader is not deployed or not enabled for your account. Ask an administrator to deploy it for your account, or do it yourself if you have access to the server. The steps are in xref:run-package-deploy/deploy.adoc[Deploy]. Then reload the Modern UI and repeat the check.
+
+[#accept-certificate]
+== Accept the development HTTPS certificate
+
+`zimlet watch` starts a development server that serves your Zimlet over HTTPS with a self-signed certificate. Your browser blocks the sideloader from loading it until you accept the certificate once. You do this the first time you run the development server in the xref:getting-started/quickstart.adoc[quickstart].
+
+When the development server runs:
+
+. Open `https://localhost:8081/index.js` in your browser.
+. When the browser warns that the connection is not private, choose the option that proceeds to `localhost`. In Chrome, choose *Advanced*, then *Proceed to localhost (unsafe)*.
+
+The browser shows the JavaScript of your Zimlet.
+
+NOTE: The development server prints an `http://` address when it starts, but it answers only over HTTPS. Use the `https://` address, both in the browser and in the sideloader.
+
+[#allow-chrome-access]
+== Allow Chrome to reach your development server
+
+Chrome asks for permission when a page that does not run on your machine, such as the Modern UI, tries to reach a program that does. This applies to the sideloader, which loads your Zimlet from `localhost`. You see the prompt the first time the sideloader loads a Zimlet from your development server, in the xref:getting-started/quickstart.adoc#load-with-sideloader[quickstart]. The prompt says that the Modern UI site wants to access other apps and services on this device.
+
+When the prompt appears, choose *Allow*.
+
+If you choose *Block* or close the prompt, Chrome stops the request. The development server keeps running, but the sideloader table shows `Error: TypeError: Failed to fetch` for your Zimlet, even though you accepted the certificate. To allow the request afterwards:
+
+. Open the site information panel with the icon at the left of the address bar.
+. Turn on the *Apps on device* toggle.
+. Reload the Modern UI page, which loads the Zimlet again.
+
+[#ready-check]
+== Ready check
+
+Check that each of these is true before you start the quickstart:
+
+* `node --version` prints `v24.18.0` or a later 24 version.
+* `npm --version` prints a version that starts with 11.
+* `zimlet --version` prints a version.
+* You have a code editor.
+* You know your Modern UI version.
+* The *Zimlets Sideloader* tab opens in the Modern UI.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+`node --version` prints a version below 24.18.0.::
+* Cause: A different Node.js version is first on your path.
+* Fix: Install Node.js 24, or run `nvm use 24` and check again.
+
+`npm install --global` fails with a permission error (`EACCES`).::
+* Cause: npm cannot write to its global folder.
+* Fix: Follow the npm guide to https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally[resolve permission errors on global installs^].
+
+`zimlet: command not found`.::
+* Cause: The folder that npm installs global commands into is not on your path.
+* Fix: On macOS and Linux, add the `bin` folder inside the folder that `npm prefix --global` prints to your path, then open a new shell.
+
+*Integrations* or the *Zimlets Sideloader* tab is missing after you deploy the sideloader.::
+* Cause: The Zimlet is not granted on your xref:reference/glossary.adoc#cos[class of service] or account.
+* Fix: Deploy and enable it as xref:run-package-deploy/deploy.adoc[Deploy] describes, then reload the Modern UI.
+
+== Next step
+
+Create and run your first Zimlet in xref:getting-started/quickstart.adoc[Your first Zimlet].

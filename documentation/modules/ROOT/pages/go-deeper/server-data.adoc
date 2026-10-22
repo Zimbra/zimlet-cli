@@ -1,0 +1,67 @@
+= Server data
+
+A Zimlet works with data that Zimbra stores, such as mail, contacts and the account. It can also store values of its own on the server. Decide which of the two you need, then choose a way. Each way has its own page, with the details and a working example.
+
+[#choose-a-way]
+== Choose a way
+
+[#use-data-that-zimbra-has]
+=== Use data that Zimbra already has
+
+Mail, contacts, the account and the preferences are data of this kind. Start with the first way that covers your need.
+
+xref:go-deeper/server-data/data-hooks.adoc[Data hooks]::
+Read data that the xref:reference/glossary.adoc#modern-ui[Modern UI] already loads, such as the account or the preferences, inside a component. Use a hook when one exists.
+
+xref:go-deeper/server-data/batch-client.adoc[Batch client]::
+Send a Zimbra request that has no hook, with `zimbraBatchClient`. The client adds the address, the session and the token for you.
+
+xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch]::
+Send a request that you control yourself, with your own `fetch`, the `zimbraOrigin` field of the xref:fundamentals/host-context.adoc[context] and `csrfStorage` from `@zimbra-client/util`. Use it for an endpoint that is not a Zimbra request.
+
+[#when-to-use-which]
+==== When to use which method
+
+Go with this preference. Take the first method that covers your need. Move to the next one only when the one before cannot do the job.
+
+. *Data hook.* Use a hook first. It gives you data that the Modern UI has already loaded, such as the account or the preferences. A value that is already there needs no new request. Use it whenever a hook exists for the data. See xref:go-deeper/server-data/data-hooks.adoc[Data hooks] for the hooks that Zimlets can use.
+. *Batch client.* Use `zimbraBatchClient.jsonRequest` when no hook covers the data. It sends a Zimbra request for you and adds the address, the session and the token. It also combines requests made at the same time into one call. Use it when you can name the Zimbra request that you need. See xref:go-deeper/server-data/batch-client.adoc[Batch client].
+. *Your own `fetch`.* Use it last, for an endpoint that is not a Zimbra request, or when you need to control the request yourself. You build the address and the token yourself, so it takes the most work. See xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch].
+
+[#show-a-change]
+==== Keep the Modern UI up to date
+
+The user expects to see a change that your Zimlet makes to data that the xref:reference/glossary.adoc#modern-ui[Modern UI] shows, such as a tag. Follow the same preference as above. The answer differs because each method tells the Modern UI about the change in a different way.
+
+. *Data hook.* A hook works through the data that the Modern UI itself keeps, so the Modern UI updates what it shows. The recipe xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item] puts a tag on messages with `useItemActionMutation`.
+. *Batch client or `fetch`.* The request goes to the server, and the server should report the change as an event. The Modern UI listens to these events and updates what it shows. This works for most kinds of data, with a few exceptions. Check the result in the Modern UI before you rely on it.
+. *Reload.* Use it only when no event arrives, or when the Modern UI does not handle the event. For example, the Modern UI does not show a tag that your Zimlet creates until the page is reloaded. To offer the reload, show a notification with a button. Pass `action` to `notify`, with a `label` for the button and an `fn` that reloads the page. The recipe xref:build-by-goal/recipe-mail-action-menu.adoc#notify[Add a mail menu item] shows the code. 
+
+[#keep-a-value-of-your-own]
+=== Keep a value that belongs to your Zimlet
+
+Both ways keep the value on the server, so it follows the user to every browser and device. Choose by who sets the value.
+
+xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]::
+Let an administrator set a default on the server with `config_template.xml`, and let each user save their own value in the Settings dialog. Choose it for a setting.
+
+xref:go-deeper/server-data/metadata.adoc[Mailbox metadata]::
+Store a small value for one user, such as a note or a flag that a tip was dismissed. Choose it for state that your code manages, with no Settings section and no administrator default.
+
+[#when-to-store-which]
+==== When to use which method
+
+Go with this preference. Ask who sets the value, and take the first method that fits.
+
+. *Zimlet configuration.* Use it when an administrator should be able to set a default, or when users change the value in the Settings dialog. The value belongs to your Zimlet by name, and your code reads it with the account data. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration].
+. *Mailbox metadata.* Use it for state that only your code manages, such as a note or a flag that a tip was dismissed. It has no Settings section and no administrator default. Your code reads and writes it with the batch client. See xref:go-deeper/server-data/metadata.adoc[Mailbox metadata].
+
+[#state-in-the-browser]
+== State in the browser
+
+Two pages are about code that runs in the browser, not about the server. Keep state that several handlers share with xref:go-deeper/redux.adoc[Shared state with Redux]. Check where your code runs with xref:go-deeper/platform-checks.adoc[Platform checks].
+
+[#next-step]
+== Next step
+
+Read data that the Modern UI already has, in xref:go-deeper/server-data/data-hooks.adoc[Data hooks].

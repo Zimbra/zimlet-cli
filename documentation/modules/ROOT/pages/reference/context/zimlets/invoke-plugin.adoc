@@ -1,0 +1,64 @@
+= invokePlugin
+
+Calls every handler registered under a key and returns their results. Use it to let other Zimlets contribute to a feature of yours: you define a key, other Zimlets register handlers under it, and you collect their answers, such as the problems that each Zimlet finds in a message before it is sent. Use it when you need answers, because an event returns nothing to the sender.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.invokePlugin(name, ...args)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`name`
+|string
+|The key under which handlers are registered.
+
+|`...args`
+|any
+|Arguments to pass to every handler that is a function.
+
+|===
+
+[#returns]
+== Returns
+
+An array with one result for each handler, in the order of registration.
+
+[#usage-notes]
+== Usage notes
+
+* A handler that is a function is called with `args`. Any other value is returned as it is.
+* If a handler throws, its result is the error, and the name of its Zimlet is in `error.sourceZimlet`. The other handlers still run.
+* A result that is a promise is not awaited.
+* Use it when you need the answers of several Zimlets, which an event cannot give. An event such as xref:reference/context/zimlets/emit.adoc[emit] returns nothing to the sender.
+* The key is yours to define. Start it with the name of your Zimlet and describe it, so that other Zimlets know what to register.
+
+[#example]
+== Example
+
+One Zimlet defines the key `my-checks.before-send` and collects the answers when the user sends a message. Another Zimlet registers a check for an empty subject. Install both Zimlets, and send a message without a subject to see the problem.
+
+.Collector: src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/invoke-plugin-collector.js[]
+----
+
+.Check: src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/invoke-plugin-check.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to check whether a key is used in xref:reference/context/zimlets/is-slot-active.adoc[isSlotActive].

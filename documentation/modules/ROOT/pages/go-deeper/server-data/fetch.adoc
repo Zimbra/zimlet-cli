@@ -1,0 +1,55 @@
+= Call a server API with fetch
+
+Use your own `fetch` when no xref:go-deeper/server-data/data-hooks.adoc[data hook] or xref:go-deeper/server-data/batch-client.adoc[batch client] method covers the request. Use it also when you need to control the request, for example to call a REST endpoint. A small helper that builds the address and sends the session and the token keeps each call short. To compare `fetch` with the other ways to get data, see xref:go-deeper/server-data.adoc#when-to-use-which[When to use which method].
+
+[#what-a-request-needs]
+== What a request needs
+
+A request to the Zimbra server needs three things:
+
+An address::
+Put `zimbraOrigin` from the xref:fundamentals/host-context.adoc[context] in front of the server path. The prefix depends on the installation: it can be a path such as `/@zimbra` or a full origin. Read it from the context and never write it in your code.
+
+The session::
+Set `credentials: 'include'`, so that the browser sends the cookies of the signed-in user.
+
+The token::
+Send the token in the `X-Zimbra-Csrf-Token` header. CSRF stands for cross-site request forgery. The token shows the server that the request comes from the Modern UI and not from another site. Import `csrfStorage` from `@zimbra-client/util` and call `csrfStorage.get()` each time you send a request, so that you always send the current token. It returns `null` when the Modern UI does not use a token. Add the header only when the value is set.
+
+NOTE: The `csrfToken` field of the context is deprecated. It keeps the value from the time the Zimlet loaded and is not updated. See xref:reference/context/deprecated.adoc#csrf-token[Deprecated].
+
+[#helper]
+== A helper for Zimbra requests
+
+Zimbra accepts a SOAP request as JSON. Send it with `POST` to `/service/soap/<Name>Request`. Wrap the content in `Body`, and put the namespace in `_jsns`. The helper below does this and returns the content of the response.
+
+The Zimlet below shows the version of the server in the sidebar footer. `index.js` creates the helper from the address in the context and calls `GetInfo` when the handler first shows.
+
+.index.js
+[source,js]
+----
+include::example$fetch-server-api/index.js[]
+----
+
+.api/soap-request.js
+[source,js]
+----
+include::example$fetch-server-api/api/soap-request.js[]
+----
+
+Pass the request name without `Request`, the namespace and the content. Account requests use `urn:zimbraAccount`, and mail requests use `urn:zimbraMail`.
+
+[#errors]
+== Handle errors
+
+`fetch` rejects only when the request cannot be sent. When the server answers with an error status, `response.ok` is `false`, and the helper throws. Always add `.catch` to a call, as the example does.
+
+[#other-endpoints]
+== Other endpoints
+
+The same pattern works for any path under the origin, including an endpoint that a server extension of your own provides. Change the path and the body, and keep `credentials` and the token header.
+
+[#next-step]
+== Next step
+
+Let an administrator or a user set a value for your Zimlet in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration].

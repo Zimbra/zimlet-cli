@@ -1,0 +1,212 @@
+= Project structure
+
+A xref:reference/glossary.adoc#zimlet[Zimlet] is a small npm project. This page shows what it is made of, from the few files that every Zimlet needs, through the folders and files that the default template adds, to the folders that you can add yourself. Knowing the layout tells you where your code, your texts and your settings go, so it is a page you return to whenever you wonder what a file in your project is for.
+
+[#minimum-package]
+== Minimum package
+
+Three files are enough to build and package a Zimlet:
+
+[source,text]
+----
+my-zimlet/
+  package.json
+  src/index.js
+  src/intl/en_US.json
+----
+
+`package.json` names the Zimlet, points the build at the entry file and holds the commands you run. `src/index.js` is the entry file. `src/intl/en_US.json` holds the label and description of the Zimlet. Install the `@zimbra/zimlet-cli` development dependency with `npm install` before you build.
+
+.package.json
+[source,json]
+----
+include::example$project-structure/package.json[]
+----
+
+.src/index.js
+[source,js]
+----
+include::example$project-structure/src/index.js[]
+----
+
+.src/intl/en_US.json
+[source,json]
+----
+include::example$project-structure/src/intl/en_US.json[]
+----
+
+`npm run build` compiles these files into `build/index.js`, and `npm run package` adds the xref:run-package-deploy/build-and-package.adoc[descriptor] and zips the result to `pkg/my-zimlet.zip`. This Zimlet adds nothing to the xref:reference/glossary.adoc#modern-ui[Modern UI] yet. Register your first handler as xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] describes.
+
+[#template-layout]
+== Folders and files of the default template
+
+`zimlet create default <name>` copies the default template into a new folder. It adds a tab to the Mail section that opens a "Hello World" page. The folder holds these files:
+
+[source,text]
+----
+<name>/
+  package.json
+  zimlet.config.js
+  eslint.config.mjs
+  .prettierrc
+  .editorconfig
+  .gitignore
+  README.md
+  .husky/
+  scripts/
+  src/
+    index.js
+    components/
+      EmailTabItem/
+      app/
+    constants/
+    enhancers/
+    intl/
+----
+
+The build reads `package.json`, `src/` and the optional `config_template.xml` and `zimlet.config.js`. Everything else supports checking and committing your code, and you can change or remove it.
+
+[#src-folder]
+=== Your code in src
+
+[[src-index]]pass:[<a class="anchor" href="#src-index"></a>]`src/index.js`::
+The entry file. It registers the tab and its page. See <<entry-file,src/index.js>>.
+
+[[src-components]]pass:[<a class="anchor" href="#src-components"></a>]`src/components/`::
+One folder for each component. A component folder holds an `index.js` that default-exports the component and, if the component has styles, a `style.less`. You import the component by its folder name: `import App from './components/app'`. The template has `EmailTabItem`, the tab, and `app`, the page. Give your own components the same layout.
+
+[[src-constants]]pass:[<a class="anchor" href="#src-constants"></a>]`src/constants/`::
+Values that several files share. The template's `index.js` exports `SLUG`, the slug of the page. See <<naming-rules,Zimlet naming rules>>.
+
+[[src-enhancers]]pass:[<a class="anchor" href="#src-enhancers"></a>]`src/enhancers/`::
+Wrappers that give components a feature. The template's `index.js` exports `withIntl`, which lets a component show translated text. See <<strings-components,Texts in your components>>.
+
+[[src-intl]]pass:[<a class="anchor" href="#src-intl"></a>]`src/intl/`::
+The strings files, one for each language. See <<strings-file,src/intl/en_US.json>>.
+
+Put style files next to the component that uses them, in `src/components/`. The build turns the classes of every `.less` or `.css` file in `src/components/`, `src/screens/` and `src/pages/` into class names that are unique to your Zimlet. You use them as `style.wrapper` after `import style from './style.less'`. Style files in other folders keep their class names as written. See xref:go-deeper/styling.adoc[Styling].
+
+[#root-files]
+=== Files in the project root
+
+[[root-package-json]]pass:[<a class="anchor" href="#root-package-json"></a>]`package.json`::
+The name, version, entry file, scripts and dependencies. See xref:reference/files/package-json.adoc[The package.json file].
+
+[[root-zimlet-config]]pass:[<a class="anchor" href="#root-zimlet-config"></a>]`zimlet.config.js`::
+Optional build settings. See <<zimlet-config,zimlet.config.js>>.
+
+[[root-eslint]]pass:[<a class="anchor" href="#root-eslint"></a>]`eslint.config.mjs`::
+The rules that `npm run lint` checks. See xref:run-package-deploy/lint-your-code.adoc#eslint-config[Lint].
+
+[[root-prettier]]pass:[<a class="anchor" href="#root-prettier"></a>]`.prettierrc`::
+The formatting options that Prettier applies when `npm run lint` checks your code: single quotes, lines of up to 100 characters and no trailing commas. Edit it to change the format.
+
+[[root-editorconfig]]pass:[<a class="anchor" href="#root-editorconfig"></a>]`.editorconfig`::
+The indentation and line endings: tabs in code files and two spaces in `package.json` and the `.prettierrc` file. Prettier reads it, so keep it in the project root, or lint reports every tab as an error.
+
+[[root-hooks]]pass:[<a class="anchor" href="#root-hooks"></a>]`.husky/` and `scripts/`::
+The commit hooks. In a Git repository they lint the staged files and add the branch name to the commit message. See xref:reference/files/package-json.adoc#prepare[the `prepare` script].
+
+[[root-gitignore]]pass:[<a class="anchor" href="#root-gitignore"></a>]`.gitignore` and `README.md`::
+`.gitignore` keeps `node_modules`, `build`, `pkg` and `.DS_Store` out of Git. `README.md` describes the project and its commands. Replace its text with your own.
+
+[#generated-folders]
+=== Folders the tools create
+
+[[gen-node-modules]]pass:[<a class="anchor" href="#gen-node-modules"></a>]`node_modules/`::
+The installed dependencies. `npm install` creates it.
+
+[[gen-build]]pass:[<a class="anchor" href="#gen-build"></a>]`build/`::
+The output of `npm run build`: `index.js` and, after `npm run package`, the descriptor and the `.properties` files. Do not edit these files.
+
+[[gen-pkg]]pass:[<a class="anchor" href="#gen-pkg"></a>]`pkg/`::
+The zip that `npm run package` creates. You deploy this file.
+
+[#add-folders]
+== Folders you can add
+
+The build bundles every file that `src/index.js` imports, directly or through other files. The folders of the template are a convention, so you can add your own and name them as you like. You can also use a single file, such as `src/utils.js`, where a folder would be too much. Zimlets that Zimbra provides use the folders below.
+
+[[add-hooks]]pass:[<a class="anchor" href="#add-hooks"></a>]`src/hooks/`::
+Your own Preact hooks. Put a hook here when several components need the same logic, for example one that loads a value and returns it with a loading flag. Import it with a relative path, as in `import { useNote } from '../../hooks'`.
+
+[[add-utils]]pass:[<a class="anchor" href="#add-utils"></a>]`src/utils/`::
+Plain helper functions that show nothing, such as functions that format or parse a value. Keeping them out of the components makes them easy to reuse and to test.
+
+[[add-api]]pass:[<a class="anchor" href="#add-api"></a>]`src/api/`::
+Helpers that call the Zimbra server, for example a small `fetch` wrapper that adds the address and the CSRF token. See xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch].
+
+[[add-store]]pass:[<a class="anchor" href="#add-store"></a>]`src/store/`::
+State of your own that several components share: a reducer, its actions and its selectors, one file each. You register them from `init()`. See xref:go-deeper/redux.adoc[Shared state with Redux].
+
+[[add-screens]]pass:[<a class="anchor" href="#add-screens"></a>]`src/screens/` and `src/pages/`::
+Components that fill a whole screen or page. The build treats their style files like those in `src/components/`, so the class names are unique to your Zimlet.
+
+[[add-assets]]pass:[<a class="anchor" href="#add-assets"></a>]`src/assets/`::
+Images and other static files that your code imports. The build includes the ones that you import.
+
+[#entry-file]
+== src/index.js
+
+The entry file default-exports a function, the xref:fundamentals/factory-and-lifecycle.adoc[factory]. The Modern UI calls it with the xref:fundamentals/host-context.adoc[context] and expects an object with an `init()` method in return. It calls `init()` once, and you register everything your Zimlet adds to the UI inside it. See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle].
+
+You can split your code into more files and import them from `index.js`. The build bundles them all into the one `build/index.js`.
+
+[#strings-file]
+== src/intl/en_US.json
+
+The strings file holds the label and description of your Zimlet and the texts that your components show. English (`en_US`) is the base language. The file has two blocks:
+
+* The `zimlet` block with `label` and `description`.
+* A block named after your Zimlet with your texts. The template has `menuItem` and `helloWorld` in it.
+
+[#strings-label]
+=== Label and description
+
+`zimlet package` reads `zimlet.label` and `zimlet.description` from this file and writes them into the descriptor and into a `.properties` file. If either one is missing, it stops with `label and description string are not provided as argument`.
+
+The Modern UI lists your Zimlet by this label and description under Add-ons (Zimlets) in the user's settings. A Zimlet that an administrator made mandatory is not listed there.
+
+WARNING: Do not use `"`, `&` or `<` in `label` or `description`. `zimlet package` writes them into the XML descriptor as they are, so the descriptor is invalid.
+
+[#strings-components]
+=== Texts in your components
+
+The `withIntl()` enhancer in `src/enhancers/index.js` loads the strings for the components it wraps. It loads `en_US.json` and the file for the user's language. A `<Text id="my-zimlet.helloWorld" />` in a wrapped component then shows the text of that key. If the language file has no such key, or no file exists for that language, the English text appears.
+
+The build bundles every file of `src/intl/` that `withIntl()` can load into `build/index.js`, so the texts travel with the Zimlet. A Zimlet that never imports its strings, such as the minimum package above, bundles none.
+
+Add one `<locale>.json` file for each further language, for example `fr_FR.json`. `zimlet package` then writes a `.properties` file for that language, too. See xref:go-deeper/localization.adoc[Localization] for how to write and use texts.
+
+[#config-template]
+== config_template.xml
+
+Add a `config_template.xml` file when administrators need to change settings without a new build, such as a service address or a switch. `zimlet build` copies the file into the package, and the descriptor lists it as a resource. Without the file, the Zimlet has no administrator settings. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] to declare the settings and read them in your code.
+
+[#zimlet-config]
+== zimlet.config.js
+
+Add a `zimlet.config.js` file when you need to change how the Zimlet is built. It default-exports a function that receives the build settings (`config`) and information about the run (`env`), and changes `config`. The build loads the file from the project folder when it exists. The file in the template has only commented-out examples, so it changes nothing until you edit it. See xref:reference/cli.adoc[CLI reference] for the `--config` option, which names another file.
+
+[#naming-rules]
+== Zimlet naming rules
+
+Choose one name for the Zimlet. The name appears in four places:
+
+Zimlet name::
+The `name` field of `package.json`. Make it unique among the Zimlets on the server, because the descriptor and the zip use it. Use lowercase letters, digits and hyphens, for example `acme-order-notes`.
+
+Folder name::
+Any name. The build uses it only as the first part of the generated class names of your styles. `zimlet create` uses the destination you give as the Zimlet name when you pass no `--name`, so pass `--name` if the destination is a path.
+
+Slug::
+The `SLUG` constant in `src/constants/index.js`. The template ends the page address with it, after the address of the Mail section. The link of the tab uses it too.
+
+Strings namespace::
+The name of the block in `en_US.json` that holds your texts. Components refer to a text as `<name>.<key>`, for example `<Text id="my-zimlet.helloWorld" />`.
+
+`zimlet create` writes the name you give it into all four places. It accepts capital letters, but it lowercases only the `name` in `package.json`. The slug and the namespace keep the capitals, so the four places no longer match. If you rename a Zimlet later, change all four places. That means the `name` in `package.json`, the `SLUG` constant, the block name in `en_US.json` and every `Text` id with the old name.
+
+== Next step
+
+Learn how your entry file starts the Zimlet in xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle].

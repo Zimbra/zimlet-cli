@@ -1,0 +1,330 @@
+= CLI reference
+
+The `zimlet` command is the tool that creates, runs, builds and packages a xref:reference/glossary.adoc#zimlet[Zimlet]. It runs on your machine and needs no Zimbra server. The project that `zimlet create` makes already has an npm script for each command, so you rarely type the full command. Look here when you need an option, a default or the exact output of a command. Run a command in the project folder, where `package.json` is. Every command accepts `--help`, which prints its usage.
+
+[#commands]
+== Commands
+
+<<create,`zimlet create [template] [dest]`>>::
+Makes a new project from a template. Use it once, at the start of a Zimlet.
+
+<<watch,`zimlet watch`>>::
+Serves the Zimlet from your machine and rebuilds it when you save a file. Use it while you develop.
+
+<<build,`zimlet build`>>::
+Compiles the Zimlet into the `build` folder. Use it before you package.
+
+<<package,`zimlet package`>>::
+Adds a descriptor to the build and zips it for deployment. Use it when the Zimlet is ready for an administrator.
+
+[#how-to-run]
+== Run a command
+
+The default template adds the `watch`, `build` and `package` scripts to `package.json`, so you run them with `npm run`. See xref:reference/files/package-json.adoc#package-json-scripts[Scripts of the package.json file]. To pass an option to a script, add it after `--`, for example `npm start -- --port 8082`. To run a command yourself, use `npx zimlet <command>` in the project folder, or `zimlet <command>` when you installed the tool with `npm install --global`. See xref:getting-started/setup-environment.adoc[Set up your machine].
+
+[#create]
+== zimlet create
+
+Creates a Zimlet project in a new folder from a template on GitHub, and installs its dependencies. The default template is a working Zimlet with an Email tab and its page.
+
+=== Signature
+
+[source,sh]
+----
+zimlet create [template] [dest] [options]
+----
+
+=== Arguments
+
+[options="header",cols="1,1,3"]
+|===
+|Name |Type |Description
+
+|`template`
+|string
+|The template to copy. `default` is the default Zimlet template. A name without a slash, such as `foo`, is a repository of the `zimbra` organization on GitHub. `<owner>/<repository>` names a repository of any owner, and `<owner>/<repository>#<tag>` names a tag or branch of it. Only the `template` folder of the repository is copied.
+
+|`dest`
+|string
+|The folder to create, relative to the current folder. It must not exist. It is also the name of the Zimlet when you leave out `--name`.
+|===
+
+=== Options
+
+[options="header",cols="2,1,1,3"]
+|===
+|Name |Type |Default |Description
+
+|`--name`
+|string
+|The value of `dest`
+|The name of the Zimlet. The command writes it as the `name` in `package.json` and in every text file of the template that has `+{{name}}+`. It must be a valid npm package name.
+
+|`--force`, `-f`
+|boolean
+|`false`
+|Create the Zimlet in a folder that already exists. The files of the template overwrite files with the same name, and other files stay.
+
+|`--install`, `-i`
+|boolean
+|`true`
+|Install the dependencies with `npm install` after the files are created. Pass `--install false` to skip it.
+
+|`--yarn`
+|boolean
+|`false`
+|Install with `yarn` instead of `npm`. It has an effect only when `yarn` is installed.
+
+|`--git`
+|boolean
+|`false`
+|Run `git init` in the new folder, stage the files and make the commit `initial commit from zimlet-cli`.
+
+|`--cwd`
+|string
+|`.`
+|The folder that `dest` is relative to, instead of the current folder.
+|===
+
+=== Output
+
+The command prints one line for each step (`Creating project`, `Parsing package.json file`, `Updating name`, `Installing dependencies`), then `Done!` and the commands to run next. It exits with code `0`. On an error it prints a line that starts with `ERROR` and exits with code `1`. These errors are the common ones:
+
+* `Invalid package name: <name>`: the name is not a valid npm package name. A path such as `./my-zimlet` is not valid.
+* `Refusing to overwrite current directory! Please specify a different destination or use the --force flag`: the folder exists.
+* `Could not find repository: <owner>/<repository>`: the template does not exist.
+
+=== Usage notes
+
+* Pass a name and not a path. `zimlet create default ./my-zimlet` fails, because the command uses `dest` as the name. Run `zimlet create default my-zimlet`, or add `--name my-zimlet` when `dest` is a path. See xref:fundamentals/project-structure.adoc#naming-rules[Zimlet naming rules].
+* Always give both `template` and `dest`. When you leave one out, the command asks for it but then ignores your answers. It uses the parent of the current folder as `dest` and stops with `Refusing to overwrite current directory!`.
+* The question `You are using '--force'. Do you wish to continue and overwrite …` does not cancel the command. It continues when you answer `N`.
+* The command replaces `+{{name}}+` in text files only. It copies images, fonts and other media files unchanged.
+* The command keeps the `scripts` of the template. It adds `build`, `watch` and `package` scripts only to a template whose `package.json` has none.
+
+=== Example
+
+Create a Zimlet named `my-zimlet` from the default template, without installing the dependencies:
+
+[source,sh]
+----
+zimlet create default my-zimlet --install false
+----
+
+[#watch]
+== zimlet watch
+
+Starts a development server that serves your Zimlet from your machine and builds it again each time you save a file. You load the served file into the xref:reference/glossary.adoc#modern-ui[Modern UI] with the sideloader. See xref:run-package-deploy/run-and-debug.adoc[Run and debug] for the steps.
+
+=== Signature
+
+[source,sh]
+----
+zimlet watch [options]
+----
+
+=== Arguments
+
+None.
+
+=== Options
+
+[options="header",cols="2,1,1,3"]
+|===
+|Name |Type |Default |Description
+
+|`--port`
+|number
+|`8081`
+|The port of the server. The `PORT` environment variable takes precedence over this option.
+
+|`--https`
+|boolean
+|`true`
+|Serve over HTTPS with a self-signed certificate. `--https false` serves over plain HTTP.
+
+|`--config`
+|string
+|`./zimlet.config.js`
+|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[The zimlet.config.js file]. A path that does not exist prints a warning, and the command goes on without it.
+|===
+
+=== Output
+
+The command prints `Compiled successfully!` and the address of the Zimlet, then keeps running until you stop it with kbd:[Ctrl+C]. It prints the same lines again after each rebuild:
+
+[source,text]
+----
+Compiled successfully!
+
+You can view the application in browser.
+
+Local:            http://localhost:8081/index.js
+On Your Network:  http://<your-ip-address>:8081/index.js
+----
+
+When a build has an error, the command prints `Build failed!` and the error, and keeps running. If the port is in use, the command stops with `Error: listen EADDRINUSE` and exit code `1`.
+
+=== Usage notes
+
+* The printed address starts with `http://`, but with the default `--https true` the server answers only over HTTPS. Use `https://localhost:<port>/index.js`. Open it once in your browser and accept the certificate. See xref:getting-started/setup-environment.adoc#accept-certificate[Accept the development HTTPS certificate].
+* The server allows requests from any origin, so the Modern UI can load the file.
+* The command serves an unminified build with inline source maps, which makes debugging in the browser easier.
+* The server does not look for another port. Choose a free port with `--port` when 8081 is in use, and use the same port in the sideloader.
+* A Modern UI page that is already open does not update when you save. Reload it. See xref:run-package-deploy/run-and-debug.adoc#see-a-change[See a change].
+
+=== Example
+
+Serve the Zimlet on port 8082:
+
+[source,sh]
+----
+zimlet watch --port 8082
+----
+
+[#build]
+== zimlet build
+
+Compiles the Zimlet into one JavaScript file in the `build` folder. This is the build that you package and deploy. See xref:run-package-deploy/build-and-package.adoc#build[Build the Zimlet] for the steps.
+
+=== Signature
+
+[source,sh]
+----
+zimlet build [options]
+----
+
+=== Arguments
+
+None.
+
+=== Options
+
+[options="header",cols="2,1,1,3"]
+|===
+|Name |Type |Default |Description
+
+|`--config`
+|string
+|`./zimlet.config.js`
+|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[The zimlet.config.js file]. A path that does not exist prints a warning, and the command goes on without it.
+|===
+
+=== Output
+
+On success the command prints `Compiled successfully!` and exits with code `0`. It writes these files to the build folder:
+
+* `index.js`, the whole Zimlet in one file, minified, and `index.js.LICENSE.txt`.
+* `config_template.xml`, copied from the project folder when the project has one.
+* `fonts/`, with each image or font that your code imports.
+* `scripts/`, with each part that your code loads on demand.
+
+On a build error the command prints `Build failed!` and the errors, then the number of errors, and exits with code `1`.
+
+=== Usage notes
+
+* The command starts from the file that the `module` field of `package.json` names. See xref:reference/files/package-json.adoc#module[The module field].
+* The command does not empty the build folder. A file from an earlier run stays, including the descriptor and the `.properties` files of an earlier `zimlet package`, and `zimlet package` adds it to the zip. Delete the `build` folder before a build that you package.
+* The build needs every import to be installed. A missing package ends the build with `Module not found`.
+
+=== Example
+
+Build the Zimlet into the default folder:
+
+[source,sh]
+----
+zimlet build
+----
+
+[#package]
+== zimlet package
+
+Adds the descriptor and the `.properties` files to the `build` folder and zips the folder. The zip is the file that an administrator deploys. See xref:run-package-deploy/build-and-package.adoc#package[Package the Zimlet] for the steps and xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] for what happens next.
+
+=== Signature
+
+[source,sh]
+----
+zimlet package --name <name> --pkg-version <version> [options]
+----
+
+=== Arguments
+
+None.
+
+=== Options
+
+[options="header",cols="2,1,1,3"]
+|===
+|Name |Type |Default |Description
+
+|`--name`, `-n`
+|string
+|Required
+|The name of the Zimlet. It must be unique on the server. It becomes the name of the zip file and of the descriptor.
+
+|`--pkg-version`, `-v`
+|string
+|Required
+|The version of the Zimlet, for example `1.0.1`.
+
+|`--zimbraXVersion`
+|string
+|`>=1.0.0`
+|The xref:reference/glossary.adoc#semver-range[semver range] of Modern UI versions that the Zimlet supports. Put the range in single quotes. See xref:run-package-deploy/build-and-package.adoc#choose-range[Choose the Modern UI versions your Zimlet supports].
+
+|`--label`, `-l`
+|string
+|None
+|The display name of the Zimlet. It is used only when `src/intl/en_US.json` has no `zimlet.label` and `zimlet.description`.
+
+|`--description`, `--desc`
+|string
+|None
+|The description of the Zimlet. It is used under the same condition as `--label`.
+
+|`--dest`, `-d`
+|string
+|`./pkg`
+|The folder for the zip file.
+|===
+
+=== Output
+
+On success the command prints the path of the zip and exits with code `0`:
+
+[source,text]
+----
+Successfully packaged zimlet to: <your-project-path>/pkg/my-zimlet.zip
+----
+
+It writes `<name>.xml` and `<name>.properties` to the build folder, and a `<name>_<locale>.properties` file for each other language in `src/intl`. The zip holds the whole build folder. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files] and xref:reference/files/descriptor.adoc[Descriptor XML] for their content.
+
+These messages show a problem:
+
+* `Missing required arguments: name, pkg-version`: the command prints its usage and exits with code `1`.
+* `Failed to read <path>/build`: the build folder does not exist. Exit code `1`. Run the build first.
+* `label and description string are not provided as argument`: no label and description were found. The command exits with code `0` and writes no zip, so check that the zip exists.
+
+=== Usage notes
+
+* Run `zimlet build` first. The command zips the `build` folder.
+* The label and the description come from `zimlet.label` and `zimlet.description` in `src/intl/en_US.json`. They win over `--label` and `--description`. If the file lacks them, the command prints a deprecation warning and uses the options. See xref:fundamentals/project-structure.adoc#strings-label[Label and description].
+* The command needs the `src/intl` folder, even when you pass `--label` and `--description`. Without it, it stops with `TypeError: Cannot read properties of undefined (reading 'filter')` and exit code `1`.
+* The command writes the label, the description and the name to the descriptor as they are. A `&`, `<` or `"` in one of them makes the descriptor invalid XML.
+* `-v` is the short form of `--pkg-version`. `--version` prints the version of the tool.
+* The `package` script of the default template passes the name and version of `package.json` and `--zimbraXVersion '^4.0.0'`.
+
+=== Example
+
+Package version 1.0.0 of `my-zimlet` for Modern UI versions 4.50 and later in version 4:
+
+[source,sh]
+----
+zimlet package --name my-zimlet --pkg-version 1.0.0 --zimbraXVersion '^4.50.0'
+----
+
+[#next-step]
+== Next step
+
+See the files that these commands read and write in xref:reference/files.adoc[Files].

@@ -1,0 +1,15 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds a Follow up item to the menus of a message."
+	},
+	"my-zimlet": {
+		"followUp": {
+			"menuItem": "Follow up",
+			"done": "Marked for follow up",
+			"doneNewTag": "Marked for follow up. Reload the page to see the new tag in the Tags list.",
+			"reload": "Reload now",
+			"failed": "The messages could not be marked for follow up"
+		}
+	}
+}

@@ -1,0 +1,182 @@
+= Transform messages
+
+This recipe changes the text that the xref:reference/glossary.adoc#modern-ui[Modern UI] shows for a message or a calendar event, without adding any screen or component. The example turns ticket numbers such as `SUP-1042` in a message into links to a ticket tracker. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] must rewrite content as the Modern UI prepares it, for example to add links, mark text or remove it. To add a block or a control next to the message, fill a slot instead, as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose the message processor key.
+* Register a processor under `messageProcessors:emailProcessor`.
+* Change the message as a `Document`.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-key]
+== Choose the key
+
+A message processor is a function that the Modern UI calls with the content that it is about to show. You register it under a key that starts with `messageProcessors:`, and the rest of the key names the content. Choose the key by where the change must appear. The example changes the body of a message in the viewer, so it uses `messageProcessors:emailProcessor`.
+
+[#the-key]
+=== The key
+
+`messageProcessors:emailProcessor`::
+The body of a message in the message viewer.
+
+[#other-keys]
+=== Other keys
+
+`messageProcessors:composerProcessor`::
+The quoted original message that the composer adds when the user replies to a message or forwards it in HTML format.
+
+`messageProcessors:mailPrintProcessor`::
+The message in its printed form.
+
+`messageProcessors:eventExcerptProcessor`::
+The excerpt of the description in the details of a calendar event.
+
+`messageProcessors:eventLocationProcessor`::
+The location of an event, in the event details and in the invitation that a message contains.
+
+`messageProcessors:eventNotesProcessor`::
+The notes of an event in the invitation that a message contains.
+
+Each key changes one place. To change a message in the viewer and in the printout, register the processor under both keys. A processor of one key does not run for another. The processors of all kinds receive the content as a `Document`.
+
+Two more keys, `messageProcessors:attachPopover` and `messageProcessors:dateInfoPopover`, do not take a processor. They let a Zimlet add a popover to dates in a message. See xref:reference/slots/invoke-plugin.adoc[Direct invokePlugin extension points] for every key and its arguments.
+
+A processor changes content as it is prepared. It does not react to something the user does. To run code when the user sends a message or logs out, listen to an app event instead, as xref:build-by-goal/recipe-app-events.adoc[React to app events] shows.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Remove `src/components/`, `src/constants/` and `src/enhancers/`. The example has no components and no texts of its own, and a `constants/` folder next to its `constants.js` would clash with it.
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the handler. It replaces the generated file.
+** `constants.js` holds the project keys, the address of the tracker and the pattern that finds a ticket number.
+** `processors/link-ticket-numbers.js` is the processor. It finds the ticket numbers in the message.
+** `utils/create-ticket-link.js` builds the link for one ticket number.
+. Keep the `zimlet` block of `src/intl/en_US.json`, set its `description`, and remove the `my-zimlet` object. Users only see the text of their messages, so the Zimlet adds no text of its own.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$message-processor/intl/en_US.json[]
+----
+
+[#describe-the-tickets]
+== Describe the ticket numbers
+
+A ticket number is a project key, a hyphen and a number. Keep the keys, the address and the pattern in one file, so you change them in one place.
+
+.constants.js
+[source,js]
+----
+include::example$message-processor/constants.js[]
+----
+
+The pattern has one capture group. `String.split` then keeps each ticket number between the pieces of text around it, which the processor uses to rebuild the text. The address is a placeholder that has no ticket pages, so replace it with the address of your own tracker.
+
+[#write-the-processor]
+== Write the processor
+
+The processor receives the message as a `Document`. It reads the text of the message and replaces each ticket number with a link.
+
+.processors/link-ticket-numbers.js
+[source,js]
+----
+include::example$message-processor/processors/link-ticket-numbers.js[]
+----
+
+.utils/create-ticket-link.js
+[source,js]
+----
+include::example$message-processor/utils/create-ticket-link.js[]
+----
+
+The processor works on text nodes only, so it never changes a tag or an attribute. It skips text that is already inside a link. The Modern UI turns web addresses into links before your processor runs. An address that contains a ticket number stays as it is, and no link is nested inside another.
+
+The link text is only the ticket number, so the reader cannot see where the link goes. Link only to a fixed `https` address that you own, and never build the host or the path from the text of a message. The example sets `title` to the address, so it shows when the reader points at the link.
+
+The processor changes the `Document` and returns nothing. Use `doc.createElement` and `doc.createTextNode`, so that every new node belongs to the `Document` that you receive.
+
+[#register-the-handler]
+== Register the handler
+
+Register the handler in `init()`, with the key of the content that you change.
+
+[#registration-key]
+=== The messageProcessors:emailProcessor key
+
+`messageProcessors:emailProcessor` is the key for the body of a message in the message viewer. You register a handler under it with `plugins.register`, as you do for a slot. The handler returns a function that the Modern UI calls with the message, and nothing is drawn.
+
+.index.js
+[source,js]
+----
+include::example$message-processor/index.js[]
+----
+
+The handler and the processor are two functions:
+
+The handler::
+The function that you pass to `register`. The Modern UI calls it with no arguments each time the viewer draws a message, and it must return the processor. Return the same function every time, and do not build a new one, so that the call stays cheap.
+
+The processor::
+The function that the handler returns. The Modern UI calls it with the message as a `Document`, and it changes `doc.body`.
+
+[#how-a-processor-runs]
+=== How the Modern UI runs a processor
+
+The message viewer applies the processors of this key in the same way for every message. Keep these rules in mind when you write one:
+
+* The Modern UI runs the processors in a fixed order. Its own processors for links and quoted text run first, and the processors of the Zimlets follow in the order in which the Zimlets registered. Each processor sees the result of the one before it.
+* After each processor, the Modern UI cleans the `Document` again. It removes scripts, event handler attributes, unsafe addresses and most `data-` attributes that your processor added. Add markup that is safe, as the example does.
+* A processor that throws an error stops the message from being prepared. Do not let your code throw, and check that the handler returns a function. If the handler throws, or returns anything else, the viewer fails with a `TypeError` when it runs the result, and the message body stays empty. See xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin] for how the Modern UI collects the results of handlers.
+* The Modern UI keeps the result for each message body that it has prepared, up to 300 bodies. It does not run the processors again for the same body. A changed processor does not update a message that the user has opened. The change applies after the user reloads the browser page.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*. Reload the Modern UI page first if you opened messages before you loaded the Zimlet.
+. Send yourself a new message with this text in the body: `Please look at SUP-1042 and OPS-7 before the review. XYZ-9 is not one of ours.`
+. Open the message in the reading pane. `SUP-1042` and `OPS-7` are links, and `XYZ-9` is plain text.
++
+.A message with two linked ticket numbers
+image::message-processor-linked-ticket.png["The message Ticket test open in the reading pane. The text reads Please look at SUP-1042 and OPS-7 before the review. XYZ-9 is not one of ours. The links SUP-1042 and OPS-7 are outlined in red. XYZ-9 is plain text."]
++
+The outlined *SUP-1042* and *OPS-7* are the links that the processor adds.
+. Choose *SUP-1042*. A new browser tab opens at `+https://zimbra.github.io/zimlet-cli/issues/SUP-1042+`. The page does not show your ticket, because the address is a placeholder.
+
+[#expected-result]
+== Expected result
+
+* Each ticket number of your projects in the message body is a link to the ticket.
+* Text that does not match a project key, such as `XYZ-9`, stays plain text.
+* A ticket number that is already inside a link is left as it was.
+* The link opens in a new browser tab.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The ticket numbers are plain text.::
+* Cause: The Zimlet was not running when the message was prepared. Or the Modern UI had already prepared that message, because it keeps the result for each message body.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Reload the Modern UI page, load the Zimlet again, and open a message that you have not opened since the reload. Check that the key is `messageProcessors:emailProcessor` and that you register it in `init()`. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+
+The body of the message is empty.::
+* Cause: The handler or the processor throws an error, or the handler does not return a function. The browser console lists an error, such as a `TypeError` with the text `is not a function`.
+* Fix: Return the processor from the handler, as the example does, and open the browser console to read the error. See xref:run-package-deploy/run-and-debug.adoc#browser-console[Run and debug] for how.
+
+A ticket number is not a link although it matches the keys.::
+* Cause: The number is inside text that is already a link, or the project key is not in `PROJECT_KEYS`. Matching is case sensitive.
+* Fix: Add the key to `PROJECT_KEYS`, and write it in the same case as in the messages.
+
+[#next-step]
+== Next step
+
+Run code when the user sends a message or logs out, instead of changing what a message shows, in xref:build-by-goal/recipe-app-events.adoc[React to app events].

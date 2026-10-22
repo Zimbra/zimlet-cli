@@ -1,0 +1,23 @@
+= Zimlet manager
+
+The Zimlet manager of the Modern UI. Use it when your Zimlet must work with other Zimlets or react to the loading of the Zimlets. Take the field from the context first, as in `const { zimlets } = context;`. It calls plugin handlers, tells whether a slot is in use, and sends events to the Modern UI and to Zimlets. App events, such as sending a message, are a different thing. See xref:go-deeper/app-events.adoc[App events].
+
+[#members]
+== Members
+
+[[zimlets-initialized]]pass:[<a class="anchor" href="#zimlets-initialized"></a>]xref:reference/context/zimlets/zimlets-initialized.adoc[`zimlets-initialized`]::
+Event: Zimlets have finished loading.
+
+[[plugins-changed]]pass:[<a class="anchor" href="#plugins-changed"></a>]xref:reference/context/zimlets/plugins-changed.adoc[`plugins::changed`]::
+Event: a handler was added or removed.
+
+[[invoke-plugin]]pass:[<a class="anchor" href="#invoke-plugin"></a>]xref:reference/context/zimlets/invoke-plugin.adoc[`invokePlugin(name, ...args)`]::
+Calls every handler registered under a key.
+
+[[is-slot-active]]pass:[<a class="anchor" href="#is-slot-active"></a>]xref:reference/context/zimlets/is-slot-active.adoc[`isSlotActive(slot)`]::
+Tells whether a handler is registered under a key.
+
+[#next-step]
+== Next step
+
+Learn how slots call handlers in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].

@@ -1,0 +1,9 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Shows a reminder in the mail sidebar."
+	},
+	"my-zimlet": {
+		"reminder": "You have {{count}} unread reminders."
+	}
+}

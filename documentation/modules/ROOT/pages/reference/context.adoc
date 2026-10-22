@@ -1,0 +1,45 @@
+= Context
+
+Find the page for each field of the xref:fundamentals/host-context.adoc[context]. Each member has its own page with the type, arguments, return value. See xref:fundamentals/host-context.adoc[The context object] for what the context is and how to choose a field.
+
+[#fields-with-members]
+== Fields with members
+
+[[plugins]]pass:[<a class="anchor" href="#plugins"></a>]xref:reference/context/plugins.adoc[`plugins`]::
+Registers and removes xref:fundamentals/extending-the-ui.adoc[plugin handlers]: `register`, `unregister` and `unregisterAll`.
+
+[[store]]pass:[<a class="anchor" href="#store"></a>]xref:reference/context/store.adoc[`store`]::
+The Redux store: `getState`, `dispatch`, `subscribe`, and `zimletRedux` for your own reducers, actions and selectors.
+
+[[zimbra-batch-client]]pass:[<a class="anchor" href="#zimbra-batch-client"></a>]xref:reference/context/batch-client.adoc[`zimbraBatchClient`]::
+Sends requests to the Zimbra server: `jsonRequest`, `origin` and `resolve`.
+
+[[zimlets]]pass:[<a class="anchor" href="#zimlets"></a>]xref:reference/context/zimlets.adoc[`zimlets`]::
+The Zimlet manager: `invokePlugin`, `isSlotActive`, `on`, `off`, `emit` and its events.
+
+[[key-bindings]]pass:[<a class="anchor" href="#key-bindings"></a>]xref:reference/context/keyboard-shortcuts.adoc[`keyBindings` and `shortcutCommandHandler`]::
+Add keyboard shortcuts: key bindings and command handlers.
+
+[#single-values]
+== Single values and functions
+
+Each of these fields has its own page under xref:reference/context/values.adoc[Single values].
+
+[[zimbra-origin]]pass:[<a class="anchor" href="#zimbra-origin"></a>]xref:reference/context/values/zimbra-origin.adoc[`zimbraOrigin`]::
+The prefix for server URLs.
+
+[[meta]]pass:[<a class="anchor" href="#meta"></a>]xref:reference/context/values/meta.adoc[`meta`]::
+The build version, hash and time of the Modern UI.
+
+[[host-name]]pass:[<a class="anchor" href="#host-name"></a>]xref:reference/context/values/host-name.adoc[`hostName`]::
+The host name of the page.
+
+[#deprecated]
+== Deprecated
+
+Do not use these in new Zimlets. The xref:reference/context/deprecated.adoc[Deprecated] page lists each one with what to use instead: `cache`, `shims`, `config`, `utils`, `resourceUrl`, `zimbra`, `getAccount()`, `csrfToken` and `zimbraBatchClient.accountInfo()`.
+
+[#next-step]
+== Next step
+
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].

@@ -1,0 +1,223 @@
+= Add a control to a built-in settings page
+
+This recipe adds one control to a page that the Settings dialog of the xref:reference/glossary.adoc#modern-ui[Modern UI] already has. The example adds a *Closing phrase* field beside the built-in options on the Writing Email page. The dialog saves it through `modifyProps`. See xref:go-deeper/server-data/zimlet-configuration.adoc#user-values[Let users save their own value] for how the Settings dialog saves it. Use this recipe when a single option of your xref:reference/glossary.adoc#zimlet[Zimlet] belongs with settings that users already know. Build a section of your own instead when the Zimlet has several options, as xref:build-by-goal/recipe-settings/new-section.adoc[Add a section to the Settings dialog] describes.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Pick the slot of a built-in settings page.
+* Register the `settings` key with `fields` only.
+* Report a change with `onFieldChange`.
+* Show help text with `HelpTooltip`.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of xref:build-by-goal/recipe-settings.adoc#fields[fields] and of xref:build-by-goal/recipe-settings.adoc#what-the-dialog-passes[what the dialog passes], which the recipe uses without repeating them.
+
+[#choose-the-slot]
+== Choose the slot
+
+A built-in page draws the controls of Zimlets in a slot that it names. The slot decides where the control appears and what it receives. Pick the slot of the page that your option belongs to, and of the place on that page. The example fills the slot that ends the Writing Email page.
+
+[cols="3,2,2,3",options="header"]
+|===
+|Slot |Page and place |Page `id` |Receives
+
+|`writting-email-additional-settings`
+|Writing Email, after the last built-in option
+|`writingEmail`
+|`value`, `onFieldChange`
+
+|`writing-email-post-composer-settings`
+|Writing Email, in the Composer block, after the font choices
+|`writingEmail`
+|`value`, `onFieldChange`
+
+|`calendar-and-reminders-video-call-preferences`
+|Calendar and Reminders, after the reminder options
+|`calendarAndReminders`
+|`value`, `onFieldChange`
+
+|`general-setting-bottom`
+|General, after the last built-in option
+|`general`
+|`matchesScreenMd`
+
+|`additional-signature-settings`
+|Signatures, after the default and the reply signature
+|`signatures`
+|`style`, `additionalSignatures`, `additionalSignatureActions`, `additionalSignatureActionTypes`, `zimbraMailSignatureMaxLength`
+|===
+
+[#the-slot]
+=== The slot
+
+`slot::writting-email-additional-settings`::
+The end of the Writing Email page, after the last built-in option. The name is spelled with two `t` in the Modern UI, so use it as written. Look up the slots in the xref:reference/slots.adoc[slot index].
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the control and the field. It replaces the generated file.
+** `constants/index.js` holds the id of the page, the name of the value and its length limit. It replaces the generated file.
+** `utils/property.js` builds and reads a saved value.
+** `utils/fields.js` describes the field.
+** `components/closing-phrase/index.js` and `style.less` are the control.
+. Merge the texts into `src/intl/en_US.json`.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$settings-existing-section/intl/en_US.json[]
+----
+
+[#describe-the-field]
+== Describe the field
+
+The field is the kind that xref:build-by-goal/recipe-settings.adoc#fields[Fields] describes. It is a `modifyProperties` value with the name of your Zimlet, the name of the setting and the text.
+
+.constants/index.js
+[source,js]
+----
+include::example$settings-existing-section/constants/index.js[]
+----
+
+.utils/property.js
+[source,js]
+----
+include::example$settings-existing-section/utils/property.js[]
+----
+
+.utils/fields.js
+[source,js]
+----
+include::example$settings-existing-section/utils/fields.js[]
+----
+
+The `SECTION_ID` is the `id` of the Writing Email page, from the table in <<choose-the-slot,Choose the slot>>. The dialog matches it exactly, so a different spelling does not extend the page. The name `closingPhrase` is the key of the field and the name of the saved value. The dialog finds a saved value by name only, so choose a name that no other Zimlet uses.
+
+[#add-the-control]
+== Add the control
+
+The page creates your component with `value` and `onFieldChange`. `value` holds the values of every field of the page, including the built-in ones, so read only your own by its name. The control reads the value on every render and reports each change at once, so the field always shows what the dialog will save.
+
+Only the first three slots of the table pass `value` and `onFieldChange`, so only they can hold a control whose value the dialog saves. A control in the other two slots can show content or do its own work, and cannot report a value to the dialog.
+
+.components/closing-phrase/index.js
+[source,js]
+----
+include::example$settings-existing-section/components/closing-phrase/index.js[]
+----
+
+.components/closing-phrase/style.less
+[source,less]
+----
+include::example$settings-existing-section/components/closing-phrase/style.less[]
+----
+
+The styles follow the layout of the built-in rows, with a label column and a field column. The control then lines up with the options above it. See xref:go-deeper/styling.adoc[Styling] for how styles are scoped.
+
+The slot passes no `handleValidityOfTabs`, so the control cannot disable *Save*. Keep the value valid in the control itself. The example limits the length of the phrase with `maxLength`.
+
+[#text-input]
+=== The TextInput component
+
+The example draws the field with `TextInput`, as xref:build-by-goal/recipe-settings/new-section.adoc#text-input[The TextInput component] describes. Here it needs `id`, `value` and `onInput`. It also gets `maxLength`, which goes to the `input` element and stops the user from typing more characters than the limit.
+
+[#help-tooltip]
+=== The HelpTooltip component
+
+`HelpTooltip` shows a question mark button that opens a short help text. It comes from `@zimbra-client/components`. Choose it for an explanation that the label alone cannot give, in the way that the built-in settings do.
+
+*Without it:* you write the explanation as a line of text under the field. That does not look like the other rows and makes the page longer.
+
+*With it:* put the help in the children of a `HelpTooltip`, next to the label.
+
+[source,js]
+----
+<HelpTooltip position="right" customStyle={style.tooltip}>
+	<p class={style.tooltipTitle}>
+		<Text id="my-zimlet.closingPhraseLabel" />
+	</p>
+	<p>
+		<Text id="my-zimlet.closingPhraseTooltip" />
+	</p>
+</HelpTooltip>
+----
+
+The example uses two props:
+
+`position`::
+Where the tooltip opens. The default is `left`. The example uses `right`.
+
+`customStyle`::
+A class for the tooltip. The example sets its width.
+
+The children are the content of the tooltip. Look up the rest in xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback].
+
+[#register-the-control]
+== Register the control
+
+Register two handlers in `init()`. The slot handler draws the control. The `settings` handler adds the field. Its `id` is the id of the built-in page, and it has no `title` or `component`. The dialog merges `fields` into the fields of that page. If you add a `title` or a `component`, the dialog ignores them, because the page that is already there wins.
+
+Without the `settings` handler the control is drawn, but the dialog does not know the field and cannot save it. Without the slot handler the field is saved, but no control changes it.
+
+.index.js
+[source,js]
+----
+include::example$settings-existing-section/index.js[]
+----
+
+Look up the `settings` key and the slot in the xref:reference/slots.adoc[slot index]. Read xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for these keys work.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
+. Open the gear menu (*Settings and more*) and choose *Settings*.
+. Select *Writing Email* and scroll to the end of the page. A *Closing phrase* row follows *Show send and archive*, with a question mark button and an empty field.
++
+.The Closing phrase control in the Writing Email page
+image::settings-existing-section-control-in-writing-email.png["The Settings dialog over the mail view, with Writing Email selected. The Closing phrase row, outlined in red, is the last row of the page, below Show send and archive. It has a question mark button after the label and an empty field. The Save and Cancel buttons are below."]
++
+The outlined row is your control. It lines up with the built-in rows above it.
+. Select the question mark button. A tooltip titled *Closing phrase* opens, with the text *The phrase to end new messages with. Leave the field empty to add no phrase.* Close it.
+. Type `Kind regards` in the field and choose *Save*. The dialog closes and the Modern UI shows *Settings saved.*
+. Reload the Modern UI page, open *Settings* and select *Writing Email* again. The field shows `Kind regards`.
++
+.The saved closing phrase
+image::settings-existing-section-saved-value.png["The Writing Email page after a reload. The Closing phrase field, outlined in red, shows Kind regards."]
++
+The outlined field shows the value that the dialog saved with the account.
+
+[#expected-result]
+== Expected result
+
+* The Writing Email page has a *Closing phrase* row after its built-in options.
+* The built-in options of the page work as before.
+* The value that you type is saved with *Save*, and it is still there after a reload.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The control is not on the Writing Email page.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another slot name. The Modern UI does not check slot names, so a misspelled name adds nothing and shows no error. The name of this slot has two `t` in *writting*.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check the slot name in the xref:reference/slots.adoc[slot index] and that you register it in `init()`. Reload the page and open the dialog again.
+
+The control is there, but the value is not saved.::
+* Cause: The `settings` handler is missing, its `id` is not `writingEmail`, or the change did not go through `onFieldChange`. The dialog saves only the fields that it knows and whose value changed.
+* Fix: Register `settings` with `id: 'writingEmail'` and the field. Report every change with `onFieldChange('closingPhrase')({ target: { value } })`, and build the value with `toProperty`, as the example does.
+
+The control shows an empty field after you saved a value.::
+* Cause: The `key` of the field differs from the `name` in the saved value. The dialog finds the saved value by name.
+* Fix: Use the same name in the `key` of the field and in the `name` of the value, as `utils/fields.js` does.
+
+[#next-step]
+== Next step
+
+Read the saved value in your Zimlet, and let an administrator give it a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on the value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.

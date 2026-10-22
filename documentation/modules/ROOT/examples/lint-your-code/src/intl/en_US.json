@@ -1,0 +1,11 @@
+{
+	"zimlet": {
+		"label": "my-zimlet",
+		"description": "Describe what this Zimlet does."
+	},
+	"my-zimlet": {
+		"menuItem": "my-zimlet",
+		"helloWorld": "Hello World",
+		"greeting": "Hello from my Zimlet"
+	}
+}

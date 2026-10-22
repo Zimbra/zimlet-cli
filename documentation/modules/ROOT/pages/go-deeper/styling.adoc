@@ -1,0 +1,17 @@
+= Styling
+
+A xref:reference/glossary.adoc#zimlet[Zimlet] shares the page with the xref:reference/glossary.adoc#modern-ui[Modern UI]. Its styles must fit the look of the Modern UI and its light and dark modes. Two pages cover this work. One covers where your styles live and how they are scoped. The other covers the style library of the Modern UI, with the values to use inside them.
+
+[#choose-a-page]
+== Choose a page
+
+xref:go-deeper/styling/write-and-scope-styles.adoc[Write and scope styles]::
+Write Less or CSS, decide which styles are scoped to a component and which are global, and set values at run time with custom properties. Read it first.
+
+xref:go-deeper/styling/shared-styles.adoc[Style library]::
+Use the spacing, font, color and screen size values of the Modern UI, and its light and dark color modes, instead of fixed values. The page also shows where to explore the rest of the library.
+
+[#next-step]
+== Next step
+
+Start with xref:go-deeper/styling/write-and-scope-styles.adoc[Write and scope styles].

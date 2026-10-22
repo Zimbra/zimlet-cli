@@ -1,0 +1,56 @@
+= addBindings
+
+Merges bindings into the existing ones. Use it to bind a key, or a sequence of keys, to a command, such as a shortcut for a feature of your Zimlet, without changing the other shortcuts. A command runs only when it has a handler, which xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers] adds.
+
+WARNING: The bindings are shared with the Modern UI. If you bind a key that the Modern UI already uses in the same context, your command replaces the Modern UI command for that key, and the Modern UI shortcut stops working. Binding a command to a key that starts a sequence, such as `M` in `mail`, removes the whole sequence. Call xref:reference/context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.adoc[getCommandsAndSequences] to check that a key is free before you bind it. Nothing restores the original binding afterwards, and `removeBindings` only deletes the key.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+keyBindings.addBindings(newBindings)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`newBindings`
+|object
+|Bindings in the form `{ <context>: { <key>: <command> } }`.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* The merge is deep, so a new key does not remove the other keys of its context.
+* A key in the `all` context does not replace the same key in a screen context. The handlers of the screen run first, and the `all` handlers run only if none of them ran. A key you bind in a screen context takes precedence over the same key in `all` on that screen.
+* If two Zimlets bind the same key in the same context, the one that runs last wins.
+* To add behaviour to a Modern UI command without taking over its key, add a handler for that command with xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers]. Every handler of a command runs.
+* A command only does something when a handler exists for it. See xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers].
+
+[#example]
+== Example
+
+A shortcut with modifier keys is added, and a lookup shows the command for its key.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/key-bindings/add-bindings.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to remove a binding in xref:reference/context/keyboard-shortcuts/key-bindings/remove-bindings.adoc[removeBindings].

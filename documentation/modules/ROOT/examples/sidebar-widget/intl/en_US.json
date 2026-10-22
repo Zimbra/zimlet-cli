@@ -1,0 +1,9 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Shows the current time and date at the head office."
+	},
+	"my-zimlet": {
+		"label": "Head office"
+	}
+}

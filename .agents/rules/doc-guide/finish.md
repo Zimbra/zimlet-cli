@@ -10,12 +10,13 @@ The conditions for a finished page are in section 8 of [claims.md](./claims.md).
 
 Run `node .agents/scripts/check-doc-style.mjs <page>` and fix every finding. Then read the page once more, sentence by sentence, and answer each point with one line of evidence (a line number, a command result or "not applicable").
 
-- Structure: one `=` title and an opening that leads with the outcome; headings in sentence case; the page ends with a link to the next step; the page matches its part (sections 2 and 3).
+- Structure: one `=` title and an introduction with a summary, when to read the page and why (section 2 of `write-doc.md`) that does not repeat the sections; headings in sentence case; the page ends with a link to the next step; the page matches its part (sections 2 and 3).
 - Style: nothing talks about the page, its tables, links or examples; no sentence is longer than about 25 words; at most one admonition per section; no internal repository, tool or path names (sections 9 and 2).
 - Ownership: each procedure, command or option that another page in section 1 of the plan owns is linked, not restated (section 2). Name the owning page.
-- Terms and links: each term is explained at first use and linked to the glossary; every link text says where it goes; a link to an unwritten planned page has no section anchor (sections 2 and 6).
-- Examples: each is in `examples/`, includes `createElement`, uses shimmed imports only and registers inside `init()`; each simplification has a `NOTE` with its consequence ([examples.md](./examples.md)).
-- Accessibility and media: each table has a header row; each code block has a language ([accessibility.md](./accessibility.md)); each image or diagram has quoted alt text, a text version of the facts and no text under 14 px ([media.md](./media.md)).
+- Terms and links: each term is explained at first use and linked to the concept page that owns it, or to the glossary when it has no concept page (section 2 of `write-doc.md`); every link text says where it goes; a link to an unwritten planned page has no section anchor (sections 2 and 6).
+- Examples: each is in `examples/`, includes `createElement`, uses shimmed imports only and registers inside `init()`; visible text is a constant label with a comment to use localization; each other simplification has a `NOTE` with its consequence ([examples.md](./examples.md)).
+- Accessibility and media: each table has a header row; each code block has a language ([accessibility.md](./accessibility.md)); each image or diagram has quoted alt text, a text version of the facts, no diagram text under 14 px, and each UI screenshot with an outlined element ([media.md](./media.md)).
+- Claims: every `Unverified` row of this change says that the user was asked and what the user answered (`Not sure`, `Verify later`, or the batch question). No row says that the user was not asked. If one does, stop and ask the user before you finish ([claims.md](./claims.md) section 7).
 - Safety: no credentials, hostnames, customer data or private repository names; no mention of Classic UI except where the plan allows (section 2).
 
 ### Build and preview

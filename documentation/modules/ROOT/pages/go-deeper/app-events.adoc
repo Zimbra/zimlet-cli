@@ -1,0 +1,142 @@
+= App events
+
+The Modern UI announces what the user does, such as sending a message or logging out, as app events. Your Zimlet listens for an event to react, and an asynchronous listener can delay the action or stop it. Use app events when your Zimlet must run code at one of these moments. Examples are a check of a message before it leaves and a clean up before logout. Every app event is listed here, with how to add and remove a listener.
+
+[#get-the-emitter]
+== Get the emitter and the event names
+
+Import `zimletEventEmitter` from `@zimbra-client/util` and `ZIMBRA_ZIMLET_EVENTS` from `@zimbra-client/constants`. Use the constant for the event name, not the text.
+
+[source,js]
+----
+import { zimletEventEmitter } from '@zimbra-client/util';
+import { ZIMBRA_ZIMLET_EVENTS } from '@zimbra-client/constants';
+----
+
+The emitter has three methods:
+
+`on(name, listener, isAsync = false)`::
+Adds a listener. Pass `true` as the third argument for an asynchronous listener.
+
+`off(name, listener)`::
+Removes a listener.
+
+`emit(name, data, callback)`::
+Sends an event. The Modern UI calls it for app events, so your Zimlet does not need it.
+
+This emitter is not the `zimlets` field of the xref:fundamentals/host-context.adoc[context]. That field carries events that Zimlets send to each other.
+
+[#events]
+== App events
+
+Each event passes one data object to its listeners. The last column tells whether the Modern UI waits for asynchronous listeners before it continues.
+
+[cols="2,3,3,1",options="header"]
+|===
+|Event |Emitted when |Data |Waits
+
+|`ONBEFORESEND`
+|The user chooses Send, before the Modern UI checks and sends the message.
+|`{ message }`
+|Yes
+
+|`ONSEND`
+|The Modern UI is about to send the message to the server.
+|`{ message, onAfterSend, sign, encrypt }`
+|Yes
+
+|`AFTERONSEND`
+|The Modern UI has sent the message.
+|`{ message }`
+|No
+
+|`ONSENDINVITEREPLY`
+|The user answers a calendar invitation.
+|`{ verb, invitation }`
+|Yes
+
+|`LOGOUT`
+|The user chooses to log out.
+|`null`
+|Yes
+
+|===
+
+`message` is the message that the user composes. It has fields such as `subject`, `to`, `cc`, `bcc` and `attachments`.
+
+`ONSEND` is for a Zimlet that sends the message itself, for example to sign or encrypt it. `sign` and `encrypt` are present only when the user chose to sign or encrypt the message. Reject the promise of your listener so that the Modern UI does not send the message a second time. Then call `onAfterSend(true)` after a successful send, or `onAfterSend(false)` after a failure, to tell the composer that you are done.
+
+`AFTERONSEND` does not run when a Zimlet sent the message in its own `ONSEND` listener.
+
+`verb` in `ONSENDINVITEREPLY` is the answer that the user chose: accept, tentative or decline. `invitation` is the invitation that the user answers.
+
+[#listen-to-an-event]
+== Listen to an event
+
+Add the listener in `init()`. The emitter belongs to the Modern UI, so the listener stays until you remove it or the page reloads. See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] for `init()`.
+
+The example removes data that your Zimlet stored in the browser when the user logs out. A synchronous listener is enough, because the work finishes at once.
+
+.src/index.js
+[source,js]
+----
+include::example$app-events/clear-on-logout.js[]
+----
+
+[#sync-or-async]
+== Choose a synchronous or an asynchronous listener
+
+You choose the kind of a listener when you add it. A listener added without a third argument is synchronous. A listener added with `true` as the third argument is asynchronous.
+
+The Modern UI runs the two kinds in separate groups. The group order does not depend on the order in which the listeners were added:
+
+. All asynchronous listeners run first, one at a time, in the order they were added. Each one starts when the promise of the previous one is resolved.
+. All synchronous listeners run next, in the order they were added.
+
+The Modern UI continues with its own work, such as sending the message, only after both groups have finished.
+
+Use a synchronous listener for work that finishes at once, such as writing a value or logging. The `LOGOUT` listener in <<listen-to-an-event,Listen to an event>> is one. The Modern UI ignores its return value. If the listener throws, the remaining synchronous listeners do not run, and the Modern UI does not continue.
+
+Use an asynchronous listener to wait for something, such as a server request or an answer from the user, or to stop the action. An `async` function works, or any function that returns a promise.
+
+* Resolve the promise to let the Modern UI continue.
+* Reject the promise to stop the action. The message is not sent, or the user stays logged in. The Modern UI writes the rejection to the browser console and shows nothing to the user, so tell the user why yourself.
+* Do not return anything else. A listener that returns no promise breaks the chain. The Modern UI logs an error and does not continue.
+
+A rejection also stops the listeners that have not run yet, including the synchronous ones.
+
+An asynchronous listener holds up the action until its promise settles. Keep it short.
+
+NOTE: A promise that a synchronous listener returns is not awaited. The Modern UI continues at once.
+
+The example stops a message that has no subject and tells the user why.
+
+.src/index.js
+[source,js]
+----
+include::example$app-events/stop-send.js[]
+----
+
+[#remove-a-listener]
+== Remove a listener
+
+Call `off` with the same event name and the same function that you gave to `on`. A new function, even with the same code, does not match. Keep the function in a variable. `off` removes every registration of that function for the event.
+
+`off` throws an error when the event has no listener left at all. The message starts with `Can't remove a listener`. This happens when the event name is wrong, when your listener was never added, and when you remove it twice and no other listener remains. Call `off` once for each listener.
+
+When other listeners exist for the event and yours is not one of them, `off` does nothing.
+
+Remove a listener when the code that needs it goes away. A component that adds a listener removes it in the cleanup function of `useEffect`.
+
+A notification appears the first time the user sends a message. The listener removes itself, so it runs once until the page reloads.
+
+.src/index.js
+[source,js]
+----
+include::example$app-events/remove-listener.js[]
+----
+
+[#next-step]
+== Next step
+
+Build a complete Zimlet that delays sending a message and delays logout in xref:build-by-goal/recipe-app-events.adoc[React to app events].

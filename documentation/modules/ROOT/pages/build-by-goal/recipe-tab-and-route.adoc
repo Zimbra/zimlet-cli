@@ -1,0 +1,282 @@
+= Add a tab and a screen
+
+This recipe gives your xref:reference/glossary.adoc#zimlet[Zimlet] a tab in the xref:reference/glossary.adoc#modern-ui[Modern UI] and a screen of your own that the tab opens. The example adds a *Meeting rooms* tab to the Video area. The screen lists the rooms of a company meeting service, and each room opens in a new browser tab. Use it when your feature needs a whole screen, such as a list or a form. A small addition to an existing screen needs a slot instead.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Choose the area and the tab slot (`slot::<area>-tab-item`).
+* Add a tab with `MenuItem`.
+* Add a screen and open it with a route (`slot::routes`).
+* Share one address with `useClientConfig`.
+* Make the screen work on a narrow window.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-slot]
+== Choose the slot
+
+The slot of a tab decides the area that shows it, so choose the area first. The Modern UI groups its screens into areas, which the top navigation lists. The first part of a screen's address names its area, such as `/videoapps/meeting-rooms`. An area shows the tabs of the screens in it. Some areas depend on the account, and the others exist only when a Zimlet fills one of their slots.
+
+[cols="2,2,4,3",options="header"]
+|===
+|Area |Name in the address |The area exists when |Slot for your tab
+
+|Mail
+|`email`
+|The account has the mail feature.
+|`slot::email-tab-item`
+
+|Calendar
+|`calendar`
+|The account has the calendar feature.
+|`slot::calendar-tab-item`
+
+|Contacts
+|`contacts`
+|The account has the contacts feature.
+|`slot::contacts-tab-item`
+
+|Briefcase
+|`briefcase`
+|The account has the Briefcase feature.
+|`slot::briefcase-tab-item`
+
+|Video
+|`videoapps`
+|An enabled Zimlet registers a handler that adds the area.
+|`slot::videoapps-tab-item`
+
+|Chat
+|`chatapps`
+|An enabled Zimlet registers a handler that adds the area.
+|`slot::chatapps-tab-item`
+
+|Cloud Storage
+|`cloudapps`
+|An enabled Zimlet registers a handler that adds the area.
+|`slot::cloudapps-tab-item`
+
+|Integrations
+|`integrations`
+|An enabled Zimlet registers a handler that adds the area.
+|`slot::integrations-tab-item`
+|===
+
+A handler for the tab slot of Video, Chat, Cloud Storage or Integrations adds that area. The first three areas are also added by a handler for their landing page slot, such as `slot::videoapps-landing-page`. Integrations is also added by a handler for `slot::menu`. A handler from any Zimlet counts, so your Zimlet does not need another Zimlet to add the area. When several Zimlets add the same area, they share it, and it goes away only when none of them is enabled.
+
+The names in the address are the defaults. The Modern UI reads them from its client configuration, so a deployment can use other names. Read them at run time, as <<read-the-area-name,Read the area name>> shows.
+
+Choose the area by what the screen is for:
+
+* Put a screen that belongs to mail, calendar, contacts or files in that area. The tab appears beside the tabs that the area already has, and the top navigation does not change.
+* Put a screen for a meeting service in Video, for a chat service in Chat, and for a cloud drive in Cloud Storage. The area appears in the top navigation for users who have your Zimlet enabled.
+* Put anything else in Integrations. The sideloader that loads your Zimlets in development lives there.
+
+The tab shows only while the user is in its area. A handler for `slot::videoapps-tab-item` adds nothing to the Mail area. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs] for the slots of an area, and xref:reference/slots/app-shell/landing-pages.adoc[Landing pages] for the default page of an area that a Zimlet adds. The xref:reference/slots.adoc[slot index] lists every other slot.
+
+[#the-slot]
+=== The slot
+
+`slot::videoapps-tab-item`::
+The tab slot of the Video area, which the example uses for its meeting rooms screen. To use another area, change the slot name and the area name in `useMeetingsPath`.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the two handlers. It replaces the generated file.
+** `constants/index.js` holds the end of the address and the list of rooms. It replaces the generated file.
+** `hooks/use-meetings-path.js` builds the address of the screen.
+** `components/meetings-tab-item/index.js` is the tab.
+** `components/meetings-route/index.js` is the route handler.
+** `components/meetings-screen/index.js` and `style.less` are the screen.
+. Merge the texts into `src/intl/en_US.json`. The room names come from `ROOMS` and are not translated, because they are data of your service.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$tab-and-route/intl/en_US.json[]
+----
+
+[#read-the-area-name]
+== Read the area name
+
+The tab and the route must use the same address, and it starts with the name of the area. Do not type that name. Read it with the `useClientConfig` hook, which returns the names from the client configuration of the Modern UI. See xref:go-deeper/server-data/data-hooks.adoc[Data hooks] for how hooks work, and xref:reference/shims/hooks/environment.adoc[Environment hooks] for the signature.
+
+Put the address in one hook, so that the tab and the route cannot drift apart.
+
+.constants/index.js
+[source,js]
+----
+include::example$tab-and-route/constants/index.js[]
+----
+
+.hooks/use-meetings-path.js
+[source,js]
+----
+include::example$tab-and-route/hooks/use-meetings-path.js[]
+----
+
+`SLUG` is the last part of the address. The hook returns `/videoapps/meeting-rooms` with the default names. `ROOMS` is the list that the screen shows.
+
+[#add-a-tab-item]
+== Add a tab item
+
+The tab is a handler for the tab slot of the area. It returns a `MenuItem` that links to the screen.
+
+.components/meetings-tab-item/index.js
+[source,js]
+----
+include::example$tab-and-route/components/meetings-tab-item/index.js[]
+----
+
+[#menu-item]
+=== The MenuItem component
+
+`MenuItem` draws one entry of a menu or tab bar in the style of the Modern UI. Choose it for a tab. For an item in an action menu, use `ActionMenuItem`, as xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app] shows.
+
+*Without it:* a plain link in the tab slot, such as `<a href="/videoapps/meeting-rooms">`, opens the screen. It has none of what `MenuItem` adds: the styling of the other tabs, an icon, and the selected state while its screen is open. The tab looks different from its neighbours and does not show that its screen is open.
+
+*With it:* render the tab as a `MenuItem`.
+
+[source,js]
+----
+<MenuItem icon={VideoIcon} href={path}>
+----
+
+The example uses three of its props:
+
+`href`::
+The address to open. The tab shows as selected while the address of the page matches it.
+
+`icon`::
+A component from `lucide-preact`, such as `VideoIcon`. Pass the component, not a name.
+
+Children::
+The label of the tab, a `<Text>` from `en_US.json`.
+
+Look up every prop of `MenuItem` in xref:reference/shims/components/menus-and-actions.adoc[Menus and actions].
+
+[#add-a-route]
+== Add a route
+
+The route tells the Modern UI when to show your screen. The Modern UI asks every handler for `slot::routes` (see xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in]) for routes. It shows the one whose `path` matches the address. The handler returns your screen with a `path` prop. The `path` is the address from the hook, the same one that the tab links to.
+
+.components/meetings-route/index.js
+[source,js]
+----
+include::example$tab-and-route/components/meetings-route/index.js[]
+----
+
+The handler calls `useMeetingsPath` on every call, with no condition. xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] describes the rules for hooks in a handler. The screen that the route shows follows in the next section.
+
+[#add-the-screen]
+== Add the screen
+
+The screen is a component that lists the rooms from the constants. The room addresses in `ROOMS` are placeholders, so replace them with the rooms of your own service.
+
+.components/meetings-screen/index.js
+[source,js]
+----
+include::example$tab-and-route/components/meetings-screen/index.js[]
+----
+
+.components/meetings-screen/style.less
+[source,less]
+----
+include::example$tab-and-route/components/meetings-screen/style.less[]
+----
+
+The styles use the CSS variables of the Modern UI, such as `--spacing-lg` and `--text-color`, so the screen follows its theme. See xref:go-deeper/styling.adoc[Styling] for how styles are scoped.
+
+[#mobile-toolbar-and-sidebar]
+=== The toolbar and sidebar components
+
+`GenericMobileUIToolbar` and `GenericMobileUISidebar` come from `@zimbra-client/components`.
+
+*Without them:* the Modern UI shows the screen of a route as it is and adds nothing around it. In a narrow window the screen then has no toolbar and no sidebar button. It does not offer the sidebar that lists the tabs of the area.
+
+*With them:* render both at the top of the screen.
+
+[source,js]
+----
+<GenericMobileUIToolbar />
+<GenericMobileUISidebar />
+----
+
+In a narrow window they show a toolbar with the name of the area. A button on it opens a sidebar that lists the tabs of the area, including yours. In a wide window they add nothing that you can see. See xref:reference/shims/components/layout-and-navigation.adoc[Layout and navigation] for both.
+
+[#register-the-handlers]
+== Register the handlers
+
+Register both handlers in `init()`. The tab handler turns on the Video area, and the route handler adds the screen.
+
+.index.js
+[source,js]
+----
+include::example$tab-and-route/index.js[]
+----
+
+Registering the tab handler is what makes the Video area appear. After the Zimlets have loaded, the Modern UI checks which area slots have a handler and adds those areas to the top navigation. If your Zimlet is the only one that fills a Video slot, the Video area exists only for the users who have your Zimlet enabled.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
+. Check the top navigation. A *Video* area is there.
+. Choose *Video*. The area shows its default page, and a *Meeting rooms* tab with a video icon sits beside the default *Video* tab.
++
+.The Video area with the Meeting rooms tab
+image::tab-and-route-video-area-tab.png["The Video area with its default page, which reads Video and Video calls are simple! You can. The Meeting rooms tab, outlined in red, sits beside the Video tab in the bar below the top navigation."]
++
+The outlined *Meeting rooms* tab is the tab that your handler adds.
+. Choose the *Meeting rooms* tab. The address ends with `/videoapps/meeting-rooms`, the tab shows as selected, and the screen opens.
++
+.The Meeting rooms screen
+image::tab-and-route-meeting-rooms-screen.png["The Meeting rooms tab, outlined in red and selected, with its screen below. The heading is Meeting rooms. The sentence reads Choose a room to join the meeting in a new browser tab. Three rows follow, Daily standup, All hands and Support desk, each with a Join link at the right."]
++
+The heading, the sentence and one row for each room fill the screen. The outlined tab is selected.
+. Choose a *Join* link. The room opens in a new browser tab. The placeholder addresses of the example do not open a real meeting.
+. Make the browser window narrow. A toolbar with the title *Video* and a sidebar button appears above the screen. The sidebar lists *Meeting rooms*.
+
+[#expected-result]
+== Expected result
+
+* The Video area is in the top navigation, with a *Meeting rooms* tab beside its default tab.
+* The tab opens a screen at `/videoapps/meeting-rooms` and shows as selected there.
+* The screen lists the rooms, and each *Join* link opens in a new browser tab.
+* A narrow window shows the toolbar and the sidebar.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The *Video* area is not in the top navigation.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the key is `slot::videoapps-tab-item` and that you register it in `init()`. Reload the page, because the areas are set up once the Zimlets have loaded. Add `?zimletSlots=show` to the address to see the slot labels, as xref:run-package-deploy/run-and-debug.adoc#debug-slots[Run and debug] describes.
+
+The area is there, but the tab is not.::
+* Cause: A tab shows only while the user is in its area. A handler for the tab slot of another area adds nothing here.
+* Fix: Choose the area that the slot name names. For `slot::videoapps-tab-item`, that is *Video*.
+
+The tab opens a page that reads *Not Found*.::
+* Cause: No route matches the address of the tab, because the address of the tab differs from the `path` of the route.
+* Fix: Build both addresses with `useMeetingsPath`, as the example does, and do not type the address in one of them.
+
+The screen shows no toolbar and no sidebar button in a narrow window.::
+* Cause: The screen does not render `GenericMobileUIToolbar` and `GenericMobileUISidebar`.
+* Fix: Render both at the top of the screen, as the example does.
+
+A *Join* link opens a page that does not load.::
+* Cause: The example rooms use placeholder addresses.
+* Fix: Replace the addresses in `ROOMS` with the rooms of your own service.
+
+[#next-step]
+== Next step
+
+Make your screen read and change data on the server in xref:build-by-goal/recipe-server-data.adoc[Manage server data].

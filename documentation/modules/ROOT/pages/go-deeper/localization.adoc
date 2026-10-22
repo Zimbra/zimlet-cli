@@ -1,0 +1,126 @@
+= Localization
+
+A Zimlet shows its texts in the language that the user chose in the xref:reference/glossary.adoc#modern-ui[Modern UI]. You keep the texts in one JSON file for each language, load them with a wrapper and show them with the `Text` component. The label and description of the Zimlet follow the same languages. Use it when your Zimlet shows text to users, or when you add a language to an existing Zimlet. English is the base language, so a Zimlet works for every user from its first build.
+
+[#locale-files]
+== Locale files
+
+Texts live in `src/intl/`, one JSON file for each language. `en_US.json` is required, and it is the language that a user sees when no better file exists. Name every other file after the code of its language, such as `de.json`, `fr_FR.json` or `pt_BR.json`.
+
+A file has two blocks:
+
+`zimlet`::
+The `label` and `description` of the Zimlet. See <<label-description,Label and description>>.
+
+A block named after your Zimlet::
+The texts of your components, as keys. The id of a text is the block name, a dot and the key. For `my-zimlet` and the key `reminder`, the id is `my-zimlet.reminder`.
+
+Name the block after your Zimlet. Where an id is the same as an id of the Modern UI, the Modern UI text appears and yours does not.
+
+A text can hold a placeholder in double braces, such as `+{{count}}+`, that the component fills in. Every language file uses the same keys and the same placeholders.
+
+.intl/en_US.json
+[source,json]
+----
+include::example$localization/intl/en_US.json[]
+----
+
+.intl/de.json
+[source,json]
+----
+include::example$localization/intl/de.json[]
+----
+
+[#show-texts]
+== Load and show the texts
+
+Two parts make a text appear in a component:
+
+* A wrapper that loads `en_US.json` and the file for the language of the user. The template has it in `src/enhancers/index.js` as `withIntl`.
+* The `Text` component from `@zimbra/preact-i18n`, which looks up an id and shows the text.
+
+A Zimlet adds a reminder to the footer of the mail sidebar. The `Reminder` component wraps itself with `withIntl()`, shows its text with `Text` and fills the placeholder through `fields`. The files go in the folders shown in their titles. The slot is explained in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+
+.index.js
+[source,js]
+----
+include::example$localization/index.js[]
+----
+
+.enhancers/index.js
+[source,js]
+----
+include::example$localization/enhancers/index.js[]
+----
+
+.components/Reminder/index.js
+[source,js]
+----
+include::example$localization/components/Reminder/index.js[]
+----
+
+The `importFn` loads the file for a locale code from `src/intl/`. The build bundles every JSON file of that folder into `index.js`, so the texts travel with the Zimlet. Without the wrapper, `Text` cannot find your ids, so wrap every component that shows a text of your Zimlet.
+
+When a language file has no entry for an id, the English text appears. When the user changes the language, the wrapped components load the new file. A file that cannot be loaded is logged to the browser console and English appears.
+
+[#label-description]
+== Label and description
+
+The `zimlet` block gives the Zimlet its name and its description in the Modern UI settings and in the Admin Console. `zimlet package` reads them from `en_US.json` and writes one `.properties` file for each language into the package. xref:fundamentals/project-structure.adoc[Project structure] describes the English file and the characters that the values must avoid.
+
+The package of the example holds these files next to `index.js` and the descriptor:
+
+* `my-zimlet.properties`, from `en_US.json`.
+* `my-zimlet_de.properties`, from `de.json`.
+
+The Modern UI asks the server for the label and description in the language of the user. Every language file therefore needs its own `zimlet` block.
+
+WARNING: A language file without a `zimlet.label` or a `zimlet.description` produces a `.properties` file with the value `undefined`, such as `label = undefined`. Add both to every language file.
+
+[#add-locale]
+== Add a locale
+
+Add a language when users of the Zimlet work in it. You create one file, and the build and package steps pick it up.
+
+Before you start, have a Zimlet with the wrapper and `en_US.json` above, such as the one from xref:getting-started/quickstart.adoc[Your first Zimlet]. You also need the code of the language.
+
+. Find the code of the language. The Modern UI offers the languages that the server offers and that it supports, so ask an administrator for the codes of the server. An administrator can list them on the server:
++
+[source,sh]
+----
+su - zimbra
+zmsoap -z -t account -m admin@$(zmhostname) GetAvailableLocalesRequest
+----
++
+Each language is a `locale` element, and its `id` is the code:
++
+[source,xml]
+----
+<locale localName="Japanese" name="日本語" id="ja"/>
+----
++
+The list can hold codes that the Modern UI does not offer, such as `en_GB`. A file for such a code is never loaded.
+. Create `src/intl/<code>.json`, for example `src/intl/ja.json`. The code is the whole file name before `.json`, and the country part keeps an underscore and capitals, as in `fr_FR`.
+. Copy `en_US.json` into it and translate the values. Keep every key and every `+{{placeholder}}+` as it is. Translate `zimlet.label` and `zimlet.description` too.
+. Run `npm run build`, then `npm run package`. The package then holds `<zimlet-name>_<code>.properties` for the new language. See xref:run-package-deploy/build-and-package.adoc[Build and package] for the commands and their options.
+
+Then open the gear icon and choose Language. Select the new language in the Choose language dialog and choose Save. The wrapped components show the new texts.
+
+.The Choose language dialog with German selected
+image::localization-language-dialog.png["The Choose language dialog in English. A list of languages has the radio button of German - Deutsch selected, and the Save and Cancel buttons are below the list"]
+
+.The reminder of the example in the Mail sidebar with German selected
+image::localization-translated-reminder.png["The bottom of the Mail sidebar with German selected. The text Sie haben 3 ungelesene Erinnerungen appears above the mini calendar, which shows Heute and Keine Ereignisse"]
+
+A text stays in English when one of these applies:
+
+* The file name does not match the language code. `fr_CA` does not use `fr_FR.json`, and a file named `german.json` is bundled but never loaded. Add a file for each code that you want to translate.
+* The language is not in the language dialog. The Modern UI lists only languages that the server offers and that it supports.
+* The component is not wrapped with `withIntl()`.
+
+The browser console shows `Error loading translations for <code> from zimlet.` when the file for the chosen language cannot be loaded.
+
+[#next-step]
+== Next step
+
+Keep your Zimlet safe in the shared page of the Modern UI with xref:go-deeper/security-and-best-practices.adoc[Security and best practices].

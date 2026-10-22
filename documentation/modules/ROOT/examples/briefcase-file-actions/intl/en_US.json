@@ -1,0 +1,13 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Checks the selected files in Briefcase against a sharing policy."
+	},
+	"my-zimlet": {
+		"check": "Check before sharing",
+		"dialogTitle": "Sharing check",
+		"ready": "Ready to share",
+		"blockedType": "Executable files cannot be shared",
+		"tooLarge": "Larger than {{limit}} MB"
+	}
+}

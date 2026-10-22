@@ -1,0 +1,12 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds a Meeting rooms tab to the Video area."
+	},
+	"my-zimlet": {
+		"tabTitle": "Meeting rooms",
+		"title": "Meeting rooms",
+		"intro": "Choose a room to join the meeting in a new browser tab.",
+		"join": "Join"
+	}
+}
