@@ -1,0 +1,20 @@
+= Command handler
+
+Runs a function when a command is triggered. Use it to give a command a behaviour that runs when the user presses its key. Take the field from the context first, as in `const { shortcutCommandHandler } = context;`. The Modern UI calls its `handleKeyDown` and `handleKeyUp` methods for key events, so a Zimlet does not call them. A handler runs only for a command that has a binding. See xref:reference/context/keyboard-shortcuts/key-bindings.adoc[Key bindings].
+
+[#members]
+== Members
+
+[[add-command-handlers]]pass:[<a class="anchor" href="#add-command-handlers"></a>]xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[`addCommandHandlers(commandHandlers)`]::
+Adds functions for commands.
+
+[[remove-command-handlers]]pass:[<a class="anchor" href="#remove-command-handlers"></a>]xref:reference/context/keyboard-shortcuts/command-handler/remove-command-handlers.adoc[`removeCommandHandlers(commandHandlers)`]::
+Removes functions for commands.
+
+[[get-shortcuts]]pass:[<a class="anchor" href="#get-shortcuts"></a>]xref:reference/context/keyboard-shortcuts/command-handler/get-shortcuts.adoc[`getShortcuts()`]::
+Lists the shortcuts that have a handler.
+
+[#next-step]
+== Next step
+
+Return to the xref:reference/context/keyboard-shortcuts.adoc[Keyboard shortcuts] to look up another field.

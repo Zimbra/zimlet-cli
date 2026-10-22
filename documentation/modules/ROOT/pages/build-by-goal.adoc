@@ -1,0 +1,101 @@
+= Build by goal
+
+A recipe is a complete, working Zimlet feature for one goal, with the steps to build it and a checklist to verify the result. Choose the recipe for what you want your Zimlet to do. Each recipe shows which part of the xref:reference/glossary.adoc#modern-ui[Modern UI] the feature extends. It also shows how to use the xref:fundamentals/extending-the-ui.adoc[slots] and xref:fundamentals/shared-libraries.adoc[shared modules] that Zimlets use most, such as `@zimbra-client/components` and `@zimbra-client/blocks`. Come here when you know the feature you want but not yet how to build it. Each recipe covers the whole solution: which slot or registration key delivers the feature, the code to write, and how to check that it works. The choice of slot or registration key decides where the feature appears, so it is the first decision of every build.
+
+[#choose-a-recipe]
+== Choose a recipe
+
+Match your goal to the recipe that builds it. Each recipe is a complete Zimlet for one use case, and the recipes do not depend on each other. Each entry names the mechanism that delivers the feature.
+
+[#choose-a-slot]
+=== Add content to a screen that exists
+
+Fill a xref:fundamentals/extending-the-ui.adoc[slot] to add a menu item, a button, a field or a block to a screen that the xref:reference/glossary.adoc#modern-ui[Modern UI] already has. The slot decides where your content appears and which props your handler receives, so choose it before you write code. Answer two questions.
+
+. Where must the content appear? The slots belong to the areas of the Modern UI: the app shell, mail, calendar, contacts, briefcase etc. The recipes below are grouped by these areas.
+. What does the user do with it? Content that the user reads is a UI block. An action is a menu item or a button. A feature that needs no place on a screen can run once the app has loaded, and needs only the `app` slot. To change the text of a message or an event without adding anything to the screen, use xref:build-by-goal/recipe-message-processing.adoc[Transform messages].
+
+To see where a slot appears, show the names of all slots in the running Modern UI, as xref:run-package-deploy/run-and-debug.adoc#debug-slots[Run and debug] describes. The xref:reference/slots.adoc[slot index] lists the props that each slot passes to your handler.
+
+==== App shell
+
+xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget]::
+Choose it for a small block of information that stays in view, such as a clock or a status note. The slot `rightside-zimlet-slot` is a panel at the right of Mail, Calendar, Contacts and Briefcase that holds the blocks of several Zimlets.
+
+xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app]::
+Choose it for a menu item that opens a link or runs an action. The slots `settings-dropdown-item-end` and `gear-menu` add to the *Settings and more* menu, and `header-menu-item` adds to the account menu above *Logout*.
+
+xref:build-by-goal/recipe-app-content.adoc[Run an app-wide feature]::
+Choose it for a feature that starts when the app has loaded and has no screen, such as an overlay, a dialog or a listener. The slot `app` is not tied to a screen.
+
+==== Mail
+
+xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]::
+Choose it for an action on the open or selected message. The slot `action-menu-mail-more` adds to the three menus of a message. The slot `mail-overflow-menu-option` adds to the toolbar menu only.
+
+==== Calendar
+
+xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field]::
+Choose it for a control that sets the meeting platform of an event, such as a video call link. The slot `calendar-appointment-edit-video-call` fills the *Meeting Platform* field, which the editor shows only when a Zimlet fills the slot.
+
+==== Contacts
+
+xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards]::
+Choose it for a mark next to an address, or for details or an action in the card that opens over an address or in the details of a contact. The slots `contact-hover-card-details`, `contact-card-item`, `address-pill` and `contact-input-token:button-inner-content` pass `email`, and the two card slots also pass `contact`.
+
+==== Briefcase
+
+xref:build-by-goal/recipe-briefcase-file-actions.adoc[Add a Briefcase action]::
+Choose it for an action on the selected file. The slots `briefcase-document-context-menu`, `briefcase-document-header-action` and `action-menu-briefcase-more` pass the selection as `selectedList`.
+
+=== Add a screen or settings
+
+xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen]::
+Give users a new tab that opens a screen of your own. Register handlers for the `slot::email-tab-item` and `slot::routes` slots, with a link that follows the configured route.
+
+xref:build-by-goal/recipe-settings.adoc[Add a settings]::
+Give users a page in the Settings dialog, or a control on an existing page. It saves an option of your Zimlet or a user preference of the Modern UI. Register a handler for the `settings` key and for a slot of the page that you extend.
+
+=== Work with messages, data and events
+
+xref:build-by-goal/recipe-message-processing.adoc[Transform messages]::
+Change or check the content of a message or a calendar event, with no screen element of your own. Register a handler for a `messageProcessors:*` key.
+
+xref:build-by-goal/recipe-server-data.adoc[Manage server data]::
+Read, create and remove data on the Zimbra server, and show it on a screen of your own. Send requests through `zimbraBatchClient.jsonRequest`.
+
+xref:build-by-goal/recipe-app-events.adoc[React to app events]::
+Run code when the user sends a message or logs out, and delay or stop the action. Add a listener on `zimletEventEmitter` and remove it when you no longer need it.
+
+[#before-every-recipe]
+== Required reading before every recipe
+
+Read these before you start any recipe:
+
+* xref:getting-started/concepts.adoc[Getting started]. It covers how Zimlets work, what you need before you start, how to set up your machine with the Zimlet CLI and a Modern UI where you can load a dev Zimlet, and your first Zimlet, which shows the whole development loop.
+* xref:fundamentals/project-structure.adoc[Fundamentals]. It covers the project structure, the factory and `init()`, slots and plugin handlers, the shared imports and the `context` object, which every recipe uses.
+* xref:go-deeper/localization.adoc[Localization], because nearly every example shows texts from `intl/en_US.json`.
+* xref:go-deeper/styling.adoc[Styling], because many examples have a `style.less` that uses style tokens.
+
+[#set-up-the-project]
+== Set up the project
+
+Every recipe starts from the default project. Name it `my-zimlet`, so that the ids in the examples match your files.
+
+* Create the project with `zimlet create default my-zimlet`. See xref:getting-started/quickstart.adoc[Your first Zimlet] for how the command works and how to run and load the Zimlet.
+* Remove the generated files that the recipe does not use. Every recipe removes `src/components/app/` and `src/components/EmailTabItem/`, which belong to the Hello World tab. A recipe names any other file to remove.
+* Keep `src/enhancers/index.js`. It provides `withIntl`, which loads your texts into a component.
+* Copy the files of the example into `src/`. A file with the path of a generated file replaces it, such as `src/index.js`.
+* Merge the texts of the recipe into `src/intl/en_US.json`. Keep the `zimlet` block and set its `description`. Replace the keys of the `my-zimlet` object with the keys of the recipe. See xref:go-deeper/localization.adoc[Localization] for the full approach.
+
+[#confirm-before-you-build]
+== Confirm before you build
+
+Every recipe that registers a handler depends on the exact key it registers under. The Modern UI does not check the key: `plugins.register` accepts any name. A handler registered under a key that the Modern UI never calls does not run, and no error tells you so.
+
+Before you copy a registration into your own Zimlet, check that the slot or key exists in the xref:reference/slots.adoc[slot index]. Then read the page of the feature you extend, if there is one, for rules that apply to it. xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] explains how handlers are called and how to read what a slot passes.
+
+[#next-step]
+== Next step
+
+Start with the most common goal. If you do not know where your feature belongs, start with xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].

@@ -1,0 +1,10 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds a closing phrase field to the Writing Email page of the Settings dialog."
+	},
+	"my-zimlet": {
+		"closingPhraseLabel": "Closing phrase",
+		"closingPhraseTooltip": "The phrase to end new messages with. Leave the field empty to add no phrase."
+	}
+}

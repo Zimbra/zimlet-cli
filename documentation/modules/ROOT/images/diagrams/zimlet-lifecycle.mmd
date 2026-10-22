@@ -8,7 +8,7 @@ flowchart TB
   end
   subgraph browser["Modern UI in the browser"]
     direction LR
-    F["Loads the Zimlet"] --> G["Sets it up"] --> H["Its features start working"]
+    F["Downloads the Zimlet"] --> G["Runs the Zimlet code"] --> H["Modern UI shows the result"]
   end
   author --> server
   server --> browser

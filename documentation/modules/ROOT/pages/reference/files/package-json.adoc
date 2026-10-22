@@ -1,0 +1,114 @@
+= The package.json file
+
+The `package.json` file in the root of your project is where a xref:reference/glossary.adoc#zimlet[Zimlet] starts: the build, the commands that you run and the libraries that you use all begin with it. This page explains each field and script of the default template and which ones you are likely to change. It is the place to look when you raise a version, add a library or wonder what an `npm run` command does. The smallest form of the file is on xref:fundamentals/project-structure.adoc#minimum-package[Project structure].
+
+[#package-json-identity]
+== Identity and entry
+
+[[name]]pass:[<a class="anchor" href="#name"></a>]`name`::
+The name of the Zimlet. `npm run package` passes it to `zimlet package`, which uses it as the name in the xref:run-package-deploy/build-and-package.adoc[descriptor] and as the name of the zip file. See xref:fundamentals/project-structure.adoc#naming-rules[Zimlet naming rules].
+
+[[version]]pass:[<a class="anchor" href="#version"></a>]`version`::
+The version of the Zimlet, in the form `1.0.0`. `npm run package` writes it into the descriptor. Raise it for each release you deploy.
+
+[[private]]pass:[<a class="anchor" href="#private"></a>]`private`::
+Set to `true`. It is the npm flag for a project that is not published as an npm package. You deliver a Zimlet as a zip, so keep it. See the https://docs.npmjs.com/cli/configuring-npm/package-json#private[npm documentation^].
+
+[[module]]pass:[<a class="anchor" href="#module"></a>]`module`::
+The entry file, `src/index.js`. The build starts here. Without `module`, the build falls back to `main`, and it fails if that file is the build output, which does not exist yet.
+
+[[main]]pass:[<a class="anchor" href="#main"></a>]`main`::
+The build output, `build/index.js`. The build reads it only when `module` is missing. Keep it as it is.
+
+[[keywords]]pass:[<a class="anchor" href="#keywords"></a>]`keywords` and `author`::
+Descriptive fields for npm. The build ignores them.
+
+[#package-json-scripts]
+== Scripts
+
+Run a script with `npm run <script>`, or with `npm start` for `start`.
+
+[[start]]pass:[<a class="anchor" href="#start"></a>]`start` and `watch`::
+Run `zimlet watch`. It starts the development server that serves your Zimlet to the xref:reference/glossary.adoc#modern-ui[Modern UI]. Both scripts do the same. See xref:run-package-deploy/run-and-debug.adoc[Run and debug].
+
+[[build]]pass:[<a class="anchor" href="#build"></a>]`build`::
+Runs `zimlet build`. It writes the minified Zimlet to the `build` folder. See xref:run-package-deploy/build-and-package.adoc[Build and package].
+
+[[package]]pass:[<a class="anchor" href="#package"></a>]`package`::
+Runs `zimlet package` with the name and version from `package.json` and the Modern UI versions your Zimlet supports, the xref:reference/glossary.adoc#semver-range[semver range] `--zimbraXVersion '^4.0.0'`. Run `npm run build` first. Change the range to match your server, as xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version] describes. The zip is written to `pkg/`. See xref:run-package-deploy/build-and-package.adoc[Build and package].
+
+[[lint]]pass:[<a class="anchor" href="#lint"></a>]`lint` and `lint:fix`::
+Check the code in `src/` with ESLint, and fix what ESLint can fix. See xref:run-package-deploy/lint-your-code.adoc[Lint].
+
+[[prepare]]pass:[<a class="anchor" href="#prepare"></a>]`prepare`::
+Runs `husky || true` after `npm install`. In a Git repository, it turns on the commit hooks in `.husky/`. They lint the staged files in `src/` and add the branch name to the start of the commit message, except on `master`.
+
+[[lint-staged]]pass:[<a class="anchor" href="#lint-staged"></a>]`lint-staged`::
+Not a script but a setting: it tells the commit hook to lint the staged `.js` and `.mjs` files in `src/`.
+
+[#package-json-dependencies]
+== Dependencies
+
+A library that your code imports belongs in `dependencies`. A tool that only builds, checks or commits your code belongs in `devDependencies`. The build bundles every import it finds in `node_modules` into `build/index.js`, whichever of the two lists holds the library.
+
+The packages below are recommended: the template and the Zimlets that Zimbra maintains use them. You are not limited to them. Install any other library that your Zimlet needs with `npm install`, unless the Modern UI already provides it.
+
+[#dependencies]
+=== Libraries in `dependencies`
+
+The libraries that your code imports, which end up in your bundle. Do not add libraries that the Modern UI already provides, such as Preact. See xref:fundamentals/shared-libraries.adoc[Shared libraries and imports]. The template imports two of the libraries below.
+
+[#bundled-interface]
+==== Interface and styles
+
+[[zimbra-x-ui]]pass:[<a class="anchor" href="#zimbra-x-ui"></a>]`@zimbra/x-ui`::
+Style variables and mixins that match the Modern UI, with its fonts. Import them in a `.less` file, as the template does. See xref:go-deeper/styling/shared-styles.adoc[Style library]. The source is in the https://github.com/Zimbra/zm-x-ui[`@zimbra/x-ui` repository on GitHub^].
+
+[[lucide-preact]]pass:[<a class="anchor" href="#lucide-preact"></a>]`lucide-preact`::
+Icons as components, such as `XIcon`, imported by name. The template imports it. See the https://lucide.dev/guide/packages/lucide-preact[Lucide guide for Preact^].
+
+[[zimbra-lucide-lab]]pass:[<a class="anchor" href="#zimbra-lucide-lab"></a>]`@zimbra/lucide-lab`::
+Custom icons that Zimbra designed for the Lucide set, such as `windowMinimize`. See the https://www.npmjs.com/package/@zimbra/lucide-lab[`@zimbra/lucide-lab` package on npm^]. 
+
+[[classnames]]pass:[<a class="anchor" href="#classnames"></a>]`classnames`::
+Joins class names and adds some only when a condition is true. The source is in the https://github.com/JedWatson/classnames[`classnames` repository on GitHub^].
+
+[#bundled-utilities]
+==== Utilities
+
+[[es-toolkit]]pass:[<a class="anchor" href="#es-toolkit"></a>]`es-toolkit`::
+Small helper functions for arrays, objects and functions, such as `sortBy` and `groupBy`. `es-toolkit/compat` adds Lodash style functions, such as `get` and `flowRight`. See the https://es-toolkit.dev[`es-toolkit` documentation^].
+
+[[immutability-helper]]pass:[<a class="anchor" href="#immutability-helper"></a>]`immutability-helper`::
+Returns an updated copy of an object or array with `update`. Use it in reducers. The source is in the https://github.com/kolodny/immutability-helper[`immutability-helper` repository on GitHub^].
+
+[#bundled-integrations]
+==== Service integrations
+
+[[dropbox]]pass:[<a class="anchor" href="#dropbox"></a>]`dropbox`::
+The client library of the Dropbox service, for a Zimlet that connects to a Dropbox account. The source is in the https://github.com/dropbox/dropbox-sdk-js[`dropbox` repository on GitHub^].
+
+[[zimbra-oauth-client]]pass:[<a class="anchor" href="#zimbra-oauth-client"></a>]`@zimbra/oauth-client`::
+Connects the reader's account to a third-party service with OAuth, with `OAuthClient`, `AuthorizeRoute` and `AuthorizeWindowOpener`. It is not on the public npm registry, so you cannot install it for your own Zimlet.
+
+[[zimbra-cloud-common]]pass:[<a class="anchor" href="#zimbra-cloud-common"></a>]`@zimbra/cloud-common`::
+Components and helpers that the cloud integration Zimlets share. It is not on the public npm registry, so you cannot install it for your own Zimlet.
+
+[#devdependencies]
+=== Tools in `devDependencies`
+
+The tools that build, check and commit your code. None of them ends up in your bundle.
+
+[[zimbra-zimlet-cli]]pass:[<a class="anchor" href="#zimbra-zimlet-cli"></a>]`@zimbra/zimlet-cli`::
+The `zimlet` command that builds, runs and packages a Zimlet. Every Zimlet needs it. See xref:run-package-deploy/build-and-package.adoc[Build and package]. The source is in the https://github.com/Zimbra/zimlet-cli[`@zimbra/zimlet-cli` repository on GitHub^].
+
+[[eslint]]pass:[<a class="anchor" href="#eslint"></a>]`eslint` and `@zimbra/eslint-config`::
+Check the code in `src/`, with the rules that Zimbra sets. See the https://eslint.org[ESLint documentation^]. See xref:run-package-deploy/lint-your-code.adoc[Lint]. The rules are in the https://github.com/Zimbra/zm-eslint-config[`@zimbra/eslint-config` repository on GitHub^].
+
+[[husky]]pass:[<a class="anchor" href="#husky"></a>]`husky` and `lint-staged`::
+Run the commit hooks and lint the staged files. See xref:reference/files/package-json.adoc#prepare[the `prepare` script]. The sources are in the https://github.com/typicode/husky[`husky` repository on GitHub^] and the https://github.com/lint-staged/lint-staged[`lint-staged` repository on GitHub^].
+
+[#next-step]
+== Next step
+
+Return to the xref:reference/files.adoc[Files] to look up another file.

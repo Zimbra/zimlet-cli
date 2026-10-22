@@ -1,0 +1,39 @@
+= How Zimlets work
+
+A xref:reference/glossary.adoc#zimlet[Zimlet] adds your own features to the xref:reference/glossary.adoc#modern-ui[Modern UI] as JavaScript that the Modern UI loads and runs in the browser. You build it from source files, and an administrator deploys it to the Zimbra server.
+
+This page gives the short mental model of how a Zimlet works. It opens the guide, because the commands and files that follow are easier to understand once you see how the parts fit together. Later pages cover each topic in depth.
+
+[#from-source-to-modern-ui]
+== From source to Modern UI
+
+You write your Zimlet as source files. The `zimlet` tool builds them into one file and packages it. An administrator deploys the package. Then the Modern UI downloads your Zimlet and runs its code, and shows the result. The code registers what the Zimlet adds, such as a handler for a place in the screen or for an event. Most often that is new UI in existing screens, but a Zimlet can also add behaviour only and show nothing.
+
+.From source files to the Modern UI
+image::diagrams/zimlet-lifecycle.svg["A Zimlet is written, built and packaged on your machine, deployed to the Zimbra server, then downloaded by the Modern UI, which runs the Zimlet code and shows the result"]
+
+[#build-and-package]
+== How a Zimlet is built and packaged
+
+The Zimlet tool builds your source files into one JavaScript file, and packages that file with a small XML xref:run-package-deploy/build-and-package.adoc[descriptor] in a zip file. The zip file is what an administrator deploys.
+
+The descriptor tells the Zimbra server what the Zimlet is. It holds the name, version, label and description, the files to load, and the range of Modern UI versions the Zimlet works with. See xref:run-package-deploy/build-and-package.adoc[Build and package].
+
+[#how-a-zimlet-communicates]
+== How a Zimlet communicates with the Modern UI
+
+A Zimlet and the Modern UI work together in a few ways:
+
+* *The context.* When the Modern UI loads a Zimlet, it calls the xref:fundamentals/factory-and-lifecycle.adoc[factory] in your entry file and passes it the xref:fundamentals/host-context.adoc[context]. Through the context, your Zimlet registers what it adds, reads the state of the Modern UI, sends requests to the server and works with other Zimlets.
+* *Shared libraries.* The Modern UI already contains libraries such as Preact. Import them as usual, and your Zimlet uses the Modern UI's copy instead of bundling its own. Any other library you import is added to your bundle and makes it larger. See xref:fundamentals/shared-libraries.adoc[Shared libraries and imports].
+* *Events.* The Modern UI announces things that happen, such as a message being sent, and your Zimlet can listen for them and react. Zimlets can also send events to each other. See xref:go-deeper/app-events.adoc[App events].
+* *Data.* Your Zimlet reads and shares state through the store of the Modern UI, and gets data from the Zimbra server with requests. See xref:go-deeper/redux.adoc[Shared state with Redux] and xref:go-deeper/server-data.adoc[Server data].
+
+[#try-it-while-you-develop]
+== Try it while you develop
+
+`zimlet watch` serves your Zimlet from your machine. A helper Zimlet called the xref:run-package-deploy/run-and-debug.adoc[*sideloader*] loads it into the Modern UI. When you save a file, `zimlet watch` rebuilds the Zimlet and serves the new version. The open Modern UI page keeps the old version, so reload the page to see the change. Keep *Persist on Reload* ticked in the sideloader so the Zimlet loads again after the reload. See xref:run-package-deploy/run-and-debug.adoc[Run and debug].
+
+== Next step
+
+Check the xref:getting-started/prerequisites.adoc[knowledge and tools you need] before you set up your machine.

@@ -1,0 +1,37 @@
+= meta
+
+Details of the Modern UI build that runs your Zimlet. Use it when your Zimlet needs to know the version of the Modern UI, for example to add it to a log line or an error report, or to turn off a feature that an older version does not support.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+context.meta.build
+----
+
+[#type]
+== Type
+
+An object with the strings `version`, `hash` and `timestamp`.
+
+[#usage-notes]
+== Usage notes
+
+* `version` is the version of the Modern UI. The Modern UI sends it to the server when it asks for the Zimlets of the account.
+
+[#example]
+== Example
+
+The version and the build hash are printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/values/meta.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn about the host name in xref:reference/context/values/host-name.adoc[hostName].

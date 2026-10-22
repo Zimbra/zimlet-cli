@@ -1,0 +1,51 @@
+= removeActions
+
+Removes the action creators that you published under a namespace. Use it when your Zimlet stops offering them, for example when it turns a feature off, so that other code can no longer use them.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.removeActions(namespace)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`namespace`
+|string
+|The namespace that you gave to xref:reference/context/store/zimlet-redux/add-actions.adoc[addActions].
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Nothing happens when the namespace has no actions.
+* It removes only published actions. Reducers stay.
+
+[#example]
+== Example
+
+The actions are published and removed, and the check shows that they are gone.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/remove-actions.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to publish a selector in xref:reference/context/store/zimlet-redux/add-selectors.adoc[addSelectors].

@@ -1,0 +1,26 @@
+= Key bindings
+
+Maps keys to commands. Use it to add, find or remove the keys that trigger commands. Take the field from the context first, as in `const { keyBindings } = context;`. A binding is an object `{ <context>: { <key>: <command> } }`. The context is `all` or the name of a screen. A key is in upper case, and modifiers come first in the order `cmd`, `ctrl`, `shift`, `alt`, joined with `+`, as in `ctrl+shift+C`. A key that holds an object instead of a command starts a sequence of keys, as `G` then `M` does for the Modern UI.
+
+[#members]
+== Members
+
+[[get-bindings]]pass:[<a class="anchor" href="#get-bindings"></a>]xref:reference/context/keyboard-shortcuts/key-bindings/get-bindings.adoc[`getBindings()`]::
+Returns a copy of all bindings.
+
+[[add-bindings]]pass:[<a class="anchor" href="#add-bindings"></a>]xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[`addBindings(newBindings)`]::
+Merges bindings into the existing ones.
+
+[[remove-bindings]]pass:[<a class="anchor" href="#remove-bindings"></a>]xref:reference/context/keyboard-shortcuts/key-bindings/remove-bindings.adoc[`removeBindings(paths)`]::
+Removes bindings by path.
+
+[[replace-bindings]]pass:[<a class="anchor" href="#replace-bindings"></a>]xref:reference/context/keyboard-shortcuts/key-bindings/replace-bindings.adoc[`replaceBindings(newBindings)`]::
+Replaces all bindings.
+
+[[get-commands-and-sequences]]pass:[<a class="anchor" href="#get-commands-and-sequences"></a>]xref:reference/context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.adoc[`getCommandsAndSequences(key)`]::
+Looks up what a key does.
+
+[#next-step]
+== Next step
+
+Learn how to run a function for a command in xref:reference/context/keyboard-shortcuts/command-handler.adoc[Command handler].

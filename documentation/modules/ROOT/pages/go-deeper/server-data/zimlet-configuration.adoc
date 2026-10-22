@@ -1,0 +1,122 @@
+= Zimlet configuration
+
+A Zimlet takes its values from two places. An administrator sets defaults on the server, and each user saves values for their own account. Use an administrator default for a value that differs between installations, such as a notice, a service address or a keyword list. Use a user value for a choice that differs between people, such as whether to see a notice. The Zimlet reads both, so an administrator can set a starting point that users adjust.
+
+[#choose]
+== Choose where a value lives
+
+Administrator default::
+One value for every user of the server. An administrator changes it without a new build, and you declare it in `config_template.xml`.
+
+User value::
+One value for each account. The user changes it in the Settings dialog of the xref:reference/glossary.adoc#modern-ui[Modern UI]. The value is the same in every browser where the user signs in.
+
+Use Zimlet configuration for a setting that an administrator can give a default or that users edit in Settings. Your code reads the value with the account data, and it belongs to your Zimlet by name. For state that only your code manages, see xref:go-deeper/server-data.adoc#when-to-store-which[When to use which method].
+
+The example is an announcement. The administrator writes the text, and each user can choose to hide announcements.
+
+[#declare]
+== Declare an administrator default
+
+Put `config_template.xml` in the root of the Zimlet project, next to `package.json`. `zimlet build` copies it into `build/`, and the package contains it. Set `name` and `version` to the name and version of your Zimlet. Add each setting as a `property` in the `global` section, with the default value as its text.
+
+.config_template.xml
+[source,xml]
+----
+include::example$zimlet-configuration/config_template.xml[]
+----
+
+How an administrator default is stored:
+
+* The package carries `config_template.xml` to the server.
+* An administrator deploys the Zimlet. The server then copies the text of the file into the entry of the Zimlet in LDAP, the directory of the server. Every user gets this one text.
+* An administrator replaces the stored text at any time, as <<change,Change an administrator default>> describes.
+* The server sends the stored text to the Modern UI with the account data, as the `zimletConfig` of your Zimlet. <<read,Read both values>> shows how to read it.
+
+See xref:reference/files/config-template.adoc[config_template.xml] for every element of the file.
+
+[#user-values]
+== Let users save their own value
+
+Register a settings section under the `settings` key, as xref:build-by-goal/recipe-settings.adoc[Add a settings] describes. Give the section a field of the type `modifyProperties`. The Settings dialog shows your section, and it saves the fields that the user changed when the user selects *Save*.
+
+How a `modifyProperties` value is saved:
+
+* Your component reports each edit with `onFieldChange`. The dialog holds the new value until the user decides.
+* When the user selects *Save*, the dialog collects the fields of this type whose value changed.
+* It passes their `{ zimlet, name, _content }` objects using `ModifyProperties` request to the server, with one `prop` for each object. See the https://wiki.zimbra.com/wiki/SOAP_API_Reference_Manual[SOAP API Reference Manual^] for the request.
+* The server stores each property with the account, so the value is the same in every browser.
+
+Your Zimlet never calls `ModifyProperties` itself. It reports edits and reads the saved values, as <<read,Read both values>> describes.
+
+The value of the field is an object with three keys. `zimlet` holds the name of your Zimlet, `name` holds the name of the setting, and `_content` holds the text. A value is always text, so the example stores a check box as `'true'` or `'false'`. The `defaultValue` of the field is the value that the section shows before the user has saved anything.
+
+The Settings dialog finds the saved value by `name` only. Use a setting name that no other Zimlet uses, so that two Zimlets do not read each other's value.
+
+See xref:reference/slots/invoke-plugin.adoc[Direct invokePlugin extension points] for all keys of the `settings` registration and of a field.
+
+[#read]
+== Read both values
+
+The `useAccountInfo` hook returns the data of the account, as xref:go-deeper/server-data/data-hooks.adoc[Data hooks] describes. It has no data until it has loaded, so each value is `undefined` at first.
+
+* The administrator default is in `zimlets.zimlet`. Each entry carries the configuration of one Zimlet. `useAdminSetting` finds the entry by name, collects the properties of its `global` section and returns one value. Use the name that you pass to `zimlet package` as `ZIMLET_NAME`.
+* The user value is in `props.prop`, a list of objects with `zimlet`, `name` and `_content`. `useUserSetting` returns the text of the object that has your Zimlet name and your setting name.
+
+`Announcement` shows the text of the administrator at the top of the message list. It hides the text only when the user saved `'false'`. A user who has not chosen yet has no saved value, so the announcement shows. `AnnouncementSettings` is the content of the settings section. It shows the check box as ticked unless the saved value is `'false'`.
+
+.src/index.js
+[source,js]
+----
+include::example$zimlet-configuration/index.js[]
+----
+
+[#check]
+== Check the result
+
+. Deploy the Zimlet and enable it for a test account, as xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] describes. Sign in to the Modern UI and open the Mail view. The announcement shows above the messages of the list.
++
+.The announcement at the top of the message list, outlined
+image::zimlet-configuration-announcement.png["The Mail view with the folders on the left and two messages in the list. Above the messages, the text The mail service is unavailable on Saturday from 22:00 to 23:00. is outlined."]
+. Open *Settings* and select *Announcements*. The check box *Show announcements from the administrator* is ticked.
++
+.The Announcements section of Settings, with the section and the check box outlined
+image::zimlet-configuration-settings-section.png["The Settings dialog over the Mail view, with the Announcements section selected in the list on the left. The check box Show announcements from the administrator is ticked. The Save and Cancel buttons are below."]
+. Clear the check box and select *Save*. The announcement disappears from the list.
+. Reload the Modern UI. The announcement stays hidden, because the server stores the choice with the account.
+. Open *Settings*, tick the check box and select *Save*. The announcement shows again.
+
+If the announcement does not show for a user who has not opted out, check two things. The administrator default must exist, and `ZIMLET_NAME` must equal the name of the deployed Zimlet.
+
+[#change]
+== Change an administrator default
+
+An administrator changes a default on the server without a new build. Run the commands in a shell on the Zimbra server as the `zimbra` user, as xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] describes.
+
+. Extract the settings template from the zip file of the Zimlet:
++
+[source,sh]
+----
+zmzimletctl getConfigTemplate /tmp/my-zimlet.zip > my-zimlet-config.xml
+----
+. Open `my-zimlet-config.xml` and change the text of the `announcement` property. Leave `name` and `version` as they are.
+. Install the new settings:
++
+[source,sh]
+----
+zmzimletctl configure my-zimlet-config.xml
+----
+. Flush the Zimlet cache, so that the Modern UI gets the new value:
++
+[source,sh]
+----
+zmprov flushCache zimlet
+----
+. Reload the Modern UI as a user who shows announcements. The announcement has the new text.
+
+The choices that users saved stay as they are. A user who hid announcements still does not see the new text. See xref:run-package-deploy/deploy.adoc#configure[Configure the Zimlet] for the output of each command.
+
+[#next-step]
+== Next step
+
+Save state that your code manages, without a settings section or an administrator default, in xref:go-deeper/server-data/metadata.adoc[Mailbox metadata].

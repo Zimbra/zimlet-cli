@@ -1,0 +1,5 @@
+<zimletConfig name="my-zimlet" version="1.0.1">
+	<global>
+		<property name="announcement">The mail service is unavailable on Saturday from 22:00 to 23:00.</property>
+	</global>
+</zimletConfig>

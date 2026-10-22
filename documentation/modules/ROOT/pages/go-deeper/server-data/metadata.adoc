@@ -1,0 +1,37 @@
+= Mailbox metadata
+
+Mailbox metadata stores small values for one user on the server, so the values follow the user to every browser and device. Use it for a value that your Zimlet owns, such as a note or a flag that says a tip was dismissed. Browser storage keeps nothing across devices. You read and write the values with the xref:go-deeper/server-data/batch-client.adoc[batch client]. To choose between metadata and Zimlet configuration, see xref:go-deeper/server-data.adoc#when-to-store-which[When to use which method].
+
+[#section]
+== Name a section
+
+Metadata is grouped in sections, and each section holds keys with values. Name your section `zwc:` followed by the name of your Zimlet. The prefix `zwc` and the colon are required, and the whole name is at most 36 characters. Another Zimlet with the same section name shares your keys, so use a name that is yours.
+
+[#read-and-write]
+== Read and write a section
+
+The example keeps a note in the sidebar footer. It reads the section when the component first shows, and saves the note when the user presses the button.
+
+* `GetMailboxMetadata` reads a section. The response has the list `meta`. Its first entry holds `_attrs`, an object of keys and values.
+* `ModifyMailboxMetadata` writes the keys that you send and keeps the other keys of the section.
+
+Both requests take the section name in `meta.section`. Values are strings.
+
+.src/index.js
+[source,js]
+----
+include::example$mailbox-metadata/index.js[]
+----
+
+[#limits]
+== Limits
+
+* A section that has no values returns no keys. The example falls back to an empty string.
+* `ModifyMailboxMetadata` removes a key when you send an empty value for it.
+* A section holds at most 32768 characters in total. A write above the limit fails.
+* `SetMailboxMetadata` replaces the whole section with the keys that you send, and it rejects an empty value. Use it only when you want to replace everything.
+
+[#next-step]
+== Next step
+
+Learn how to keep state that your handlers share in the browser in xref:go-deeper/redux.adoc[Shared state with Redux].

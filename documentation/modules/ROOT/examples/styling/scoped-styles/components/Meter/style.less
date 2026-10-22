@@ -1,0 +1,22 @@
+.meter {
+	padding: var(--spacing-sm);
+	color: var(--text-color);
+}
+
+.track {
+	height: var(--spacing-sm);
+	margin-top: var(--spacing-xs);
+	background-color: var(--gray-lighter);
+	border-radius: var(--radius-xs);
+}
+
+.fill {
+	width: var(--used, 0%);
+	height: 100%;
+	background-color: var(--brand-primary-500);
+	border-radius: var(--radius-xs);
+}
+
+.warning .fill {
+	background-color: var(--brand-danger-500);
+}

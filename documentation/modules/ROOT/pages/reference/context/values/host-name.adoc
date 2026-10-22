@@ -1,0 +1,37 @@
+= hostName
+
+The host name of the page that runs the Modern UI. Use it when your Zimlet needs to know which server the user is on, for example to show it or to behave differently on a test server. For the address of a request, use xref:reference/context/values/zimbra-origin.adoc[zimbraOrigin].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+context.hostName
+----
+
+[#type]
+== Type
+
+string.
+
+[#usage-notes]
+== Usage notes
+
+* It is the host name only, without the port.
+
+[#example]
+== Example
+
+The Zimlet behaves differently on a local test server.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/values/host-name.js[]
+----
+
+[#next-step]
+== Next step
+
+Return to xref:reference/context/values.adoc[Single values] to look up another field.

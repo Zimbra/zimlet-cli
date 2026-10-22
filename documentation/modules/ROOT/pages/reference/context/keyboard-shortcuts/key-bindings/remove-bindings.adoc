@@ -1,0 +1,51 @@
+= removeBindings
+
+Removes bindings by path. Use it to free a key, for example one of your own that you no longer need, or one of the Modern UI that clashes with a shortcut of your Zimlet.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+keyBindings.removeBindings(paths)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`paths`
+|array of strings
+|Each path is the context and the keys joined with dots, such as `all.N.C`.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Removing a key that starts a sequence removes the whole sequence below it.
+* A path that does not exist is ignored.
+
+[#example]
+== Example
+
+The shortcut for a new contact is removed, and the other shortcut of its sequence stays.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/key-bindings/remove-bindings.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to replace all bindings in xref:reference/context/keyboard-shortcuts/key-bindings/replace-bindings.adoc[replaceBindings].

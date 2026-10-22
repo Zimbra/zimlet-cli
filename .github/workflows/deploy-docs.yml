@@ -46,13 +46,13 @@ jobs:
         run: npm run build:docs
 
       - name: Upload Pages artifact
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/master'
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy == true
         uses: actions/upload-pages-artifact@v3
         with:
           path: documentation/build
 
   deploy:
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true && github.ref == 'refs/heads/master'
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true
     needs: build
     runs-on: ubuntu-latest
     permissions:

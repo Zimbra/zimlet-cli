@@ -1,0 +1,57 @@
+= Data hooks
+
+A data hook gives a component data that the xref:reference/glossary.adoc#modern-ui[Modern UI] already loads, such as the account or the preferences. You write no request. Use a hook before you write a request. It reads from a cache that the Modern UI shares, so a value that is already loaded needs no new request. To compare a hook with the other ways to get data, see xref:go-deeper/server-data.adoc#when-to-use-which[When to use which method].
+
+[#read-data]
+== Read data with a hook
+
+Call a hook inside a component. Each hook returns its own values. The hooks in this section return an object with `data`, `loading` and `error`. For the values of every other hook, see xref:reference/shims/hooks.adoc[Hooks].
+
+To offer a *Formatting tips* item in the settings menu only to users who compose email in HTML, read the preferences with `usePreferences`. It returns the preferences in `data.getPreferences`, with one field for each preference, such as `zimbraPrefComposeFormat`. The component renders nothing until the preferences have loaded, and nothing when the format is not `html`. Choosing the item opens the page at `<tips-page-url>`, which you replace with your own address.
+
+.src/index.js
+[source,js]
+----
+include::example$data-hooks/index.js[]
+----
+
+`usePreferences` comes from `@zimbra-client/hooks`, and `ActionMenuItem` comes from `@zimbra-client/components`. Both are xref:fundamentals/shared-libraries.adoc[shared modules] that the Modern UI provides, so you do not add a package for them. The recipe xref:build-by-goal/recipe-gear-and-settings-menu.adoc#action-menu-item[Add menu items to the app] explains `ActionMenuItem`. `usePreferences` sends `GetPrefsRequest` to the server.
+
+The reference page xref:reference/shims/hooks.adoc[Hooks] lists every hook.
+
+[#loading]
+== Handle loading and missing data
+
+With these hooks, `data` is `undefined` while `loading` is `true`, and when the request fails. Check `loading` first, and read from `data` with optional chaining, as the example does. A component that reads `data.getPreferences.zimbraPrefComposeFormat` too early throws and shows nothing.
+
+[#change-data]
+== Change data with a hook
+
+A hook that changes data returns a function that you call. It does not return `data`. `useItemActionMutation` returns an array, and its first element is the function that sends an action on an item, such as a message. Call that function from an event handler, for example when the user chooses a menu item. Call the hook itself while the component renders.
+
+To add a *Flag* item to the *More* menu of a message, call the function with the `id` of the message and `op: 'flag'`. The `emailData` prop holds the message that the menu belongs to. The function sends `ItemActionRequest` with `op="flag"`. The server then flags the item.
+
+.src/index.js
+[source,js]
+----
+include::example$data-hooks-mutation/index.js[]
+----
+
+`useItemActionMutation` comes from `@zimbra-client/hooks`, and `ActionMenuItem` comes from `@zimbra-client/components`. Both are shared modules. The `op` value tells the server what to do. Other values include `read`, `move` and `trash`. See xref:reference/shims/hooks.adoc[Hooks] for the options of each hook.
+
+[#rules]
+== Rules for hooks
+
+* Call a hook only while a component renders: in the body of a component, never in the factory, in `init()` or in an event handler. The https://preactjs.com/guide/v10/hooks/[Preact hooks guide^] explains why. The function that a hook returns, such as the one from `useItemActionMutation`, is different: call it from an event handler.
+* Keep hook calls unconditional. A slot runs your handler while it renders, so a hook in the handler belongs to the slot. A condition before the hook changes the order of the calls.
+* Return an element of your own component when the UI keeps state. Then the hooks belong to your component and not to the slot.
+
+[#more-hooks]
+== More hooks
+
+The Modern UI offers more hooks, for example for folders, search and sending messages. See xref:reference/shims/hooks.adoc[Hooks] for the list.
+
+[#next-step]
+== Next step
+
+Send a request that no hook covers in xref:go-deeper/server-data/batch-client.adoc[Batch client].

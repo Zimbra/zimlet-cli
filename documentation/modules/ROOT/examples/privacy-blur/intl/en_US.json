@@ -1,0 +1,10 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Blurs the screen when the user leaves the Modern UI, until the user presses a keyboard shortcut."
+	},
+	"my-zimlet": {
+		"hidden": "The screen is hidden for privacy.",
+		"showHint": "Press Y, then B, to show it again."
+	}
+}

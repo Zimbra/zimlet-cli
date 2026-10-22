@@ -1,0 +1,213 @@
+= Add a mail menu item
+
+This recipe adds a *Follow up* item to the menus of a message in the xref:reference/glossary.adoc#modern-ui[Modern UI]. Choosing it puts a tag on the open message or on every selected message, so that the user can find them again. The item turns itself off when it does not apply, and a notification reports the result. Use it when an action belongs to a message. The user then finds it next to *Flag* and *Tag*, and does not need a screen of your own. The item is a small component that a xref:reference/glossary.adoc#zimlet[Zimlet] registers for a slot of the mail menus.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Add an item to the menus of a message.
+* Turn the item off when it does not apply.
+* Create a tag and apply it to messages.
+* Report the result in a notification.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of xref:go-deeper/server-data/data-hooks.adoc[data hooks] and of the xref:go-deeper/server-data/batch-client.adoc[batch client], because the item changes the message with a hook and creates the tag with the client.
+
+[#choose-the-slot]
+== Choose the slot
+
+*Follow up* must be in every menu of a message. The example therefore fills the slot `action-menu-mail-more`, which three menus show.
+
+[#the-slot]
+=== The slot
+
+`slot::action-menu-mail-more`::
+The *More* menu of an open message, the *More Options* menu in the toolbar, and the right-click menu of a message. The item comes after the built-in items of its group. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::mail-overflow-menu-option`::
+The *More Options* menu in the toolbar only, and only when one message or no message is selected. The example does not use it, because the item must also be in the other two menus and must work for several selected messages. Choose it when the item does not belong in the other two menus.
+
+For the menus of the app, see xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the item in `init()`. It replaces the generated file.
+** `constants/index.js` holds the name and the colour of the tag. It replaces the generated file.
+** `api/tags.js` creates the tag.
+** `hooks/use-follow-up.js` tags messages.
+** `utils/has-follow-up-tag.js` tells whether a message has the tag.
+** `components/follow-up-item/` is the menu item.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$mail-action-menu/intl/en_US.json[]
+----
+
+[#tag-the-message]
+== Tag the message
+
+A tag is a label that the user puts on messages and searches by. Tagging takes two steps: make sure that the tag exists, and put it on the message.
+
+.constants/index.js
+[source,js]
+----
+include::example$mail-action-menu/constants/index.js[]
+----
+
+.api/tags.js
+[source,js]
+----
+include::example$mail-action-menu/api/tags.js[]
+----
+
+`ensureFollowUpTag` reads the tags of the user with `GetTag`. It sends `CreateTag` only when the tag is missing, and it resolves to `true` when it did. The Modern UI has no hook for these two requests, so the example sends them with `zimbraBatchClient`, as xref:go-deeper/server-data/batch-client.adoc[Batch client] describes.
+
+NOTE: No hook that Zimlets can use reads the tag list or creates a tag, so `ensureFollowUpTag` sends `GetTag` and `CreateTag` with the batch client. `GetTag` runs every time the user chooses the item. The Modern UI is not told about a tag that is created this way. The example therefore offers a reload in its notification the first time, as xref:build-by-goal/recipe-mail-action-menu.adoc#notify[The notify action] describes. xref:go-deeper/server-data.adoc#show-a-change[Keep the Modern UI up to date] explains why. Use a hook when the Modern UI exports one.
+
+.hooks/use-follow-up.js
+[source,js]
+----
+include::example$mail-action-menu/hooks/use-follow-up.js[]
+----
+
+`useItemActionMutation` returns the function that sends `ItemActionRequest`. Called with `op: 'tag'` and a tag name, it puts the tag on the message, as xref:go-deeper/server-data/data-hooks.adoc#change-data[Change data with a hook] describes. The hook returns a function that takes a list of messages. It joins their ids with commas and sends them as `id`, so that one request tags every message. The function resolves to an object. `marked` is `false` when a request fails, and `created` is `true` when this call created the tag. The item uses both to choose the notification.
+
+.utils/has-follow-up-tag.js
+[source,js]
+----
+include::example$mail-action-menu/utils/has-follow-up-tag.js[]
+----
+
+The `tagNames` field of a message is a string of tag names separated by commas. The item uses the check to turn itself off for a message that already has the tag.
+
+[#build-the-item]
+== Build the menu item
+
+The item reads the messages from `selectedMails`. The *More* menu of an open message passes no selection, so the item falls back to `emailData` there. It is disabled in two cases. One is an empty list, which means that no message is selected. The other is a list in which every message already has the tag. When only some messages have it, the item stays on and tags all of them.
+
+The props depend on the menu. The example reads `emailData` and `selectedMails`:
+
+`emailData`::
+The open or selected message. In a list that groups messages by conversation, it is the conversation. It is empty when no message is selected or when several messages are selected.
+
+`selectedMails`::
+The selected messages, which is the prop to read when the user selects several. The *More* menu of an open message does not pass it. The `mail-overflow-menu-option` slot does not pass it either.
+
+`isContextMenuSlot`::
+`true` in the right-click menu only. The example does not read it. Return `null` for it when the item must stay out of that menu. The right-click menu does not call the slot for messages in the Drafts folder.
+
+.components/follow-up-item/index.js
+[source,js]
+----
+include::example$mail-action-menu/components/follow-up-item/index.js[]
+----
+
+The menu closes when the user chooses an item, so the user cannot see progress in it. The item reports the result in a notification instead. It reads the texts with `useText` from `@zimbra/preact-i18n`, which returns the translated strings that `notify` needs as its message. Wrap the component with `withIntl` so that `useText` finds the texts of your Zimlet.
+
+[#action-menu-item]
+=== The ActionMenuItem component
+
+`ActionMenuItem` draws one entry of an action menu. The recipe xref:build-by-goal/recipe-gear-and-settings-menu.adoc#action-menu-item[Add menu items to the app] explains it. This example uses three props:
+
+`icon`::
+The icon component, from `lucide-preact`. The built-in items of these menus have an icon, so the item has one too.
+
+`disabled`::
+Turns the item off. A disabled item stays in the menu and cannot be chosen.
+
+`onClick`::
+Runs when the user chooses the item.
+
+[#notify]
+=== The notify action
+
+`notify` shows a message to the user as a notification that disappears after a few seconds. Get it from `store.zimletRedux.actions.notifications`, call it with an object, and pass the result to the `dispatch` function that `useDispatch` from `react-redux` returns. Read the action in the handler when the slot renders, as the example does, because the registry of actions can change while the Modern UI runs, and pass it to the component. See xref:reference/context/store/zimlet-redux/actions.adoc#notify[notify] for every key.
+
+The example uses four keys:
+
+`message`::
+The text of the notification, as a string or an element.
+
+`failure`::
+Set to `true` to show the notification as an error. The example sets it when a request fails.
+
+`action`::
+Adds a button to the notification. `label` is the text of the button, and `fn` runs when the user selects it. The example adds *Reload now* the first time it creates the tag. The Modern UI does not show a new tag until the page is reloaded. A Zimlet runs in a hidden frame, so `fn` calls `window.parent.location.reload()`. `window.location.reload()` would reload only that frame.
+
+`duration`::
+How long the notification stays, in milliseconds. The default is `6000`. The example sets `10000` for the longer text.
+
+[#register-the-item]
+== Register the item
+
+Register one handler in `init()`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The handler receives the props of the slot and passes them on to the component. The example takes `store` and `zimbraBatchClient` from the xref:fundamentals/host-context.adoc[context] in the factory. It passes the component only `zimbraBatchClient` and the `notify` action, and not the whole store.
+
+.index.js
+[source,js]
+----
+include::example$mail-action-menu/index.js[]
+----
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page first if the Zimlet was loaded before.
+. Open *Mail* and select a message that has no *To follow up* tag. Open the *More Options* menu with the three dots in the toolbar above the message. *Follow up* is at the end of the menu, above *Print*.
++
+.The More Options menu with the Follow up item
+image::mail-action-menu-more-options-menu.png["The More Options menu of the toolbar is open for a selected message. The three dots button and the Follow up item, which is above Print, are outlined in red."]
++
+The outlined three dots button and *Follow up* item are the menu and the item of your Zimlet.
+. Choose *Follow up*. The menu closes, and the notification *Marked for follow up* appears. The first time, the notification also asks you to reload the page. Choose *Reload now*. The message shows the tag *To follow up* in its header and in the list, and the tag is in the *Tags* list.
+. Open the same menus again. *Follow up* is disabled, because the message has the tag. Check the *More* menu at the end of the open message, and the menu that opens when you right-click the message in the list.
+. Select two messages without the tag and choose *Follow up* in the *More Options* menu. The notification appears, and both messages show the tag in the list.
++
+.Two selected messages after the item is chosen
+image::mail-action-menu-multiple-selection.png["Two messages are selected in the list. The notification Marked for follow up is outlined in red at the top, and the To follow up tag is outlined in red on both selected messages."]
++
+The outlined notification is the result of your item, and the outlined tags are what it added to the two messages.
+. Select the two tagged messages and open the *More Options* menu. *Follow up* is disabled. Select one tagged and one untagged message. *Follow up* is enabled, and both messages end up with the tag.
+
+[#expected-result]
+== Expected result
+
+* *Follow up* is in the *More* menu of an open message, in the *More Options* menu and in the right-click menu.
+* Choosing it shows a notification, and every selected message gets the tag *To follow up*.
+* The item is disabled when no message is selected, and when every selected message already has the tag.
+* The item works in a list of single messages and in a list that groups messages by conversation. It also works with a selection that mixes both kinds.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The item is not in the menu.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the key is `slot::action-menu-mail-more` and that you register in `init()`. Reload the page and open the menu again.
+
+The item is disabled.::
+* Cause: No message is selected, or every selected message already has the tag.
+* Fix: Select at least one message that has no *To follow up* tag.
+
+The notification says that the messages could not be marked.::
+* Cause: One of the two requests failed. The browser can be offline, or the server answered with an error.
+* Fix: Open the network tab of the browser tools and find the failed request. Choose the item again when the cause is gone.
+
+The tag is not in the *Tags* list after the first use.::
+* Cause: This happens only the first time, when the Zimlet creates the tag. The Modern UI does not refresh its tag list when a Zimlet creates a tag.
+* Fix: Choose *Reload now* in the notification, or reload the page. The tag is in the list from then on, and later uses need no reload.
+
+[#next-step]
+== Next step
+
+To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

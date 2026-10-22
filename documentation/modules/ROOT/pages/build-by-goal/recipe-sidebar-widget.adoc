@@ -1,0 +1,175 @@
+= Add a sidebar widget
+
+This recipe builds a xref:reference/glossary.adoc#zimlet[Zimlet] that shows a second time zone clock in the panel at the right of the xref:reference/glossary.adoc#modern-ui[Modern UI]. A team that works across time zones sees the time and the date at its head office on every screen that has the panel. It does not need another application. Use the same pattern for any small, always visible piece of information, such as a status note, a counter or a reminder. The widget is a component for one xref:fundamentals/extending-the-ui.adoc[slot] that needs no request to the server and stores nothing.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose a slot that stays in view.
+* Register a component for the right panel.
+* Show a value that changes with time.
+* Add more widgets to the same slot.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-slot]
+== Choose the slot
+
+The clock must stay in view while the user moves between screens. The slot `rightside-zimlet-slot` does this, so the example uses it.
+
+[#the-slot]
+=== The slot
+
+`slot::rightside-zimlet-slot`::
+A panel at the right of Mail, Calendar, Contacts and Briefcase. It belongs to the desktop layout. Other Zimlets, such as a chat Zimlet, can fill the same panel, so give your block its own border or spacing. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::adSlot-*`::
+Ten slots with a name that starts with `adSlot-`, such as `adSlot-300-250-top` and `adSlot-160-600`. Most names carry the size of the block in pixels. They sit at the right and left of the screen in a large window, and at the bottom in a small one. Choose one when the block has the fixed size of an advertisement.
+
+`slot::app`::
+No place of its own. Choose it for an overlay or other content that needs no place, as xref:build-by-goal/recipe-app-content.adoc[Run an app-wide feature] shows.
+
+`slot::mail-sidebar-footer`::
+The footer of the mail sidebar, in Mail only. Choose it for a block that only Mail needs.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the component. It replaces the generated file.
+** `constants/index.js` holds the time zone and the refresh interval. It replaces the generated file.
+** `hooks/use-now.js` gives the component the current time and refreshes it.
+** `components/head-office-clock/index.js` and `components/head-office-clock/style.less` are the widget.
+. Merge the texts into `src/intl/en_US.json`. Keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$sidebar-widget/intl/en_US.json[]
+----
+
+[#register-the-zimlet]
+== Register the Zimlet
+
+`init()` registers a handler for the slot. The handler returns the component and keeps no state itself, as xref:fundamentals/extending-the-ui.adoc#hooks-in-handlers[Hooks in handlers] explains. The handler needs no xref:fundamentals/extending-the-ui.adoc#props-and-payload[props], because the clock reads nothing from the screen. The factory registers nothing, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes.
+
+.index.js
+[source,js]
+----
+include::example$sidebar-widget/index.js[]
+----
+
+.constants/index.js
+[source,js]
+----
+include::example$sidebar-widget/constants/index.js[]
+----
+
+The time zone is an IANA name, such as `Europe/London` or `Asia/Tokyo`. Set it to the zone of your own head office.
+
+[#show-the-clock]
+== Show the clock
+
+The component asks `useNow` for the current time and formats it twice, once as the time and once as the date. The date matters because the day at the head office can differ from the day of the user.
+
+.components/head-office-clock/index.js
+[source,js]
+----
+include::example$sidebar-widget/components/head-office-clock/index.js[]
+----
+
+.components/head-office-clock/style.less
+[source,less]
+----
+include::example$sidebar-widget/components/head-office-clock/style.less[]
+----
+
+`Intl.DateTimeFormat` is part of the browser. Its `timeZone` option converts the time to the zone that you chose. An `undefined` locale formats it in the language of the browser. The formats are created once, outside the component, so they are not rebuilt every time the clock refreshes.
+
+The styles give the block padding and a line below it, so that it stands apart from the blocks of other Zimlets. The Modern UI and your Zimlet share one page, so keep the class names scoped, as xref:go-deeper/styling/write-and-scope-styles.adoc[Write and scope styles] describes. Wrap the component with `withIntl`, as xref:go-deeper/localization.adoc[Localization] describes, so that `Text` finds the texts of your Zimlet.
+
+[#refresh-the-time]
+== Refresh the time
+
+A component shows a value that changes with time only if it renders again. The hook keeps the time in state and sets a new value at an interval.
+
+.hooks/use-now.js
+[source,js]
+----
+include::example$sidebar-widget/hooks/use-now.js[]
+----
+
+The clock checks the time every 15 seconds, so a new minute shows within 15 seconds. The cleanup stops the timer when the component goes away. Without it, each load of the component would leave a timer that nobody stops.
+
+[#more-widgets]
+== Add more widgets to the panel
+
+To add another widget, register another handler for the same slot, in the same `init()` or in another Zimlet. Each handler adds its own block to the panel.
+
+[source,js]
+----
+plugins.register('slot::rightside-zimlet-slot', () => <AnotherWidget />);
+----
+
+[#limits]
+== Know the limits
+
+* The clock reads the clock of the computer of the user. A computer with a wrong time or time zone shows the wrong time at the head office too.
+* A name that the browser does not know makes loading the Zimlet fail with a `RangeError`.
+* The panel is for desktop screens only. The clock shows nothing in a window narrower than 1025 pixels, so do not put information there that users on small screens must see.
+* The panel is at most 250 pixels wide. Keep the widget narrow.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Make the browser window at least 1025 pixels wide, and open *Mail*. The block *Head office* shows in the panel at the right, with the time and the date.
++
+.The Mail view with the clock in the panel at the right, outlined
+image::sidebar-widget-clock-in-right-panel.png["The Mail view of the Modern UI. In the panel at the right of the screen, a red outline surrounds the text Head office, the time 18:40 and the date Wednesday 28 October."]
++
+The outlined block is your component.
+. Compare the time with the current time in London. Wait for the next minute. The time changes within 15 seconds, without a reload.
+. Open *Calendar*, *Contacts* and *Briefcase*. The block shows in the panel of each screen.
+. Make the window narrower than 1025 pixels. The block disappears. Make it wide again, and it returns.
+
+[#expected-result]
+== Expected result
+
+* A *Head office* block with the time and the date shows in the panel at the right of Mail, Calendar, Contacts and Briefcase.
+* The time is the time of the zone that you set, and it changes without a reload.
+* The block does not show in a window narrower than 1025 pixels.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The block does not show.::
+* Cause: The Zimlet is not running, the page was not reloaded after you loaded the Zimlet, or the window is narrower than 1025 pixels.
+* Fix: Check that the sideloader shows *Running*, reload the Modern UI page and widen the window. Show the slot names, as xref:run-package-deploy/run-and-debug.adoc#debug-slots[Run and debug] describes, and check that `rightside-zimlet-slot` is at the right of the screen.
+
+The Zimlet fails to load with a `RangeError` about the time zone.::
+* Cause: The name in `constants/index.js` is not a time zone that the browser knows.
+* Fix: Use an IANA name, such as `Europe/London`.
+
+The label shows as a key, or not at all.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or the component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around the component.
+
+The block is wider than the panel.::
+* Cause: The panel is at most 250 pixels wide, and the content is wider.
+* Fix: Make the text smaller, or let it wrap inside the block.
+
+[#next-step]
+== Next step
+
+Add an action to the menus of a message with xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].
