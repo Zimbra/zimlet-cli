@@ -30,5 +30,6 @@ export const debounce = wrap('debounce');
 export const getContext = wrap('getContext');
 export const branch = wrap('branch');
 export const withProps = wrap('withProps');
+export const getCspNonce = wrap('getCspNonce');
 
 export default global.shims['@zimbra-client/util'];
