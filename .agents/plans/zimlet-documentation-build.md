@@ -30,7 +30,7 @@ Each phase produces files under `zimlet-cli/documentation/modules/ROOT/` and upd
 |---|---|---|---|---|
 | 1. Foundation | Finalise the navigation skeleton (grouped by the parts of section 1 of the [plan](./zimlet-documentation-plan.md)), a page template for the task layout (Goal, Before you start, Steps, Expected result, If it didn't work, Next step), admonition conventions and a glossary stub. | P35 (stub) | None | In progress |
 | 2. Groundwork | Spike the tutorial path in a scratch folder outside the repo (install Node 24, `npm i -g @zimbra/zimlet-cli`, `zimlet create`, `build`, `package`, on the refreshed template), recording exact commands, outputs and errors; anything needing a server or Modern UI is marked unverified. Compile the APIs and hooks inventory from `shims.js`, the host `src/hooks`, and the catalog, verifying each export. | P33 (inventory) | 1 | In progress |
-| 3. Getting started | Welcome and Part 1 pages. Check that every official link in P04 is live. | P01, P03–P06 | 2 | In progress |
+| 3. Getting started | Welcome and Part 1 pages. Check that every official link in P04 is live. | P01, P03–P06 | 2 | Done |
 | 4. Fundamentals and features | Part 2 and Part 4 pages. | P07–P11, P20–P23, P25 | 2, 3 | Not started |
 | 5. Test, package, deploy | Part 5 pages and troubleshooting. | P26–P29, P36 | 2 | Not started |
 | 6. Reference and migration | Reference pages, including the scripted slot index. | P30–P35 | 2 | Not started |

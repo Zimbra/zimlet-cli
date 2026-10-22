@@ -72,11 +72,11 @@ _Purpose: take a newcomer from nothing to a working first Zimlet. Give only what
   - Accept the development HTTPS certificate – trust the development server's self-signed certificate in the browser. The steps are given here, and the reader does them the first time the development server runs in P06, because the server needs a project.
   - Ready check – a checklist that confirms the machine and the server are ready for the quickstart.
   - Brief: ends with the ready-check list. Sources: `cli-commands.md` (development loading), `packaging-deployment.md`. Commands inline.
-- **P06 `quickstart.adoc` – Your first Zimlet** (Not started)
+- **P06 `quickstart.adoc` – Your first Zimlet** (Drafted)
   - Create a Zimlet from the template – scaffold with `zimlet create`; what the template gives you.
   - Run it with `npm start` – start the development server and the output to expect.
   - Load it through the sideloader – load the running Zimlet into Modern UI.
-  - See the result and change it (HMR) – confirm the Zimlet appears, edit a file and see the change without a reload.
+  - See the result and change it – confirm the Zimlet appears, edit a file and reload the Modern UI page to see the change (the development server does not push updates to an open page).
   - Build and package – produce `build/index.js` and the zip, with the exact commands and expected output.
   - Brief: task layout from `doc-guide/types.md`. Written for the refreshed default template: the team will fix the template, so there is no "apply the template fixes" step. Before writing, check that the template is refreshed and builds with the current CLI. Ends with a working zip. Sources: `authoring.md`, `cli-commands.md`, the template. Next step: P07.
 
@@ -268,13 +268,13 @@ _Purpose: complete facts for lookup. Tables and entries only, no tutorial text._
 - **P32 `reference-shims.adoc` – Modules, components and enhancers** (Drafted)
   - The full module table – every shimmed import path, with the names it exports.
   - UI components – the components exported from `@zimbra-client/components`, one line each.
-  - Brief: source `context-and-shims.md` §2 and `shims.js`. Written as an inventory: every module and export, a short note on when to use it, no per-entry examples (inventory rules in `doc-guide/types.md` section 3). The only full module table in the guide. GraphQL queries and wrappers are listed by module only. `@zimbra-client/blocks` has one module entry that links to P40; its exports are not listed here. Split from P33 and P40 to keep each page short.
+  - Brief: source `context-and-shims.md` §2 and `shims.js`. Written as an inventory: every module and export, a short note on when to use it (inventory rules in `doc-guide/types.md` section 3). The only full module table in the guide. GraphQL queries and wrappers are listed by module only. `@zimbra-client/blocks` has one module entry that links to P40; its exports are not listed here. Split from P33 and P40 to keep each page short.
 - **P33 `reference-apis-hooks.adoc` – APIs and hooks** (Drafted)
   - `fetch`-based API calls, batch client, host hooks by area, utilities and constants, platform and browser helpers, server proxy, OAuth client.
-  - Brief: each entry has its name, signature or usage and a short note on when and why to use it. Verify every export in `shims.js` and the host `src/hooks` folders. Document ready-made hooks, not GraphQL queries. How-to text stays in P20 and P25. List every export, but no per-entry examples, at most one sample example (inventory rules in `doc-guide/types.md` section 3). Components and the module table are in P32.
+  - Brief: each entry has its name, signature or usage and a short note on when and why to use it. Verify every export in `shims.js` and the host `src/hooks` folders. Document ready-made hooks, not GraphQL queries. How-to text stays in P20 and P25. List every export (inventory rules in `doc-guide/types.md` section 3). Components and the module table are in P32.
 - **P40 `reference-blocks.adoc` – Blocks UI kit** (Not started)
   - The exports of `@zimbra-client/blocks`, grouped by area under headings: buttons and progress, dialogs and overlays, popovers and tooltips, form inputs and choices, layout and lists, focus and click helpers, constants and enhancers.
-  - Brief: about 50 exports. Source: the `allBlocks` entry in `shims.js` and the exports of the `@zimbra/blocks` package index; verify each name against them. One entry per export with its name and when to use it in one or two sentences, no per-entry examples, at most one sample example for the page (inventory rules in `doc-guide/types.md` section 3). Check the length before you write (rule 0 in `write-doc.md`). Link the module entry in P32 to this page. This page was added after P33 and keeps the next free number, so no other page is renumbered. It sits in Part 6 after P33.
+  - Brief: about 50 exports. Source: the `allBlocks` entry in `shims.js` and the exports of the `@zimbra/blocks` package index; verify each name against them. One entry per export with its name and when to use it in one or two sentences (inventory rules in `doc-guide/types.md` section 3). Check the length before you write (rule 0 in `write-doc.md`). Link the module entry in P32 to this page. This page was added after P33 and keeps the next free number, so no other page is renumbered. It sits in Part 6 after P33.
 - **P34 `reference-slots.adoc` – Slot and extension-point index** (Not started)
   - How to read an entry – what each column means.
   - Table of all extension points – generated from the slot catalog.

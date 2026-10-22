@@ -49,6 +49,6 @@ One `postMessage` use exists: a zimlet may post `USER_ACTIVITY` to reset the idl
 
 ## 3. Dev-time vs prod-time
 
-**Dev**: `npm start` in the zimlet → `https://localhost:8081/index.js` (accept the self-signed certificate) → sideloader page in Modern UI → same load path as production. Saving a file triggers webpack HMR; `entry.js` re-calls `zimlet(factory)`, and the manager's replacement performs shutdown → setup → init (soft restart, iframe kept).
+**Dev**: `npm start` in the zimlet → `https://localhost:8081/index.js` (accept the self-signed certificate) → sideloader page in Modern UI → same load path as production. Saving a file rebuilds the bundle that the dev server serves, but the dev server runs with `client: false` and sends no update to the browser, so an open Modern UI page keeps the old code until it is reloaded. With *Persist on Reload* ticked, the sideloader loads the new bundle on that reload. The soft restart path (`entry.js` re-calls `zimlet(factory)`, and the manager's replacement performs shutdown → setup → init, iframe kept) exists but is not triggered by a save.
 
 **Prod**: `zimlet build` → `zimlet package` → deploy zip (`zmzimletctl` or admin console) → enable per COS/user → Modern UI receives it in the consolidated bundle. Server packaging and deployment are covered in [packaging-deployment.md](./packaging-deployment.md).

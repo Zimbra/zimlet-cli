@@ -9,7 +9,7 @@ You need a computer where you can install software and a shell to run commands. 
 [#install-node]
 == Install Node 24
 
-Install Node.js 24 from the https://nodejs.org/en/download[Node.js downloads]. The `zimlet` tool needs Node.js 24.18.0 or later. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but the tool does not support that setup. If you use nvm, a Node.js version manager, run `nvm use 24`.
+Install Node.js 24 from the https://nodejs.org/en/download[Node.js downloads^]. The `zimlet` tool needs Node.js 24.18.0 or later. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but the tool does not support that setup. If you use nvm, a Node.js version manager, run `nvm use 24`.
 
 Check the versions:
 
@@ -24,9 +24,9 @@ Node.js prints `v24.18.0` or a later 24 version. npm prints a version that start
 [#install-git-and-editor]
 == Install Git and an editor
 
-Install a code editor. Any editor works, for example https://code.visualstudio.com/docs[Visual Studio Code].
+Install a code editor. Any editor works, for example https://code.visualstudio.com/docs[Visual Studio Code^].
 
-Install Git if you keep your Zimlet in version control. The `zimlet` tool does not need it. Download Git from the https://git-scm.com/downloads[Git downloads], then check it:
+Install Git if you keep your Zimlet in version control. The `zimlet` tool does not need it. Download Git from the https://git-scm.com/downloads[Git downloads^], then check it:
 
 [source,sh]
 ----
@@ -108,7 +108,7 @@ Check that each of these is true before you start the quickstart:
 
 `npm install --global` fails with a permission error (`EACCES`).::
 * Cause: npm cannot write to its global folder.
-* Fix: Follow the npm guide to https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally[resolve permission errors on global installs].
+* Fix: Follow the npm guide to https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally[resolve permission errors on global installs^].
 
 `zimlet: command not found`.::
 * Cause: The folder that npm installs global commands into is not on your path.
