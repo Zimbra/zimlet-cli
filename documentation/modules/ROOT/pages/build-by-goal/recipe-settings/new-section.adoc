@@ -1,0 +1,224 @@
+= Add a section to the Settings dialog
+
+This recipe adds a section of your own to the Settings dialog of the xref:reference/glossary.adoc#modern-ui[Modern UI], where users change the options of your xref:reference/glossary.adoc#zimlet[Zimlet]. The example adds a *Reply reminders* section with a check box and a number of days. It checks the number, keeps the *Save* button disabled while the number is wrong, and saves the values with the account. Use it when users need to choose how your Zimlet behaves. A section in the dialog suits options that a user sets once and expects to find with the other settings.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Register a section under the `settings` key.
+* Report a change with `onFieldChange`.
+* Disable *Save* for invalid values with `handleValidityOfTabs`.
+* Build controls with `ChoiceInput` and `TextInput`.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of xref:build-by-goal/recipe-settings.adoc#where-settings-fit[where a settings section fits] and of its keys, which the recipe uses without repeating them.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the section. It replaces the generated file.
+** `constants/index.js` holds the names of the values and the limits of the number. It replaces the generated file.
+** `utils/property.js` builds and reads a saved value.
+** `utils/fields.js` describes the two fields of the section.
+** `components/settings-title/index.js` is the name in the list.
+** `components/reminder-settings/index.js` and `style.less` are the content of the section.
+. Merge the texts into `src/intl/en_US.json`. The title and the controls of the section show these texts.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$settings-new-section/intl/en_US.json[]
+----
+
+[#describe-the-fields]
+== Describe the fields
+
+The example saves its two values as fields of the type `modifyProperties`, as xref:build-by-goal/recipe-settings.adoc#fields[Fields] describes. A value is text, so the example saves the check box as `'true'` or `'false'` and the number as typed.
+
+.constants/index.js
+[source,js]
+----
+include::example$settings-new-section/constants/index.js[]
+----
+
+.utils/property.js
+[source,js]
+----
+include::example$settings-new-section/utils/property.js[]
+----
+
+.utils/fields.js
+[source,js]
+----
+include::example$settings-new-section/utils/fields.js[]
+----
+
+The names in `constants/index.js` start with `replyReminder`, so no other Zimlet reads them by mistake. The `defaultValue` is what the section shows until the user saves a value.
+
+[#add-the-title]
+== Add the title
+
+The name in the list is a component of its own, so wrap it with `withIntl` to load the texts of your Zimlet.
+
+.components/settings-title/index.js
+[source,js]
+----
+include::example$settings-new-section/components/settings-title/index.js[]
+----
+
+[#add-the-section]
+== Add the content of the section
+
+The dialog creates your component with `value` and `onFieldChange`, as xref:build-by-goal/recipe-settings.adoc#what-the-dialog-passes[What the dialog passes] describes, and with these props:
+
+`activeId`::
+The `id` of your section.
+
+`handleValidityOfTabs`::
+A function that tells the dialog whether the section holds a value that cannot be saved. Call `handleValidityOfTabs(activeId, true)` to disable *Save*, and `handleValidityOfTabs(activeId, false)` to enable it again.
+
+The component keeps no state of its own. It reads `value` on every render, so the screen always shows what the dialog will save. The check box, for example, is `value.replyReminderEnabled._content`. The effect reports the validity after each change. The number is valid when it is a whole number from 1 to 30, and the check applies only while the check box is ticked.
+
+.components/reminder-settings/index.js
+[source,js]
+----
+include::example$settings-new-section/components/reminder-settings/index.js[]
+----
+
+.components/reminder-settings/style.less
+[source,less]
+----
+include::example$settings-new-section/components/reminder-settings/style.less[]
+----
+
+The styles use the CSS variables of the Modern UI, so the section follows its theme. See xref:go-deeper/styling.adoc[Styling] for how styles are scoped.
+
+[#choice-input]
+=== The ChoiceInput component
+
+`ChoiceInput` draws a check box or a radio button in the style of the Modern UI. It comes from `@zimbra-client/blocks`. Choose it for a yes or no option.
+
+*Without it:* a plain `<input type="checkbox">` works, but it has none of the styling of the Modern UI.
+
+*With it:* render the option as a `ChoiceInput` inside a `<label>`, so that a click on the text also changes the box.
+
+[source,js]
+----
+<ChoiceInput type="checkbox" checked={enabled} onChange={changeEnabled} />
+----
+
+The example uses three props:
+
+`type`::
+`checkbox` (the default) or `radio`.
+
+`checked`::
+Whether the box is ticked. The example sets it from `value`.
+
+`onChange`::
+Called when the user changes the box. The new state is in `event.target.checked`.
+
+Look up the rest in xref:reference/shims/components/form-inputs.adoc[Form inputs].
+
+[#text-input]
+=== The TextInput component
+
+`TextInput` draws a one line field in the style of the Modern UI. It comes from `@zimbra-client/components`. Choose it for a text or a number that the user types.
+
+*Without it:* a plain `<input>` works, but it has none of the styling of the Modern UI, and no way to mark a wrong value.
+
+*With it:* render the field as a `TextInput`, and set `invalid` when the value cannot be saved.
+
+[source,js]
+----
+<TextInput type="number" value={days} invalid={invalid} onInput={changeDays} />
+----
+
+The example uses these props:
+
+`invalid`::
+Marks the field as wrong with a red border. The example sets it from the check that disables *Save*.
+
+`value` and `onInput`::
+The text in the field, and the function that runs while the user types.
+
+`disabled`::
+Turns the field off. The example turns it off while the check box is not ticked.
+
+`type`, `min`, `max` and `id`::
+Go to the `input` element. `id` ties the field to its `<label>`.
+
+Look up the rest in xref:reference/shims/components/form-inputs.adoc[Form inputs].
+
+[#register-the-section]
+== Register the section
+
+Register the section in `init()` with `plugins.register`. The key is `settings`, with no `slot::` prefix, because the Settings dialog collects the objects and does not render a slot. The handler is the object with the keys that xref:build-by-goal/recipe-settings.adoc#where-settings-fit[Where a settings section fits] describes.
+
+Look up the `settings` key in the xref:reference/slots.adoc[slot index], and read xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for these keys work.
+
+.index.js
+[source,js]
+----
+include::example$settings-new-section/index.js[]
+----
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
+. Open the gear menu (*Settings and more*) and choose *Settings*.
+. Scroll the list on the left to its end. A *Reply reminders* section follows the built-in sections. Select it.
++
+.The Reply reminders section in the Settings dialog
+image::settings-new-section-in-list.png["The Settings dialog over the Zimlets Sideloader page. The Reply reminders section, outlined in red, is the last item in the list on the left. Its content, outlined in red, shows a ticked check box labelled Remind me about messages without a reply, and the text Remind me after, a field with 3, and days. The Save and Cancel buttons are below."]
++
+The outlined *Reply reminders* item is your section. The outlined area is your component.
+. Clear the check box. The number field turns off. Tick it again.
+. Type `0` in the number field. The field gets a red border, the message *Enter a whole number from 1 to 30.* appears, and *Save* is disabled.
++
+.A wrong number
+image::settings-new-section-invalid-value.png["The Reply reminders section with the check box ticked and 0 in the number field, which is outlined in red. The message Enter a whole number from 1 to 30., outlined in red, is below it. The Save button, outlined in red, is disabled."]
++
+The outlined field, message and *Save* button show the check that the component reports.
+. Type `5`. The message goes away and *Save* is enabled. Choose *Save*. The dialog closes and the Modern UI shows *Settings saved.*
+. Open *Settings* and select *Reply reminders* again. The box is ticked and the field shows `5`.
+. Reload the Modern UI page and open the section again. The box is still ticked and the field still shows `5`.
+
+[#expected-result]
+== Expected result
+
+* The Settings dialog has a *Reply reminders* section after the built-in sections.
+* The number field is on only while the check box is ticked.
+* A number outside 1 to 30 turns the field red, shows a message and disables *Save*.
+* A valid value is saved with *Save*, and it is still there after a reload.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The *Reply reminders* section is not in the list.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the key is `settings` and that you register it in `init()`. Reload the page, and open the dialog again.
+
+*Save* stays disabled.::
+* Cause: The section reported a value that cannot be saved with `handleValidityOfTabs`, and it has not reported that the value is valid again.
+* Fix: Check the number in the field. In your own section, call `handleValidityOfTabs(activeId, false)` whenever the value is valid, not only when it changes from wrong to right.
+
+A value that you changed is not saved.::
+* Cause: The change did not go through `onFieldChange`, so the dialog holds the old value and has nothing to save.
+* Fix: Report every change with `onFieldChange('<field name>')({ target: { value } })`, and build the value with `toProperty`, as the example does.
+
+The section shows the default value after you saved a value.::
+* Cause: The `key` of the field differs from the `name` in the saved value. The dialog finds the saved value by name.
+* Fix: Use the same name in the `key` of the field and in the `name` of the value, as `utils/fields.js` does.
+
+[#next-step]
+== Next step
+
+Read the saved values in your Zimlet, and let an administrator give them a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on a saved value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.

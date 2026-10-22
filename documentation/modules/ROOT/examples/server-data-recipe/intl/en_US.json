@@ -1,0 +1,17 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds a Partners tab to the Contacts area, where you keep the email addresses of your partner companies."
+	},
+	"my-zimlet": {
+		"tabTitle": "Partners",
+		"title": "Partners",
+		"intro": "Keep the email addresses of your partner companies in one address book.",
+		"emailPlaceholder": "Email address",
+		"add": "Add partner",
+		"empty": "There are no partners yet. Enter an email address and choose Add partner.",
+		"loadError": "The partners could not be loaded. Reload the page to try again.",
+		"addError": "The partner could not be added. Try again.",
+		"removePartner": "Remove {{email}}"
+	}
+}

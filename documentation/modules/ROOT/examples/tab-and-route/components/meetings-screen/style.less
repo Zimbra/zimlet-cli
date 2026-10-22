@@ -1,0 +1,43 @@
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow-y: auto;
+	background-color: var(--body-bg);
+}
+
+.content {
+	padding: var(--spacing-lg) var(--spacing-xl);
+	color: var(--text-color);
+}
+
+.title {
+	margin: 0 0 var(--spacing-sm);
+	font-size: var(--font-size-h3);
+}
+
+.rooms {
+	margin: var(--spacing-md) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.room {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--spacing-sm) 0;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.roomName {
+	font-size: var(--font-size-med);
+}
+
+.join {
+	color: var(--link-color);
+
+	&:hover {
+		color: var(--link-hover-color);
+	}
+}

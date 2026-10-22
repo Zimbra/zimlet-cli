@@ -1,0 +1,41 @@
+= Platform checks
+
+The xref:reference/glossary.adoc#modern-ui[Modern UI] also runs in the desktop app and in the mobile apps, where some browser features differ or are missing. Check the platform before your Zimlet uses a feature that needs a particular one, and take the code path that works. `getPlatformType()` tells you where your code runs.
+
+[#find-the-platform]
+== Find the platform
+
+Import `getPlatformType` and `PLATFORM_TYPES` from `@zimbra-client/platform`. `getPlatformType()` returns one of these values. Compare the result with the constant and not with the text.
+
+`PLATFORM_TYPES.WEB`::
+A browser. The value is `web`.
+
+`PLATFORM_TYPES.ELECTRON`::
+The desktop app. The value is `electron`.
+
+`PLATFORM_TYPES.ANDROID`::
+The Android app. The value is `android`.
+
+`PLATFORM_TYPES.IOS`::
+The iOS app. The value is `ios`.
+
+[#choose-a-code-path]
+== Choose a code path
+
+The example adds a button that opens the documentation. `openExternalBrowser(url)` from `@zimbra-client/browser` opens an address outside the Modern UI. In the desktop app and in the iOS app it asks the app to open the address in an external browser. Everywhere else it calls `window.open`. The button label tells users outside a browser that the link opens in their browser.
+
+.src/index.js
+[source,js]
+----
+include::example$platform-checks/index.js[]
+----
+
+[#one-platform-only]
+== Register a handler on one platform only
+
+To show a feature on one platform only, check the platform in `init()` and register the handler only when it matches. See xref:fundamentals/factory-and-lifecycle.adoc#register-conditionally[Register and unregister conditionally].
+
+[#next-step]
+== Next step
+
+Learn how your Zimlet reacts to what happens in the Modern UI in xref:go-deeper/app-events.adoc[App events].

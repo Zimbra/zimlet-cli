@@ -1,0 +1,84 @@
+= Deprecated
+
+Do not use these fields in new Zimlets. Each entry names what to use instead, or says that there is no replacement yet. Take a field from the context first, as in `const { cache } = context;`.
+
+[[cache]]pass:[<a class="anchor" href="#cache"></a>]`cache`::
+An object with `get(key)` and `set(key, value)` that keeps values in the browser across a page reload. Do not use it. Zimlets that load from the server share one cache entry, and a value that one Zimlet saves can be lost when another saves. Use `localStorage` with a key that starts with your Zimlet name instead. For values that follow the user, use the `useCustomMetaData` hook. See xref:reference/shims/hooks.adoc[Hooks].
++
+[source,js]
+----
+localStorage.setItem('my-zimlet.count', JSON.stringify(3));
+----
+
+[[shims]]pass:[<a class="anchor" href="#shims"></a>]`shims`::
+An object that holds the shared libraries of the Modern UI. Do not use it. Import the library from its module instead. See xref:fundamentals/shared-libraries.adoc[Shared libraries and imports].
++
+[source,js]
+----
+import { MenuItem } from '@zimbra-client/components';
+----
+
+[[config]]pass:[<a class="anchor" href="#config"></a>]`config`::
+The configuration that the loader gives to a Zimlet. The Modern UI gives none, so it is normally `undefined`. Do not use it. Use the `useClientConfig` hook instead. See xref:reference/shims/hooks.adoc[Hooks].
++
+[source,js]
+----
+const value = useClientConfig('<setting-path>');
+----
+
+[[utils]]pass:[<a class="anchor" href="#utils"></a>]`utils`::
+An object of helper functions of the Modern UI: `htmlToText`, `moment`, `draftForMessage`, `colorForCalendar`, `newAlarm` and `filterNonEditableCalendars`. Do not use it. Import `htmlToText` from `@zimbra-client/util` and `moment` from `moment` instead. No shimmed module exports the other four yet, so they have no replacement today.
++
+[source,js]
+----
+import { htmlToText } from '@zimbra-client/util';
+----
+
+[[resource-url]]pass:[<a class="anchor" href="#resource-url"></a>]`resourceUrl`::
+A string of the form `/service/zimlet/<name>/`. The `<name>` is the name that the Modern UI gives to the context, and it is not always the name of your Zimlet. All Zimlets that load from the server get the same shared name. The path is therefore the same for all of them, and it is not specific to your Zimlet. Do not use it. There is no replacement. See xref:fundamentals/host-context.adoc#shared-name[the shared name].
++
+[source,js]
+----
+const base = zimbraOrigin + resourceUrl;
+----
+
+[[zimbra]]pass:[<a class="anchor" href="#zimbra"></a>]`zimbra`::
+The older API client of the Modern UI. Do not use it. Use xref:reference/context/batch-client.adoc[`zimbraBatchClient`] instead. Its method `checkSession()` takes no arguments and returns a promise for a boolean: `true` when the session check succeeds, `false` when it fails.
++
+[source,js]
+----
+zimbra.checkSession().then(isValid => isValid || showSignInHint());
+----
+
+[[get-account]]pass:[<a class="anchor" href="#get-account"></a>]`getAccount()`::
+Takes no arguments. Returns the signed-in account from the store, or an empty object until the account has loaded. Its members include `name` and `attrs`. Do not use it. In a handler, use the `useAccountInfo` hook instead. See xref:reference/shims/hooks.adoc[Hooks].
++
+[source,js]
+----
+const { name } = getAccount();
+----
+
+[[csrf-token]]pass:[<a class="anchor" href="#csrf-token"></a>]`csrfToken`::
+The CSRF token of the session, as a string, or a falsy value when the Modern UI does not use a token. The Modern UI copies it into the context when the Zimlet loads and does not update that copy. Do not use it. Import `csrfStorage` from `@zimbra-client/util` and call `csrfStorage.get()` each time you send a request. It reads the current token and returns `null` when there is none. Call only `get`. `csrfStorage` also has `set` and `clear`, which belong to the Modern UI. See xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch].
++
+[source,js]
+----
+import { csrfStorage } from '@zimbra-client/util';
+
+const token = csrfStorage.get();
+----
+
+[[batch-client-account-info]]pass:[<a class="anchor" href="#batch-client-account-info"></a>]`zimbraBatchClient.accountInfo()`::
+Takes no arguments. Returns a promise for an object with the account `name`, `attrs` and `zimlets`, and rejects when the request fails. Each call sends a request. Do not use it. In a component, use the `useAccountInfo` hook instead. See xref:reference/shims/hooks.adoc[Hooks]. Outside a component, for example in `init()`, send the `GetInfo` request with xref:reference/context/batch-client/json-request.adoc[`jsonRequest`].
++
+[source,js]
+----
+zimbraBatchClient
+	.jsonRequest({ name: 'GetInfo', namespace: 'urn:zimbraAccount', body: { sections: 'attrs' } })
+	.then(({ name }) => showWelcome(name));
+----
+
+[#next-step]
+== Next step
+
+Return to the xref:reference/context.adoc[Context] to look up another field.

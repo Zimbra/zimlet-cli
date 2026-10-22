@@ -1,0 +1,188 @@
+= Run an app-wide feature
+
+This recipe builds a xref:reference/glossary.adoc#zimlet[Zimlet] that blurs the whole screen of the xref:reference/glossary.adoc#modern-ui[Modern UI] when the user leaves it. The screen stays blurred until the user presses a shortcut. An example is returning to the Modern UI while the whole screen is shared: the messages do not show before the user decides. Use the same pattern for any feature that starts once the app has loaded and belongs to no screen. Examples are a dialog, a banner over the whole page and a listener. The example is a component of the `app` xref:fundamentals/extending-the-ui.adoc[slot] that shows nothing until the screen must be hidden.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Register a component for the `app` slot.
+* Display content conditionally.
+* Listen to events of the Modern UI page.
+* Add a keyboard shortcut.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-slot]
+== Choose the slot
+
+The feature must start when the app has loaded and belong to no screen. The slot `app` does this, so the example uses it.
+
+[#the-slot]
+=== The slot
+
+`slot::app`::
+Rendered once for the whole Modern UI, with no place of its own. A component that you register for it stays active while the user moves between Mail, Calendar, Contacts and Briefcase. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::rightside-zimlet-slot`::
+A panel at the right of the screen. Choose it for a block that stays in view, as xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget] shows.
+
+For a control on a screen, choose the slot of that screen, as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes. For a change to messages with no screen, see xref:build-by-goal/recipe-message-processing.adoc[Transform messages].
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the shortcut and the component. It replaces the generated file.
+** `constants/index.js` holds the shortcut and the name of its command. It replaces the generated file.
+** `hooks/use-away.js` tells the component when the user looks away.
+** `components/privacy-blur/index.js` and `components/privacy-blur/style.less` are the overlay.
+. Merge the texts into `src/intl/en_US.json`. Keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$privacy-blur/intl/en_US.json[]
+----
+
+[#register-the-zimlet]
+== Register the Zimlet
+
+`init()` adds the key binding and registers the handler for the `app` slot. The handler returns the component and gives it `shortcutCommandHandler`, which the component needs to add the handler of the shortcut. The handler also receives `matchesScreenMd`, which says whether the window is at least a medium size. The example does not need it. The factory registers nothing itself, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes.
+
+.index.js
+[source,js]
+----
+include::example$privacy-blur/index.js[]
+----
+
+.constants/index.js
+[source,js]
+----
+include::example$privacy-blur/constants/index.js[]
+----
+
+WARNING: xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[`addBindings`] replaces any binding of the same key, including a shortcut of the Modern UI or of another Zimlet. Check the key with xref:reference/context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.adoc[getCommandsAndSequences] first. The reference of `addBindings` lists the cases where a binding removes a whole sequence.
+
+The binding is `Y`, then `B`, in the `all` context, so it works on every screen. The Modern UI does not use the key `Y` in its own bindings.
+
+[#show-the-overlay]
+== Show the overlay
+
+The component keeps one flag, `hidden`. It sets the flag when the user leaves the Modern UI, which `useAway` reports, and clears it only when the user presses the shortcut. The overlay therefore stays after the user returns. While the flag is `false`, the component returns `null`, so the slot shows nothing and the Modern UI looks as it does without your Zimlet.
+
+When the overlay appears, it takes the focus. Keys that the user presses then do not reach the page below, and a text field that had the focus cannot swallow the shortcut.
+
+.components/privacy-blur/index.js
+[source,js]
+----
+include::example$privacy-blur/components/privacy-blur/index.js[]
+----
+
+.components/privacy-blur/style.less
+[source,less]
+----
+include::example$privacy-blur/components/privacy-blur/style.less[]
+----
+
+The overlay covers the window and blurs what is behind it with `backdrop-filter`. Its colors are tokens, so they follow the theme that the user chose, as xref:go-deeper/styling/shared-styles.adoc#light-dark[Light and dark mode] describes. It stays above the dialogs and menus of the Modern UI because its `z-index` is very high. The Modern UI and your Zimlet share one page, so keep the class name scoped, as xref:go-deeper/styling/write-and-scope-styles.adoc[Write and scope styles] describes. Wrap the component with `withIntl`, as xref:go-deeper/localization.adoc[Localization] describes, so that `Text` finds the texts of your Zimlet.
+
+[#hide-when-away]
+== Detect that the user looks away
+
+A Zimlet runs in a hidden frame inside the page of the Modern UI. In the Zimlet, `window` is that frame, and `window.parent` is the page that the user sees. The events of the page, such as losing the focus, reach `window.parent`.
+
+.hooks/use-away.js
+[source,js]
+----
+include::example$privacy-blur/hooks/use-away.js[]
+----
+
+The hook listens to three things on the page:
+
+`blur` and `focus` of the window::
+The page loses the focus when the user selects another window, such as a meeting. It gets the focus back when the user returns.
+
+`visibilitychange` of the document::
+The page becomes hidden when the user selects another browser tab.
+
+The hook does not trust the `blur` event alone. The focus moves a moment after the event, so the hook waits and then asks `document.hasFocus()`, which says whether the page has the focus now. A click inside the page, such as in the text of a message or in the composer, therefore leaves the screen clear.
+
+The cleanup removes the three listeners when the component goes away. Without it, each load of the Zimlet would add listeners that nobody removes.
+
+[#shortcut]
+== Show the screen with the shortcut
+
+The shortcut needs two parts, a binding from the keys to a command and a handler for the command, as xref:reference/context/keyboard-shortcuts.adoc[Keyboard shortcuts] describes. The component adds the handler with xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers] only while the screen is hidden. Its cleanup removes the same handler with xref:reference/context/keyboard-shortcuts/command-handler/remove-command-handlers.adoc[removeCommandHandlers], which is why the code keeps the objects in a variable. The keys do nothing while the screen is clear. The Modern UI lists a shortcut only while it has a handler. The keys therefore stay out of its list until the screen is hidden.
+
+The example uses a shortcut and not a click to show the screen. The click that brings the window forward could show the screen at once, so a click does not show it. The overlay shows the keys as its second line. If you change the keys in `constants/index.js`, change that text in `intl/en_US.json` too.
+
+The Modern UI ignores shortcuts while the cursor is in a text field or an editable area, such as the composer. That is why the overlay takes the focus when it appears.
+
+[#limits]
+== Know the limits
+
+The overlay changes only what the user sees in the Modern UI window. It does not cover other windows or the rest of the screen, and it does not protect the messages: they stay in the page. Use it to keep a glance from reading the screen, and not as a security control.
+
+The blur starts only when the focus leaves the Modern UI. While you share the Modern UI window and keep the focus in it, nothing blurs. A tab that was hidden for a moment also blurs the screen, so the user presses the shortcut after every return.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Select another browser tab, and then return to the Modern UI tab. The screen is blurred. The overlay shows two lines:
+** *The screen is hidden for privacy.*
+** *Press Y, then B, to show it again.*
++
+Moving the mouse or clicking keeps the screen blurred.
++
+.The Mail view blurred by the Zimlet, with the text of the overlay outlined
+image::privacy-blur-hidden-screen.png["The Mail view of the Modern UI blurred so that nothing can be read. In the middle, the text The screen is hidden for privacy. and the text Press Y, then B, to show it again. are outlined in red."]
++
+The outlined text is the text of your component. The blur is the overlay in front of the Modern UI.
+. Press `Y`, and then `B`. The Modern UI shows normally.
+. Select another application window, such as a terminal, and then select the browser window again. The screen is blurred.
+. Open *New message* and click in the text area of the composer. Leave the tab and return, so that the screen is blurred. Type a few letters. Nothing appears in the composer. Press `Y`, and then `B`. The screen shows, and the composer has none of the letters.
+. Open *Settings*, leave the tab and return. The dialog is blurred with the rest of the screen. Press `Y`, and then `B` to show it.
+
+[#expected-result]
+== Expected result
+
+* The screen blurs when the user leaves the Modern UI for another tab or window, and stays blurred after the user returns.
+* A click or a mouse move does not show the screen. `Y` then `B` shows it.
+* The blur covers dialogs and menus.
+* Keys that the user types while the screen is blurred do not reach the page.
+* Nothing shows on the screen of the Modern UI while the screen is clear.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The screen does not blur when you leave the tab.::
+* Cause: The Zimlet is not running, or the page was not reloaded after you loaded the Zimlet.
+* Fix: Check that the sideloader shows *Running*, and reload the Modern UI page.
+
+Nothing happens when you press `Y` and then `B`.::
+* Cause: The screen is not blurred, because the keys do nothing on a clear screen. Or another Zimlet binds the same keys, or the Zimlet is not running.
+* Fix: Check that the sideloader shows *Running*. Check the keys with xref:reference/context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.adoc[getCommandsAndSequences].
+
+Nothing shows when the text of the overlay should show.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or the component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around the component.
+
+The screen stays blurred after you return to the Modern UI.::
+* Cause: This is the intended behavior. Only the shortcut shows the screen.
+* Fix: Press `Y`, and then `B`.
+
+[#next-step]
+== Next step
+
+Add a menu item that opens a page or runs an action in xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].

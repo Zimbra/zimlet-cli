@@ -1,0 +1,326 @@
+= Deploy a Zimlet
+
+Deploying a packaged xref:reference/glossary.adoc#zimlet[Zimlet] to a Zimbra server takes three steps. Upload the zip file, make the Zimlet available to the right users, and check that the xref:reference/glossary.adoc#modern-ui[Modern UI] loads it. Each step works in the Admin Console and on the command line. It matters when you run the server, and when you hand a Zimlet to the administrator who does. The Admin Console steps come first, followed by the same steps with the xref:reference/glossary.adoc#zmzimletctl[`zmzimletctl`] command.
+
+[#hand-over]
+== Hand over a Zimlet to an administrator
+
+Give the administrator these items, so that they can deploy the Zimlet without reading your source:
+
+* The zip file `pkg/<name>.zip` that xref:run-package-deploy/build-and-package.adoc[Build and package] creates.
+* The Modern UI versions that the zip supports. This is the range that you set with `--zimbraXVersion`. The Modern UI version of the server must fall inside it.
+* The classes of service that should get the Zimlet. For each one, say whether the Zimlet is mandatory, enabled by default or disabled by default.
+* The settings that the Zimlet reads and the value to use for each, if it has a `config_template.xml`. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration].
+* The checks in <<verify,Check that the deployment worked>>, and what each one should show.
+
+[#before-you-start]
+== Before you start
+
+* An Admin Console account that can manage Zimlets, or a shell on the Zimbra server as the `zimbra` user.
+* The zip file of the Zimlet.
+* The Modern UI version of the server, to compare with the range of the zip. See xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version].
+* A test account in the xref:reference/glossary.adoc#cos[class of service] (COS) that should get the Zimlet.
+
+[#deploy-admin-console]
+== Deploy with the Admin Console
+
+. Sign in to the Admin Console.
+. In the left navigation, choose *Configure*, then *Zimlets*.
+. Open the gear menu of the toolbar and choose *Deploy*.
+. In the *Upload and deploy the zimlet or extension* window, choose *Choose file* and select the zip file.
+. Select *Flush zimlet cache*, so that users get the Zimlet. The check box is cleared at first.
+. Choose *Deploy*. The window shows the server that receives the Zimlet and the status of the deployment.
+. When the message *Successfully deployed the zimlet file.* appears, choose *Finish*.
+
+.The deploy window of the Admin Console with a zip file chosen
+image::deploy-admin-console-wizard.png["The Upload and deploy the zimlet or extension window on the Zimlets page of the Admin Console. The file my-zimlet-1.zip is chosen, the Flush zimlet cache check box is selected, and the Deploy button is available."]
+
+.The window after a successful deployment
+image::deploy-admin-console-success.png["The Upload and deploy the zimlet or extension window. A message reads Successfully deployed the zimlet file. The Finish button is available."]
+
+The Zimlets list now shows your Zimlet with its version and the status *Enabled*.
+
+A deployment installs the files of the Zimlet, adds the Zimlet to the server and enables it. It also makes the Zimlet available in the `default` class of service. Other classes of service do not get it until you grant it, as <<make-available,Make the Zimlet available to users>> describes.
+
+[#deploy-command-line]
+== Deploy with the command line
+
+. Copy the zip file to the Zimbra server, for example to `/tmp`.
+. Sign in to the server and switch to the `zimbra` user:
++
+[source,sh]
+----
+su - zimbra
+----
+. Deploy the Zimlet:
++
+[source,sh]
+----
+zmzimletctl deploy /tmp/my-zimlet.zip
+----
++
+The command prints one line for each action it takes:
++
+[source,text]
+----
+2026-10-26 07:01:16,065 [main] INFO : Deploying Zimlet my-zimlet in LDAP.
+2026-10-26 07:01:16,096 [main] INFO : Installing Zimlet my-zimlet on this host.
+2026-10-26 07:01:16,102 [main] INFO : Upgrading Zimlet my-zimlet to 1.0.0
+2026-10-26 07:01:16,117 [main] INFO : Adding Zimlet my-zimlet to COS default
+2026-10-26 07:01:16,129 [main] INFO : Enabling Zimlet my-zimlet
+----
+. Flush the Zimlet cache, so that users get the Zimlet:
++
+[source,sh]
+----
+zmprov flushCache zimlet
+----
+
+The command makes the same changes as the Admin Console. On an installation with several servers, it also deploys to the other servers that serve Zimlets. Add `-l` before `deploy` to deploy only on the server that you are signed in to.
+
+List the Zimlets of the server to check the result:
+
+[source,sh]
+----
+zmzimletctl listZimlets all
+----
+
+The output has three parts. Your Zimlet is in each one. A Zimlet that is disabled on the server shows `(disabled)` after its name in the second part.
+
+[source,text]
+----
+Installed Zimlet files on this host:
+	my-zimlet
+Installed Zimlets in LDAP:
+	my-zimlet
+Available Zimlets in COS:
+  default:
+	my-zimlet
+----
+
+For more commands and options, see the https://zimbra.github.io/documentation/zimbra-10/adminguide.html#_managing_zimlets_from_the_command_line_interface[Managing Zimlets from the command line interface^] section of the Zimbra Administrator Guide.
+
+[#make-available]
+== Make the Zimlet available to users
+
+Each class of service sets a Zimlet to one of three states:
+
+Mandatory::
+The Zimlet is always on. The user does not see it in the Modern UI settings and cannot turn it off.
+
+Enabled::
+The Zimlet is on by default. The user can turn it off in the Modern UI settings.
+
+Disabled::
+The Zimlet is off by default. The user can turn it on in the Modern UI settings.
+
+[#make-available-console]
+=== In the Admin Console
+
+To set the state for a class of service:
+
+. Choose *Configure*, then *Class of Service*, then the class of service.
+. In its list of pages, choose *Zimlets*.
+. For your Zimlet, select *available*, then choose *mandatory*, *disabled* or *enabled*.
+. Choose *Save*.
+
+.The Zimlets page of a class of service
+image::deploy-cos-zimlets.png["The Zimlets page of the default class of service. Each Zimlet is a row with an available check box and the options mandatory, disabled and enabled. The options of a Zimlet that is not available are greyed out."]
+
+To set the state for one account instead, choose *Manage*, then *Accounts*, then open the account. Choose its *Zimlets* page and set the Zimlet in the same way.
+
+To turn a Zimlet off for everyone without removing it, select it in the *Zimlets* list and choose *Toggle Status*. Choose it again to turn the Zimlet on.
+
+[#make-available-command-line]
+=== On the command line
+
+Grant the Zimlet to a class of service, and take it away from another one:
+
+[source,sh]
+----
+zmzimletctl acl my-zimlet <cos-one> grant <cos-two> deny
+----
+
+`grant` makes the Zimlet enabled by default in that class of service. `deny` removes it from the class of service. To make a Zimlet mandatory or disabled by default, or to set it for one account, use the Admin Console.
+
+Flush the class of service cache, so that the Admin Console and the Modern UI show the change. Until you flush it, the server keeps its cached copy of the class of service for up to 15 minutes:
+
+[source,sh]
+----
+zmprov flushCache cos
+----
+
+List the classes of service that have the Zimlet:
+
+[source,sh]
+----
+zmzimletctl listAcls my-zimlet
+----
+
+To turn the Zimlet off or on for everyone, run `zmzimletctl disable my-zimlet` or `zmzimletctl enable my-zimlet`. Then flush the Zimlet cache and reload the Modern UI:
+
+[source,sh]
+----
+zmprov flushCache zimlet
+----
+
+[#user-settings]
+== Let users turn a Zimlet on or off
+
+A user who can manage Zimlets turns an enabled or disabled Zimlet on and off in the Modern UI:
+
+. Sign in to the Modern UI.
+. Click the settings icon (the gear) in the top right, then choose *Settings*.
+. Choose *Add-ons (Zimlets)*.
+. Select or clear the check box of the Zimlet, then choose *Save*.
+. In the message that appears, choose *RELOAD NOW*. The change applies after a reload or the next sign-in.
+
+.The Add-ons (Zimlets) page of the Modern UI settings
+image::deploy-user-settings-addons.png["The Settings window of the Modern UI with Add-ons (Zimlets) chosen. The Available Add-ons list shows three Zimlets, each with a check box, a name and a description. The second Zimlet is cleared. The Save and Cancel buttons are below the list."]
+
+Each Zimlet that is not mandatory appears with its label and description. If the *Add-ons (Zimlets)* page is missing, the *Manage Zimlets* feature is turned off for the user in the Admin Console.
+
+[#configure]
+== Configure the Zimlet
+
+Some Zimlets have settings that an administrator changes after deployment. Change them with `zmzimletctl`. The Zimlet declares the settings, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes.
+
+. Extract the settings template from the zip file:
++
+[source,sh]
+----
+zmzimletctl getConfigTemplate /tmp/my-zimlet.zip > my-zimlet-config.xml
+----
+. Open `my-zimlet-config.xml` and change the text of each `property` that you need. Leave `name` and `version` as they are.
+. Install the settings:
++
+[source,sh]
+----
+zmzimletctl configure my-zimlet-config.xml
+----
++
+The command prints one line:
++
+[source,text]
+----
+2026-10-26 07:26:45,331 [main] INFO : Installing Zimlet config for my-zimlet
+----
+. Flush the Zimlet cache, then reload the Modern UI. Until you flush it, the Modern UI keeps showing the old values.
++
+[source,sh]
+----
+zmprov flushCache zimlet
+----
+
+The command reads the name of the Zimlet from the file, so you can give the file any name. Give each Zimlet its own file. Only the first step needs the zip file. Without it, ask the author for the `config_template.xml` of the Zimlet.
+
+[#flush-cache]
+== Flush the cache after a change
+
+The server keeps cached copies of Zimlets and classes of service, so a change shows only after you flush the cache. Flush it as the steps above do:
+
+* `zmprov flushCache zimlet` after a deployment, an update, enabling or disabling, or a change of the settings.
+* `zmprov flushCache cos` after `zmzimletctl acl`.
+
+Deploying, undeploying, configuring, granting, enabling, disabling and updating a Zimlet need no restart of the mailbox service.
+
+[#how-the-server-loads]
+== How the server loads deployed Zimlets
+
+When a user opens the Modern UI, the browser asks the server for one bundle with the Zimlets of that user. The server adds a Zimlet to the bundle only when all of these are true:
+
+* The Zimlet is available to the class of service or the account of the user.
+* The Zimlet is enabled on the server.
+* The range in its xref:run-package-deploy/build-and-package.adoc#descriptor[descriptor] includes the Modern UI version.
+
+The server leaves out a Zimlet that fails one of these conditions without an error message. The Modern UI then starts every Zimlet of the bundle except the ones that the user turned off. To fix the range, see xref:run-package-deploy/build-and-package.adoc#keep-compatible[Keep the Zimlet compatible after an upgrade].
+
+[#verify]
+== Check that the deployment worked
+
+. In the Admin Console, the *Zimlets* list shows the Zimlet with the version that you packaged and the status *Enabled*. On the command line, `zmzimletctl listZimlets all` lists it in all three parts.
+. The class of service has the Zimlet set to the state that you intended. On the command line, `zmzimletctl listAcls my-zimlet` lists the class of service.
+. Sign in to the Modern UI with a test account of that class of service, and reload the page.
+. Use what the Zimlet adds to the Modern UI. It appears where its xref:fundamentals/extending-the-ui.adoc[slot] is.
+. Open the *Add-ons (Zimlets)* page of the settings. The Zimlet is listed unless it is mandatory.
+. If the Zimlet has settings, the Zimlet shows the values that you installed.
+
+[#update]
+== Update a Zimlet
+
+Deploy the new zip file in the same way as the first one, with the same name. In the Admin Console, select *Flush zimlet cache*. On the command line, run `zmzimletctl deploy` and then `zmprov flushCache zimlet`.
+
+Before you package the update:
+
+. Raise `version` in `package.json`.
+. If you added or changed a setting, raise `version` in `config_template.xml` too.
+
+The server treats each deployment by the version of the zip:
+
+* A different version replaces the files and the descriptor. A Zimlet that an administrator disabled stays disabled. The deployment grants the Zimlet in the `default` class of service again.
+* The same version repairs the files and the descriptor and changes nothing else.
+
+WARNING: The server installs the `config_template.xml` of the new zip only when its `version` is higher than the installed one. It then replaces all settings with the defaults of the new file. Note the current values before you deploy, and set them again with `zmzimletctl configure`.
+
+[#undeploy]
+== Undeploy a Zimlet
+
+In the Admin Console, choose *Configure*, then *Zimlets*. Select the Zimlet, open the gear menu, choose *Undeploy* and confirm with *Yes*.
+
+On the command line, give the name of the Zimlet, not the zip file:
+
+[source,sh]
+----
+zmzimletctl undeploy my-zimlet
+----
+
+The command prints one line for each action it takes, with one `Removing` line for each class of service:
+
+[source,text]
+----
+2026-10-26 07:32:34,372 [main] INFO : Uninstalling Zimlet my-zimlet from LDAP.
+2026-10-26 07:32:34,766 [main] INFO : Removing Zimlet my-zimlet from COS default
+2026-10-26 07:32:34,795 [main] INFO : Removing Zimlet my-zimlet from COS defaultExternal
+2026-10-26 07:32:34,820 [main] INFO : undeploying zimlet my-zimlet
+2026-10-26 07:32:34,821 [main] INFO : zimlet directory my-zimlet is deleted
+----
+
+Undeploying removes the Zimlet from every class of service and deletes its entry on the server, including its settings. A later deployment starts with the defaults of `config_template.xml`.
+
+[#roll-back]
+== Roll back to an earlier version
+
+There is no rollback command. Deploy the zip of the earlier version in the same way as an update, and flush the Zimlet cache. Keep the zip of every release that you hand over.
+
+The server accepts an older version over a newer one. The settings stay as they are, because the earlier zip has a lower `version` in `config_template.xml` than the one installed.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+Users do not see the Zimlet after the deployment.::
+* Cause: The Zimlet fails a condition of <<how-the-server-loads,How the server loads deployed Zimlets>>, the user turned it off, or the cache was not flushed.
+* Fix: Check that the class of service has the Zimlet, that its status is *Enabled*, and that its range includes the Modern UI version. Flush the Zimlet cache, then reload the Modern UI.
+
+The *Add-ons (Zimlets)* page is missing in the Modern UI settings.::
+* Cause: The *Manage Zimlets* feature is turned off for the user.
+* Fix: Turn the feature on for the class of service or the account in the Admin Console.
+
+`zmzimletctl getConfigTemplate` prints `FileNotFoundException: zimlet config not found: config_template.xml`.::
+* Cause: The zip file has no `config_template.xml`, so the Zimlet has no settings to change.
+* Fix: Nothing to configure. If the Zimlet should have settings, ask the author to add the file and package again, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes.
+
+A changed setting in `config_template.xml` does not reach the server after an update.::
+* Cause: The `version` in `config_template.xml` is not higher than the installed one, so the server keeps the installed settings.
+* Fix: Raise `version` in `config_template.xml`, package and deploy again. Then check the values, because the deployment replaces all of them with the new defaults.
+
+The Modern UI still shows the old value after `zmzimletctl configure`.::
+* Cause: The Zimlet cache still holds the old settings.
+* Fix: Run `zmprov flushCache zimlet`, then reload the Modern UI.
+
+The settings of the Zimlet went back to their defaults after an update.::
+* Cause: The `version` in `config_template.xml` of the new zip is higher than the installed one, so the server replaced the settings.
+* Fix: Set the values again with `zmzimletctl configure`, as <<configure,Configure the Zimlet>> describes.
+
+== Next step
+
+If the Zimlet does not load, continue with xref:help-and-migration/troubleshooting.adoc[Troubleshooting].

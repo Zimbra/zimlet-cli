@@ -1,0 +1,20 @@
+= Batch client
+
+The client of the Zimbra API library that the Modern UI uses to send requests to the server. Use it when your Zimlet must read data from the server, or send it a request, and no hook covers the request. Take the field from the context first, as in `const { zimbraBatchClient } = context;`. It has a method for most common requests. The members below are the ones that Zimlets use. `accountInfo()` is deprecated; see xref:reference/context/deprecated.adoc#batch-client-account-info[Deprecated]. For other operations, see xref:reference/shims/hooks.adoc[Hooks].
+
+[#members]
+== Members
+
+[[json-request]]pass:[<a class="anchor" href="#json-request"></a>]xref:reference/context/batch-client/json-request.adoc[`jsonRequest(options)`]::
+Sends any request through the server's SOAP API.
+
+[[origin]]pass:[<a class="anchor" href="#origin"></a>]xref:reference/context/batch-client/origin.adoc[`origin`]::
+The prefix that the client puts in front of every request path.
+
+[[resolve]]pass:[<a class="anchor" href="#resolve"></a>]xref:reference/context/batch-client/resolve.adoc[`resolve(path)`]::
+Builds the full address of a server path.
+
+[#next-step]
+== Next step
+
+Learn how to read and change data on the server in xref:build-by-goal/recipe-server-data.adoc[Manage server data].

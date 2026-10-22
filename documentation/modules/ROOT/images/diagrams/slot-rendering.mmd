@@ -1,0 +1,10 @@
+flowchart TB
+  subgraph zimlet["Your Zimlet"]
+    direction LR
+    A["Registers a handler for a slot"] --> E["Can add or remove it later"]
+  end
+  subgraph screen["Screen of the Modern UI"]
+    direction LR
+    B["Draws the slot"] --> C["Calls each handler"] --> D["Shows the results in order"]
+  end
+  zimlet --> screen

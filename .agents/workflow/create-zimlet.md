@@ -13,12 +13,11 @@ implementation patterns.
    the feature: loading and lifecycle, context and shared libraries, slot behavior and the slot catalog,
    routes and tabs, and the host area and its source. Check the relevant source callsite; never infer a
    slot's contract from its name alone.
-3. Choose a registration pattern from
-   [zimlet-examples.md](../../../zm-modern-zimlets/.agents/reference/zimlet-examples.md) and
-   inspect a real example that uses it.
-4. For a new Zimlet, scaffold from the default template only after applying the fixes in
-   [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md), or copy the closest existing
-   Zimlet. For an existing Zimlet, preserve its repository conventions.
+3. Find a Zimlet to take the example from, following the order in
+   [doc-guide/examples.md](../rules/doc-guide/examples.md#4-examples), and inspect it.
+4. For a new Zimlet, scaffold from the default template (see the
+   [authoring reference](../reference/authoring.md#starting-from-the-default-template)), or copy the
+   closest existing Zimlet. For an existing Zimlet, preserve its repository conventions.
 5. Implement the package and factory using the
    [authoring reference](../reference/authoring.md). Apply the rules for imports, JSX,
    localization, lifecycle, and registration in

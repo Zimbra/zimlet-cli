@@ -1,0 +1,129 @@
+= actions
+
+The action creators of all Zimlets and of the Modern UI, one entry for each namespace. Use it to find an action that the Modern UI or another Zimlet offers, such as `notifications.notify`, and to pass what it returns to `dispatch`. The Modern UI has actions in many namespaces. Zimlets call the ones that show a notification, open a dialog and work with the Settings dialog, which are described below.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.actions
+----
+
+[#type]
+== Type
+
+object. Each key is a namespace, such as `notifications`, and each value is an object of action creators.
+
+[#modern-ui-actions]
+== Actions of the Modern UI
+
+Take an action creator from its namespace, call it, and pass the result to xref:reference/context/store/dispatch.adoc[dispatch]. For example, `const { notify } = store.zimletRedux.actions.notifications;`.
+
+[#notifications]
+=== notifications
+
+Shows a message to the user as a notification that disappears after a few seconds.
+
+[[notify]]pass:[<a class="anchor" href="#notify"></a>]`notify(payload)`::
+Shows a notification. Pass an object with these keys.
++
+[cols="2,2,6",options="header"]
+|===
+|Key |Type |Description
+
+|`message`
+|string or element
+|The text of the notification.
+
+|`failure`
+|boolean
+|Shows the notification as an error.
+
+|`warning`
+|boolean
+|Shows the notification as a warning.
+
+|`action`
+|object
+|Adds a button to the notification. `label` is the text of the button, and `fn` is the function that runs when the user selects it. The notification closes when the user selects the button.
+
+|`duration`
+|number
+|How long the notification stays, in milliseconds. The default is `6000`.
+
+|`position`
+|string
+|Where the notification appears. The default is `top-center`.
+
+|`id`
+|string
+|An identifier for the notification.
+
+|`style`
+|object
+|Style properties for the notification.
+|===
++
+A notification without an `action` closes when the user selects it.
+
+[[clear]]pass:[<a class="anchor" href="#clear"></a>]`clear()`::
+Clears the notification that the Modern UI keeps. A notification that is already on the screen stays until it closes.
+
+[#zimlets]
+=== zimlets
+
+Shows dialogs of Zimlets in the Modern UI, outside the content of the Zimlet, and stores flags for conditional xref:fundamentals/extending-the-ui.adoc[slots].
+
+[[add-modal]]pass:[<a class="anchor" href="#add-modal"></a>]`addModal({ id, modal })`::
+Shows a dialog. `modal` is the element to show, usually a dialog component, and `id` is a name that you choose for it. Adding a dialog with an `id` that is already in use replaces that dialog.
+
+[[remove-modal]]pass:[<a class="anchor" href="#remove-modal"></a>]`removeModal({ id })`::
+Closes a dialog that a Zimlet added. Call it with the `id` that you used in `addModal`. It closes every dialog that Zimlets added, not only the one with that `id`.
+
+[[add-slot]]pass:[<a class="anchor" href="#add-slot"></a>]`addSlot({ id, flag })`::
+Stores a visibility flag under the name of a slot. The Modern UI reads this flag only for the calendar subscription flow.
+
+[[remove-slot]]pass:[<a class="anchor" href="#remove-slot"></a>]`removeSlot({ id })`::
+Removes the flag that you stored with `addSlot`.
+
+[#settings]
+=== settings
+
+Opens and closes the Settings dialog.
+
+[[show]]pass:[<a class="anchor" href="#show"></a>]`show()`::
+Opens the Settings dialog. It opens on the section that was selected last.
+
+[[hide]]pass:[<a class="anchor" href="#hide"></a>]`hide()`::
+Closes the Settings dialog.
+
+[[toggle]]pass:[<a class="anchor" href="#toggle"></a>]`toggle()`::
+Opens the dialog when it is closed and closes it when it is open.
+
+[[set-active-id]]pass:[<a class="anchor" href="#set-active-id"></a>]`setActiveId(id)`::
+Selects the section of the dialog with that `id`. Call it after `show()` to open the dialog on a section.
+
+[#usage-notes]
+== Usage notes
+
+* Read it each time you need it. It is built from the current state of the registry.
+* If a Zimlet and the Modern UI use the same namespace, the Modern UI entry wins.
+* Pass the action that a creator returns to xref:reference/context/store/dispatch.adoc[dispatch].
+* Publish the actions of your own Zimlet with xref:reference/context/store/zimlet-redux/add-actions.adoc[addActions].
+
+[#example]
+== Example
+
+A Zimlet shows a warning notification that stays for ten seconds.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/actions.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to read selectors in xref:reference/context/store/zimlet-redux/selectors.adoc[selectors].

@@ -1,0 +1,15 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Asks before a message goes to external recipients and saves the approved domains when the user logs out."
+	},
+	"my-zimlet": {
+		"externalTitle": "Send to external recipients?",
+		"externalDescription": "This message goes to addresses outside your organization:",
+		"rememberHint": "The Zimlet does not ask again for these domains.",
+		"sendAnyway": "Send anyway",
+		"dontSend": "Don't send",
+		"savingTitle": "Logging out",
+		"savingDescription": "Saving your approved domains."
+	}
+}

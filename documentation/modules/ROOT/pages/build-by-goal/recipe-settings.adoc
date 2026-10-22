@@ -1,0 +1,71 @@
+= Add a settings
+
+The Settings dialog of the xref:reference/glossary.adoc#modern-ui[Modern UI] is where users change options, and a xref:reference/glossary.adoc#zimlet[Zimlet] can add to it. A section or control can save an option of your Zimlet, or a user preference of the Modern UI. Choose the recipe that matches what your Zimlet adds. The shared facts are here: how the dialog lists sections, the keys that a Zimlet registers and how a value is saved. Use a settings control for an option that a user sets once and expects to find with the other settings.
+
+[#choose-a-goal]
+== Choose a goal
+
+xref:build-by-goal/recipe-settings/new-section.adoc[Add a section to the Settings dialog]::
+Choose it when your Zimlet has several options, or options that belong to no built-in page. The section has a name in the list of the dialog and a component of your own.
+
+xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page]::
+Choose it when one control belongs in a page that the Modern UI already has, such as Writing Email. The control sits next to the settings of that page.
+
+[#where-settings-fit]
+== Where a settings section fits
+
+The Settings dialog lists its sections on the left and shows the selected section on the right. It has one *Save* button and one *Cancel* button for all sections. The built-in sections come first, and the sections of Zimlets follow in the order in which the Zimlets register them.
+
+You register a plain object under the `settings` key. The dialog reads every object registered under that key, and reads them again when a Zimlet registers one. Use these keys of the object:
+
+`id`::
+The name of the section. It is also the key of the values that the dialog passes to your component. Use an id that no other section uses.
+
+`title`::
+The name in the list on the left. Give a text, or an element when the name must be localized.
+
+`component`::
+The component that the dialog shows when the user selects the section.
+
+`fields`::
+The values that the section saves. Each field names the kind of value and the name under which the account stores it. It also holds the value to show before the user has saved one.
+
+`afterSave`::
+An optional function that runs when the user chooses *Save*.
+
+See xref:reference/slots.adoc[the slot index] for the `settings` key, and xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for these keys work.
+
+[#fields]
+== Fields
+
+A field has a `type`, a `key` and a `defaultValue`. The type tells the dialog where to read and save the value. Two field types are useful for a Zimlet:
+
+`modifyProperties`::
+Saves a value under a name of your Zimlet with the account. Use it for an option that only your Zimlet reads. The recipes use this type.
+
+`userPref`::
+Reads and saves a user preference of the account, such as `zimbraPrefExample`, the same way the built-in settings do. Use it when your control changes a preference that the Modern UI already has.
+
+The value of a `modifyProperties` field is an object with three keys. `zimlet` holds the name of your Zimlet, `name` holds the name of the setting, and `_content` holds the text. A value is always text, so save a check box as `'true'` or `'false'`. The `defaultValue` is what the dialog shows before the user has saved a value.
+
+The dialog finds a saved `modifyProperties` value by `name` only. Use a setting name that no other Zimlet uses.
+
+See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] for where the saved values live and how your Zimlet reads them. See xref:go-deeper/server-data/metadata.adoc[Mailbox metadata] for state that your code saves without a settings section.
+
+[#what-the-dialog-passes]
+== What the dialog passes
+
+The dialog gives the component of a section two props:
+
+`value`::
+The saved values of the section, by field name. Each value has the shape that its field describes, so a `modifyProperties` field gives the object with `zimlet`, `name` and `_content`.
+
+`onFieldChange`::
+A function that reports a change. Call `onFieldChange('<field name>')` and pass an object with a `target.value` that holds the new value of the field. The dialog replaces the value of that field. When the user chooses *Save*, it saves the fields whose value changed.
+
+A section must report every change through `onFieldChange`. A value that the section keeps only to itself is not saved.
+
+[#next-step]
+== Next step
+
+Build a section of your own in xref:build-by-goal/recipe-settings/new-section.adoc[Add a section to the Settings dialog].

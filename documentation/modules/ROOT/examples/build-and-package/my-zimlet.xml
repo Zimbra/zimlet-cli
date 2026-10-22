@@ -1,0 +1,3 @@
+<zimlet name="my-zimlet" version="1.0.0" description="Shows a reminder in the mail sidebar." label="My Zimlet" zimbraXZimletCompatibleSemVer="^4.0.0">
+	<include>index.js</include>
+</zimlet>

@@ -1,0 +1,156 @@
+= Build and package
+
+You turn your source files into a zip file that an administrator can deploy. `zimlet build` compiles the Zimlet into one JavaScript file, and `zimlet package` adds a descriptor and zips the result. Both commands run on your machine and need no Zimbra server. Do it when your Zimlet is ready to hand over, and again whenever the xref:reference/glossary.adoc#modern-ui[Modern UI] version of your server changes. The version range you set decides whether the server loads your xref:reference/glossary.adoc#zimlet[Zimlet] at all.
+
+[#before-you-start]
+== Before you start
+
+* A Zimlet project with its dependencies installed, as xref:getting-started/quickstart.adoc#create-from-template[Create a Zimlet from the template] describes.
+* A label and a description in `src/intl/en_US.json`. See xref:fundamentals/project-structure.adoc#strings-label[Label and description].
+* The Modern UI version of the server you target. See <<choose-range,Choose the Modern UI versions your Zimlet supports>>.
+
+[#build]
+== Build the Zimlet
+
+. In the Zimlet folder, run:
++
+[source,sh]
+----
+npm run build
+----
+. Wait for the line `Compiled successfully!`.
+
+The script runs `zimlet build`. It compiles and minifies your Zimlet into `build/index.js`. A file that your code imports, such as an image or a font, goes to `build/fonts/`. A part that your code loads on demand goes to `build/scripts/`. The Zimlet code itself stays in `index.js`.
+
+[#build-options]
+=== Options of zimlet build
+
+To pass an option, add it after `--`, for example `npm run build -- --config ./other.config.js`. See xref:reference/cli.adoc#build[zimlet build] for the output and usage notes.
+
+`--config <path>`::
+The path of a custom build configuration file. The default is `./zimlet.config.js`. See xref:go-deeper/advanced.adoc[Advanced topics] for what the file can change.
+
+[#package]
+== Package the Zimlet
+
+. Run the build first, as above.
+. Package the Zimlet:
++
+[source,sh]
+----
+npm run package
+----
+
+The script runs `zimlet package` with the name and version of your `package.json` and the Modern UI range `^4.0.0`. See xref:reference/files/package-json.adoc#package[The `package` script]. The command prints the path of the zip:
+
+[source,text]
+----
+Successfully packaged zimlet to: <your-project-path>/my-zimlet/pkg/my-zimlet.zip
+----
+
+You can also run the command yourself. This example sets the three values that matter most:
+
+[source,sh]
+----
+npx zimlet package --name my-zimlet --pkg-version 1.0.0 --zimbraXVersion '^4.0.0'
+----
+
+[#package-options]
+=== Options of zimlet package
+
+See xref:reference/cli.adoc#package[zimlet package] for the output and usage notes.
+
+`--name <name>` (`-n`, required)::
+The name of the Zimlet. It must be unique on the server, and it becomes the name of the zip file and of the descriptor. Use the name in `package.json`, as the `package` script does with `$npm_package_name`.
+
+`--pkg-version <x.y.z>` (`-v`, required)::
+The version of the Zimlet, for example `1.0.1`. The `package` script passes `$npm_package_version`, so change the `version` in `package.json` before you package a new release.
+
+`--zimbraXVersion <range>`::
+The xref:reference/glossary.adoc#semver-range[semver range] of Modern UI versions that your Zimlet supports. The default is `>=1.0.0`. Put the range in single quotes, because a shell treats characters such as `>` as commands. See <<choose-range,Choose the Modern UI versions your Zimlet supports>>.
+
+`--label <text>` (`-l`) and `--description <text>` (`--desc`)::
+The display name and the description of the Zimlet. They are used only when `src/intl/en_US.json` has no `zimlet.label` and `zimlet.description`, and the command then prints a deprecation warning. Set both in `en_US.json` instead.
+
+`--dest <folder>` (`-d`)::
+The folder for the zip file. The default is `./pkg`. See <<zip-location,Find the zip file>>.
+
+[#descriptor]
+== The descriptor and the properties files
+
+`zimlet package` adds three kinds of file to the build, and then zips all of it.
+
+The descriptor is an XML file named after your Zimlet. It tells the server the name, version, label and description of the Zimlet, and which files to load. It also gives the Modern UI versions that the Zimlet supports. See xref:getting-started/concepts.adoc#build-and-package[How a Zimlet is built and packaged]. For the template Zimlet it reads:
+
+.my-zimlet.xml
+[source,xml]
+----
+include::example$build-and-package/my-zimlet.xml[]
+----
+
+You control these values:
+
+* `name` and `version` come from `--name` and `--pkg-version`.
+* `label` and `description` come from `src/intl/en_US.json`.
+* `zimbraXZimletCompatibleSemVer` comes from `--zimbraXVersion`.
+
+The command lists every other entry of the build folder by itself. A `.js` file becomes an `<include>`, a `.css` file an `<includeCSS>`, and everything else, including the `fonts` and `scripts` folders, a `<resource>`.
+
+The properties files are `my-zimlet.properties` and one `my-zimlet_<locale>.properties` for each other language in `src/intl/`. The Admin Console reads them to show the label and description of your Zimlet in each language. The file for English holds:
+
+[source,properties]
+----
+label = My Zimlet
+description = Shows a reminder in the mail sidebar.
+----
+
+[#zip-location]
+== Find the zip file
+
+The zip is written to `pkg/<name>.zip`. It holds the build folder: `index.js`, the descriptor, the properties files, and any `fonts` or `scripts` folder. To write it elsewhere, add `--dest <folder>` to the `package` script in `package.json`.
+
+[#choose-range]
+== Choose the Modern UI versions your Zimlet supports
+
+The server loads your Zimlet only when the Modern UI version of the user falls inside the range of your descriptor. Set the range to the versions you have tested.
+
+. Find the Modern UI version of your server. Follow xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version].
+. Open `package.json` and change the range in the `package` script, for example from `'^4.0.0'` to `'^4.50.0'`.
+. Run `npm run package` again.
+
+The range `^4.0.0` accepts every 4.x version from 4.0.0 on. The range `^4.50.0` accepts every 4.x version from 4.50.0 on. If you omit the option, the range is `>=1.0.0`, which accepts every version. Always set it, so that the server does not load your Zimlet on a version you have not tested.
+
+[#keep-compatible]
+== Keep the Zimlet compatible after an upgrade
+
+A Zimlet whose range does not include the running Modern UI version is left out without an error message. Users do not see it. After the server is upgraded:
+
+. Read the new Modern UI version, as xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version] describes.
+. If the version is outside your range, load your Zimlet from your machine into the upgraded Modern UI and test it. See xref:run-package-deploy/run-and-debug.adoc[Run and debug].
+. When it works, widen the range, build, package and give the new zip to the administrator. See xref:run-package-deploy/deploy.adoc[Deploy].
+
+[#expected-result]
+== Expected result
+
+* `build/` holds `index.js` and the descriptor `my-zimlet.xml`.
+* `pkg/` holds `my-zimlet.zip`, which contains the same files and the properties files.
+* The descriptor lists the range you set in `zimbraXZimletCompatibleSemVer`.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+`zimlet package` prints `Failed to read <path>/build`.::
+* Cause: The `build` folder does not exist, because you did not run the build.
+* Fix: Run `npm run build`, then package again.
+
+`zimlet package` prints `label and description string are not provided as argument`.::
+* Cause: `src/intl/en_US.json` has no `zimlet.label` or no `zimlet.description`.
+* Fix: Add both. See xref:fundamentals/project-structure.adoc#strings-label[Label and description].
+
+The Zimlet is deployed but users do not see it.::
+* Cause: The range in the descriptor does not include the Modern UI version of the server.
+* Fix: Check the version and the range, as <<choose-range,Choose the Modern UI versions your Zimlet supports>> describes. Then package again and deploy the new zip.
+
+== Next step
+
+Give the zip to the administrator of your server and deploy it. See xref:run-package-deploy/deploy.adoc[Deploy].

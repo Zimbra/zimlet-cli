@@ -1,0 +1,366 @@
+= Manage server data
+
+This recipe builds a xref:reference/glossary.adoc#zimlet[Zimlet] that reads, creates and removes data on the Zimbra server. The example adds a *Partners* tab to the Contacts area. The tab lists the email addresses of your partner companies and lets the user add and remove them. The Zimlet keeps each address as a contact in an address book of its own. Use it when your Zimlet owns a list of records that the xref:reference/glossary.adoc#modern-ui[Modern UI] has no screen or xref:go-deeper/server-data/data-hooks.adoc[data hook] for.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Send read, create and remove requests with `zimbraBatchClient.jsonRequest`.
+* Create the address book on first use.
+* Keep loading, error and data in one hook.
+* Show the list of records.
+* Add a record from a field and remove it from the list.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of the xref:go-deeper/server-data/batch-client.adoc[batch client], which this recipe uses for every request.
+* Knowledge of xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen], which explains the tab and the route that the Partners screen uses.
+
+[#choose-the-requests]
+== Choose the requests
+
+Zimbra offers one request for each step of the list. They all belong to the mail namespace, which `jsonRequest` uses when you leave `namespace` out. Find the name, the namespace, the `body` fields and the response fields of each request in the https://wiki.zimbra.com/wiki/SOAP_API_Reference_Manual[Zimbra SOAP API Reference Manual^]. Choose the manual for your Zimbra version.
+
+[cols="2,3,5",options="header"]
+|===
+|Step |Request |What it does
+
+|Prepare
+|`CreateFolder` with `fie`
+|Creates the address book, or returns it when it exists.
+
+|Read
+|`Search` with `types: 'contact'`
+|Lists the contacts in one folder.
+
+|Add
+|`CreateContact`
+|Adds a contact to a folder.
+
+|Remove
+|`ContactAction` with `op: 'trash'`
+|Moves a contact to the Trash.
+|===
+
+Check first whether a data hook already covers your data. Use `jsonRequest` when none does, as xref:go-deeper/server-data.adoc#when-to-use-which[When to use which method] describes.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the tab and the route in `init()`. It replaces the generated file.
+** `constants.js` holds the end of the screen address and the name of the address book.
+** `api/contacts.js` sends the four requests.
+** `hooks/use-partners.js` loads the list and changes it.
+** `hooks/use-partners-path.js` builds the address of the screen.
+** `components/partners-tab-item/` is the tab and `components/partners-route/` is the route handler.
+** `components/partners-screen/` and `components/partner-row/` are the screen and one row of its list.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$server-data-recipe/intl/en_US.json[]
+----
+
+[#describe-the-folder]
+== Describe the address book
+
+Keep the values that you may change in one file.
+
+.constants.js
+[source,js]
+----
+include::example$server-data-recipe/constants.js[]
+----
+
+The Zimlet keeps its contacts in an address book named *Partners*, so they stay apart from the personal contacts of the user. `ROOT_FOLDER_ID` is the top folder of the mailbox, which holds every folder that the user sees. `PAGE_SIZE` is the most contacts that one search returns. The example does not load more, so a list that can grow past it needs paging.
+
+[#send-the-requests]
+== Send the requests
+
+Put every request in its own function, so that a component never builds a request. Each function takes `zimbraBatchClient`, which comes from the xref:fundamentals/host-context.adoc[context], and returns the promise of `jsonRequest`. The promise resolves with the content of the response and rejects when the server answers with a fault.
+
+.api/contacts.js
+[source,js]
+----
+include::example$server-data-recipe/api/contacts.js[]
+----
+
+[#find-or-create-the-folder]
+=== Find or create the address book
+
+`CreateFolder` creates a folder of the view `contact`. With `fie` set, the server returns the folder when it already exists, instead of answering with an error. One request therefore does both jobs, and the Zimlet needs no check of its own. The response holds the folder in a list, so the function returns `folder[0].id`.
+
+[#read-the-list]
+=== Read the list
+
+`Search` finds the contacts in the folder with the query `inid:<folder id>`. `types: 'contact'` limits the search to contacts. `sortBy: 'nameAsc'` sorts the list by name. The response holds the contacts in the list `cn`. The function defaults `cn` to an empty list, so a folder without contacts gives an empty list.
+
+A contact holds its fields in the object `_attrs`. `toPartner` copies the email address, which is all that the screen shows, and sets a missing one to an empty text.
+
+[#create-a-record]
+=== Create a record
+
+`CreateContact` takes the folder in `l` and the fields as a list of `{ n, _content }` items, where `n` is the name of the field. The example sends one item, the email address.
+
+[#remove-a-record]
+=== Remove a record
+
+`ContactAction` changes a contact without sending its fields. `op: 'trash'` moves the contact to the Trash, so the user can restore a partner that was removed by mistake. Use `op: 'delete'` to delete it for good.
+
+[#load-the-data-in-a-hook]
+== Load and change the data in a hook
+
+One hook holds the state of the list, so the screen only draws it. The hook loads the list when the screen opens, and it exposes `add` and `remove` for the changes.
+
+.hooks/use-partners.js
+[source,js]
+----
+include::example$server-data-recipe/hooks/use-partners.js[]
+----
+
+Three pieces of state describe the list. `loading` starts as `true` and ends with the first load. `error` holds the error of a failed load, and `partners` holds the list. A change reloads the whole list instead of patching the state. The screen then always shows what the server holds, at the cost of one more request.
+
+`add` and `remove` return their promise. The screen that calls `add` needs it to show the error of a failed change and to keep the typed address. A promise that nobody handles is lost, so every caller adds `.catch`.
+
+[#show-the-list]
+== Show the list
+
+The screen draws the heading, the field that adds a partner and the list. It uses `Button`, `Spinner` and `WarningBanner` for the states of the screen, and one row component for each partner.
+
+.components/partners-screen/index.js
+[source,js]
+----
+include::example$server-data-recipe/components/partners-screen/index.js[]
+----
+
+.components/partners-screen/style.less
+[source,less]
+----
+include::example$server-data-recipe/components/partners-screen/style.less[]
+----
+
+The screen decides what to show from the state of the hook. While `loading` is `true`, it shows a `Spinner`. When `error` is set, it shows a `WarningBanner` and turns *Add partner* off, because a change cannot succeed when the list did not load. An empty list shows a sentence that tells the user what to do. The styles use the CSS variables of the Modern UI, as xref:go-deeper/styling.adoc[Styling] describes. `.content` has a maximum width, so the field and the addresses do not stretch across a wide screen.
+
+The screen holds three more pieces of state. `email` is the text in the field. `adding` is `true` while the request runs, so the user cannot send it twice. `addFailed` shows a `WarningBanner` after a failed add. A successful add clears the field, and a failed one keeps it, so the user can try again.
+
+The field and the button sit in a `form`. The user adds a partner with the button or the *Enter* key. `addPartner` calls `preventDefault`, so the browser does not reload the page.
+
+[#button]
+=== The Button component
+
+`Button` draws a button in the style of the Modern UI. It comes from `@zimbra-client/blocks`. Choose it for a text button, such as the main action of a screen.
+
+*Without it:* a plain `<button>` works, but it has none of the styling of the Modern UI.
+
+*With it:* render the action as a `Button`, and set `styleType` and `brand` for the main action.
+
+[source,js]
+----
+<Button type="submit" styleType="primary" brand="primary" disabled={adding}>
+----
+
+The example uses these props:
+
+`styleType`::
+The look of the button. `primary` is the filled button for the main action.
+
+`brand`::
+The colour family. `primary` is the main colour of the Modern UI.
+
+`type`::
+Works as on a `button`. `submit` sends the form, so the button and the *Enter* key do the same. The component sets `button` when you leave it out.
+
+`disabled`::
+Works as on a `button`. The example turns the button off while the list loads, after it failed, while a request runs and while the field is empty.
+
+See xref:reference/shims/blocks/buttons-and-progress.adoc[Buttons and progress] for the rest of the props.
+
+[#warning-banner]
+=== The WarningBanner component
+
+`WarningBanner` draws a block with a warning icon and your content in it. It comes from `@zimbra-client/blocks`. Choose it for a message about a failed request, such as a list that did not load or an address that was not added.
+
+[source,js]
+----
+<WarningBanner size="md">
+	<Text id="my-zimlet.loadError" />
+</WarningBanner>
+----
+
+`size` sets the size of the text and the icon. It defaults to `lg`, and the example uses `md`. `icon` is `true` by default and hides the icon when it is `false`. The children are the message. See xref:reference/shims/blocks/display-and-layout.adoc[Display and layout] for the entry.
+
+[#spinner-link]
+=== The Spinner component
+
+Pass `block` to show the spinner in a block of its own. The xref:build-by-goal/recipe-app-events.adoc#spinner[Spinner section of React to app events] explains the component.
+
+[#row]
+== Show one partner
+
+A row shows the email address of a partner, with a button that removes it. It takes the function from the screen and does not know how the change works.
+
+.components/partner-row/index.js
+[source,js]
+----
+include::example$server-data-recipe/components/partner-row/index.js[]
+----
+
+.components/partner-row/style.less
+[source,less]
+----
+include::example$server-data-recipe/components/partner-row/style.less[]
+----
+
+The row builds `remove` with `useCallback`, because a function written in the JSX would be a new function on every render.
+
+[#action-button]
+=== The ActionButton component
+
+`ActionButton` draws a button with an icon, in the style of the Modern UI. It comes from `@zimbra-client/components`. Choose it for an action on one item, such as remove, where an icon says enough.
+
+*Without it:* an icon inside a plain `<button>` works, but you draw the icon, its size and the hover colour yourself.
+
+*With it:* pass the icon and set `iconOnly`.
+
+[source,js]
+----
+<ActionButton iconOnly icon={Trash2Icon} aria-label={label} title={label} onClick={remove} />
+----
+
+The example uses these props:
+
+`icon`::
+The icon component, here from `lucide-preact`. See xref:fundamentals/shared-libraries.adoc[Shared libraries] for the libraries that a Zimlet can import.
+
+`iconOnly`::
+Shows only the icon.
+
+`title` and `aria-label`::
+`aria-label` names the button for a screen reader, and `title` shows the name as a tooltip. The example puts the email address in the name, so the user knows which row a button belongs to.
+
+`onClick`::
+Runs when the user chooses the button.
+
+The component also has a `loading` prop, which replaces the icon with a spinner while a request runs. See xref:reference/shims/components/menus-and-actions.adoc[Menus and actions] for the rest of the props.
+
+[#add-a-partner]
+== Add a partner from a field
+
+The field holds the address that the user types. The button sends it as a new contact. The request needs nothing else, so the screen needs no dialog. It keeps the text in `email`, and `addPartner` sends it when the form is submitted.
+
+The screen sends the trimmed text and does not check the address. A fault goes to the browser console and shows *The partner could not be added.* above the list.
+
+[#text-input]
+=== The TextInput component
+
+Each field is a `TextInput`. See xref:build-by-goal/recipe-settings/new-section.adoc#text-input[The TextInput component] for what it is and for the props `value` and `onInput`. The example also sets these props:
+
+`type`::
+`email`, for a field that holds an email address.
+
+`placeholderId`::
+The id of the text that the field shows while it is empty, taken from `en_US.json`.
+
+`aria-label`::
+Names the field for a screen reader, because the field has no visible label. The example uses the same text as the placeholder.
+
+`class`::
+Gives the field a class of the screen, so it can fill the space beside the button.
+
+[#remove-a-partner]
+== Remove a partner
+
+The trash button of a row calls `removePartner` of the screen with the `id` of the contact. The request moves the contact to the Trash, so the screen does not ask for a confirmation. The hook reloads the list, and the partner leaves it.
+
+[#register-the-handlers]
+== Register the tab and the route
+
+Register the tab in the slot of the Contacts area, and the screen in `routes`. See xref:build-by-goal/recipe-tab-and-route.adoc#choose-the-slot[Choose the slot] for the slots of the other areas.
+
+.index.js
+[source,js]
+----
+include::example$server-data-recipe/index.js[]
+----
+
+.components/partners-tab-item/index.js
+[source,js]
+----
+include::example$server-data-recipe/components/partners-tab-item/index.js[]
+----
+
+.components/partners-route/index.js
+[source,js]
+----
+include::example$server-data-recipe/components/partners-route/index.js[]
+----
+
+.hooks/use-partners-path.js
+[source,js]
+----
+include::example$server-data-recipe/hooks/use-partners-path.js[]
+----
+
+The tab and the route share one address, which `usePartnersPath` builds from the name of the Contacts area. xref:build-by-goal/recipe-tab-and-route.adoc#read-the-area-name[Read the area name] explains why. The tab uses `MenuItem`, which xref:build-by-goal/recipe-tab-and-route.adoc#menu-item[The MenuItem component] explains.
+
+The route handler needs `zimbraBatchClient`, so `createPartnersRoute` takes it and returns the handler. The Modern UI calls the handler and puts the element that it returns into its router. The router reads the `path` from that element, so give `PartnersScreen` the `path`. Without it, the router fails and navigation stops in every area of the Modern UI. xref:build-by-goal/recipe-tab-and-route.adoc#add-a-route[Add a route] describes the handler.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page.
+. Choose *Contacts*. A *Partners* tab sits beside the default *Contacts* tab. Choose it. The address ends with `/contacts/partners`, and the screen shows the heading *Partners* and the sentence *There are no partners yet.* on a new account.
+. The button *Add partner* is off. Enter `ada@example.com` in the field *Email address*. The button turns on.
+. Choose *Add partner*, or press *Enter*. The field clears, and `ada@example.com` appears in the list. Add a second address the same way.
++
+.The Partners screen with two partners
+image::server-data-recipe-partners-list.png["The Contacts area with the tab Partners, outlined in red and selected. The heading is Partners. The field Email address, the button Add partner and the list of two addresses, each with a trash button, are outlined in red."]
++
+The outlined tab, the field, the button *Add partner* and the list are the parts that your code draws.
+. Choose the trash button of an address. The address leaves the list.
+. Choose the default *Contacts* tab. The list of address books holds *Partners* with the contacts that remain.
+
+[#expected-result]
+== Expected result
+
+* The Contacts area has a *Partners* tab that opens a screen at `/contacts/partners`.
+* The first load creates the address book *Partners*, and later loads reuse it.
+* *Add partner* creates a contact with that email address in the address book, and it appears in the list.
+* The trash button moves the contact to the Trash, and it leaves the list.
+* The contacts are in the address book *Partners* of the Contacts area.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+Navigation stops working in the Modern UI, and the browser console shows an error that mentions `replace`.::
+* Cause: The route handler returned an element without a `path`.
+* Fix: Return the screen with its `path` prop from the handler, as the example does.
+
+The *Partners* tab does not appear.::
+* Cause: The Zimlet is not loaded, or you are not in the Contacts area. A tab shows only in the area that its slot names.
+* Fix: Check that the sideloader shows *Running*, reload the page and open *Contacts*. Check that the key is `slot::contacts-tab-item`.
+
+The screen shows *The partners could not be loaded.*::
+* Cause: A request failed. The browser console shows the error that the server returned, for example when the session ended.
+* Fix: Open the browser console, as xref:run-package-deploy/run-and-debug.adoc#browser-console[Run and debug] describes, and read the error. Reload the page. If the session ended, log in again.
+
+The screen shows *The partner could not be added.* and the address stays in the field.::
+* Cause: The server answered the request with a fault. The browser console shows the fault.
+* Fix: Read the error in the console. Check the request that `createPartner` sends and the name of its field, because the server rejects a name that it does not know.
+
+The list is empty after you add a partner.::
+* Cause: The search finds the contacts in the folder with the id that `CreateFolder` returned. The query or the folder id is wrong, or the contact was created in another folder.
+* Fix: Check that `createPartner` passes `folderId` in `l`, and that `listPartners` searches the same folder.
+
+[#next-step]
+== Next step
+
+Make your Zimlet react when the user sends a message or logs out in xref:build-by-goal/recipe-app-events.adoc[React to app events].

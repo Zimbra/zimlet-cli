@@ -1,0 +1,28 @@
+= Batch client
+
+The batch client sends a request to the Zimbra server for you. Use it when a request has no xref:go-deeper/server-data/data-hooks.adoc[data hook], as xref:go-deeper/server-data.adoc#when-to-use-which[When to use which method] describes. It builds the address, the session and the token for you. You give it the name and the content of the request, and it returns the content of the response. It can combine requests made at the same time into one call to the server.
+
+[#send-a-request]
+== Send a request
+
+Take the client from the xref:fundamentals/host-context.adoc[context] with `const { zimbraBatchClient } = context;`. The example looks up people in the company directory. `name` is the request name without `Request`. `namespace` is `urn:zimbraAccount` for account requests, and `urn:zimbraMail` when you leave it out. `body` holds the content of the request. The promise resolves with the content of the response, here an object with the list `cn`.
+
+.src/index.js
+[source,js]
+----
+include::example$batch-client/index.js[]
+----
+
+NOTE: Find the name, the namespace, the `body` fields and the response fields of every request in the https://wiki.zimbra.com/wiki/SOAP_API_Reference_Manual[Zimbra SOAP API Reference Manual^]. For the type of `options`, the return value and the options of `jsonRequest`, see xref:reference/context/batch-client/json-request.adoc[jsonRequest].
+
+[#errors-and-options]
+== Errors and options
+
+After a request changes data that the Modern UI shows, check that the screen updates, as xref:go-deeper/server-data.adoc#show-a-change[Keep the Modern UI up to date] describes. The promise rejects when the server answers with a fault. Always add `.catch`, as the example does. Set `singleRequest: true` to send a request alone instead of combining it with others.
+
+The xref:build-by-goal/recipe-server-data.adoc[Manage server data] recipe uses the client to read, create and remove records. The client has two more members: `origin` and `resolve(path)`. See the xref:reference/context/batch-client.adoc[Batch client reference] for each.
+
+[#next-step]
+== Next step
+
+Learn how to call an endpoint that is not a Zimbra request in xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch].

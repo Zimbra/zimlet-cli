@@ -1,0 +1,98 @@
+= Shared libraries and imports
+
+A xref:reference/glossary.adoc#zimlet[Zimlet] takes Preact, the components, hooks and helper functions of the xref:reference/glossary.adoc#modern-ui[Modern UI] from the Modern UI itself. It bundles every other package that it imports. Knowing which imports are which keeps the bundle small and keeps the Zimlet on the same Preact as the Modern UI. It also explains three early failures: a package added for nothing, JSX that fails when it runs, and the `Export … was not found` error. Read it before you add a package to a Zimlet, or when an import does not work.
+
+[#how-shims-work]
+== How shims work
+
+A shim is the Modern UI's own copy of a module that it shares with Zimlets. A shared module can be a library, a set of components, hooks or helper functions. When you build, `zimlet build` replaces each import of a shared module with a small stand-in. When the Modern UI loads your Zimlet, the stand-in takes the module from the Modern UI. Your Zimlet then uses the same Preact, components and hooks as the Modern UI, and the bundle holds no copy of them.
+
+Every import ends up in one of two places.
+
+.Where an import ends up
+image::diagrams/shared-libraries.svg["Your code imports a module. If the Modern UI shares it, your code uses the Modern UI's copy in the browser. If it does not, you install the package, and the build copies it into your Zimlet bundle."]
+
+[#what-you-may-import]
+== What you may import
+
+Import a shared module by its name, as you import any package. The Modern UI shares these modules.
+
+Preact and its companions::
+`preact`, `preact/hooks` and `preact/compat`, together with `preact-router`, `preact-router/match`, `preact-render-to-string` and `preact-markup`. Imports of `react` and `react-dom` also resolve to `preact/compat`. Use the router of the Modern UI to move between screens, and do not bring your own.
+
+Other libraries::
+`moment`, `dompurify`, `react-redux`, `redux-actions` and `@zimbra/preact-i18n`, which provides `Text` and `Localizer` for xref:go-deeper/localization.adoc[localization].
+
+Building blocks of the Modern UI::
+`@zimbra-client/blocks` (buttons, icons and other UI kit parts) and `@zimbra-client/components` (components of the Modern UI screens, such as `MenuItem` and `ModalDialog`). Also `@zimbra-client/hooks` (hooks such as `usePreferences`), `@zimbra-client/enhancers`, `@zimbra-client/util`, `@zimbra-client/constants`, `@zimbra-client/errors`, `@zimbra-client/platform`, `@zimbra-client/browser` and `@zimbra-client/pwa-utils`.
+
+A shared module offers only the exports that xref:reference/shims.adoc[Shared modules] lists for it. Check the list before you import a name.
+
+The example puts a button in the xref:fundamentals/extending-the-ui.adoc[slot] `mail-sidebar-footer`, the area at the bottom of the mail sidebar. It shows today's date, and a click switches between a long and a short format. The button uses four shared modules and one package that is not shared.
+
+.src/index.js
+[source,js]
+----
+include::example$shared-libraries/index.js[]
+----
+
+.src/components/today/index.js
+[source,js]
+----
+include::example$shared-libraries/components/today/index.js[]
+----
+
+[#what-gets-bundled]
+== What gets bundled
+
+The build writes your code and every import that is not shared into one file, `build/index.js`. In the example, `lucide-preact` is not shared, so the build copies the calendar icon and the code that draws it into the bundle. The template lists `lucide-preact` in `dependencies`, so it is installed. Each package that you bundle makes the file larger.
+
+The build does not copy a shared module. `preact`, `preact/hooks`, `moment` and `@zimbra-client/blocks` stay out of the bundle, whatever version you installed.
+
+The build copies a package that is not shared only when it is installed. Add it with `npm install`, so that it is in `dependencies`. If it is not installed, the build fails. See xref:reference/files/package-json.adoc#dependencies[Libraries in dependencies].
+
+[#packages-you-must-not-add]
+== Packages you must not add
+
+Do not add a package that the Modern UI already provides to `package.json`, such as `preact`, `react` or `react-dom`. The build ignores the installed copy and uses the one in the Modern UI, so the package adds nothing to the Zimlet. The version that you installed is also not the version that runs, which misleads you when you read its documentation or check its version.
+
+[#jsx-and-createelement]
+== JSX and createElement
+
+The build turns JSX such as `<Today />` into calls of `createElement`, and it does not import that function for you. Add this line to every file that contains JSX:
+
+[source,js]
+----
+import { createElement } from 'preact';
+----
+
+Without the import, the build still succeeds. The handler fails when the slot calls it, with `ReferenceError: createElement is not defined`.
+
+[#icons]
+== Icons
+
+A prop named `icon`, such as the one on `Button` and `MenuItem`, takes an icon component and not a name. Import the component from `lucide-preact` and pass it, as the example does with `+icon={CalendarIcon}+`.
+
+A string such as `icon="calendar"` is not supported. The Modern UI logs `+Icon => received name as string: calendar+` in the browser console.
+
+[#export-not-found]
+== The Export … was not found error
+
+The browser console shows this message when your Zimlet calls an import that the Modern UI does not provide:
+
+[source,text]
+----
+[ZimletCli]: Export <module>.<name> was not found in the <module> instance passed down from ZimbraX.
+----
+
+The build knows the name, but the Modern UI that runs your Zimlet does not have it. The error appears when the code calls the import, not when the Zimlet loads. To fix it:
+
+. Look up the module in xref:reference/shims.adoc[Shared modules] and check that you spelled the name as listed.
+. If the name is listed and the error stays, the Modern UI you test on does not provide it. Check its version in xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version]. Test on a version that provides it, or use another export.
+
+An error such as `+TypeError: ... is not a function+` is different. It means that the module has no export of that name, for example after a typo or because another module owns the name. The build does not report it. Check the name against the same list.
+
+[#next-step]
+== Next step
+
+Learn what the Modern UI hands to your Zimlet in xref:fundamentals/host-context.adoc[The context object].

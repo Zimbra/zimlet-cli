@@ -1,0 +1,16 @@
+.overlay {
+	position: fixed;
+	inset: 0;
+	// Above every element of the Modern UI, so that nothing shows through unblurred.
+	z-index: 2147483647;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	// The backdrop and the text follow the color mode of the Modern UI.
+	background: var(--overlay-bg);
+	color: var(--body-bg);
+	backdrop-filter: blur(24px);
+	text-align: center;
+	outline: none;
+}

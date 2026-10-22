@@ -1,0 +1,163 @@
+= Style library
+
+A Zimlet styles itself with the same library as the Modern UI, the https://www.npmjs.com/package/@zimbra/x-ui[`@zimbra/x-ui`^] package. It holds a large set of named values, such as spacing, fonts, colors and screen sizes. It also holds Less mixins for layout, scrolling, lists, toolbars and popovers. A named value like this is a style token. Tokens make your Zimlet match the Modern UI. They follow its light and dark modes and its brand colors, so no fixed value needs updating later. The sections below cover what a Zimlet needs most often. <<explore,Explore the rest of the library>> shows where to find the rest. Read this when you write the styles of a component, after xref:go-deeper/styling/write-and-scope-styles.adoc[Write and scope styles].
+
+[#use-tokens]
+== Use the tokens in your styles
+
+A token reaches your styles in two ways.
+
+CSS variables::
+Write `var(--spacing-md)` in any `.less` or `.css` file. The Modern UI defines the variables on the page, so you import nothing, and the values follow the color mode of the user.
+
+Less variables::
+Import `refs.less` and write `@spacing-md`. The build turns it into `var(--spacing-md)`, so both ways give the same CSS. The screen sizes are the exception: they are fixed numbers, as <<screen-sizes,Screen size helpers>> explains.
+
+The template lists `@zimbra/x-ui` in `dependencies` (`"@zimbra/x-ui": "^13.1.0"`), so it is installed. For the Less variables and the helpers, import one of these files:
+
+[source,less]
+----
+@import (reference) '~@zimbra/x-ui/refs.less';
+@import (reference) '~@zimbra/x-ui/helpers.less';
+----
+
+`refs.less` gives the variables, and `helpers.less` gives the variables and the helpers, so import only the one you need. The `(reference)` keyword makes the import add no CSS of its own. Without it, `helpers.less` adds its `hide…` classes to your stylesheet.
+
+[WARNING]
+====
+Do not import `index.less` or `css-variables.css`. `index.less` adds the Roboto font files to your build (20 files), which the Modern UI already loads. `css-variables.css` repeats variables that the Modern UI already defines.
+====
+
+[#spacing]
+== Spacing tokens
+
+Spacing tokens are multiples of a base of 8 px. Use them for padding, margins and gaps, so your Zimlet keeps the rhythm of the Modern UI.
+
+`--spacing-xs`:: 4 px
+`--spacing-sm`:: 8 px
+`--spacing-md`:: 16 px
+`--spacing-lg`:: 24 px
+`--spacing-xl`:: 32 px
+
+The corner radius has tokens too, from `--radius-xs` (4 px) to `--radius-xl` (20 px).
+
+.spacing.less
+[source,less]
+----
+include::example$styling/tokens/spacing.less[]
+----
+
+Use a class of any file below as `<div class={style.card}>`, where `style` is the object that the component imports from the file.
+
+[#font-sizes]
+== Font sizes
+
+Font size tokens start from `--font-size-base`, which is 14 px, and the other sizes are derived from it.
+
+`--font-size-small`:: About 12 px.
+`--font-size-med`:: About 16 px.
+`--font-size-large`:: About 18 px.
+`--font-size-secondary`:: 13 px, for secondary text.
+`--font-size-caption`:: 11 px, for captions.
+`--font-size-h1` to `--font-size-h6`:: Heading sizes, from about 36 px down to about 12 px.
+
+.font-sizes.less
+[source,less]
+----
+include::example$styling/tokens/font-sizes.less[]
+----
+
+[#font-styles]
+== Font styles
+
+Font style tokens cover the font family, the heading weight and the line height. By default the Modern UI uses Roboto, which it loads in the weights 100, 300, 400, 500 and 700, each with an italic style. There is no token for a weight other than the heading weight, so write a number such as `500` for medium text.
+
+`--font-family-base`:: The font of body text. `--font-family-sans-serif`, `--font-family-serif` and `--font-family-monospace` give a specific family.
+`--headings-font-family`, `--headings-font-weight`, `--headings-line-height`:: The family, the weight (300) and the line height of headings.
+`--line-height-base`:: The line height of body text, a unitless number of about 1.43.
+
+.font-styles.less
+[source,less]
+----
+include::example$styling/tokens/font-styles.less[]
+----
+
+[#colors]
+== Colors
+
+Color tokens fall into three groups. Prefer the first, because it names the purpose of a color and the Modern UI keeps it in line with the mode and the brand.
+
+Purpose colors::
+`--text-color`, `--body-bg`, `--border-color` and `--link-color`, with others for lists, sidebars and dialogs.
+
+Neutral grays::
+`--gray-darkest`, `--gray-darker`, `--gray-dark`, `--gray`, `--gray-light`, `--gray-lighter` and `--gray-lightest`. They swap in dark mode, so `--gray-darkest` is the darkest gray in light mode and the lightest in dark mode. A `-stable` name, such as `--gray-darkest-stable`, never changes.
+
+Brand palette::
+`--brand-primary-50` to `--brand-primary-900`, and the same range for `--brand-secondary`, `--brand-tertiary`, `--brand-success`, `--brand-info`, `--brand-warning` and `--brand-danger`. The palette is the brand of the Modern UI, so it can differ from one installation to another.
+
+.colors.less
+[source,less]
+----
+include::example$styling/tokens/colors.less[]
+----
+
+[#light-dark]
+== Light and dark mode
+
+Users choose Dark Theme, Light Theme or Device's Theme in the Modern UI. Most purpose colors and the neutral grays hold a light value and a dark value. The Modern UI switches them when the user changes the theme. A Zimlet that writes `var(--text-color)` follows the switch with no extra code and no listener.
+
+A fixed color, such as `#333`, never changes. It can be unreadable on one of the two backgrounds. Use a token for every color that should follow the theme: `--text-color` for text, `--body-bg` or a gray for backgrounds, and `--border-color` for lines.
+
+.theme-colors.less
+[source,less]
+----
+include::example$styling/tokens/theme-colors.less[]
+----
+
+Do not write your own `light-dark()` value to get two colors. In the Modern UI it follows the color scheme of the operating system. It ignores the theme that the user chose, so it can show the wrong color. When no token fits, use the closest token.
+
+[#screen-sizes]
+== Screen size helpers
+
+A CSS variable cannot be used inside a media query, so the screen sizes are Less variables with fixed values. Use them with `@media`:
+
+`@screen-xs`:: 480 px (`@screen-phone`)
+`@screen-sm`:: 769 px (`@screen-tablet`)
+`@screen-md`:: 1025 px (`@screen-desktop`)
+`@screen-lg`:: 1300 px (`@screen-lg-desktop`)
+`@screen-xs-max`, `@screen-sm-max`, `@screen-md-max`:: 768 px, 1024 px and 1299 px, the largest width of each range. Use them as `max-width` so the ranges do not overlap.
+
+`helpers.less` also gives mixins that hide an element on part of the range of screen sizes. Call one inside a rule, as in `.hideXsDown();`.
+
+`.hideBelowXs()`:: Hides the element at 480 px and narrower.
+`.hideXsDown()`:: Hides it at 768 px and narrower.
+`.hideSmDown()` and `.hideMdDown()`:: Hide it at 1024 px and narrower.
+`.hideXsUp()`:: Hides it at 480 px and wider.
+`.hideSmUp()`:: Hides it at 769 px and wider.
+`.hideMdUp()`:: Hides it at 1025 px and wider.
+
+A panel takes the full width on a phone, and a secondary element is hidden there.
+
+.screen-sizes.less
+[source,less]
+----
+include::example$styling/tokens/screen-sizes.less[]
+----
+
+[#explore]
+== Explore the rest of the library
+
+The library holds many more tokens and mixins than the sections above. Browse them in the https://github.com/Zimbra/zm-x-ui[`@zimbra/x-ui` repository on GitHub^], or in `node_modules/@zimbra/x-ui` in your project. The repository shows the latest version, and `node_modules` shows the version that your project uses. These files hold the values and helpers:
+
+`variables.less`:: The Less variables, one for each token, grouped by area: layout sizes, grays, brand colors, borders, forms, headings, icon sizes and spacing.
+`css-variables.css`:: The same tokens as CSS variables, with their light and dark values. Read it for the exact name of a token. Do not import it, as the warning above says.
+`palette.css`:: The brand color scales, such as `--brand-primary-50` to `--brand-primary-900`.
+`helpers.less`:: The mixins. Besides the screen size mixins above, it has layout (`.fit()`, `.fill()`), scrolling (`.scroll()`), list items (`.listItem()`), toolbar sizes (`.toolbarHeight()`) and popovers (`.popover()`).
+
+Use a token from these files in place of a fixed value whenever one fits, so that your Zimlet keeps following the Modern UI.
+
+[#next-step]
+== Next step
+
+Show visible text in the language of the user with xref:go-deeper/localization.adoc[Localization].

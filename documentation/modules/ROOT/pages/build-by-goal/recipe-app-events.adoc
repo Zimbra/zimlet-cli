@@ -1,0 +1,286 @@
+= React to app events
+
+This recipe builds a xref:reference/glossary.adoc#zimlet[Zimlet] that runs code when the user sends a message or logs out. The action waits until the code has finished. The example asks for confirmation before a message goes to an address outside your organization. It saves the domains that the user approved when the user logs out. Use it when your Zimlet must check, delay or stop an action of the xref:reference/glossary.adoc#modern-ui[Modern UI], such as sending a message or logging out.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Listen to `ONBEFORESEND` to stop or continue the send.
+* Listen to `LOGOUT` to finish work before logout.
+* Show a dialog with `addModal` and `removeModal`.
+* Remove a listener.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of the app events and of the two kinds of listener, from xref:go-deeper/app-events.adoc[App events]. The xref:go-deeper/app-events.adoc#sync-or-async[choice between a synchronous and an asynchronous listener] decides how your Zimlet can stop an action.
+
+[#choose-the-events]
+== Choose the events
+
+The recipe uses two events. Each one needs an asynchronous listener, because the Modern UI continues only when the promise of the listener is resolved.
+
+`ONBEFORESEND`::
+The user chooses *Send*. The listener receives `{ message }` and decides whether the send goes on. It resolves to let the message go, and rejects to stop it.
+
+`LOGOUT`::
+The user chooses to log out. The listener receives `null`. It does its work and resolves, and the Modern UI then logs the user out.
+
+An event is the right tool when the Zimlet reacts to something the user does and the action must wait for the answer. If you only need to change what a message shows, use a message processor, as xref:build-by-goal/recipe-message-processing.adoc[Transform messages] shows.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Remove `src/constants/`, because a folder next to the `constants.js` file of the example would clash with it. Keep `src/enhancers/index.js`, which provides `withIntl`.
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` adds the listeners in `init()`. It replaces the generated file.
+** `constants.js` holds the domain of your organization, the metadata keys and the dialog ids.
+** `utils/get-domain.js` reads the domain of an address.
+** `state/approved-domains.js` keeps the approved domains in memory.
+** `api/approved-domains.js` reads and writes the approved domains on the server.
+** `listeners/check-recipients.js` and `listeners/save-on-logout.js` are the two listeners.
+** `components/external-recipients-dialog/` and `components/saving-dialog/` are the two dialogs.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$app-events-recipe/intl/en_US.json[]
+----
+
+[#describe-the-settings]
+== Describe the organization and where to save
+
+Keep the values that you change in one file.
+
+.constants.js
+[source,js]
+----
+include::example$app-events-recipe/constants.js[]
+----
+
+`INTERNAL_DOMAIN` is a placeholder. Replace it with the domain of your organization, or read it from xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. The Zimlet compares the whole domain, so a subdomain counts as external.
+
+The metadata section and key name the place on the server where the Zimlet saves the approved domains. See xref:go-deeper/server-data/metadata.adoc[Mailbox metadata] for the rules for a section name.
+
+[#keep-the-approved-domains]
+== Keep the approved domains
+
+When the user confirms a send, the Zimlet remembers the domains of the recipients and does not ask for them again. The set lives in memory, and a flag tells whether a domain was added since the last save. Only this Zimlet knows that state, which is why an event is the right tool: the Modern UI cannot save it for you at logout.
+
+.state/approved-domains.js
+[source,js]
+----
+include::example$app-events-recipe/state/approved-domains.js[]
+----
+
+.utils/get-domain.js
+[source,js]
+----
+include::example$app-events-recipe/utils/get-domain.js[]
+----
+
+.api/approved-domains.js
+[source,js]
+----
+include::example$app-events-recipe/api/approved-domains.js[]
+----
+
+The two requests read and write one metadata key with `zimbraBatchClient`, as xref:go-deeper/server-data/metadata.adoc#read-and-write[Read and write a section] describes. The Zimlet saves the domains as one comma separated string.
+
+[#ask-before-sending]
+== Ask before a message is sent
+
+The listener of `ONBEFORESEND` collects the addresses in `to`, `cc` and `bcc` that are outside your organization and not yet approved. With none, it resolves at once and the user sees nothing. Otherwise it opens a dialog and returns a promise that the user's answer settles.
+
+.listeners/check-recipients.js
+[source,js]
+----
+include::example$app-events-recipe/listeners/check-recipients.js[]
+----
+
+The send waits while the dialog is open. The two answers end it differently:
+
+* *Send anyway* approves the domains and resolves the promise. The Modern UI sends the message.
+* *Don't send* rejects the promise. The Modern UI does not send the message, and it stays open in the composer. The Modern UI writes the rejection to the browser console and shows nothing to the user, so the dialog is the explanation.
+
+Closing the dialog with the close button also counts as *Don't send*.
+
+[#dialogs-with-addmodal]
+=== Show and close a dialog
+
+A listener has no component of its own, so it shows a dialog with the `addModal` action of the Zimlet state. `addModal({ id, modal })` shows the element that you pass, and `removeModal({ id })` closes it. Both come from `context.store.zimletRedux.actions.zimlets`. A hook such as `useDispatch` works only in a component, so the listener sends the actions with `store.dispatch`. See xref:reference/context/store/zimlet-redux/actions.adoc#add-modal[addModal] and xref:reference/context/store/zimlet-redux/actions.adoc#remove-modal[removeModal] for every detail.
+
+Choose an `id` that is yours, as the example does. Close the dialog before you resolve or reject, so that it never stays open after the action goes on. `removeModal` closes every dialog that Zimlets added, so do not call it while a dialog of another Zimlet must stay open.
+
+[#confirm-modal-dialog]
+=== The ConfirmModalDialog component
+
+`ConfirmModalDialog` is a dialog with a title, a text and two buttons, for a question that the user answers with yes or no. Choose it for a confirmation. For a dialog with content of your own and one main action, use `ModalDialog`, as the next dialog does. See xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback] for the full list of props.
+
+.components/external-recipients-dialog/index.js
+[source,js]
+----
+include::example$app-events-recipe/components/external-recipients-dialog/index.js[]
+----
+
+.components/external-recipients-dialog/style.less
+[source,less]
+----
+include::example$app-events-recipe/components/external-recipients-dialog/style.less[]
+----
+
+The example uses these props:
+
+`title`::
+The heading of the dialog. Pass a `Text` element.
+
+`acceptText` and `rejectText`::
+The ids of the texts for the two buttons. They default to `buttons.yes` and `buttons.no`.
+
+`cancelButton`::
+Shows a third button, *Cancel*, when it is not `false`. It defaults to `true`. The example sets it to `false`, because *Don't send* already stops the message.
+
+`onResult`::
+A function that the dialog calls with `true` for the accept button, `false` for the reject button and `null` for the close button.
+
+The Modern UI draws the dialog outside your Zimlet, so wrap the component with `withIntl`, as xref:go-deeper/localization.adoc[Localization] describes. Without it, `Text` cannot find the texts of your Zimlet.
+
+[#save-on-logout]
+== Save before the user logs out
+
+The listener of `LOGOUT` writes the approved domains to the server, and only when a domain was added in this session. While the request runs, it shows a dialog, so the user sees why logout takes a moment. It resolves when the request ends, and the Modern UI logs the user out.
+
+.listeners/save-on-logout.js
+[source,js]
+----
+include::example$app-events-recipe/listeners/save-on-logout.js[]
+----
+
+The listener never rejects. A failed save goes to the browser console, and the user still logs out. A rejection would keep the user logged in and show no reason. Reject only when stopping the logout is the point of your Zimlet.
+
+The user must log out for the save to run. Closing the browser tab does not emit `LOGOUT`, so the domains approved in that session are lost.
+
+[#modal-dialog]
+=== The ModalDialog component
+
+`ModalDialog` is the frame of a dialog: a header, content and a row of buttons. Choose it when the content is your own and `ConfirmModalDialog` does not fit. The dialog of the example is a notice, so it has no buttons and cannot be closed by the user. See xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback] for the full list of props.
+
+.components/saving-dialog/index.js
+[source,js]
+----
+include::example$app-events-recipe/components/saving-dialog/index.js[]
+----
+
+.components/saving-dialog/style.less
+[source,less]
+----
+include::example$app-events-recipe/components/saving-dialog/style.less[]
+----
+
+The example uses these props:
+
+`title`::
+The heading of the dialog.
+
+`footer`::
+Set to `false` to hide the row of buttons.
+
+`hideClose`::
+Hides the close button in the header.
+
+`disableEscape` and `disableOutsideClick`::
+Stop the *Escape* key and a click outside the dialog from closing it. The Zimlet closes the dialog itself when the save ends.
+
+Do not hide every way to close a dialog unless your code is sure to close it. Here `removeModal` runs in `finally`, so the dialog closes whether the save succeeds or fails.
+
+[#spinner]
+=== The Spinner component
+
+`Spinner` shows an animated indicator that work is in progress. Choose it for a wait of unknown length, next to a text that says what is happening. The example sets no props. Import it from `@zimbra-client/blocks`. See xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback] for its entry.
+
+[#register-the-listeners]
+== Add the listeners
+
+Create the listeners from the context, and add them in `init()` with `zimletEventEmitter.on`. Pass `true` as the third argument, so that the Modern UI waits for the promise.
+
+.index.js
+[source,js]
+----
+include::example$app-events-recipe/index.js[]
+----
+
+The example also reads the saved domains in `init()`. A send before the request ends is treated as unapproved, so the user is asked once more at worst.
+
+The listeners stay until the page reloads. Loading the Zimlet again without a reload, for example in the sideloader, adds a second pair of listeners. The user then sees two dialogs.
+
+[#remove-the-listeners]
+== Remove a listener
+
+The example needs both listeners for the whole session, so it never removes them. Remove a listener when the code that needs it goes away. Call `off` with the same event and the same function that you gave to `on`, which is why `index.js` keeps each listener in a variable.
+
+[source,js]
+----
+zimletEventEmitter.off(ZIMBRA_ZIMLET_EVENTS.ONBEFORESEND, checkRecipients);
+----
+
+`off` throws an error when the event has no listener left, so call it once for each listener. See xref:go-deeper/app-events.adoc#remove-a-listener[Remove a listener] for the rules.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page first if the Zimlet was loaded before.
+. Choose *New message*. Enter `someone@example.net` as the recipient, or any address whose domain is not `INTERNAL_DOMAIN`, and `Test` as the subject. Choose *Send*.
+. The dialog *Send to external recipients?* opens, and the message is not sent.
++
+.The confirmation dialog over the composer
+image::app-events-recipe-external-dialog.png["The composer with the recipient someone and the subject Test. The dialog Send to external recipients? lists the address someone@example.net. The address, the button Send anyway and the button Don't send are outlined in red."]
++
+The outlined address and the buttons *Send anyway* and *Don't send* are the parts of the dialog that your code draws.
+. Choose *Don't send*. The dialog closes and the message stays open in the composer. The browser console shows the error `The user stopped the message.`
+. Choose *Send* again, and then *Send anyway*. The message is sent.
+. Send another message to the same domain. No dialog opens, and the message is sent.
+. Log out. The dialog *Logging out* shows a spinner and the text *Saving your approved domains.* for a moment, and then the Modern UI logs you out. To see the dialog longer, slow the network in the developer tools of your browser before you log out.
++
+.The dialog while the Zimlet saves
+image::app-events-recipe-saving-dialog.png["The Mail view with the dialog Logging out in front of it. The dialog shows a spinner and the text Saving your approved domains. The dialog is outlined in red."]
++
+The outlined dialog is the *Logging out* dialog that your code shows.
+. Log in, load the Zimlet again and send a message to the same domain. No dialog opens, because the domain was saved.
+
+[#expected-result]
+== Expected result
+
+* A message to an unapproved address outside `INTERNAL_DOMAIN` waits for the user's answer.
+* *Send anyway* sends the message and remembers its domains. *Don't send* keeps the message in the composer.
+* A message to your own domain, or to an approved domain, is sent with no dialog.
+* At logout, the Zimlet saves the approved domains if it added any, and the user is then logged out.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+No dialog opens and the message is sent.::
+* Cause: The Zimlet is not running, or the recipient is in `INTERNAL_DOMAIN`. Or the Zimlet approved the domain in this session or an earlier one.
+* Fix: Check that the sideloader shows *Running*. Send to a domain that is not `INTERNAL_DOMAIN` and that you have not approved. Use the `ZIMBRA_ZIMLET_EVENTS` constant, because a misspelled event name adds a listener that the Modern UI never calls and shows no error.
+
+Choosing *Send* does nothing, and no dialog opens.::
+* Cause: A listener threw an error, or an asynchronous listener did not return a promise. The Modern UI then stops the send and writes the error to the browser console.
+* Fix: Open the browser console, as xref:run-package-deploy/run-and-debug.adoc#browser-console[Run and debug] describes, and read the error. Return a promise on every path of the listener.
+
+The user sees two dialogs one after the other.::
+* Cause: The Zimlet was loaded twice without a page reload, so two listeners are active.
+* Fix: Reload the Modern UI page and load the Zimlet once.
+
+The domains are asked for again after the next login.::
+* Cause: The user closed the browser instead of logging out, or the save failed. The browser console shows the error of a failed save.
+* Fix: Log out with the account menu, and read the console if the problem stays.
+
+[#next-step]
+== Next step
+
+Build the Zimlet and package it for your server in xref:run-package-deploy/build-and-package.adoc[Build and package].

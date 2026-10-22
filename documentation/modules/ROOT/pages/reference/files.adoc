@@ -1,0 +1,14 @@
+= Files
+
+Find the page for each file of a xref:reference/glossary.adoc#zimlet[Zimlet]. Each page lists the fields, elements or settings of one file. See xref:fundamentals/project-structure.adoc[Project structure] for where each file belongs in your project.
+
+[#files]
+== Files
+
+[[package-json]]pass:[<a class="anchor" href="#package-json"></a>]xref:reference/files/package-json.adoc[`package.json`]::
+The name, version, entry file, scripts and dependencies of the Zimlet, including the packages that other Zimlets use.
+
+[#next-step]
+== Next step
+
+Learn what each file and folder of the default template is for in xref:fundamentals/project-structure.adoc[Project structure].

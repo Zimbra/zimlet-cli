@@ -17,7 +17,7 @@ Follow these when running `zimlet package`, writing `config_template.xml`, deplo
 ## Bundle content
 
 - Ship the Zimlet as a single `index.js` (plus `index.css`). The server concatenates only the `<include>`d scripts.
-- Load any other asset through `publicPath` URLs: build with `--publicpath "/service/zimlet/<name>/"` when the bundle references assets by URL.
+- Do not rely on `--publicpath "/service/zimlet/<name>/"` to load images or fonts of a deployed Zimlet: the server answers 403 (known issue [KI-47](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md)).
 
 ## `config_template.xml`
 
@@ -30,6 +30,7 @@ Follow these when running `zimlet package`, writing `config_template.xml`, deplo
 
 ### Deploying via CLI
 - Run the CLI as the `zimbra` user: `zmzimletctl -l deploy /path/<name>.zip`, then `zmprov fc zimlet` to flush the Zimlet cache ([§4](../reference/packaging-deployment.md#4-deploying)).
+- After `zmzimletctl enable`, `disable`, `configure` or `deploy`, run `zmprov flushCache zimlet`. After `zmzimletctl acl <zimlet> <cos> grant|deny`, run `zmprov flushCache cos`. No mailbox restart is needed ([§4](../reference/packaging-deployment.md#4-deploying)).
 - For OS packages, add the Zimlet to the repository's package scripts and provide `scripts/postinst.sh` (see [Zimlet monorepos](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md)).
 
 ### Deploying via Admin console

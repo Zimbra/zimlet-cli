@@ -1,0 +1,160 @@
+= Extend the UI with slots
+
+A slot is a named place on a screen of the xref:reference/glossary.adoc#modern-ui[Modern UI] where a xref:reference/glossary.adoc#zimlet[Zimlet] adds content. You register a plugin handler for the slot, and the screen shows what the handler returns. Everything visible that a Zimlet adds to the Modern UI goes through a slot. Read this before you build a feature that appears on a screen, and when a handler shows nothing, shows too much or loses its state.
+
+[#how-slots-work]
+== How slots work
+
+The Modern UI draws slots at fixed places in its screens. Examples are the footer of the mail sidebar and the area above the text of an open message. Each slot has a name. Your Zimlet registers a plugin handler under that name, and the slot calls the handler each time the slot renders.
+
+.How a slot gets its content from the handlers of Zimlets
+image::diagrams/slot-rendering.svg["Your Zimlet registers a handler for a slot and can add or remove it later. When a screen of the Modern UI draws the slot, the slot calls each handler and shows the results in order."]
+
+The slot works like this:
+
+* Any number of Zimlets can register a handler for the same slot. The slot calls the handlers in the order in which they were registered and shows all their results.
+* The slot calls the handlers again every time it renders, not once. Keep a handler fast and free of side effects.
+* The slot renders again when a handler is registered or removed for it, so a handler that you register later appears at once.
+* A slot that no Zimlet fills shows nothing.
+
+[#register-a-handler]
+== Register a handler
+
+Register a handler with `plugins.register` from the xref:fundamentals/host-context.adoc[context], in `init()`. The key is the slot name with the prefix `slot::`. The slot `mail-sidebar-footer` has the key `slot::mail-sidebar-footer`.
+
+The example adds a link to a help desk at the bottom of the mail sidebar. The handler is a function that returns an element, and the slot shows the element.
+
+.src/index.js
+[source,js]
+----
+include::example$slots/register-handler.js[]
+----
+
+Register in `init()`, not in the factory, as xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] explains. Remove a handler with `plugins.unregister` and the same function. For the arguments of each method, see xref:reference/context/plugins/register.adoc[register].
+
+[#handler-return-types]
+== Handler return types
+
+A handler can be a function or any other value. The slot treats each result in one of these ways:
+
+An element::
+A function that returns an element, such as `<p>…</p>`. The slot shows the element.
+
+A component::
+A function that returns a function. The slot renders the returned function as a component and passes it the props of the slot. Use this form when the content needs its own state or hooks.
+
+A plain value::
+A value that is not a function, such as an element or a text. The slot shows it as it is.
+
+Nothing::
+`null` or `false`. The slot shows nothing for this handler. A number is shown as text, so `0` appears on the screen. Write `count > 0 && …` and not `count && …`.
+
+The example registers one handler of each form for the slot above the text of an open message. The component form shows the subject of the message.
+
+.src/index.js
+[source,js]
+----
+include::example$slots/return-types.js[]
+----
+
+An object that is not an element shows nothing. A handler cannot return a promise: the slot does not wait for it and does not show it. Finish asynchronous work first, and register the handler when it is done, as xref:fundamentals/factory-and-lifecycle.adoc#async-setup[Async setup] shows.
+
+[#props-and-payload]
+== Props and payload
+
+The slot gives each handler one object, the payload. It holds the props that the screen passes to the slot. The props differ from slot to slot. They describe what the screen shows, such as the open message. Destructure the props that you need in the parameter of the handler.
+
+Some props are functions that the screen provides. Call them to act on the screen. The slot does not pass the props `name`, `class` and `children`.
+
+The handler shows the subject of the open message. The slot above the text of a message passes the message as `emailData`, and the handler reads `emailData.subject`.
+
+.src/index.js
+[source,js]
+----
+include::example$slots/read-payload.js[]
+----
+
+Keep to these rules:
+
+* Every handler of a slot receives the same payload object, so do not change it.
+* A prop that the slot does not pass is `undefined`. Look up the props of a slot in the xref:reference/slots.adoc[slot index] before you use them.
+* The slot passes the same props to a component that a handler returns.
+
+[#hooks-in-handlers]
+== Hooks in handlers
+
+A Preact hook works only while a component renders. A slot calls a handler as an ordinary function while the slot itself renders. A hook that you call directly in a handler therefore belongs to the slot. The slot has one list of hooks for all its handlers.
+
+WARNING: Hooks in a handler share one hook list with every other handler of the slot. If a handler is added or removed, or a hook runs under a condition, the hooks shift. A handler can then read the state of another one. Call a hook directly in a handler only at the top, with no condition. For anything with state, return a component, as the example does.
+
+The handler shows a notice that the user can dismiss. The handler returns the `Notice` component. The component keeps its own state with `useState`, apart from the other handlers of the slot. See the https://preactjs.com/guide/v10/hooks/[Preact hooks guide^] for the rules of hooks.
+
+.src/index.js
+[source,js]
+----
+include::example$slots/own-state.js[]
+----
+
+[#error-isolation]
+== Error isolation
+
+An error that a handler throws does not stop the other handlers. The Modern UI catches it and puts the error in the results, in place of the content of that handler. The slot then shows the other handlers as usual.
+
+The Modern UI does not log this error and the slot shows nothing for it. If your handler shows nothing, wrap its body in `try` and `catch`. Write the error to the browser console with `console.error`.
+
+The isolation covers only the call of the handler. An error that a component throws while it renders, after the handler returned it, is not caught by the slot. Catch the errors that you expect inside your component.
+
+[#find-a-slot]
+== Find a slot
+
+Find the slot for your feature in the running Modern UI. Add `?zimletSlots=show` to the address, and each slot shows its name. xref:run-package-deploy/run-and-debug.adoc#debug-slots[Show every slot in the page] describes the steps and shows the result. The label gives the name, and the key for your handler is `slot::` followed by that name.
+
+The xref:reference/slots.adoc[slot index] lists every slot and extension point with its props. Look up a name there to see which props the handler receives.
+
+[#slots-and-invoke-plugin]
+== Slots and `invokePlugin` extension points
+
+A slot is one kind of extension point. It shows what the handlers return. The other kind is an `invokePlugin` extension point. The Modern UI code calls the handlers under a key and uses the results itself, for example to change message text. Nothing is drawn for such a key.
+
+You register both kinds in the same way, with `plugins.register`. The difference is the key. A slot key starts with `slot::`. The key of an `invokePlugin` extension point has no prefix, such as `settings` or `messageProcessors:emailProcessor`. The xref:reference/slots.adoc[slot index] lists both kinds.
+
+Your Zimlet can also define a key of its own and collect the answers of other Zimlets with xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin].
+
+[#render-prop-slots]
+== Render-prop slots
+
+Some screens pass a function to the slot instead of letting the slot draw the results. This pattern is called a render prop. The slot calls all handlers, collects their results in a list and gives the list to that function. The screen shows what the function returns. Your handler provides data, and the screen decides how to use it.
+
+The `searchInputPlaceholder` slot is an example. The search box asks it for the word that completes its hint, `Search your <word>`. The slot passes `pathType`, the area that is open, such as `email` or `briefcase`. Your handler returns the word as text, or nothing to keep the default word.
+
+The example makes the search box in the Briefcase read `Search your team documents`. In every other area the handler returns `null`, so the search box keeps its own word.
+
+.src/index.js
+[source,js]
+----
+include::example$slots/render-prop-slot.js[]
+----
+
+Keep to these rules for a render-prop slot:
+
+* The xref:reference/slots.adoc[slot index] marks each render-prop slot. The screen decides what it does with the results, so every slot has its own rules. Check what the screen expects before you choose what to return.
+* The search box uses only the first result that is not empty. Return `null` when you have no value, so that the default stays.
+* The slot has no label with `?zimletSlots=show`. It writes `non-visible ZimletSlot name=<slot-name>` to the browser console instead.
+* A handler that throws still puts an error object in the list, in its place.
+
+[#other-registration-keys]
+== Other registration keys
+
+The `settings` key adds a section to the Settings dialog. You register an object that describes the section, and the Modern UI reads it each time a Zimlet registers or removes a `settings` handler. Follow xref:build-by-goal/recipe-settings.adoc[Add a settings] to build one.
+
+The keys `messageProcessors:<kind>` change the content of a message or a calendar event as the Modern UI prepares it. The handler returns a processor, and the Modern UI applies it. Follow xref:build-by-goal/recipe-message-processing.adoc[Transform messages] to build one.
+
+[#choose-a-slot]
+== Choose a slot
+
+To pick the slot or key for a goal, see xref:build-by-goal.adoc#choose-a-recipe[Choose a recipe].
+
+[#next-step]
+== Next step
+
+Learn which libraries a Zimlet imports from the Modern UI in xref:fundamentals/shared-libraries.adoc[Shared libraries and imports].

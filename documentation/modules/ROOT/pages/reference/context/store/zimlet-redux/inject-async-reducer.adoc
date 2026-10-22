@@ -1,0 +1,56 @@
+= injectAsyncReducer
+
+Adds a Redux reducer under a key of the state tree. Use it when your Zimlet needs state of its own that its handlers share, such as a counter or a selection, and you want to change it with `dispatch` and read it with `getState`.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.injectAsyncReducer(namespace, reducer)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`namespace`
+|string
+|The key of the state tree, so the state is at `state[namespace]`.
+
+|`reducer`
+|function
+|A Redux reducer, `(state, action) => newState`. Give `state` a default value.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Start the namespace with the name of your Zimlet. A reducer of the Modern UI with the same key wins, and yours is ignored.
+* Calling it again with the same namespace replaces your reducer. You cannot remove a reducer.
+* The state is not kept after a page reload.
+
+[#example]
+== Example
+
+A reducer counts the actions that it receives, and the count is read from the state.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/inject-async-reducer.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to publish an action in xref:reference/context/store/zimlet-redux/add-actions.adoc[addActions].

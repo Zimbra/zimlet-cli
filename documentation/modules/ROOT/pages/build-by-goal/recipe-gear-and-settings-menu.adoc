@@ -1,0 +1,181 @@
+= Add menu items to the app
+
+This recipe adds help desk entries to two menus of the xref:reference/glossary.adoc#modern-ui[Modern UI] that users open all the time. The gear icon opens the *Settings and more* menu, and the avatar opens the account menu. The example adds a *Help desk* link and a *Report a problem* action to the first menu, and a *Manage account* link to the second. Use it when users need a page or an action next to the entries that they already know, and not a screen of your own. Each item is a small component that a xref:reference/glossary.adoc#zimlet[Zimlet] registers for a slot of the menu.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Choose the slot for the *Settings and more* menu or the account menu.
+* Add an item that opens a page, and an item that runs code.
+* Build items with `ActionMenuItem`.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-slot]
+== Choose the slot
+
+Users look for an item next to the entries it relates to. The example therefore fills three of the four slots for the *Settings and more* menu and the account menu.
+
+[#the-slots]
+=== The slots
+
+Look up each slot in the xref:reference/slots.adoc[slot index].
+
+`slot::settings-dropdown-item-end`::
+The *Settings and more* menu, in the first group, after *Help*. The example uses it for the *Help desk* link, because users look for it next to *Help*. Choose it for a link or an action that users need as often as *Help*.
+
+`slot::gear-menu`::
+The *Settings and more* menu, in the last group, below *About*. The example uses it for *Report a problem*, because a feedback action belongs with *About*. Choose it for an item such as a feedback form.
+
+`slot::header-menu-item`::
+The account menu, in the last group, above *Logout*. The example uses it for *Manage account*, because the item is about the user's account.
+
+NOTE: The `gear-menu` slot is in the same group as *About*. A Zimlet that replaces *About* through the `about-link` slot also hides the items of `gear-menu`.
+
+[#other-slots]
+=== Other slots
+
+`slot::settings-dropdown-item`::
+The same group as `settings-dropdown-item-end`, above *Settings*. The example does not use it, because no item of the example must come first. Choose it when your item must come before the other entries of the group.
+
+For the menus of a message, see xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the three items. It replaces the generated file.
+** `constants/index.js` holds the addresses and the window size. It replaces the generated file.
+** `components/menu-link/index.js` is the item that opens a page in a new tab.
+** `components/report-problem/index.js` is the item that runs code.
+. Merge the texts into `src/intl/en_US.json`. The labels of the items show these texts.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$help-desk-menu/intl/en_US.json[]
+----
+
+[#add-the-link-item]
+== Add the link item
+
+The `MenuLink` component opens a page of your own in a new tab. It takes the address, an icon and the id of its label, so the example uses it for two menus. The addresses are constants that you replace with the pages of your own help desk. Wrap the component with `withIntl` to load the texts of your Zimlet.
+
+.constants/index.js
+[source,js]
+----
+include::example$help-desk-menu/constants/index.js[]
+----
+
+.components/menu-link/index.js
+[source,js]
+----
+include::example$help-desk-menu/components/menu-link/index.js[]
+----
+
+[#action-menu-item]
+=== The ActionMenuItem component
+
+`ActionMenuItem` draws one entry of an action menu in the style of the Modern UI. It comes from `@zimbra-client/components`. Choose it for every item that you add to a menu such as the two in this recipe.
+
+*Without it:* a plain `<a>` or `<button>` in the slot works, but it has none of the styling of the other items. It looks different from its neighbours.
+
+*With it:* render the label as the child, and set `href` and `isExternal` for a link, or `onClick` for an action.
+
+[source,js]
+----
+<ActionMenuItem href={url} icon={icon} isExternal>
+----
+
+The example uses these props:
+
+`href`::
+The address of a link item.
+
+`isExternal`::
+Opens `href` in a new tab. Set it for every address outside the Modern UI.
+
+`onClick`::
+Runs when the user chooses the item. Use it for an action, as the next section does.
+
+`icon`::
+The icon component, from `lucide-preact`. See xref:fundamentals/shared-libraries.adoc#icons[Icons] for how to pass it. *Manage account* has none, like the built-in items of the account menu.
+
+Look up the rest of the props in xref:reference/shims/components/menus-and-actions.adoc[Menus and actions].
+
+[#add-the-action-item]
+== Add the action item
+
+The `ReportProblem` component opens the problem form in a small window, so that the user keeps the Modern UI in view. A link cannot set the size of the window it opens, which is why this item runs code with `onClick` and calls `window.open`.
+
+.components/report-problem/index.js
+[source,js]
+----
+include::example$help-desk-menu/components/report-problem/index.js[]
+----
+
+[#register-the-items]
+== Register the items
+
+Register one handler for each slot in `init()`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. Each handler is a function that returns an element, and the slot shows it in the menu. The two links share `MenuLink` and differ in their address, icon and label. None of these slots passes xref:fundamentals/extending-the-ui.adoc#props-and-payload[props] to your handler.
+
+Read xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for a slot work.
+
+.index.js
+[source,js]
+----
+include::example$help-desk-menu/index.js[]
+----
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
+. Open the gear menu (*Settings and more*). The *Help desk* item follows *Help*, and *Report a problem* is below *About*.
++
+.The Settings and more menu with the two new items
+image::help-desk-menu-settings-and-more-menu.png["The Settings and more menu is open. The Help desk item, outlined in red, follows Help in the first group. The Report a problem item, outlined in red, is below About in the last group."]
++
+The outlined *Help desk* and *Report a problem* items are yours.
+. Choose *Help desk*. The help desk address opens in a new browser tab, and the menu closes.
+. Open the gear menu again and choose *Report a problem*. The problem form opens in a small window, and the Modern UI stays open.
+. Open the account menu with the avatar in the header. *Manage account* is above *Logout*.
++
+.The account menu with the new link
+image::help-desk-menu-account-menu.png["The account menu is open. The Manage account item, outlined in red, is in the last group above Logout. It has no icon."]
++
+The outlined *Manage account* item is yours.
+. Choose *Manage account*. The account address opens in a new browser tab.
+
+[#expected-result]
+== Expected result
+
+* The *Settings and more* menu has a *Help desk* link after *Help* and a *Report a problem* item below *About*, each with an icon.
+* The account menu has a *Manage account* link above *Logout*.
+* A link opens its address in a new tab. *Report a problem* opens its form in a small window.
+* The menu closes after the user chooses an item.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+An item is not in the menu.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that each key starts with `slot::` and that you register in `init()`. Reload the page and open the menu again.
+
+A link does not open in a new tab.::
+* Cause: The item has no `isExternal`, so the Modern UI treats `href` as one of its own routes.
+* Fix: Add `isExternal` to the `ActionMenuItem` of every link to an address outside the Modern UI.
+
+Two items look highlighted after you move the pointer onto a link item.::
+* Cause: The Modern UI keeps the item that you left highlighted when the pointer enters a link item. The built-in *Help* item does the same, so it is not an error of your Zimlet.
+* Fix: None is needed in your Zimlet.
+
+[#next-step]
+== Next step
+
+Let an administrator set the addresses instead of fixing them in the code, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes. To add an item to the menus of a message, read xref:build-by-goal.adoc#choose-a-slot[Choose a slot] and open the recipe for mail.

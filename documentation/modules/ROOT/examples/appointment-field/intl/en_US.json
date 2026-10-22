@@ -1,0 +1,12 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds a meeting link to the location of an appointment."
+	},
+	"my-zimlet": {
+		"meetingLink": {
+			"add": "Add meeting link",
+			"remove": "Remove meeting link"
+		}
+	}
+}

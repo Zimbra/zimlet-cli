@@ -1,0 +1,51 @@
+= Shared state with Redux
+
+Add state of your own to the Redux store of the xref:reference/glossary.adoc#modern-ui[Modern UI] when handlers must share a value. An example is a toggle that one component sets and another reads. Your Zimlet adds a section to the state with a reducer. It changes the section with actions and reads it in components. The state lives only until the page reloads. See the https://redux.js.org/introduction/getting-started[Redux documentation^] if Redux is new to you.
+
+[#add-state]
+== Add your state
+
+Follow these steps, in this order:
+
+. Create an action with `createAction` from `redux-actions`. The Modern UI shares that package with your Zimlet.
+. Write a reducer with `handleActions`. Give it an initial state.
+. In `init()`, call `store.zimletRedux.injectAsyncReducer(namespace, reducer)`.
+. In a component, read the state with `useSelector` and send an action with `useDispatch`, both from `react-redux`.
+
+The Zimlet below adds a *Focus mode* checkbox to the sidebar footer. While the mode is on, it adds a message to the end of the folder list. The two handlers share one value.
+
+.index.js
+[source,js]
+----
+include::example$redux/index.js[]
+----
+
+.store/actions.js
+[source,js]
+----
+include::example$redux/store/actions.js[]
+----
+
+.store/reducer.js
+[source,js]
+----
+include::example$redux/store/reducer.js[]
+----
+
+[#rules]
+== Rules for your state
+
+* Start the namespace with the name of your Zimlet. A key of the Modern UI with the same name wins, and your reducer is ignored.
+* Read your state with optional chaining, as the example does. The key does not exist until `init()` has added the reducer.
+* The state is not kept after a page reload.
+* You cannot remove a reducer. Calling `injectAsyncReducer` again with the same namespace replaces it.
+
+[#more]
+== Share state with other Zimlets
+
+To let other Zimlets use your actions and selectors, publish them. See xref:reference/context/store/zimlet-redux.adoc[Zimlet state] for `addActions`, `addSelectors` and the members that read what others published.
+
+[#next-step]
+== Next step
+
+Run a feature only on the platform that supports it in xref:go-deeper/platform-checks.adoc[Platform checks].
