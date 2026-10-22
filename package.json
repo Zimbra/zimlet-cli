@@ -72,7 +72,7 @@
     "postcss": "^8.4.39",
     "postcss-discard-comments": "^6.0.1",
     "postcss-loader": "^8.2.0",
-    "postcss-preset-env": "^9.3.0",
+    "postcss-preset-env": "^11.6.1",
     "progress-bar-webpack-plugin": "^2.1.0",
     "validate-npm-package-name": "^5.0.0",
     "webpack": "^5.99.9",
