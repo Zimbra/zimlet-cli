@@ -42,7 +42,7 @@ Working examples: the live Zimlets in [zm-modern-zimlets](../../../zm-modern-zim
 
 | File | Purpose |
 |---|---|
-| `package.json` | Scripts `build`, `watch`/`start`, `package`, `lint`, `security:audit`; `main`/`module` as above. |
+| `package.json` | Scripts `build`, `watch`/`start`, `package`, `lint`; `main`/`module` as above. |
 | `src/index.js` | Factory registering `slot::email-tab-item` (a Mail tab menu item) and `slot::routes` (a route at `/<email slug>/<name>`). |
 | `src/components/app/` | The routed component (`App`) and its `style.less` (CSS Modules). |
 | `src/enhancers.js`, `src/intl/en_US.json` | `withIntl()` wrapper and the English strings (namespace = zimlet name). |
