@@ -42,7 +42,8 @@ mockery.registerMock('@zimbra-client/util', {
 	debounce: 1,
 	getContext: 1,
 	branch: 1,
-	withProps: 1
+	withProps: 1,
+	getCspNonce: 1
 });
 
 mockery.registerMock('@zimbra-client/pwa-utils', {
