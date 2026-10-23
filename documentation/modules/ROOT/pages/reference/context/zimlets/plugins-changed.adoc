@@ -1,0 +1,41 @@
+= plugins::changed
+
+A handler was added or removed. Listen to it when your Zimlet must react to a change in the registrations, for example to check xref:reference/context/zimlets/is-slot-active.adoc[isSlotActive] again after another Zimlet registered or removed a handler.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.on('plugins::changed', handler)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`handler`
+|function
+|Called with the key that changed.
+
+|===
+
+[#event-data]
+== Event data
+
+A string, the key, such as `slot::message-body-top`.
+
+[#usage-notes]
+== Usage notes
+
+* It is emitted once for each `register`, `unregister` or `unregisterAll` call and for each key that changed.
+* The listener runs before the call that caused it returns.
+* A listener sees the changes of your own Zimlet too.
+
+[#next-step]
+== Next step
+
+Learn how to send events of your own in xref:reference/context/zimlets/custom-events.adoc[Custom events].

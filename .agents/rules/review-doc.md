@@ -37,7 +37,7 @@ Each topic has its own rule file in [doc-guide/](./doc-guide/). Read each file n
 |---|---|---|
 | [write-doc.md](./write-doc.md) | 2 | Writing, terms, scope, links, the next-step link, and no secrets, private names or estimates. The page matches its entry (sections and brief) in [zimlet-documentation-plan.md](../plans/zimlet-documentation-plan.md) and the purpose of its part (section 2, "Match the page to its part"). |
 | [doc-guide/types.md](./doc-guide/types.md) | 3 | Page contents match its type. |
-| [doc-guide/examples.md](./doc-guide/examples.md) | 4 | Examples are files in `examples/`, original, minimal, and disclose any simplification. |
+| [doc-guide/examples.md](./doc-guide/examples.md) | 4 | Examples are files in `examples/`, original, minimal, use constant labels with a localization comment for visible text, and disclose any other simplification. |
 | [doc-guide/media.md](./doc-guide/media.md) | 5 | Diagrams and images follow the layout, size and alt text rules, and are readable in the rendered page. |
 | [doc-guide/accessibility.md](./doc-guide/accessibility.md) | 6 | The page meets the accessibility rules. |
 | [doc-guide/style.md](./doc-guide/style.md) | 9 | The page follows the style rules. |

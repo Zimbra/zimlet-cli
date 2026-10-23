@@ -1,0 +1,41 @@
+= addCommandHandlers
+
+Adds functions that run when a command is triggered. Use it to give a command a behaviour, such as opening a dialog of your Zimlet when the user presses its key. Use it together with xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[addBindings], which binds the key to the command.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+shortcutCommandHandler.addCommandHandlers(commandHandlers)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`commandHandlers`
+|array of objects
+|Each object has `context` (string), `command` (string) and `handler` (function). The handler is called with `{ e, context, command }`, where `e` is the key event.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Handlers of a specific context run first. Handlers of the `all` context run only when none of the others ran.
+* Keep the objects in a variable if you want to remove them later with xref:reference/context/keyboard-shortcuts/command-handler/remove-command-handlers.adoc[removeCommandHandlers].
+* A command that no binding points to never runs.
+
+[#next-step]
+== Next step
+
+Learn how to remove them in xref:reference/context/keyboard-shortcuts/command-handler/remove-command-handlers.adoc[removeCommandHandlers].

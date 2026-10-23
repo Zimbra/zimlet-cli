@@ -2,7 +2,7 @@
 
 Practical guidance for writing a Zimlet that runs in `zm-x-web`. It links to the focused files for each topic instead of repeating them. The index of all files is in the root [AGENTS.md](../../AGENTS.md#topic-to-file-map). Follow the [creation workflow](../workflow/create-zimlet.md) for the task sequence and the [authoring rules](../rules/authoring.md) for requirements; this file holds supporting information and examples.
 
-Working examples: the live Zimlets in [zm-modern-zimlets](../../../zm-modern-zimlets/zimlets/) (`zimlets/*`) and [zm-cloudsuite-zimlets](../../../zm-cloudsuite-zimlets/packages/) (`packages/*`). Read their code when this file and the linked references do not answer a question. Layout and workflows: [zimlet-repositories.md](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md).
+Working examples: the [default template](#starting-from-the-default-template) and the live Zimlets in [zm-modern-zimlets](../../../zm-modern-zimlets/zimlets/) (`zimlets/*`) and [zm-cloudsuite-zimlets](../../../zm-cloudsuite-zimlets/packages/) (`packages/*`). Read their code when this file and the linked references do not answer a question. Which to look at first: [doc-guide/examples.md](../rules/doc-guide/examples.md#4-examples). Layout and workflows: [zimlet-repositories.md](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md).
 
 ## 1. Minimum package
 
@@ -15,12 +15,12 @@ Working examples: the live Zimlets in [zm-modern-zimlets](../../../zm-modern-zim
   scripts/postinst.sh  # only for repos that ship OS packages
 ```
 
-`package.json` essentials (real example: [zimbra-zimlet-personal-notes](../../../zm-modern-zimlets/zimlets/zimbra-zimlet-personal-notes/package.json)):
+`package.json` essentials, which is all that `zimlet build`, `watch` and `package` need:
 
 ```json
 {
   "private": true,
-  "name": "zimbra-zimlet-<feature>",
+  "name": "<zimlet-name>",
   "version": "1.0.0",
   "main": "build/index.js",
   "module": "src/index.js",
@@ -28,29 +28,32 @@ Working examples: the live Zimlets in [zm-modern-zimlets](../../../zm-modern-zim
     "build": "zimlet build",
     "watch": "zimlet watch",
     "start": "zimlet watch",
-    "package": "zimlet package --name $npm_package_name --pkg-version $npm_package_version --zimbraXVersion '^4.42.0'"
+    "package": "zimlet package --name \"$npm_package_name\" --pkg-version $npm_package_version --zimbraXVersion '^4.0.0'"
   },
   "devDependencies": { "@zimbra/zimlet-cli": "^19.0.0" }
 }
 ```
 
-`module` is what the CLI uses as the author entry (`module` → `jsnext:main` → `main`). Node 24 is required by every repo. To run a Zimlet in dev mode, use `npm start` (it runs `zimlet watch`, like the `watch` script) and load it with the sideloader; see [development loading](./cli-commands.md#development-loading-no-packaging).
+`module` is what the CLI uses as the author entry (`module` → `jsnext:main` → `main`). Node 24 is required by every repo. To run a Zimlet in dev mode, use `npm start` (it runs `zimlet watch`, like the `watch` script) and load it with the sideloader; see [development loading](./cli-commands.md#development-loading-no-packaging). The default template's `package.json` is the starting point, and the next section lists what it adds. The monorepo Zimlets differ from it; see [zimlet-repositories.md](../../../zm-modern-zimlets/.agents/reference/zimlet-repositories.md).
 
 ### Starting from the default template
 
-[zm-x-zimlet-template-default](../../../zm-x-zimlet-template-default) is the scaffold behind `zimlet create default <dest>` (equivalent: `zimlet create zimbra/zm-x-zimlet-template-default <dest>`). Only its `template/` folder is copied, and every `{{name}}` placeholder in non-media files is replaced with the zimlet name (package name, i18n namespace, route slug).
+[zm-x-zimlet-template-default](../../../zm-x-zimlet-template-default) is the scaffold behind `zimlet create default <dest>` (equivalent: `zimlet create zimbra/zm-x-zimlet-template-default <dest>`). It makes a Zimlet that adds a tab to the Email section, which opens a "Hello World" page. Only its `template/` folder is copied, and every `{{name}}` placeholder (with or without spaces inside the braces) in non-media files is replaced with the zimlet name (package name, i18n namespace, route slug).
+
+> **Until the refreshed template is merged.** The refreshed template is on the branch `PREAPPS-9862` of `zm-x-zimlet-template-default` and is not merged to `master`, so `zimlet create default <name>` still fetches the old 2022 template (CLI `^14.0.0`). Use `zimlet create zimbra/zm-x-zimlet-template-default#PREAPPS-9862 <name>` instead. When you read the sibling checkout, make sure it is on that branch: the refreshed layout has `template/eslint.config.mjs`, the old one has `template/.eslintrc.js`. Remove this note, the matching paragraph in [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md#default-template-zm-x-zimlet-template-default) and claim `UC-P06-02` after the merge.
 
 | File | Purpose |
 |---|---|
-| `package.json` | Scripts `build`, `watch`/`start`, `package`, `lint`; `main`/`module` as above. |
-| `src/index.js` | Factory registering `slot::email-tab-item` (a Mail tab menu item) and `slot::routes` (a route at `/<email slug>/<name>`). |
-| `src/components/app/` | The routed component (`App`) and its `style.less` (CSS Modules). |
-| `src/enhancers.js`, `src/intl/en_US.json` | `withIntl()` wrapper and the English strings (namespace = zimlet name). |
-| `src/constants/index.js` | `SLUG`, used in the route and menu href. |
-| `zimlet.config.js` | Empty webpack hook with examples (see [cli-commands.md](./cli-commands.md#customizing-webpack)). |
-| `.eslintrc.js`, `.editorconfig`, `.circleci/config.yml` | Lint, editor and CI defaults. |
-
-The template was last updated in 2022 and lags the current CLI and host; see [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md#default-template-zm-x-zimlet-template-default) before using it unchanged.
+| `package.json` | Scripts `build`, `watch`/`start`, `package` (with `--zimbraXVersion '^4.0.0'`), `lint` (`eslint src`), `lint:fix` and `prepare` (`husky \|\| true`); a `lint-staged` block; `main`/`module` as above. Dependencies `@zimbra/x-ui` and `lucide-preact`; devDependencies `@zimbra/zimlet-cli`, `@zimbra/eslint-config`, `eslint`, `husky` and `lint-staged`. It has no `engines` field. |
+| `src/index.js` | Factory registering `slot::email-tab-item` (the tab) and `slot::routes` (a route at `/<email slug>/<name>`, the slug read with `useClientConfig`). |
+| `src/components/EmailTabItem/` | The tab: a `MenuItem` with a `lucide-preact` icon that links to the route. |
+| `src/components/app/` | The routed page (`App`) and its `style.less` (CSS Modules, imports `@zimbra/x-ui/helpers.less`). |
+| `src/enhancers/index.js`, `src/intl/en_US.json` | `withIntl()` wrapper (built on `withIntlWrapper`) and the English strings: the `zimlet` label and description, and the `<name>` namespace (`menuItem`, `helloWorld`). |
+| `src/constants/index.js` | `SLUG`, used in the route and the menu href. |
+| `zimlet.config.js` | Webpack hook with commented-out examples (see [cli-commands.md](./cli-commands.md#customizing-webpack)). |
+| `eslint.config.mjs`, `.prettierrc`, `.editorconfig` | ESLint 9 with `@zimbra/eslint-config` (the `preact-i18n/no-unknown-key` rule is off because only `en_US` ships), Prettier (single quotes, width 100) and tab indentation. |
+| `.husky/pre-commit`, `.husky/prepare-commit-msg`, `scripts/git-commit-msg.sh` | Lint the staged files in `src/` and prefix the commit message with the branch name. |
+| `README.md`, `.gitignore` | Project README and ignore list. The template has no CI configuration. |
 
 ## 2. Factory and lifecycle
 
@@ -108,7 +111,7 @@ Icons: `icon` props (for example on `MenuItem`) take a **component** from `lucid
    ```json
    { "<zimlet-name>": { "title": "…" }, "zimlet": { "label": "…", "description": "…" } }
    ```
-2. `src/enhancers.js`:
+2. `src/enhancers.js` (the monorepo Zimlets) or `src/enhancers/index.js` (the default template):
    ```js
    import { withIntlWrapper } from '@zimbra-client/enhancers';
    export const withIntl = () => withIntlWrapper({
@@ -117,7 +120,7 @@ Icons: `icon` props (for example on `MenuItem`) take a **component** from `lucid
    });
    ```
 3. Wrap components with `withIntl()(Component)` and use `<Text id="<zimlet-name>.title" />` from `@zimbra/preact-i18n`.
-   `withIntlWrapper` and `withZimletIntlWrapper` are the same function: the host `shims.js` exports both names under `@zimbra-client/enhancers` (`withZimletIntlWrapper: withIntlWrapper`). The default template uses `withZimletIntlWrapper`; the zimlets in `zm-modern-zimlets` that have an `enhancers.js` use `withIntlWrapper`. Either works.
+   `withIntlWrapper` and `withZimletIntlWrapper` are the same function: the host `shims.js` exports both names under `@zimbra-client/enhancers` (`withZimletIntlWrapper: withIntlWrapper`). The default template and the zimlets in `zm-modern-zimlets` that have an `enhancers.js` use `withIntlWrapper`. Either name works.
 4. Add other locales as `src/intl/<locale>.json`. Translation workflow and locale lists: each repo's `AGENTS.md` and `.agents/translation/config.yml` (uses the sibling [zm-frontend-ai-skills](../../../zm-frontend-ai-skills) repository and its `zimbra-translation` skill).
 
 ## 7. API calling

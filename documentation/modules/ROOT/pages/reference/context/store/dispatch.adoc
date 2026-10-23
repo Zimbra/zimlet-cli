@@ -1,0 +1,41 @@
+= dispatch
+
+Sends an action to the store. The reducers of the Modern UI and of Zimlets then compute the new state. Use it to change state: to run an action of the Modern UI, such as showing a notification, or to update the state that you added with xref:reference/context/store/zimlet-redux/inject-async-reducer.adoc[injectAsyncReducer].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.dispatch(action)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`action`
+|object
+|A plain Redux action. It has a `type` string and can have other properties. Action creators of the Modern UI, such as `notify`, return this kind of object. See xref:reference/context/store/zimlet-redux/actions.adoc[actions].
+
+|===
+
+[#returns]
+== Returns
+
+The action that you dispatched.
+
+[#usage-notes]
+== Usage notes
+
+* This is the standard Redux method.
+* Dispatching an action that no reducer handles changes nothing.
+* To react to the change, see xref:reference/context/store/subscribe.adoc[subscribe].
+
+[#next-step]
+== Next step
+
+Learn how to react to changes in xref:reference/context/store/subscribe.adoc[subscribe].

@@ -1,0 +1,46 @@
+= register
+
+Adds a xref:fundamentals/extending-the-ui.adoc[plugin handler] of your Zimlet under a key. The code that owns the key then calls the handler. This is how a Zimlet extends the Modern UI: register a handler under a slot key to add content to a screen, or under a key of your own that other Zimlets can collect with xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin]. Call it in `init()`, once for each slot or key that your Zimlet uses.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+plugins.register(name, handler)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`name`
+|string
+|The key. A slot key has the form `slot::<slot-name>`, such as `slot::message-body-top`. See xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+
+|`handler`
+|function, or any other value
+|A function is called by the code that owns the key, with the arguments that the owner chooses. For a slot these are the props of the slot. Any other value is used as it is.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Call it in `init()`. The factory also runs for a Zimlet that is disabled for the account, so a registration in the factory takes effect there too. See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle].
+* A slot shows a handler as soon as you register it, also when you register it later.
+* Registering the same function twice adds two handlers.
+* Keep the function in a variable if you want to remove it later with xref:reference/context/plugins/unregister.adoc[unregister].
+
+[#next-step]
+== Next step
+
+Learn how to remove a handler in xref:reference/context/plugins/unregister.adoc[unregister].

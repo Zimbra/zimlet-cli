@@ -1,0 +1,32 @@
+= Zimlet state
+
+Adds your own state, actions and selectors to the store, and reads those of the Modern UI and of other Zimlets. Use it when your Zimlet needs state that its handlers, or other Zimlets, share. Take it from the store first, as in `const { zimletRedux } = context.store;`. Your reducer keeps the state, your actions change it, and your selectors read it. Other code can then use them through `zimletRedux.actions` and `zimletRedux.selectors`.
+
+[#members]
+== Members
+
+xref:reference/context/store/zimlet-redux/inject-async-reducer.adoc[`injectAsyncReducer(namespace, reducer)`]::
+Adds a reducer under a key of the state.
+
+xref:reference/context/store/zimlet-redux/add-actions.adoc[`addActions(namespace, actions)`]::
+Publishes your action creators.
+
+xref:reference/context/store/zimlet-redux/remove-actions.adoc[`removeActions(namespace)`]::
+Removes the action creators that you published.
+
+xref:reference/context/store/zimlet-redux/add-selectors.adoc[`addSelectors(namespace, selectors)`]::
+Publishes your selectors.
+
+xref:reference/context/store/zimlet-redux/remove-selectors.adoc[`removeSelectors(namespace)`]::
+Removes the selectors that you published.
+
+xref:reference/context/store/zimlet-redux/actions.adoc[`actions`]::
+The action creators of all Zimlets and of the Modern UI.
+
+xref:reference/context/store/zimlet-redux/selectors.adoc[`selectors`]::
+The selectors of all Zimlets and of the Modern UI.
+
+[#next-step]
+== Next step
+
+Learn how to share state between your handlers in xref:go-deeper/data-and-state.adoc[Data and state].

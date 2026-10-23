@@ -1,0 +1,41 @@
+= isSlotActive
+
+Tells whether at least one handler is registered under a key. Use it to decide whether to add your own handler, for example to add default content only when no other Zimlet has filled the slot. Check after xref:reference/context/zimlets/zimlets-initialized.adoc[zimlets-initialized], because other Zimlets may register later.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.isSlotActive(slot)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`slot`
+|string
+|The full key, such as `slot::message-body-top`.
+
+|===
+
+[#returns]
+== Returns
+
+`true` when at least one handler is registered under the key, and `false` otherwise.
+
+[#usage-notes]
+== Usage notes
+
+* A handler that was removed with `unregister` no longer counts.
+* Use it to avoid doubling up. For example, add default content only when no other Zimlet has already filled the slot.
+* Other Zimlets may register later. Check after xref:reference/context/zimlets/zimlets-initialized.adoc[zimlets-initialized], when the Zimlets have loaded.
+
+[#next-step]
+== Next step
+
+Return to the xref:reference/context/zimlets.adoc[Zimlet manager] to look up another member.

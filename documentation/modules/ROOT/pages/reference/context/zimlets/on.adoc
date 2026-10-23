@@ -1,0 +1,46 @@
+= on
+
+Starts listening for an event of the manager, or for an event of a Zimlet. Use it to run code when something happens in the Modern UI or in another Zimlet, such as the Zimlets having finished loading, a handler being added, or a custom event. Add the listener in `init()`, so that it exists before the event is sent.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.on(event, handler)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`event`
+|string
+|The name of the event, or `'*'` to listen to every event.
+
+|`handler`
+|function
+|Called with the event data. A `'*'` handler is called with `(event, data)`.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Handlers run at once, in the code that emits the event, in the order in which they were added.
+* An error that a handler throws is not caught. It stops the handlers after it and reaches the code that emitted the event, such as the `plugins.register` call that caused `plugins::changed`. Catch the errors that you expect.
+* Keep the function in a variable if you want to remove it with xref:reference/context/zimlets/off.adoc[off].
+* The manager emits `init` before the first Zimlet runs, so a Zimlet never receives it.
+
+[#next-step]
+== Next step
+
+Learn how to stop listening in xref:reference/context/zimlets/off.adoc[off].

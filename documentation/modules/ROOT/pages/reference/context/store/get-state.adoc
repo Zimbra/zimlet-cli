@@ -1,0 +1,33 @@
+= getState
+
+Returns the current state tree of the Modern UI. Use it when your Zimlet needs data that the Modern UI already holds, such as the account, so that you do not request it again. To learn when the state changes, use xref:reference/context/store/subscribe.adoc[subscribe].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.getState()
+----
+
+[#parameters]
+== Parameters
+
+None.
+
+[#returns]
+== Returns
+
+An object, the whole state tree. Treat it as read only.
+
+[#usage-notes]
+== Usage notes
+
+* This is the standard Redux method.
+* The Modern UI owns the shape of the state. Read only the part that you need, such as `email.account`, and check that it exists, because `email.account` is `undefined` until the account has loaded.
+* State that you add with xref:reference/context/store/zimlet-redux/inject-async-reducer.adoc[injectAsyncReducer] is part of the same tree.
+
+[#next-step]
+== Next step
+
+Learn how to change the state in xref:reference/context/store/dispatch.adoc[dispatch].

@@ -1,0 +1,44 @@
+= addSelectors
+
+Publishes your selectors, so that other code can use them through `selectors`. Use it when other Zimlets, or other parts of your Zimlet, should read your state without knowing how it is laid out.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.addSelectors(namespace, selectors)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`namespace`
+|string
+|The name under which the selectors are published, such as `myZimlet`.
+
+|`selectors`
+|object
+|An object of selectors. Each value is a function that takes the state and returns a value.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Calling it again with the same namespace replaces the earlier selectors.
+* If the Modern UI has selectors under the same namespace, its selectors are the ones that `selectors` returns.
+
+[#next-step]
+== Next step
+
+Learn how to remove them in xref:reference/context/store/zimlet-redux/remove-selectors.adoc[removeSelectors].

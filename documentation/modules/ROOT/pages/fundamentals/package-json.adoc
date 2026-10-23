@@ -1,0 +1,64 @@
+= The package.json file
+
+The `package.json` file in the root of your project is where a xref:reference/glossary.adoc#zimlet[Zimlet] starts: the build, the commands that you run and the libraries that you use all begin with it. This page explains each field and script of the default template and which ones you are likely to change. It is the place to look when you raise a version, add a library or wonder what an `npm run` command does. The smallest form of the file is on xref:fundamentals/project-structure.adoc#minimum-package[Project structure].
+
+[#package-json-identity]
+== Identity and entry
+
+[[name]]pass:[<a class="anchor" href="#name"></a>]`name`::
+The name of the Zimlet. `npm run package` passes it to `zimlet package`, which uses it as the name in the xref:test-package-deploy/build-and-package.adoc[descriptor] and as the name of the zip file. See xref:fundamentals/project-structure.adoc#naming-rules[Zimlet naming rules].
+
+[[version]]pass:[<a class="anchor" href="#version"></a>]`version`::
+The version of the Zimlet, in the form `1.0.0`. `npm run package` writes it into the descriptor. Raise it for each release you deploy.
+
+[[private]]pass:[<a class="anchor" href="#private"></a>]`private`::
+Set to `true`. It is the npm flag for a project that is not published as an npm package. You deliver a Zimlet as a zip, so keep it. See the https://docs.npmjs.com/cli/configuring-npm/package-json#private[npm documentation^].
+
+[[module]]pass:[<a class="anchor" href="#module"></a>]`module`::
+The entry file, `src/index.js`. The build starts here. Without `module`, the build falls back to `main`, and it fails if that file is the build output, which does not exist yet.
+
+[[main]]pass:[<a class="anchor" href="#main"></a>]`main`::
+The build output, `build/index.js`. The build reads it only when `module` is missing. Keep it as it is.
+
+[[keywords]]pass:[<a class="anchor" href="#keywords"></a>]`keywords` and `author`::
+Descriptive fields for npm. The build ignores them.
+
+[#package-json-scripts]
+== Scripts
+
+Run a script with `npm run <script>`, or with `npm start` for `start`.
+
+[[start]]pass:[<a class="anchor" href="#start"></a>]`start` and `watch`::
+Run `zimlet watch`. It starts the development server that serves your Zimlet to the xref:reference/glossary.adoc#modern-ui[Modern UI]. Both scripts do the same. See xref:test-package-deploy/run-and-debug.adoc[Run and debug].
+
+[[build]]pass:[<a class="anchor" href="#build"></a>]`build`::
+Runs `zimlet build`. It writes the minified Zimlet to the `build` folder. See xref:test-package-deploy/build-and-package.adoc[Build and package].
+
+[[package]]pass:[<a class="anchor" href="#package"></a>]`package`::
+Runs `zimlet package` with the name and version from `package.json` and the Modern UI versions your Zimlet supports, the xref:reference/glossary.adoc#semver-range[semver range] `--zimbraXVersion '^4.0.0'`. Run `npm run build` first. Change the range to match your server, as xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version] describes. The zip is written to `pkg/`. See xref:test-package-deploy/build-and-package.adoc[Build and package].
+
+[[lint]]pass:[<a class="anchor" href="#lint"></a>]`lint` and `lint:fix`::
+Check the code in `src/` with ESLint, and fix what ESLint can fix. See xref:test-package-deploy/lint-your-code.adoc[Lint].
+
+[[prepare]]pass:[<a class="anchor" href="#prepare"></a>]`prepare`::
+Runs `husky || true` after `npm install`. In a Git repository, it turns on the commit hooks in `.husky/`. They lint the staged files in `src/` and add the branch name to the start of the commit message, except on `master`.
+
+[[lint-staged]]pass:[<a class="anchor" href="#lint-staged"></a>]`lint-staged`::
+Not a script but a setting: it tells the commit hook to lint the staged `.js` and `.mjs` files in `src/`.
+
+[#package-json-dependencies]
+== Dependencies
+
+A library that your code imports belongs in `dependencies`. A tool that only builds, checks or commits your code belongs in `devDependencies`. The build bundles every import it finds in `node_modules` into `build/index.js`, whichever of the two lists holds the library.
+
+[[dependencies]]pass:[<a class="anchor" href="#dependencies"></a>]`dependencies`::
+The libraries that the template code imports: https://github.com/Zimbra/zm-x-ui[`@zimbra/x-ui`^] for the shared style helpers and https://lucide.dev/guide/packages/lucide-preact[`lucide-preact`^] for icons. Both end up in your bundle. Do not add libraries that the Modern UI already provides, such as Preact. See xref:fundamentals/shared-libraries.adoc[Shared libraries and imports].
+
+[[devdependencies]]pass:[<a class="anchor" href="#devdependencies"></a>]`devDependencies`::
+The tools: https://github.com/Zimbra/zimlet-cli[`@zimbra/zimlet-cli`^] (the `zimlet` command), `eslint` and https://github.com/Zimbra/zm-eslint-config[`@zimbra/eslint-config`^], `husky` and `lint-staged`. None of them ends up in your bundle.
+
+The complete list of files and packages is in xref:reference/files.adoc[File reference].
+
+== Next step
+
+Learn how your entry file starts the Zimlet in xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle].

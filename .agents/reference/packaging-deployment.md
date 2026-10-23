@@ -33,7 +33,7 @@ Steps:
 
 Naming: `--name` is expected to be globally unique and equal to the npm package name (scripts pass `$npm_package_name`). Existing zimlets use `zimbra-zimlet-<feature>`; the older style is `com_<company>_<feature>`.
 
-`--zimbraXVersion` is a semver **range** (npm style, for example `^4.42.0`, `>=1.0.0`). It becomes LDAP attribute `zimbraXZimletCompatibleSemVer` (`since 8.8.9`, `max=256`). It is optional: without it, `zimlet package` writes the default `>=1.0.0`, which accepts every Modern UI version (checked by running `zimlet package` without the option, CLI 19.0.0). The compatibility filter in §3 then never leaves the Zimlet out.
+`--zimbraXVersion` is a semver **range** (npm style, for example `^4.0.0`, `>=1.0.0`). It becomes LDAP attribute `zimbraXZimletCompatibleSemVer` (`since 8.8.9`, `max=256`). It is optional: without it, `zimlet package` writes the default `>=1.0.0`, which accepts every Modern UI version (checked by running `zimlet package` without the option, CLI 19.0.0). The compatibility filter in §3 then never leaves the Zimlet out.
 
 **Finding the host version to target.** The server compares your range with the Modern UI (`zm-x-web`) version (`PKG_VERSION` in `ZimletLoader`, sent as `zimbraXZimletCompatibleWith`). In Modern UI, log in, click the settings icon (top right), then **About**. It shows "Zimbra Modern Web App Version `<version-number>` (`<commit-hash>`)" (from the `zm-x-web` README; not run here). The range has to include that version. The mapping between a Zimbra server release and its `zm-x-web` version is not documented in these files; see [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md#documentation-sources).
 

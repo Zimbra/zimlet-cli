@@ -1,0 +1,39 @@
+= removeSelectors
+
+Removes the selectors that you published under a namespace. Use it when your Zimlet stops offering them, for example when it turns a feature off, so that other code can no longer use them.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.removeSelectors(namespace)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`namespace`
+|string
+|The namespace that you gave to xref:reference/context/store/zimlet-redux/add-selectors.adoc[addSelectors].
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Nothing happens when the namespace has no selectors.
+
+[#next-step]
+== Next step
+
+Learn how to read the published actions in xref:reference/context/store/zimlet-redux/actions.adoc[actions].

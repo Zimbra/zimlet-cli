@@ -1,0 +1,41 @@
+= zimlets-initialized
+
+Zimlets have finished loading. Listen to it when your Zimlet depends on what other Zimlets registered, for example to call xref:reference/context/zimlets/is-slot-active.adoc[isSlotActive] or xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin] when the registrations are in place and not at the moment of `init()`.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.on('zimlets-initialized', handler)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`handler`
+|function
+|Called with no arguments.
+
+|===
+
+[#event-data]
+== Event data
+
+None.
+
+[#usage-notes]
+== Usage notes
+
+* It is emitted about 500 milliseconds after a bundle of Zimlets has finished loading. A listener that you add in `init()` normally receives it.
+* After that first time, it is emitted again 500 milliseconds after the last handler that any Zimlet registers, so it can arrive many times.
+* Do not register a handler in a listener without a check. The registration schedules the event again.
+
+[#next-step]
+== Next step
+
+Learn about the next event in xref:reference/context/zimlets/plugins-changed.adoc[plugins::changed].

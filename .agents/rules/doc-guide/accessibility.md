@@ -9,7 +9,7 @@ Every page meets WCAG 2.2 level AA. These rules apply to text, tables, code, dia
 **Text and structure**
 
 - Use real headings in order (`==` after `=`, `===` after `==`), never bold text as a heading. One `=` title per page.
-- Link text says where the link goes: `xref:deploy.adoc[Deploy a Zimlet]`, not "click here" or "this page". Do not use a bare URL as link text. Two links with the same text go to the same place.
+- Link text says where the link goes: `xref:test-package-deploy/deploy.adoc[Deploy a Zimlet]`, not "click here" or "this page". Do not use a bare URL as link text. Two links with the same text go to the same place.
 - Do not use colour, position or shape words as the only instruction ("the green button", "the box on the right"). Name the control by its label.
 - Write for plain reading: define abbreviations on first use, keep sentences short, and do not use all capitals for emphasis.
 - Mark language and meaning with the right element: `NOTE`, `TIP`, `WARNING` and `CAUTION` admonitions carry their label as text, so they do not depend on colour. Do not simulate them with formatting.

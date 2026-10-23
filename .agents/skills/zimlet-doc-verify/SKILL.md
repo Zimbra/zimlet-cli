@@ -24,44 +24,29 @@ Every check reports one result.
 
 Quote the `COMMAND` and the key lines of `OUTPUT` in your evidence. Do not paraphrase a result you did not get.
 
+## Scratch project
+
+The scratch project is a copy of the default template (`template/` in the sibling `zm-x-zimlet-template-default` checkout, with `{{name}}` replaced by `my-zimlet`), so every check runs against the layout, lint config and scripts that a reader's new project has. The script command creates it:
+
+```sh
+node .agents/skills/zimlet-doc-verify/scripts/verify.mjs scratch
+```
+
+It checks that the template checkout has the refreshed layout (`template/eslint.config.mjs`; until the refreshed template is merged, that checkout must be on the branch `PREAPPS-9862`), copies the template, replaces `{{name}}`, runs `npm install` and prints the CLI version. `Verified` if it prints the version; quote it. `Cannot verify` if the template checkout is on the old layout, if the node version is not 24, or if the folder was made by an earlier version of this skill from a different boilerplate (run `rm -rf ../zimlet-verify` and run the command again). The install runs only when the scratch folder has no CLI, so later runs reuse it. If the install is broken, delete the folder and run the command again. `--dir <path>` uses another folder. The scratch project is the template's Hello World Zimlet (an Email tab and its page). To change what it does, edit the scratch copy, not the template.
+
+## Example file or folder (optional)
+
+The script command puts a documentation example into the scratch project:
+
+```sh
+node .agents/skills/zimlet-doc-verify/scripts/verify.mjs example <example-file-or-folder>
+```
+
+It replaces the template's code in `src/` (only `src/intl` is kept), so the project contains the example and nothing else. It strips the Antora `tag::` and `end::` comments. A single file becomes `src/index.js`. A folder example (a multi-file Zimlet, such as `components/Name/index.js` imported by `index.js`) is copied as a whole into `src/`, so relative imports resolve. The command prints the files now in `src/`. `Cannot verify` if there is no scratch project yet.
+
 ## Direct commands
 
-Run these from the repository root. The scratch folder is `zimlet-verify`, a sibling of this repository (`../zimlet-verify`), so it is outside the repository and easy to find. Keep it between runs, delete it if its install is broken, and never commit it. Each command sets `SCRATCH` itself, because each shell call starts a new process.
-
-### Scratch project
-
-```sh
-SCRATCH="$(cd .. && pwd)/zimlet-verify"
-mkdir -p "$SCRATCH"
-if [ ! -x "$SCRATCH/node_modules/.bin/zimlet" ]; then
-  cp -R .agents/skills/zimlet-doc-verify/assets/boilerplate/. "$SCRATCH"
-  (cd "$SCRATCH" && npm install --no-audit --no-fund)
-fi
-cd "$SCRATCH" && npx zimlet --version
-```
-
-The install runs only when the scratch folder has no CLI, so later runs reuse it. `Verified` if `npx zimlet --version` prints a version, and, after a fresh install, `npm install` also exits 0. Quote the version. If the install is broken, run `rm -rf "$SCRATCH"` and run this section again. The boilerplate is a minimal Zimlet (`src/index.js`, `src/intl/en_US.json`). To change what it does, edit the scratch copy, not the skill.
-
-### Example file or folder (optional)
-
-Doc examples carry Antora `tag::` and `end::` comments. Strip them before you use an example as Zimlet source. A single file becomes `src/index.js`:
-
-```sh
-SCRATCH="$(cd .. && pwd)/zimlet-verify"
-grep -v -E '^[[:space:]]*(//|<!--)[[:space:]]*(tag|end)::' <example-file> > "$SCRATCH/src/index.js"
-```
-
-A folder example (a multi-file Zimlet, such as `components/Name/index.js` imported by `index.js`) is copied as a whole into `src/`, so relative imports resolve. Remove the files of an earlier example first:
-
-```sh
-SCRATCH="$(cd .. && pwd)/zimlet-verify"
-EXAMPLE="<absolute path to the example folder>"
-rm -rf "$SCRATCH/src/components" "$SCRATCH/src/index.js"
-(cd "$EXAMPLE" && find . -type f) | while read -r f; do
-  mkdir -p "$SCRATCH/src/$(dirname "$f")"
-  grep -v -E '^[[:space:]]*(//|<!--)[[:space:]]*(tag|end)::' "$EXAMPLE/$f" > "$SCRATCH/src/$f"
-done
-```
+Run these from the repository root, after the scratch project exists. The scratch folder is `zimlet-verify`, a sibling of this repository (`../zimlet-verify`), so it is outside the repository and easy to find. Keep it between runs, delete it if its install is broken, and never commit it. Each command sets `SCRATCH` itself, because each shell call starts a new process.
 
 ### Build
 
@@ -74,7 +59,7 @@ cd "$SCRATCH" && rm -rf build && npx zimlet build && ls build
 
 ### Package
 
-Build first, then package with the boilerplate script:
+Build first, then package with the template's `package` script:
 
 ```sh
 SCRATCH="$(cd .. && pwd)/zimlet-verify"
@@ -85,32 +70,22 @@ cd "$SCRATCH" && rm -rf build pkg && npx zimlet build && npm run package && unzi
 
 ### Lint
 
-This lints an example with the real `zm-modern-zimlets` ESLint config (ESLint 9, `@zimbra/eslint-config`). Set `CHECKOUT` to the absolute path of the `zm-modern-zimlets` checkout, the sibling of this repository.
+This lints the project with the template's own ESLint config (`eslint.config.mjs`: ESLint 9, `@zimbra/eslint-config`, Prettier) and its `.editorconfig`, which the scratch project already has. Put the example in `src/` first with the "Example file or folder" section, then run the template's `lint` script, which is `eslint src`:
 
 ```sh
 SCRATCH="$(cd .. && pwd)/zimlet-verify"
-cd "$SCRATCH"
-rm -rf example example.js
-cp <example-file> example.js
-cp "$CHECKOUT/.editorconfig" .editorconfig
-printf "import cfg from '%s/eslint.config.mjs';\nexport default cfg;\n" "$CHECKOUT" > eslint.config.mjs
-"$CHECKOUT/node_modules/.bin/eslint" example.js
+cd "$SCRATCH" && npm run lint
 ```
 
-For a folder example, copy it with `cp -R <example-folder> example` and lint `example` instead of `example.js`.
-
-The wrapper config imports the checkout's config, so the checkout is not modified. ESLint ignores files outside the config's folder, which is why the example is copied into the scratch folder.
-
-The `.editorconfig` copy is required. The `prettier/prettier` rule reads indentation (tabs) from the `.editorconfig` nearest to the linted file, and `.prettierrc` sets none. Without the copy, every tab-indented line is reported as `Replace ↹ with ··`, which is a false result caused by the scratch folder, not by the example.
+The `prettier/prettier` rule reads indentation (tabs) from `.editorconfig`, which is why an example must be linted inside the scratch project and not in a folder without one.
 
 - Exit 0: `Verified`, no problems reported.
 - Exit 1: `Verified`, the rules reported problems. The output is the evidence.
 - Any other exit code: `Failed`.
-- If `$CHECKOUT/node_modules/.bin/eslint` does not exist: `Cannot verify`, with `NEEDED: npm install` in the `zm-modern-zimlets` checkout.
 
 ## Script commands
 
-Two checks need more logic than a shell command, so they stay in the script. Run them from the repository root:
+These checks need more logic than a shell command, so they are in the script. Run them from the repository root:
 
 ```sh
 node .agents/skills/zimlet-doc-verify/scripts/verify.mjs <command>
@@ -118,6 +93,8 @@ node .agents/skills/zimlet-doc-verify/scripts/verify.mjs <command>
 
 | Command | What it does |
 |---|---|
+| `scratch [--dir d]` | Creates the scratch project from the default template, installs it and prints the CLI version (see Scratch project). |
+| `example <file or folder> [--dir d]` | Replaces the scratch project's `src/` with a documentation example (see Example file or folder). |
 | `watch <dir> [--port n] [--example file or folder]` | Starts `zimlet watch`, fetches `https://localhost:<port>/index.js`, edits a source file, and checks that the served file is rebuilt. Prints the URL the CLI itself prints. |
 | `register-calls <dir> [--invoke]` | Loads `build/index.js` with a stub host and lists the `plugins.register` calls made by the factory and by `init()`. With `--invoke`, it also calls each registered handler once with empty props and reports whether it threw. Needs a build first. |
 

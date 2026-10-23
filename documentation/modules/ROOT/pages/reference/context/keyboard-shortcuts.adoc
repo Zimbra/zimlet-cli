@@ -1,0 +1,17 @@
+= Keyboard shortcuts
+
+Add a keyboard shortcut with two fields of the context. Use them when a feature of your Zimlet needs a key. `keyBindings` maps keys to a command, and `shortcutCommandHandler` runs a function for a command. Take them from the context first, as in `const { keyBindings, shortcutCommandHandler } = context;`. A binding is an object `{ <context>: { <key>: <command> } }`. The context is `all` or the name of a screen. A key is in upper case, and modifiers come first in the order `cmd`, `ctrl`, `shift`, `alt`, joined with `+`, as in `ctrl+shift+C`. A key that holds an object instead of a command starts a sequence of keys, as `G` then `M` does for the Modern UI.
+
+[#members]
+== Members
+
+xref:reference/context/keyboard-shortcuts/key-bindings.adoc[Key bindings (`keyBindings`)]::
+Maps keys to commands.
+
+xref:reference/context/keyboard-shortcuts/command-handler.adoc[Command handler (`shortcutCommandHandler`)]::
+Runs a function when a command is triggered.
+
+[#next-step]
+== Next step
+
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].

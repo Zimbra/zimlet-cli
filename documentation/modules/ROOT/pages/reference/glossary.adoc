@@ -1,0 +1,37 @@
+= Glossary
+
+Short definitions of the everyday terms that the guide uses. A concept that the guide explains on a page of its own, such as the context, the factory, slots and plugin handlers, is not listed here. Each page links to the concept page where the term first appears. Each entry below links to the page that covers the topic.
+
+[[cos]]
+== Class of service (COS)
+
+A set of account settings on the Zimbra server that applies to a group of accounts. A COS lists the Zimlets its accounts can use. Each Zimlet is mandatory, enabled by default or disabled by default. Users can switch off a Zimlet that is not mandatory. See xref:test-package-deploy/deploy.adoc[Deploy].
+
+[[hmr]]
+== Hot module replacement (HMR)
+
+A development feature of `zimlet watch` intended to update a running Zimlet without a page reload. In the sideloader check on the Modern UI, the open page did not update on save, so reload the page to see the change. HMR runs only in development, not in a production build. See xref:test-package-deploy/run-and-debug.adoc[Run and debug].
+
+[[modern-ui]]
+== Modern UI
+
+The Zimbra web client that loads and runs Zimlets. Its screens contain xref:fundamentals/extending-the-ui.adoc[slots] where Zimlets add content.
+
+[[semver-range]]
+== Semver range
+
+A version range in npm style, such as `^4.42.0`. You set it with the `--zimbraXVersion` option of `zimlet package`. The option is optional. Without it, the range is `>=1.0.0`, which accepts every Modern UI version. The range states which Modern UI versions your Zimlet works with. The server leaves out a Zimlet whose range does not include the running Modern UI version. See xref:test-package-deploy/build-and-package.adoc[Build and package].
+
+[[zimlet]]
+== Zimlet
+
+An extension of the xref:reference/glossary.adoc#modern-ui[Modern UI]. It is one JavaScript bundle and a xref:test-package-deploy/build-and-package.adoc[descriptor], packaged in a zip file. The Modern UI loads and runs it in the browser. A Zimlet can add content to existing screens, new screens, settings and event handling. See xref:getting-started/concepts.adoc[How Zimlets work].
+
+[[zmzimletctl]]
+== `zmzimletctl`
+
+The command-line tool on the Zimbra server that an administrator uses to deploy and manage Zimlets. `zmzimletctl deploy <zimlet.zip>` installs the Zimlet files, adds the Zimlet to the server, grants it on the default xref:reference/glossary.adoc#cos[COS] and enables it. Other commands include `undeploy`, `enable`, `disable`, `acl`, `configure` and `listZimlets`. See xref:test-package-deploy/deploy.adoc[Deploy].
+
+== Next step
+
+Return to xref:getting-started/concepts.adoc[How Zimlets work], or continue with the xref:getting-started/prerequisites.adoc[knowledge and tools you need].

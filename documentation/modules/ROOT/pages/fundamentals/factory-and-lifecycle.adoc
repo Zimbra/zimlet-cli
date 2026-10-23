@@ -1,0 +1,104 @@
+= Factory and lifecycle
+
+The entry file of a xref:reference/glossary.adoc#zimlet[Zimlet] default-exports a factory, and the xref:reference/glossary.adoc#modern-ui[Modern UI] calls it first and then the `init()` method that it returns. This page explains what belongs in each. It is the page that settles where a piece of code goes, and it also covers the cases that need care: asynchronous setup, conditional registration and Zimlets without a UI.
+
+[#lifecycle]
+== The lifecycle at a glance
+
+The diagram shows what the Modern UI does with your Zimlet, from loading it to the point where your handlers work.
+
+.From loading a Zimlet to running its handlers
+image::diagrams/factory-lifecycle.svg["The Modern UI calls the factory function with the context and the factory returns an object. If the Zimlet is enabled for the account, the Modern UI calls the setup method, which registers handlers now or after asynchronous work. The handlers then run as the user works, and the Zimlet can remove a handler it no longer needs. An error in the factory or the setup method logs a warning and skips the later setup."]
+
+In words:
+
+. The Modern UI calls the factory, passes it the context and receives an object with the `init()` method.
+. If the Zimlet is enabled for the account, the Modern UI calls `init()`. Otherwise it skips `init()`.
+. `init()` registers handlers, now or after asynchronous work.
+. The handlers run as the user works, for example when a slot shows content or when an event arrives.
+. Your own code can remove a handler it no longer needs with `plugins.unregister`. The Modern UI does not remove handlers while your Zimlet runs.
+. An error in the factory or in `init()` logs a warning, and the Modern UI skips the setup that comes later.
+
+[#default-export-factory]
+== The default export factory
+
+The Modern UI calls the factory once, when it loads your Zimlet, and passes it the xref:fundamentals/host-context.adoc[context]. The factory returns an object that holds the `init()` method.
+
+.src/index.js
+[source,js]
+----
+include::example$factory-and-lifecycle/factory.js[]
+----
+
+`init()` registers a xref:fundamentals/extending-the-ui.adoc[plugin handler] for the `message-body-top` xref:fundamentals/extending-the-ui.adoc[slot], which is the area above the text of an open message. The handler returns an element that the slot shows. The `createElement` import is required in every file that contains JSX.
+
+Follow these rules for the factory:
+
+* Export a function as the default export. Its name does not matter: the examples call it `Zimlet`, and "factory" describes its role, not a name that you must use. The build finds the function by its default export.
+* Do not export a class. The bundle that `zimlet build` creates calls your function as a plain function and never with `new`, so a class export fails with `Class constructor ... cannot be invoked without 'new'`.
+* Always return an object, even when the Zimlet has no UI. Without an object the Modern UI cannot call `init()`.
+* Keep the factory free of side effects. The factory also runs for a Zimlet that is disabled for the account, so a registration made in the factory takes effect for that account. Put registrations in `init()`.
+
+An error that the factory throws is logged as a warning in the browser console. The Modern UI then does not call `init()` for any Zimlet that loads together with yours.
+
+[#context-argument]
+== The context argument
+
+The xref:fundamentals/host-context.adoc[context] is the object that the Modern UI passes to the factory. It holds what the Zimlet needs to work with the Modern UI. For example, xref:fundamentals/extending-the-ui.adoc[`plugins`] registers handlers, xref:go-deeper/data-and-state.adoc[`zimbraBatchClient`] sends requests to the server and xref:go-deeper/data-and-state.adoc[`store`] gives access to the state of the Modern UI.
+
+Take only what you need from it, as the example does with `const { plugins } = context;`. The factory runs once, so the values you keep stay available to `init()` and to your handlers. See xref:fundamentals/host-context.adoc[The context object] for the fields by job, and the xref:reference/context.adoc[Context reference] for each field.
+
+[#init]
+== The init method
+
+`init()` is where a Zimlet starts working. The Modern UI calls it once after the factory returns, and only for a Zimlet that is enabled for the account. Register your handlers here, and start any setup that the Zimlet needs.
+
+An error that `init()` throws is logged as a warning in the browser console. The Modern UI then does not call `init()` for the Zimlets that come after yours in the same load. Catch the errors that you expect.
+
+[#async-setup]
+== Async setup
+
+`init()` does not need to finish its work before it returns. Start the asynchronous work, and register your handlers when it finishes. A slot shows a handler that you register later as soon as you register it.
+
+The example asks the server for the account information, and registers a handler for the `mail-sidebar-footer` xref:fundamentals/extending-the-ui.adoc[slot], which is the area at the bottom of the sidebar. The handler shows a welcome message with the account `name`. If the request fails, it logs the error, and the Zimlet adds nothing.
+
+.src/index.js
+[source,js]
+----
+include::example$factory-and-lifecycle/async-setup.js[]
+----
+
+Always handle a rejected promise with `.catch`. The Modern UI does not do it for you.
+
+[#register-conditionally]
+== Register and unregister conditionally
+
+Register a handler only when a condition holds. Remove it later with `plugins.unregister`. Pass the same function that you registered, because `unregister` matches the function itself and not its code. Keep that function in a variable.
+
+The example shows a tip about dragging messages below the folder list (the `folder-list-end` slot). Dragging needs a mouse, so the example compares the result of `getPlatformType()` with `PLATFORM_TYPES.WEB` and registers the tip only in the web client. It does nothing on other platforms, such as the desktop and mobile apps. The tip has a button that removes it with `plugins.unregister` when the user dismisses it.
+
+.src/index.js
+[source,js]
+----
+include::example$factory-and-lifecycle/conditional-registration.js[]
+----
+
+[#headless-zimlets]
+== Headless Zimlets
+
+A headless Zimlet has no UI. It registers no slot handler. It reacts to events or processes data, and it still has a factory that returns an object with `init()`.
+
+The example counts the messages that the user sends. It listens for the event that the Modern UI emits after a message is sent. It stores the count in `localStorage`, so the count survives a page reload. Other code in the page can write to `localStorage` too, so the key starts with the Zimlet name.
+
+.src/index.js
+[source,js]
+----
+include::example$factory-and-lifecycle/headless.js[]
+----
+
+See xref:build-by-goal/recipe-app-events.adoc[React to app events] for a complete recipe, and xref:build-by-goal/recipe-message-processing.adoc[Process messages without UI] for a Zimlet that changes message content.
+
+[#next-step]
+== Next step
+
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].

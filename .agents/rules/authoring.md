@@ -9,7 +9,7 @@ For the ordered creation workflow, follow [create-zimlet.md](../workflow/create-
 - Provide at least `package.json`, `src/index.js` (default export: `factory(context)`) and `src/intl/en_US.json`. `zimlet package` fails if `src/intl` is missing, even when `--label` and `--description` are supplied. Add `config_template.xml` only for admin-editable settings and `scripts/postinst.sh` only in repos that ship OS packages ([authoring §1](../reference/authoring.md#1-minimum-package)).
 - Set `main` to `build/index.js` and `module` to `src/index.js`. Put `@zimbra/zimlet-cli` in `devDependencies`.
 - Use Node 24, as every repo requires.
-- Scaffold from the default template only after applying the fixes in [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md), or copy the closest existing Zimlet.
+- Scaffold from the default template (see [authoring §1](../reference/authoring.md#starting-from-the-default-template) for what it contains and for the `create` command to use until the refreshed template is merged), or copy the closest existing Zimlet.
 
 ## Factory and lifecycle
 
@@ -33,7 +33,7 @@ For the ordered creation workflow, follow [create-zimlet.md](../workflow/create-
 ## Localization
 
 - Keep `src/intl/en_US.json` as the mandatory fallback. Use the zimlet name as the namespace and include the `zimlet` block with `label` and `description`.
-- Load locales through `withIntlWrapper` in `src/enhancers.js`, wrap components with `withIntl()(Component)`, and use `<Text id="<zimlet-name>.<key>" />`.
+- Load locales through `withIntlWrapper` in `src/enhancers.js` (or `src/enhancers/index.js`, as in the default template), wrap components with `withIntl()(Component)`, and use `<Text id="<zimlet-name>.<key>" />`.
 - For adding languages or fixing translations, use the repository's `AGENTS.md` and `.agents/translation/config.yml`; do not improvise the workflow ([authoring §6](../reference/authoring.md#6-localization)).
 
 ## Styles

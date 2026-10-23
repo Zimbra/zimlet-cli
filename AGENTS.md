@@ -18,7 +18,7 @@ generated data, and **scripts** and **prompts** keep that data current.
 | Serve a Zimlet from a dev server so the user can load it in the Modern UI | [launch-zimlet.md](.agents/workflow/launch-zimlet.md) | [cli-commands.md](.agents/reference/cli-commands.md#development-loading-no-packaging) |
 | Package, version, or deploy a Zimlet | [packaging-deployment.md](.agents/rules/packaging-deployment.md) | [packaging-deployment.md](.agents/reference/packaging-deployment.md), [Zimlet monorepos](../zm-modern-zimlets/.agents/reference/zimlet-repositories.md) |
 
-Before relying on the default template or a fact marked unverified, check
+Before relying on a fact marked unverified, check
 [zimlet-known-issues.md](../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md).
 
 ## Zimlet documentation

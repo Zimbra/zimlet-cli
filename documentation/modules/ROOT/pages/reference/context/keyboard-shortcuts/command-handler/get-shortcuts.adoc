@@ -1,0 +1,31 @@
+= getShortcuts
+
+Lists the shortcuts that have a handler. Use it to see which shortcuts work in each context, for example to avoid a key that is already in use or to show a list of shortcuts to the user.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+shortcutCommandHandler.getShortcuts()
+----
+
+[#parameters]
+== Parameters
+
+None.
+
+[#returns]
+== Returns
+
+An object with one entry for each context that has shortcuts. Each entry is an array of `[keys, command]` pairs.
+
+[#usage-notes]
+== Usage notes
+
+* A binding without a handler is not listed.
+
+[#next-step]
+== Next step
+
+Return to xref:reference/context/keyboard-shortcuts/command-handler.adoc[Command handler] to look up another member.

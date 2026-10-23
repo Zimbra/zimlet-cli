@@ -1,0 +1,39 @@
+= resolve
+
+Builds the full address of a path on the server. Use it when your Zimlet needs a server URL, such as the target of a `fetch` call or the source of an image, and you want the prefix of this installation without joining strings yourself.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimbraBatchClient.resolve(path)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`path`
+|string
+|The path on the server. It starts with `/`.
+
+|===
+
+[#returns]
+== Returns
+
+A string, the origin followed by the path.
+
+[#usage-notes]
+== Usage notes
+
+* It only joins the two strings. It does not check that the path exists.
+
+[#next-step]
+== Next step
+
+Return to the xref:reference/context/batch-client.adoc[Batch client] to look up another member.

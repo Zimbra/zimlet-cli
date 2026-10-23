@@ -1,0 +1,40 @@
+= replaceBindings
+
+Replaces all bindings with the ones that you pass. Use it only when your Zimlet must control the whole set of shortcuts. To add or remove a few keys, use xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[addBindings] and xref:reference/context/keyboard-shortcuts/key-bindings/remove-bindings.adoc[removeBindings].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+keyBindings.replaceBindings(newBindings)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`newBindings`
+|object
+|Bindings in the form `{ <context>: { <key>: <command> } }`.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* It also removes the shortcuts of the Modern UI that are not in `newBindings`. Start from the result of `getBindings`, unless you mean to remove them.
+* Use xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[addBindings] to add a binding.
+
+[#next-step]
+== Next step
+
+Learn how to look up a key in xref:reference/context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.adoc[getCommandsAndSequences].

@@ -1,0 +1,40 @@
+= addBindings
+
+Merges bindings into the existing ones. Use it to bind a key, or a sequence of keys, to a command, such as a shortcut for a feature of your Zimlet, without changing the other shortcuts. A command runs only when it has a handler, which xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers] adds.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+keyBindings.addBindings(newBindings)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`newBindings`
+|object
+|Bindings in the form `{ <context>: { <key>: <command> } }`.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* The merge is deep, so a new key does not remove the other keys of its context.
+* A command only does something when a handler exists for it. See xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers].
+
+[#next-step]
+== Next step
+
+Learn how to remove a binding in xref:reference/context/keyboard-shortcuts/key-bindings/remove-bindings.adoc[removeBindings].

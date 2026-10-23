@@ -1,0 +1,39 @@
+= getCommandsAndSequences
+
+Looks up what a key does in every context. Use it to check whether a key is already taken, as a command or as the start of a sequence, before you bind it.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+keyBindings.getCommandsAndSequences(key)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`key`
+|string
+|The key, such as `ESCAPE` or `ctrl+Q`.
+
+|===
+
+[#returns]
+== Returns
+
+An object `{ commands, sequences }`. Each is an array of `{ context, command }`. `commands` are the keys that run a command, and `sequences` are the keys that start a sequence.
+
+[#usage-notes]
+== Usage notes
+
+* A key that is not bound gives two empty arrays.
+
+[#next-step]
+== Next step
+
+Return to xref:reference/context/keyboard-shortcuts/key-bindings.adoc[Key bindings] to look up another member.

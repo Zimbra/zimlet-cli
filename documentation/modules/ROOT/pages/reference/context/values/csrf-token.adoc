@@ -1,0 +1,28 @@
+= csrfToken
+
+The CSRF token of the session, for your own calls to the server. Use it when your Zimlet calls the server with its own `fetch` and not through the batch client, because the token must go in a header of such requests.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+context.csrfToken
+----
+
+[#type]
+== Type
+
+A string, or a falsy value when the Modern UI does not use a CSRF token.
+
+[#usage-notes]
+== Usage notes
+
+* Send it in the `X-Zimbra-Csrf-Token` header of your own `fetch` calls, with `credentials: 'include'`.
+* The value is the one at the time the Zimlet loaded. It does not change afterwards.
+* The batch client adds the token to its own requests. See xref:reference/context/batch-client.adoc[Batch client].
+
+[#next-step]
+== Next step
+
+Learn about the build details in xref:reference/context/values/meta.adoc[meta].

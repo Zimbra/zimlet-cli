@@ -1,0 +1,46 @@
+= emit
+
+Sends an event to its listeners. Use it to tell other Zimlets, or other parts of your own Zimlet, that something happened, such as a user action. There is no replay, so send the event when the thing happens and not at startup.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.emit(event, data)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`event`
+|string
+|The name of the event. Start it with the name of your Zimlet.
+
+|`data`
+|any
+|The value that the listeners receive.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* The listeners of `event` run first, then the `'*'` listeners with `(event, data)`. All run before `emit` returns.
+* A listener that is added after the call does not receive the event.
+* Do not emit the names of the manager events. That runs the listeners of the Modern UI.
+* To send an event from one Zimlet to another, see xref:reference/context/zimlets/custom-events.adoc[Custom events].
+
+[#next-step]
+== Next step
+
+Learn which events the manager sends in xref:reference/context/zimlets/zimlets-initialized.adoc[zimlets-initialized].

@@ -1,0 +1,27 @@
+= origin
+
+The prefix that the client puts in front of every request path. Use it when you build a server address yourself, such as the redirect address of an OAuth sign-in, and need the same prefix that the client uses on this installation.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimbraBatchClient.origin
+----
+
+[#type]
+== Type
+
+string. It comes from the Modern UI configuration.
+
+[#usage-notes]
+== Usage notes
+
+* Use it to build addresses for the server, such as the redirect address of an OAuth sign-in.
+* For a plain address, xref:reference/context/batch-client/resolve.adoc[resolve] does the joining for you.
+
+[#next-step]
+== Next step
+
+Learn how to build a full address in xref:reference/context/batch-client/resolve.adoc[resolve].

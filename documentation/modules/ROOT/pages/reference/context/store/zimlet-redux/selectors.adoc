@@ -1,0 +1,27 @@
+= selectors
+
+The selectors of all Zimlets and of the Modern UI, one entry for each namespace. Use it to read state through functions that the Modern UI or other Zimlets publish, so that your code does not depend on how the state is laid out.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.selectors
+----
+
+[#type]
+== Type
+
+object. Each key is a namespace, and each value is an object of selectors.
+
+[#usage-notes]
+== Usage notes
+
+* If a Zimlet and the Modern UI use the same namespace, the Modern UI entry wins.
+* A selector takes the state, which you get from xref:reference/context/store/get-state.adoc[getState].
+
+[#next-step]
+== Next step
+
+Return to xref:reference/context/store/zimlet-redux.adoc[Zimlet state] to look up another member.

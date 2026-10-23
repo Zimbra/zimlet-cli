@@ -1,0 +1,20 @@
+= Plugins
+
+Add and remove the xref:fundamentals/extending-the-ui.adoc[plugin handlers] of your Zimlet. Use it to extend the Modern UI: it is how a Zimlet adds its content to a slot. Take the field from the context first, as in `const { plugins } = context;`. A handler is a function, or any other value, that you register under a key. For a slot the key has the form `slot::<slot-name>`, and the slot calls the handler to get what it shows. See xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+
+[#members]
+== Members
+
+xref:reference/context/plugins/register.adoc[`register(name, handler)`]::
+Adds a handler under a key.
+
+xref:reference/context/plugins/unregister.adoc[`unregister(name, handler)`]::
+Removes one handler that you registered.
+
+xref:reference/context/plugins/unregister-all.adoc[`unregisterAll()`]::
+Removes every handler that your Zimlet registered.
+
+[#next-step]
+== Next step
+
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].

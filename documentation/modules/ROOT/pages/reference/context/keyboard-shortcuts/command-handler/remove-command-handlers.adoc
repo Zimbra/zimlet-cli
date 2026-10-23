@@ -1,0 +1,40 @@
+= removeCommandHandlers
+
+Removes functions that you added for commands. Use it when a shortcut of your Zimlet must stop working at run time, for example when the user turns its feature off.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+shortcutCommandHandler.removeCommandHandlers(commandHandlers)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`commandHandlers`
+|array of objects
+|The same form as for xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers]. Each `handler` must be the same function that you added.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* If a function was added more than once, only the latest one is removed.
+* Nothing happens for a function that is not found.
+
+[#next-step]
+== Next step
+
+Learn how to list shortcuts in xref:reference/context/keyboard-shortcuts/command-handler/get-shortcuts.adoc[getShortcuts].

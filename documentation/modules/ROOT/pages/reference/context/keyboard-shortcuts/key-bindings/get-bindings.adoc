@@ -1,0 +1,31 @@
+= getBindings
+
+Returns a copy of all bindings. Use it to read what is bound, for example to check that a key is free before you bind it, or as the starting point for xref:reference/context/keyboard-shortcuts/key-bindings/replace-bindings.adoc[replaceBindings].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+keyBindings.getBindings()
+----
+
+[#parameters]
+== Parameters
+
+None.
+
+[#returns]
+== Returns
+
+An object `{ <context>: { <key>: <command> } }`. Changing it does not change the bindings.
+
+[#usage-notes]
+== Usage notes
+
+* The result includes the shortcuts of the Modern UI.
+
+[#next-step]
+== Next step
+
+Learn how to add a binding in xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[addBindings].

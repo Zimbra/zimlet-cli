@@ -1,0 +1,23 @@
+= Store
+
+The Redux store of the Modern UI. Use it to read the state that the Modern UI holds, to change it with actions, or to react to its changes. Take the field from the context first, as in `const { store } = context;`. It has the standard methods `getState`, `dispatch` and `subscribe`. Its extra member `zimletRedux` adds your own state, actions and selectors. See the https://redux.js.org/api/store[Redux documentation^] for the standard methods.
+
+[#members]
+== Members
+
+xref:reference/context/store/zimlet-redux.adoc[Zimlet state (`store.zimletRedux`)]::
+Adds your own reducers, actions and selectors, and reads those of the Modern UI.
+
+xref:reference/context/store/get-state.adoc[`getState()`]::
+Returns the current state.
+
+xref:reference/context/store/dispatch.adoc[`dispatch(action)`]::
+Sends an action to the store.
+
+xref:reference/context/store/subscribe.adoc[`subscribe(listener)`]::
+Runs a function after every dispatched action.
+
+[#next-step]
+== Next step
+
+Learn how to share state between your handlers in xref:go-deeper/data-and-state.adoc[Data and state].

@@ -1,0 +1,44 @@
+= off
+
+Stops one listener of an event. Use it when your Zimlet no longer needs an event, for example after it has received the one thing that it waited for, so that the listener does not run for the whole session.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.off(event, handler)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`event`
+|string
+|The name of the event.
+
+|`handler`
+|function
+|The same function that you gave to xref:reference/context/zimlets/on.adoc[on].
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* If no listener matches, nothing happens.
+* If you leave out `handler`, every listener of the event is removed, including those of the Modern UI. Always pass it.
+
+[#next-step]
+== Next step
+
+Learn how to send an event in xref:reference/context/zimlets/emit.adoc[emit].

@@ -1,17 +1,27 @@
 = Zimlet developer guide
 
-Extend the Zimbra Modern UI with features of your own, from setting up your development environment to deploying a Zimlet on a Zimbra server.
+This guide shows you how to extend the Zimbra xref:reference/glossary.adoc#modern-ui[Modern UI] with features of your own. It covers the whole work of a xref:reference/glossary.adoc#zimlet[Zimlet] author, from setting up your development environment, through building and running a Zimlet, to deploying it on a Zimbra server. It is the starting point for new readers, and the <<reading-paths,reading paths>> help you find the pages for your goal.
 
 == What is a Zimlet
 
-A xref:glossary.adoc#zimlet[Zimlet] is a small JavaScript program that the xref:glossary.adoc#modern-ui[Modern UI] loads in the browser. It adds to screens that already exist, for example content in a message, a menu item or a settings section. An administrator deploys the Zimlet to the Zimbra server and enables it for the accounts that use it.
+A xref:reference/glossary.adoc#zimlet[Zimlet] is an extension of the xref:reference/glossary.adoc#modern-ui[Modern UI], the Zimbra web client. It is a small JavaScript program that the Modern UI loads and runs in the browser. You write it as source files, build and package it into a zip file, and an administrator deploys it to the Zimbra server and enables it for the accounts that use it. From then on, the Modern UI loads it for those accounts.
+
+A Zimlet adds to what the Modern UI already does. It does not replace the Modern UI, and it works inside screens that already exist. A Zimlet can:
+
+* Add content to an existing screen, such as extra content in a message or a menu item.
+* Add a section to the settings, or a new screen of its own.
+* React to what happens in the Modern UI, such as a message being sent, and do work without showing anything.
+
+Because a Zimlet is a feature of its own, you can build, test and ship it separately from the Modern UI. Users get the feature when it is enabled for their account, and an administrator can disable it again without changing the Modern UI.
+
+See xref:getting-started/concepts.adoc[How Zimlets work] for the short mental model of how a Zimlet gets from your source files to the screen.
 
 [#who-this-guide-is-for]
 == Who this guide is for
 
-This guide is for anyone who wants to extend the Modern UI with a new feature. You can be a Zimbra developer or come from outside Zimbra. You need working knowledge of JavaScript and Node.js. Use Preact and JSX for the user interface. The Modern UI is built with Preact, and the Zimlets that Zimbra provides use it. Other frameworks may have limitations. See xref:prerequisites.adoc[What you need before you start] for the full list.
+This guide is for anyone who wants to extend the Modern UI with a new feature. You can be a Zimbra developer or come from outside Zimbra. You need working knowledge of JavaScript and Node.js. Use Preact and JSX for the user interface. The Modern UI is built with Preact, and the Zimlets that Zimbra provides use it. Other frameworks may have limitations. See xref:getting-started/prerequisites.adoc[What you need before you start] for the full list.
 
-If you only deploy a Zimlet that someone else built, you are an administrator. Start with xref:deploy.adoc[Deploy].
+If you only deploy a Zimlet that someone else built, you are an administrator. Start with xref:test-package-deploy/deploy.adoc[Deploy].
 
 == What you will build
 
@@ -27,53 +37,54 @@ The parts follow the order in which you work.
 
 | Get started
 | Understand the basics, set up your machine and build a first Zimlet.
-| xref:concepts.adoc[How Zimlets work]
+| xref:getting-started/concepts.adoc[How Zimlets work]
 
 | Fundamentals
 | Learn what every Zimlet author needs to know.
-| xref:project-structure.adoc[Project structure]
+| xref:fundamentals/project-structure.adoc[Project structure]
 
 | Build by goal
 | Follow a complete recipe for a feature.
-| xref:recipes.adoc[Build by goal: choose a recipe]
+| xref:build-by-goal/recipes.adoc[Build by goal: choose a recipe]
 
 | Go deeper
 | Use the options of one feature area, such as data, styling or localization.
-| xref:data-and-state.adoc[Data and state]
+| xref:go-deeper/data-and-state.adoc[Data and state]
 
 | Test, package, deploy
 | Run, debug, test, package and deploy a Zimlet.
-| xref:run-and-debug.adoc[Run and debug]
+| xref:test-package-deploy/run-and-debug.adoc[Run and debug]
 
 | Reference
-| Look up commands, files, shared libraries, APIs and slots.
-| xref:reference-cli.adoc[CLI reference]
+| Look up commands, files, shared libraries, APIs and xref:fundamentals/extending-the-ui.adoc[slots].
+| xref:reference/cli.adoc[CLI reference]
 
 | Help
 | Fix a problem or find an answer.
-| xref:troubleshooting.adoc[Troubleshooting]
+| xref:help-and-migration/troubleshooting.adoc[Troubleshooting]
 |===
 
+[#reading-paths]
 == Reading paths
 
 Decide whether a Zimlet fits your need::
-xref:concepts.adoc[How Zimlets work]
+xref:getting-started/concepts.adoc[How Zimlets work]
 
 Try a Zimlet quickly::
-xref:concepts.adoc[How Zimlets work], xref:prerequisites.adoc[What you need before you start], xref:setup-environment.adoc[Set up your machine] and xref:quickstart.adoc[Your first Zimlet], in this order
+xref:getting-started/concepts.adoc[How Zimlets work], xref:getting-started/prerequisites.adoc[What you need before you start], xref:getting-started/setup-environment.adoc[Set up your machine] and xref:getting-started/quickstart.adoc[Your first Zimlet], in this order
 
 Build a production Zimlet::
 The Get started and Fundamentals parts, then the recipes you need from Build by goal, then Go deeper, then Test, package, deploy
 
 Deploy a Zimlet that someone else built::
-xref:deploy.adoc[Deploy], then xref:troubleshooting.adoc[Troubleshooting]
+xref:test-package-deploy/deploy.adoc[Deploy], then xref:help-and-migration/troubleshooting.adoc[Troubleshooting]
 
 Look something up::
 The Reference part
 
 Fix a problem::
-xref:troubleshooting.adoc[Troubleshooting], then xref:run-and-debug.adoc[Run and debug] and xref:faq-and-getting-help.adoc[FAQ and getting help]
+xref:help-and-migration/troubleshooting.adoc[Troubleshooting], then xref:test-package-deploy/run-and-debug.adoc[Run and debug] and xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help]
 
 == Next step
 
-Read xref:concepts.adoc[How Zimlets work] for the short mental model.
+Read xref:getting-started/concepts.adoc[How Zimlets work] for the short mental model.
