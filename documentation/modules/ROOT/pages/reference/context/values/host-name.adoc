@@ -20,6 +20,17 @@ string.
 
 * It is the host name only, without the port.
 
+[#example]
+== Example
+
+The Zimlet behaves differently on a local test server.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/values/host-name.js[]
+----
+
 [#next-step]
 == Next step
 

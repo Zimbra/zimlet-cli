@@ -38,6 +38,17 @@ Nothing (`undefined`).
 * Calling it again with the same namespace replaces the earlier selectors.
 * If the Modern UI has selectors under the same namespace, its selectors are the ones that `selectors` returns.
 
+[#example]
+== Example
+
+A selector for the account name is published and then called with the current state.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/add-selectors.js[]
+----
+
 [#next-step]
 == Next step
 

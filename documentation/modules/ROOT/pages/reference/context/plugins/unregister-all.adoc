@@ -28,6 +28,17 @@ Nothing (`undefined`).
 
 WARNING: For a Zimlet that loads from the server, `unregisterAll` also removes the handlers of every other Zimlet that loads from the server. See xref:fundamentals/host-context.adoc#shared-name[the shared name].
 
+[#example]
+== Example
+
+Two handlers are registered, and both are removed when the user signs out.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/plugins/unregister-all.js[]
+----
+
 [#next-step]
 == Next step
 

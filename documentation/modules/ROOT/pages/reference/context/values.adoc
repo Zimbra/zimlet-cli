@@ -1,15 +1,12 @@
 = Single values
 
-Look up the context fields that hold a single value. They cover the server address and token, the build details and the host name. Take a field from the context first, as in `const { csrfToken } = context;`.
+Look up the context fields that hold a single value. They cover the server address, the build details and the host name. Take a field from the context first, as in `const { zimbraOrigin } = context;`.
 
 [#members]
 == Members
 
 xref:reference/context/values/zimbra-origin.adoc[`zimbraOrigin`]::
 The prefix for server URLs.
-
-xref:reference/context/values/csrf-token.adoc[`csrfToken`]::
-The CSRF token for your own `fetch` calls.
 
 xref:reference/context/values/meta.adoc[`meta`]::
 The build version, hash and time of the Modern UI.

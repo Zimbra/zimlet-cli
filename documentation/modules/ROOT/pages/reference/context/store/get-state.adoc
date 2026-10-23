@@ -27,6 +27,17 @@ An object, the whole state tree. Treat it as read only.
 * The Modern UI owns the shape of the state. Read only the part that you need, such as `email.account`, and check that it exists, because `email.account` is `undefined` until the account has loaded.
 * State that you add with xref:reference/context/store/zimlet-redux/inject-async-reducer.adoc[injectAsyncReducer] is part of the same tree.
 
+[#example]
+== Example
+
+The signed-in account name is read from the state and printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/get-state.js[]
+----
+
 [#next-step]
 == Next step
 

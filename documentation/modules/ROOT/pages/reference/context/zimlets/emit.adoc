@@ -40,6 +40,17 @@ Nothing (`undefined`).
 * Do not emit the names of the manager events. That runs the listeners of the Modern UI.
 * To send an event from one Zimlet to another, see xref:reference/context/zimlets/custom-events.adoc[Custom events].
 
+[#example]
+== Example
+
+A listener prints the theme that an event announces.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/emit.js[]
+----
+
 [#next-step]
 == Next step
 

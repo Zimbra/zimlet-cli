@@ -21,6 +21,17 @@ object. Each key is a namespace, and each value is an object of selectors.
 * If a Zimlet and the Modern UI use the same namespace, the Modern UI entry wins.
 * A selector takes the state, which you get from xref:reference/context/store/get-state.adoc[getState].
 
+[#example]
+== Example
+
+The namespaces that have selectors are printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/selectors.js[]
+----
+
 [#next-step]
 == Next step
 

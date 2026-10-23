@@ -34,6 +34,17 @@ Nothing (`undefined`).
 * Nothing happens when the namespace has no actions.
 * It removes only published actions. Reducers stay.
 
+[#example]
+== Example
+
+The actions are published and removed, and the check shows that they are gone.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/remove-actions.js[]
+----
+
 [#next-step]
 == Next step
 

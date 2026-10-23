@@ -35,6 +35,17 @@ A function. Call it to stop listening.
 * The listener runs after every action, also those of other Zimlets. Keep it short, and check the part of the state that you care about.
 * Stop listening when you have what you need, so the listener does not run for the whole session.
 
+[#example]
+== Example
+
+A listener waits until the account has loaded, prints its name, and then stops.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/subscribe.js[]
+----
+
 [#next-step]
 == Next step
 

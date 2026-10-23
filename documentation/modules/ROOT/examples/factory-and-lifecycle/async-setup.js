@@ -10,7 +10,11 @@ export default function Zimlet(context) {
 		init() {
 			// init() returns at once. The handler is registered when the lookup finishes.
 			zimbraBatchClient
-				.accountInfo()
+				.jsonRequest({
+					name: 'GetInfo',
+					namespace: 'urn:zimbraAccount',
+					body: { sections: 'attrs' }
+				})
 				.then(({ name }) => {
 					plugins.register('slot::mail-sidebar-footer', () => <p>{`${WELCOME_LABEL}, ${name}`}</p>);
 				})

@@ -41,6 +41,23 @@ An array with one result for each handler, in the order of registration.
 * Use it when you need the answers of several Zimlets, which an event cannot give. An event such as xref:reference/context/zimlets/emit.adoc[emit] returns nothing to the sender.
 * The key is yours to define. Start it with the name of your Zimlet and describe it, so that other Zimlets know what to register.
 
+[#example]
+== Example
+
+One Zimlet defines the key `my-checks.before-send` and collects the answers when the user sends a message. Another Zimlet registers a check for an empty subject. Install both Zimlets, and send a message without a subject to see the problem.
+
+.Collector: src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/invoke-plugin-collector.js[]
+----
+
+.Check: src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/invoke-plugin-check.js[]
+----
+
 [#next-step]
 == Next step
 

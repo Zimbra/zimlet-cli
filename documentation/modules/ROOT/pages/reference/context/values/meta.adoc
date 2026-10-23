@@ -20,6 +20,17 @@ An object with the strings `version`, `hash` and `timestamp`.
 
 * `version` is the version of the Modern UI. The Modern UI sends it to the server when it asks for the Zimlets of the account.
 
+[#example]
+== Example
+
+The version and the build hash are printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/values/meta.js[]
+----
+
 [#next-step]
 == Next step
 

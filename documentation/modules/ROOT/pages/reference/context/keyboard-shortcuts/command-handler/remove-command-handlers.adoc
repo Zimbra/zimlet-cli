@@ -34,6 +34,17 @@ Nothing (`undefined`).
 * If a function was added more than once, only the latest one is removed.
 * Nothing happens for a function that is not found.
 
+[#example]
+== Example
+
+A handler removes itself after it has run once.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/command-handler/remove-command-handlers.js[]
+----
+
 [#next-step]
 == Next step
 

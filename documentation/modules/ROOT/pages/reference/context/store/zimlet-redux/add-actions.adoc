@@ -38,6 +38,17 @@ Nothing (`undefined`).
 * Calling it again with the same namespace replaces the earlier actions.
 * If the Modern UI has actions under the same namespace, its actions are the ones that `actions` returns.
 
+[#example]
+== Example
+
+A published action creator is read back from `actions` and its action is dispatched.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/add-actions.js[]
+----
+
 [#next-step]
 == Next step
 

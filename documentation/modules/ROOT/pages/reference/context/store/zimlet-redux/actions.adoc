@@ -22,6 +22,17 @@ object. Each key is a namespace, such as `notifications`, and each value is an o
 * If a Zimlet and the Modern UI use the same namespace, the Modern UI entry wins.
 * Pass the action that a creator returns to xref:reference/context/store/dispatch.adoc[dispatch].
 
+[#example]
+== Example
+
+The notification that is showing is cleared with an action creator of the Modern UI.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/actions.js[]
+----
+
 [#next-step]
 == Next step
 

@@ -12,7 +12,7 @@ The xref:reference/glossary.adoc#modern-ui[Modern UI] creates one context for ea
 const { plugins, store } = context;
 ----
 
-The Modern UI builds the context once. A field that holds a plain value, such as `csrfToken`, keeps the value it had when the Zimlet loaded. A method, such as `store.getState()`, reads the current state each time you call it.
+The Modern UI builds the context once. A field that holds a plain value, such as `zimbraOrigin`, keeps the value it had when the Zimlet loaded. A method, such as `store.getState()`, reads the current state each time you call it.
 
 See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] for how the factory receives the context.
 
@@ -28,7 +28,7 @@ Keep and share data::
 Use `xref:go-deeper/data-and-state.adoc[store]`. It is the Redux store of the Modern UI. Read it with `getState` when you need data that the Modern UI already holds, such as the account, and use `subscribe` to react when it changes. Send an action with `dispatch` to change it. When your Zimlet needs state of its own that several handlers share, add it through `store.zimletRedux`, which also lets other Zimlets use your actions and selectors.
 
 Talk to the server::
-Use `xref:go-deeper/data-and-state.adoc[zimbraBatchClient]` to send requests to the Zimbra server. It adds the CSRF token to its requests, and its `jsonRequest` method covers requests that have no method of their own. When your Zimlet makes its own `fetch` calls instead, `xref:go-deeper/data-and-state.adoc[zimbraOrigin]` gives the prefix for the address and `xref:go-deeper/data-and-state.adoc[csrfToken]` gives the token that goes in the header of such requests.
+Use `xref:go-deeper/data-and-state.adoc[zimbraBatchClient]` to send requests to the Zimbra server. It adds the CSRF token to its requests, and its `jsonRequest` method covers requests that have no method of their own. When your Zimlet makes its own `fetch` calls instead, `xref:go-deeper/data-and-state.adoc[zimbraOrigin]` gives the prefix for the address and `csrfStorage` from `@zimbra-client/util` gives the current token for the header of such requests. See xref:go-deeper/data-and-state/fetch.adoc[Call a server API with fetch].
 
 Work with other Zimlets::
 Use `xref:fundamentals/extending-the-ui.adoc[zimlets]`, the Zimlet manager. `invokePlugin` collects the answers of every handler that is registered under a key, which lets other Zimlets contribute to a feature of yours. `isSlotActive` tells whether a slot already has content. `on`, `off` and `emit` send and receive events, such as the Zimlets having finished loading or a custom event of your own.

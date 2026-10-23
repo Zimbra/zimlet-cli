@@ -25,6 +25,17 @@ An object `{ <context>: { <key>: <command> } }`. Changing it does not change the
 
 * The result includes the shortcuts of the Modern UI.
 
+[#example]
+== Example
+
+The contexts that have bindings are printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/key-bindings/get-bindings.js[]
+----
+
 [#next-step]
 == Next step
 

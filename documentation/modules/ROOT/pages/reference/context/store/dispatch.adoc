@@ -35,6 +35,17 @@ The action that you dispatched.
 * Dispatching an action that no reducer handles changes nothing.
 * To react to the change, see xref:reference/context/store/subscribe.adoc[subscribe].
 
+[#example]
+== Example
+
+A notification is requested by dispatching an action that the Modern UI provides.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/dispatch.js[]
+----
+
 [#next-step]
 == Next step
 

@@ -39,6 +39,17 @@ Nothing (`undefined`).
 * Calling it again with the same namespace replaces your reducer. You cannot remove a reducer.
 * The state is not kept after a page reload.
 
+[#example]
+== Example
+
+A reducer counts the actions that it receives, and the count is read from the state.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/inject-async-reducer.js[]
+----
+
 [#next-step]
 == Next step
 

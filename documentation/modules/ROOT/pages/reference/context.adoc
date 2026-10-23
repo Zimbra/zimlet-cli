@@ -12,7 +12,7 @@ xref:reference/context/store.adoc[`store`]::
 The Redux store: `getState`, `dispatch`, `subscribe`, and `zimletRedux` for your own reducers, actions and selectors.
 
 xref:reference/context/batch-client.adoc[`zimbraBatchClient`]::
-Sends requests to the Zimbra server: `accountInfo`, `jsonRequest`, `origin` and `resolve`.
+Sends requests to the Zimbra server: `jsonRequest`, `origin` and `resolve`.
 
 xref:reference/context/zimlets.adoc[`zimlets`]::
 The Zimlet manager: `invokePlugin`, `isSlotActive`, `on`, `off`, `emit` and its events.
@@ -28,9 +28,6 @@ Each of these fields has its own page under xref:reference/context/values.adoc[S
 xref:reference/context/values/zimbra-origin.adoc[`zimbraOrigin`]::
 The prefix for server URLs.
 
-xref:reference/context/values/csrf-token.adoc[`csrfToken`]::
-The CSRF token for your own `fetch` calls.
-
 xref:reference/context/values/meta.adoc[`meta`]::
 The build version, hash and time of the Modern UI.
 
@@ -40,7 +37,7 @@ The host name of the page.
 [#deprecated]
 == Deprecated
 
-Do not use these in new Zimlets. The xref:reference/context/deprecated.adoc[Deprecated] page lists each one with what to use instead: `cache`, `shims`, `config`, `utils`, `resourceUrl`, `zimbra` and `getAccount()`.
+Do not use these in new Zimlets. The xref:reference/context/deprecated.adoc[Deprecated] page lists each one with what to use instead: `cache`, `shims`, `config`, `utils`, `resourceUrl`, `zimbra`, `getAccount()`, `csrfToken` and `zimbraBatchClient.accountInfo()`.
 
 [#next-step]
 == Next step

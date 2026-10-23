@@ -33,6 +33,17 @@ A string, the origin followed by the path.
 
 * It only joins the two strings. It does not check that the path exists.
 
+[#example]
+== Example
+
+A download address for a message is built from its id.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/batch-client/resolve.js[]
+----
+
 [#next-step]
 == Next step
 

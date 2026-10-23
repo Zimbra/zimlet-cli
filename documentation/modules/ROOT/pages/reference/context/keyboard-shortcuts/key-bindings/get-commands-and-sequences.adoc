@@ -33,6 +33,17 @@ An object `{ commands, sequences }`. Each is an array of `{ context, command }`.
 
 * A key that is not bound gives two empty arrays.
 
+[#example]
+== Example
+
+The key `G`, which starts the go-to sequences, is looked up.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.js[]
+----
+
 [#next-step]
 == Next step
 

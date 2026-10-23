@@ -39,6 +39,17 @@ Nothing (`undefined`).
 * If no handler matches, nothing happens and there is no error.
 * A slot stops showing the handler as soon as it is removed.
 
+[#example]
+== Example
+
+A divider appears above the text of an open message, and the handler is removed after ten seconds.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/plugins/unregister.js[]
+----
+
 [#next-step]
 == Next step
 

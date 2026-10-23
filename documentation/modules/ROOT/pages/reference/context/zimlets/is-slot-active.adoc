@@ -35,6 +35,17 @@ zimlets.isSlotActive(slot)
 * Use it to avoid doubling up. For example, add default content only when no other Zimlet has already filled the slot.
 * Other Zimlets may register later. Check after xref:reference/context/zimlets/zimlets-initialized.adoc[zimlets-initialized], when the Zimlets have loaded.
 
+[#example]
+== Example
+
+A tip is added to the description list of the email landing page, but only if no other Zimlet has added one.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/is-slot-active.js[]
+----
+
 [#next-step]
 == Next step
 

@@ -131,7 +131,7 @@ _Purpose: teach what every Zimlet author must understand, one topic per page. Gi
   - Brief: sources `context-and-shims.md` §2, `authoring.md` §4, trimmed to what authors use. The full module table is P32. Examples: short import examples.
 - **P11 `fundamentals/host-context.adoc` – The context object** (Drafted)
   - What the host hands to a Zimlet – open with what the Modern UI passes through `context`.
-  - Fields by job – only the `context` fields that have a page in the API reference, other than the Deprecated page, grouped by what they are for. Each job gets a short explanation of what the field is for, when to pick it and how it relates to the other fields of that job, with a link to the concept page that teaches it (`plugins` and `zimlets` to P09, `store`, `zimbraBatchClient`, `zimbraOrigin` and `csrfToken` to P20), and to its page in P43 to P43.9 only when no concept page is planned (`meta`, `hostName`, `keyBindings`, `shortcutCommandHandler`). No deprecated fields. No types, arguments or examples here.
+  - Fields by job – only the `context` fields that have a page in the API reference, other than the Deprecated page, grouped by what they are for. Each job gets a short explanation of what the field is for, when to pick it and how it relates to the other fields of that job, with a link to the concept page that teaches it (`plugins` and `zimlets` to P09, `store`, `zimbraBatchClient` and `zimbraOrigin` to P20), and to its page in P43 to P43.9 only when no concept page is planned (`meta`, `hostName`, `keyBindings`, `shortcutCommandHandler`). No deprecated fields. No types, arguments or examples here.
   - Zimlets that load from the server share one name – the effect on `plugins.unregisterAll()`.
   - Brief: concept page, source `context-and-shims.md` §1. The field detail is in P43 and P43.1 to P43.10, which are the only full `context` inventory in the guide.
 
@@ -164,9 +164,9 @@ _Purpose: give complete, working, reusable recipes that combine the fundamentals
   - When this pattern is appropriate and how to verify it. It is not the same mechanism as app events (P21).
   - Brief: sources `authoring.md` §2–3, P09 and the verified message-processor implementation. Example: complete recipe with a verification checklist.
 - **P17 `build-by-goal/recipe-server-data.adoc` – Show data from the server** (Not started)
-  - Complete recipe: a small `fetch` helper (origin, credentials, CSRF header) and one call that uses it, plus a ready-made hook such as `useAccountInfo`, rendered in a component.
+  - Complete recipe: a small `fetch` helper (origin, credentials, CSRF header from `csrfStorage.get()`) and one call that uses it, plus a ready-made hook such as `useAccountInfo`, rendered in a component.
   - How to verify, and what fails when the session or token is wrong.
-  - Brief: sources `context-and-shims.md` §1, `authoring.md` §7, the `fetch` helper and SOAP call in `zimbra-zimlet-org-chart/src/api` (`FetchRequest` with `zimbraOrigin` and `csrfToken` from `context`, `credentials: 'include'`, header `X-Zimbra-Csrf-Token`, `POST /service/soap/<Request>`). Links P20 for the options. No GraphQL. Example: a helper and component written for the page from that pattern and built in a scratch Zimlet. The proxy variant (`zimbra-zimlet-chat`, an extension path) is product-specific and not needed here.
+  - Brief: sources `context-and-shims.md` §1, `authoring.md` §7, the `fetch` helper and SOAP call in `zimbra-zimlet-org-chart/src/api` (`FetchRequest` with `zimbraOrigin` from `context`; the Zimlet reads `csrfToken` from `context` too, but the guide uses `csrfStorage.get()` from `@zimbra-client/util` instead, `credentials: 'include'`, header `X-Zimbra-Csrf-Token`, `POST /service/soap/<Request>`). Links P20 for the options. No GraphQL. Example: a helper and component written for the page from that pattern and built in a scratch Zimlet. The proxy variant (`zimbra-zimlet-chat`, an extension path) is product-specific and not needed here.
 - **P18 `build-by-goal/recipe-app-events.adoc` – React to app events** (Not started)
   - Two examples: delay sending a message and delay logout, with `zimletEventEmitter`.
   - Remove the listener correctly; verify the behaviour.
@@ -327,8 +327,7 @@ _Purpose: complete facts for lookup. Tables and entries only, no tutorial text._
   - `subscribe(listener)`.
 - **P43.5 `reference/context/batch-client.adoc` – Batch client** (Drafted)
   - Group page for `zimbraBatchClient`. Documents only the members that Zimlets use and links to P33 for the rest.
-- **P43.5.1 `reference/context/batch-client/account-info.adoc` – accountInfo** (Drafted)
-  - `accountInfo()`.
+- **P43.5.1** (removed: `zimbraBatchClient.accountInfo()` is deprecated and has an entry on P43.10; the number is kept so that no page is renumbered)
 - **P43.5.2 `reference/context/batch-client/json-request.adoc` – jsonRequest** (Drafted)
   - `jsonRequest(options)`.
 - **P43.5.3 `reference/context/batch-client/origin.adoc` – origin** (Drafted)
@@ -379,14 +378,13 @@ _Purpose: complete facts for lookup. Tables and entries only, no tutorial text._
   - Group page for the single-value fields.
 - **P43.9.1 `reference/context/values/zimbra-origin.adoc` – zimbraOrigin** (Drafted)
   - `zimbraOrigin` (property).
-- **P43.9.2 `reference/context/values/csrf-token.adoc` – csrfToken** (Drafted)
-  - `csrfToken` (property).
+- **P43.9.2** (removed: `csrfToken` is deprecated and now has an entry on P43.10; the number is kept so that no page is renumbered)
 - **P43.9.3 `reference/context/values/meta.adoc` – meta** (Drafted)
   - `meta` (property).
 - **P43.9.4 `reference/context/values/host-name.adoc` – hostName** (Drafted)
   - `hostName` (property).
 - **P43.10 `reference/context/deprecated.adoc` – Deprecated** (Drafted)
-  - The fields that no active Zimlet uses (including all their members) and that have an alternative: `cache`, `shims`, `config`, `utils`, `resourceUrl` (no replacement: it is not specific to a Zimlet), `zimbra` and `getAccount()` (marked deprecated by the code and by the host reference, and used by few Zimlets). One entry for each main field, with no entries for its members. Each entry says not to use it and names what to use instead, or says that no replacement exists yet (`utils`: no shimmed module exports `draftForMessage`, `colorForCalendar`, `newAlarm` and `filterNonEditableCalendars`). Unused items that have no alternative stay on their own pages until they are decided.
+  - The fields that no active Zimlet uses (including all their members) and that have an alternative: `cache`, `shims`, `config`, `utils`, `resourceUrl` (no replacement: it is not specific to a Zimlet), `zimbra` and `getAccount()` (marked deprecated by the code and by the host reference, and used by few Zimlets), `zimbraBatchClient.accountInfo()` (replaced by the `useAccountInfo` hook, or by `jsonRequest` with `GetInfo` outside a component; no active Zimlet uses it), and `csrfToken` (replaced by `csrfStorage.get()` from `@zimbra-client/util`, which reads the current token; `csrfToken` is a copy taken when the Zimlet loads. The org-chart Zimlet still uses it). One entry for each main field, with no entries for its members. Each entry says not to use it and names what to use instead, or says that no replacement exists yet (`utils`: no shimmed module exports `draftForMessage`, `colorForCalendar`, `newAlarm` and `filterNonEditableCalendars`). Unused items that have no alternative stay on their own pages until they are decided.
   - Brief for P43.1 to P43.10 and all their child pages (`context.getApolloClient()` is deliberately not documented: the guide leaves out GraphQL and Apollo, rule in `write-doc.md` section 2. `context.styles` is deliberately not documented too: the build already calls it for every Zimlet, and a call of your own replaces all the CSS from the `.less` files, so authors use `.less` and CSS Modules instead; see P22): one description-list entry for each field and member, with its type, arguments, return value and limits, with no example for now (the second exception in `doc-guide/types.md` section 3; the example files stay in `examples/reference-context/`, unlinked). Verify each entry in the code. Each page is short (about 30 to 90 lines); the structure follows the one-page-per-API style of API references, but fields with almost nothing to say share P43.9 so that no page is nearly empty.
 - **P34 `reference/slots.adoc` – Slot and extension-point index** (Not started)
   - How to read an entry – what each column means.

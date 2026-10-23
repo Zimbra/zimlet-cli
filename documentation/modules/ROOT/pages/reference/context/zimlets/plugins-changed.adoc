@@ -35,6 +35,17 @@ A string, the key, such as `slot::message-body-top`.
 * The listener runs before the call that caused it returns.
 * A listener sees the changes of your own Zimlet too.
 
+[#example]
+== Example
+
+The first time a handler appears for a slot, a message is printed and the listener stops.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/plugins-changed.js[]
+----
+
 [#next-step]
 == Next step
 

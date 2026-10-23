@@ -38,6 +38,17 @@ Nothing (`undefined`).
 * If no listener matches, nothing happens.
 * If you leave out `handler`, every listener of the event is removed, including those of the Modern UI. Always pass it.
 
+[#example]
+== Example
+
+A listener removes itself after the first event, so the second event is not printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/off.js[]
+----
+
 [#next-step]
 == Next step
 

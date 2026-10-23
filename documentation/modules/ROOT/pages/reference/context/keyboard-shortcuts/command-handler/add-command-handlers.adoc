@@ -35,6 +35,17 @@ Nothing (`undefined`).
 * Keep the objects in a variable if you want to remove them later with xref:reference/context/keyboard-shortcuts/command-handler/remove-command-handlers.adoc[removeCommandHandlers].
 * A command that no binding points to never runs.
 
+[#example]
+== Example
+
+Pressing `Y` and then `M` in the mail screen prints the key that was pressed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/command-handler/add-command-handlers.js[]
+----
+
 [#next-step]
 == Next step
 

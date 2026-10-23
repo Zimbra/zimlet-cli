@@ -21,7 +21,18 @@ string. It comes from the Modern UI configuration. Depending on the installation
 * Put it in front of a server path to build the address of a request.
 * For the batch client, xref:reference/context/batch-client/resolve.adoc[resolve] does the same.
 
+[#example]
+== Example
+
+A request to a path of your own is built from the origin.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/values/zimbra-origin.js[]
+----
+
 [#next-step]
 == Next step
 
-Learn how to send the CSRF token in xref:reference/context/values/csrf-token.adoc[csrfToken].
+Learn how to send your own request in xref:go-deeper/data-and-state/fetch.adoc[Call a server API with fetch].

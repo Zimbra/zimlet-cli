@@ -60,7 +60,7 @@ An error that `init()` throws is logged as a warning in the browser console. The
 
 `init()` does not need to finish its work before it returns. Start the asynchronous work, and register your handlers when it finishes. A slot shows a handler that you register later as soon as you register it.
 
-The example asks the server for the account information, and registers a handler for the `mail-sidebar-footer` xref:fundamentals/extending-the-ui.adoc[slot], which is the area at the bottom of the sidebar. The handler shows a welcome message with the account `name`. If the request fails, it logs the error, and the Zimlet adds nothing.
+The example asks the server for the account information with xref:reference/context/batch-client/json-request.adoc[`jsonRequest`], and registers a handler for the `mail-sidebar-footer` xref:fundamentals/extending-the-ui.adoc[slot], which is the area at the bottom of the sidebar. The handler shows a welcome message with the account `name`. If the request fails, it logs the error, and the Zimlet adds nothing.
 
 .src/index.js
 [source,js]

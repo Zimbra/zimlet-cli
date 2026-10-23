@@ -58,6 +58,26 @@ Takes no arguments. Returns the signed-in account from the store, or an empty ob
 const { name } = getAccount();
 ----
 
+[[csrf-token]]pass:[<a class="anchor" href="#csrf-token"></a>]`csrfToken`::
+The CSRF token of the session, as a string, or a falsy value when the Modern UI does not use a token. The Modern UI copies it into the context when the Zimlet loads and does not update that copy. Do not use it. Import `csrfStorage` from `@zimbra-client/util` and call `csrfStorage.get()` each time you send a request. It reads the current token and returns `null` when there is none. Call only `get`. `csrfStorage` also has `set` and `clear`, which belong to the Modern UI. See xref:go-deeper/data-and-state/fetch.adoc[Call a server API with fetch].
++
+[source,js]
+----
+import { csrfStorage } from '@zimbra-client/util';
+
+const token = csrfStorage.get();
+----
+
+[[batch-client-account-info]]pass:[<a class="anchor" href="#batch-client-account-info"></a>]`zimbraBatchClient.accountInfo()`::
+Takes no arguments. Returns a promise for an object with the account `name`, `attrs` and `zimlets`, and rejects when the request fails. Each call sends a request. Do not use it. In a component, use the `useAccountInfo` hook instead. See xref:reference/apis-hooks.adoc[APIs and hooks]. Outside a component, for example in `init()`, send the `GetInfo` request with xref:reference/context/batch-client/json-request.adoc[`jsonRequest`].
++
+[source,js]
+----
+zimbraBatchClient
+	.jsonRequest({ name: 'GetInfo', namespace: 'urn:zimbraAccount', body: { sections: 'attrs' } })
+	.then(({ name }) => showWelcome(name));
+----
+
 [#next-step]
 == Next step
 

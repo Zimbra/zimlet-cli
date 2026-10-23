@@ -11,6 +11,17 @@ Maps keys to commands.
 xref:reference/context/keyboard-shortcuts/command-handler.adoc[Command handler (`shortcutCommandHandler`)]::
 Runs a function when a command is triggered.
 
+[#example]
+== Example
+
+Pressing `Y` and then `H` runs the command, and the handler prints a message.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/shortcut.js[]
+----
+
 [#next-step]
 == Next step
 

@@ -36,6 +36,17 @@ A promise for the content of the matching response. The promise rejects when the
 * `options.namespace` (string): `urn:zimbraMail` by default. Use `urn:zimbraAccount` for account requests.
 * `options.singleRequest` (boolean): set it to `true` to send the request alone instead of batching it with others.
 
+[#example]
+== Example
+
+A request that checks the session is sent, and the result is printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/batch-client/json-request.js[]
+----
+
 [#next-step]
 == Next step
 

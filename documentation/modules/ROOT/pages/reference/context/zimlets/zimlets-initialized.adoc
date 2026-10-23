@@ -35,6 +35,17 @@ None.
 * After that first time, it is emitted again 500 milliseconds after the last handler that any Zimlet registers, so it can arrive many times.
 * Do not register a handler in a listener without a check. The registration schedules the event again.
 
+[#example]
+== Example
+
+A listener counts how often the event arrives and tells whether a slot is in use.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/zimlets-initialized.js[]
+----
+
 [#next-step]
 == Next step
 

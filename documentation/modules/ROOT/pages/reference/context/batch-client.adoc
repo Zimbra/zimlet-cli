@@ -1,12 +1,9 @@
 = Batch client
 
-The client of the Zimbra API library that the Modern UI uses to send requests to the server. Use it when your Zimlet must read data from the server, or send it a request, and no hook covers the request. Take the field from the context first, as in `const { zimbraBatchClient } = context;`. It has a method for most common requests. The members below are the ones that Zimlets use. For other operations, see xref:reference/apis-hooks.adoc[APIs and hooks].
+The client of the Zimbra API library that the Modern UI uses to send requests to the server. Use it when your Zimlet must read data from the server, or send it a request, and no hook covers the request. Take the field from the context first, as in `const { zimbraBatchClient } = context;`. It has a method for most common requests. The members below are the ones that Zimlets use. `accountInfo()` is deprecated; see xref:reference/context/deprecated.adoc#batch-client-account-info[Deprecated]. For other operations, see xref:reference/apis-hooks.adoc[APIs and hooks].
 
 [#members]
 == Members
-
-xref:reference/context/batch-client/account-info.adoc[`accountInfo()`]::
-Reads the account information of the signed-in user.
 
 xref:reference/context/batch-client/json-request.adoc[`jsonRequest(options)`]::
 Sends any request through the server's SOAP API.

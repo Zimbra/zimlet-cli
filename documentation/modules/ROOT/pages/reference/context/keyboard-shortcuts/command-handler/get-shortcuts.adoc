@@ -25,6 +25,17 @@ An object with one entry for each context that has shortcuts. Each entry is an a
 
 * A binding without a handler is not listed.
 
+[#example]
+== Example
+
+The contexts that have working shortcuts are printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/keyboard-shortcuts/command-handler/get-shortcuts.js[]
+----
+
 [#next-step]
 == Next step
 

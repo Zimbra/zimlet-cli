@@ -40,6 +40,17 @@ Nothing (`undefined`).
 * Registering the same function twice adds two handlers.
 * Keep the function in a variable if you want to remove it later with xref:reference/context/plugins/unregister.adoc[unregister].
 
+[#example]
+== Example
+
+The handler shows a divider above the text of an open message.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/plugins/register.js[]
+----
+
 [#next-step]
 == Next step
 

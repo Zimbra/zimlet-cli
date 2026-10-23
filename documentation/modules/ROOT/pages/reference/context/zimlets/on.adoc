@@ -40,6 +40,17 @@ Nothing (`undefined`).
 * Keep the function in a variable if you want to remove it with xref:reference/context/zimlets/off.adoc[off].
 * The manager emits `init` before the first Zimlet runs, so a Zimlet never receives it.
 
+[#example]
+== Example
+
+A menu item appears while another Zimlet has registered under the key `my-hub.items`, and it is removed when none is left.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/on.js[]
+----
+
 [#next-step]
 == Next step
 
