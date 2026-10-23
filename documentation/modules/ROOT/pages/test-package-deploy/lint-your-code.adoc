@@ -1,0 +1,158 @@
+= Lint
+
+Linting means checking code with a tool, here https://eslint.org/[ESLint^], before you run it. This page shows how to lint a xref:reference/glossary.adoc#zimlet[Zimlet] project, fix what the tool reports and change a rule when you need to. Linting runs on your machine and needs no Zimbra server, so you can use it at any point while you write code. It finds mistakes and style problems early, and untranslated texts are among the problems it reports.
+
+== Before you start
+
+You need a Zimlet project with its dependencies installed. Zimbra recommends the https://github.com/Zimbra/zm-eslint-config[`@zimbra/eslint-config`^] package, the Zimbra ESLint configuration. The steps below use it. A project made from the default template, as xref:getting-started/quickstart.adoc#create-from-template[Create a Zimlet from the template] describes, already has it. To add it to another project, follow <<add-lint-setup,Add the lint setup to your project>>. Run the commands in the project folder.
+
+[#add-lint-setup]
+== Add the lint setup to your project
+
+If your project comes from the default template, or you use your own ESLint setup, go on to <<run-lint,Run the checks>>.
+
+. Install ESLint and the Zimbra configuration:
++
+[source,sh]
+----
+npm install --save-dev eslint @zimbra/eslint-config
+----
+. Create `eslint.config.mjs` in the project folder. It lists the rule sets that the template uses:
++
+.eslint.config.mjs
+[source,js]
+----
+include::example$lint-your-code/eslint.config.mjs[]
+----
+. Add a `lint` script to the `scripts` block of `package.json`:
++
+[source,json]
+----
+"lint": "eslint src",
+----
+. Add `.prettierrc` and `.editorconfig` to the project folder. Copy them from a new project made from the default template, so that your code follows the same format as the examples in the documentation.
+
+NOTE: The last block of the file turns off `preact-i18n/no-unknown-key`. It is needed when your project ships only `en_US`, because the rule reports every other language as missing. Without it, `npm run lint` reports dozens of `language is missing` errors.
+
+[#run-lint]
+== Run the checks
+
+. Run the lint script:
++
+[source,sh]
+----
+npm run lint
+----
+
+The script runs `eslint src`, so it checks the `.js` and `.mjs` files in `src/`. A project without problems prints only the command line and finishes:
+
+[source,text]
+----
+> my-zimlet@1.0.0 lint
+> eslint src
+----
+
+[#fix-a-problem]
+== Fix a reported problem
+
+The most common problem is text that you write directly in a component. ESLint reports it because a text typed into the code cannot be translated.
+
+. Create `src/components/greeting/index.js` with the text written in the component. This short version leaves out the imports, and the complete component follows in step 3:
++
+[source,js]
+----
+const Greeting = () => <p>Hello from my Zimlet</p>;
+export default Greeting;
+----
+. Run `npm run lint`. ESLint reports the text and stops with an error:
++
+[source,text]
+----
+<path-to>/my-zimlet/src/components/greeting/index.js
+  1:27  error  Untranslated text 'Hello from my Zimlet'  preact-i18n/no-text-as-children
+
+✖ 1 problem (1 error, 0 warnings)
+----
+. Show the text with `<Text>` and the `withIntl` wrapper that the template has in `src/enhancers/index.js`. A project without that wrapper needs one, as xref:go-deeper/localization.adoc[Localization] describes. Replace the component with this one:
++
+.src/components/greeting/index.js
+[source,js]
+----
+include::example$lint-your-code/src/components/greeting/index.js[]
+----
+. Add the text under its key in the strings file. The file keeps the template's keys, and `greeting` is the new one:
++
+.src/intl/en_US.json
+[source,json]
+----
+include::example$lint-your-code/src/intl/en_US.json[]
+----
+. Run `npm run lint` again. It reports no problems.
+
+The component reads its text from the block named after the Zimlet, so the id `my-zimlet.greeting` matches the key `greeting` in the `my-zimlet` block. See xref:go-deeper/localization.adoc[Localization] for how texts work.
+
+NOTE: The build does not run lint. The first version of the component also builds and packages, so run `npm run lint` yourself before you package.
+
+[#lint-fix]
+== Fix formatting problems automatically
+
+Run `npm run lint:fix` to let ESLint correct what it can, such as quotes and indentation. It does not fix other problems. The `Untranslated text` problem stays until you change the code, as in the steps above.
+
+[#eslint-config]
+== eslint.config.mjs
+
+`eslint.config.mjs` tells ESLint which files to check and which rules to apply. See the https://eslint.org/docs/latest/use/configure/configuration-files[ESLint configuration files guide^] for the file format.
+
+The template's file merges the rule sets into one block. The file in <<add-lint-setup,Add the lint setup to your project>> lists them one after another. The template's file does four things:
+
+* It combines five rule sets from the `@zimbra/eslint-config` package. The https://github.com/Zimbra/zm-eslint-config[package repository^] lists every rule:
+** `coreJsConfig`: general JavaScript rules, including imports, security and style.
+** `customConfig`: rules that are specific to Zimbra code, such as one that reports unsafe `window.open` calls.
+** `reactConfig`: rules for JSX and hooks.
+** `prettierConfig`: formatting checks that follow `.prettierrc` and `.editorconfig`.
+** `preactI18nConfig`: rules for texts, such as the one in the steps above.
+* It applies the rules to `.js` and `.mjs` files. Other files, such as `.less` and `.json`, are not checked.
+* It skips the `node_modules`, `build` and `pkg` folders.
+* It turns off one rule, `preact-i18n/no-unknown-key`, because the template ships only `en_US` and the rule would report the texts that other languages lack.
+
+[#eslint-change-rule]
+=== Change a rule
+
+Add the rule to the `rules` object of the block that applies to `.js` and `.mjs` files, with the value `'off'`, `'warn'` or `'error'`:
+
+[source,js]
+----
+'preact-i18n/no-text-as-children': 'off',
+----
+
+Run `npm run lint` to see the effect. The value `'warn'` reports the problem without failing the run. See the https://eslint.org/docs/latest/use/configure/rules[ESLint rules guide^] for more.
+
+Turn a rule off only when you have a reason. The examples in the documentation follow the template's rules.
+
+[#eslint-check-files]
+=== Check specific files and see the active rules
+
+`npm run lint` checks only `src/`. To check one folder or file, run `npx eslint <path>`, for example `npx eslint src/components`. To print the complete configuration that ESLint uses for a file, run `npx eslint --print-config src/index.js`.
+
+[#commit-hooks]
+== Lint on every commit
+
+In a Git repository, `git commit` runs the same checks on the staged files and stops when ESLint reports an error. Fix the problem and commit again. See xref:fundamentals/package-json.adoc#prepare[the `prepare` script] for how the hooks are set up.
+
+== If it didn't work
+
+`npm run lint` prints `eslint: command not found`.::
+* Cause: The dependencies are not installed, for example because you created the project without installing them.
+* Fix: Run `npm install` in the project folder.
+
+`npm run lint` prints `ESLint couldn't find an eslint.config.(js|mjs|cjs) file.`::
+* Cause: `eslint.config.mjs` is missing from the project folder, or you run the command in another folder.
+* Fix: Run the command in the project root. If you deleted the file, copy it from a new project made from the default template.
+
+ESLint reports every tab, for example ``Replace `↹` with `··` ``.::
+* Cause: `.editorconfig` is missing, so Prettier expects spaces.
+* Fix: Copy `.editorconfig` from a new project made from the default template into your project root.
+
+== Next step
+
+Learn how to test your Zimlet in xref:test-package-deploy/testing.adoc[Test your Zimlet].

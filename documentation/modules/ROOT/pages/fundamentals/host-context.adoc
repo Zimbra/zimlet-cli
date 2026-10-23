@@ -1,0 +1,52 @@
+= The context object
+
+The context is the object that the Modern UI passes to your Zimlet when it loads. It is how your Zimlet reaches the Modern UI: through its fields your Zimlet adds content, sends requests to the server, shares state, works with other Zimlets and reads details of the Modern UI. This page explains how your Zimlet receives the context and which field fits which job. Come back to it whenever you need the field for a job, or when you start a Zimlet and are deciding what to take from the context. The xref:reference/context.adoc[Context reference] has a page for every field.
+
+[#what-the-modern-ui-passes]
+== What the Modern UI passes to your Zimlet
+
+The xref:reference/glossary.adoc#modern-ui[Modern UI] creates one context for each Zimlet and passes it to the xref:fundamentals/factory-and-lifecycle.adoc[factory] when the Zimlet loads. Take the fields you need with destructuring, and use them in `init()` and in your handlers.
+
+[source,js]
+----
+const { plugins, store } = context;
+----
+
+The Modern UI builds the context once. A field that holds a plain value, such as `zimbraOrigin`, keeps the value it had when the Zimlet loaded. A method, such as `store.getState()`, reads the current state each time you call it.
+
+See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] for how the factory receives the context.
+
+[#fields]
+== Fields by job
+
+Pick the field for the job you need to do. Each job links to the page that explains it. The xref:reference/context.adoc[Context reference] gives every field with its type, arguments and return value.
+
+Add content::
+Use `xref:fundamentals/extending-the-ui.adoc[plugins]`. It registers your handlers with `register` and removes them with `unregister` and `unregisterAll`. A handler is how your Zimlet adds content to a xref:fundamentals/extending-the-ui.adoc[slot] of the Modern UI, or answers a key that another Zimlet collects. Start here for most features that put something on the screen.
+
+Keep and share data::
+Use `xref:go-deeper/data-and-state.adoc[store]`. It is the Redux store of the Modern UI. Read it with `getState` when you need data that the Modern UI already holds, such as the account, and use `subscribe` to react when it changes. Send an action with `dispatch` to change it. When your Zimlet needs state of its own that several handlers share, add it through `store.zimletRedux`, which also lets other Zimlets use your actions and selectors.
+
+Talk to the server::
+Use `xref:go-deeper/data-and-state.adoc[zimbraBatchClient]` to send requests to the Zimbra server. It adds the CSRF token to its requests, and its `jsonRequest` method covers requests that have no method of their own. When your Zimlet makes its own `fetch` calls instead, `xref:go-deeper/data-and-state.adoc[zimbraOrigin]` gives the prefix for the address and `csrfStorage` from `@zimbra-client/util` gives the current token for the header of such requests. See xref:go-deeper/data-and-state/fetch.adoc[Call a server API with fetch].
+
+Work with other Zimlets::
+Use `xref:fundamentals/extending-the-ui.adoc[zimlets]`, the Zimlet manager. `invokePlugin` collects the answers of every handler that is registered under a key, which lets other Zimlets contribute to a feature of yours. `isSlotActive` tells whether a slot already has content. `on`, `off` and `emit` send and receive events, such as the Zimlets having finished loading or a custom event of your own.
+
+Learn about the Modern UI::
+Use `xref:reference/context/values/meta.adoc[meta]` for the version and build details of the Modern UI, for example to add them to an error report. Use `xref:reference/context/values/host-name.adoc[hostName]` for the host name of the page, for example to behave differently on a test server.
+
+Add keyboard shortcuts::
+Use `xref:reference/context/keyboard-shortcuts.adoc[keyBindings]` to bind keys to commands, and `xref:reference/context/keyboard-shortcuts.adoc[shortcutCommandHandler]` to run a function when a command is triggered. A command only does something when it has both a binding and a handler, so you normally use the two together.
+
+[#shared-name]
+== Zimlets that load from the server share one name
+
+The Modern UI loads all Zimlets that are deployed on the server from one bundle. It creates the context of each of them with the same name, so a call that you expect to touch only your Zimlet can reach the others too.
+
+WARNING: `plugins.unregisterAll()` removes the handlers of every Zimlet that loaded from the server, not only yours. Remove your own handlers one by one with `plugins.unregister(name, handler)`.
+
+[#next-step]
+== Next step
+
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].

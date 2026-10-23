@@ -1,0 +1,64 @@
+= Custom events
+
+Events that you name yourself, so that Zimlets can tell each other something. Use them to let one Zimlet react to something that happened in another, such as a user choice, without the Zimlets sharing code. The sender calls `emit` and the listener calls `on`. An event returns nothing to the sender. When the sender needs answers, use xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimlets.on('my-zimlet.refresh', handler)
+zimlets.emit('my-zimlet.refresh', data)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`event`
+|string
+|Any name that is not used by the Modern UI. Start it with the name of your Zimlet.
+
+|`handler`
+|function
+|Called with the data of the event.
+
+|===
+
+[#event-data]
+== Event data
+
+Whatever the sender passes to `emit`.
+
+[#usage-notes]
+== Usage notes
+
+* All Zimlets share the event names, so the prefix prevents clashes.
+* There is no replay. The listener must exist before the event is sent. Send an event when something happens, such as a user action, and not at startup, when other Zimlets may not have added their listeners yet.
+* Use an event for something that only the sender knows, such as a user choice. For "all Zimlets have loaded", listen to xref:reference/context/zimlets/zimlets-initialized.adoc[zimlets-initialized] instead.
+* Keep the data small and plain, because every Zimlet can read it.
+
+[#example]
+== Example
+
+One Zimlet adds a Compact view item to the gear menu and announces the choice. Another Zimlet reacts to it. Install both Zimlets, and choose the item to see the message.
+
+.Sender: src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/custom-events-sender.js[]
+----
+
+.Listener: src/index.js
+[source,js]
+----
+include::example$reference-context/zimlets/custom-events-listener.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to collect the answers of several Zimlets in xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin].

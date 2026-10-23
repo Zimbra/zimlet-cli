@@ -1,0 +1,14 @@
+flowchart TB
+  subgraph author["On your machine"]
+    direction LR
+    A["Write the Zimlet"] --> B["Build it"] --> C["Package it"]
+  end
+  subgraph server["Zimbra server"]
+    D["Administrator deploys it"]
+  end
+  subgraph browser["Modern UI in the browser"]
+    direction LR
+    F["Downloads the Zimlet"] --> G["Runs the Zimlet code"] --> H["Modern UI shows the result"]
+  end
+  author --> server
+  server --> browser

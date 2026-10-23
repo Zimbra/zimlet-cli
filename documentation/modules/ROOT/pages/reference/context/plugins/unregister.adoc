@@ -1,0 +1,56 @@
+= unregister
+
+Removes one plugin handler that your Zimlet registered under a key. Use it when one feature of your Zimlet must stop showing content or answering at run time, for example after the user turns it off, while your other handlers keep working.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+plugins.unregister(name, handler)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`name`
+|string
+|The key under which you registered the handler, such as `slot::message-body-top`.
+
+|`handler`
+|function
+|The same function that you gave to xref:reference/context/plugins/register.adoc[register]. A function with the same code but another reference does not match.
+
+|===
+
+[#returns]
+== Returns
+
+Nothing (`undefined`).
+
+[#usage-notes]
+== Usage notes
+
+* Each call removes one handler, the one that you registered last under that key with that function.
+* If no handler matches, nothing happens and there is no error.
+* A slot stops showing the handler as soon as it is removed.
+
+[#example]
+== Example
+
+A divider appears above the text of an open message, and the handler is removed after ten seconds.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/plugins/unregister.js[]
+----
+
+[#next-step]
+== Next step
+
+To remove every handler of your Zimlet at once, see xref:reference/context/plugins/unregister-all.adoc[unregisterAll].

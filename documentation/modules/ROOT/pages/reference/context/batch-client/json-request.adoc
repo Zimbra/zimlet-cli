@@ -1,0 +1,53 @@
+= jsonRequest
+
+Sends one request through the server's SOAP API as JSON. Use it for a request that has no method of its own, for example when your Zimlet must read or change data on the server that the Modern UI does not offer through a hook. The client can batch it with other requests. Set `singleRequest` to send it alone.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+zimbraBatchClient.jsonRequest(options)
+----
+
+[#parameters]
+== Parameters
+
+[cols="2,2,6"]
+|===
+|Name |Type |Description
+
+|`options`
+|object
+|The request. Its properties are listed below.
+
+|===
+
+[#returns]
+== Returns
+
+A promise for the content of the matching response. The promise rejects when the server answers with a fault.
+
+[#usage-notes]
+== Usage notes
+
+* `options.name` (string): the request name without `Request`, such as `NoOp`.
+* `options.body` (object): the content of the request.
+* `options.namespace` (string): `urn:zimbraMail` by default. Use `urn:zimbraAccount` for account requests.
+* `options.singleRequest` (boolean): set it to `true` to send the request alone instead of batching it with others.
+
+[#example]
+== Example
+
+A request that checks the session is sent, and the result is printed.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/batch-client/json-request.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to build the address of a server path in xref:reference/context/batch-client/resolve.adoc[resolve].

@@ -1,0 +1,39 @@
+= actions
+
+The action creators of all Zimlets and of the Modern UI, one entry for each namespace. Use it to find an action that the Modern UI or another Zimlet offers, such as `notifications.notify`, and to pass what it returns to `dispatch`.
+
+[#signature]
+== Signature
+
+[source,js]
+----
+store.zimletRedux.actions
+----
+
+[#type]
+== Type
+
+object. Each key is a namespace, such as `notifications`, and each value is an object of action creators.
+
+[#usage-notes]
+== Usage notes
+
+* Read it each time you need it. It is built from the current state of the registry.
+* If a Zimlet and the Modern UI use the same namespace, the Modern UI entry wins.
+* Pass the action that a creator returns to xref:reference/context/store/dispatch.adoc[dispatch].
+
+[#example]
+== Example
+
+The notification that is showing is cleared with an action creator of the Modern UI.
+
+.src/index.js
+[source,js]
+----
+include::example$reference-context/store/zimlet-redux/actions.js[]
+----
+
+[#next-step]
+== Next step
+
+Learn how to read selectors in xref:reference/context/store/zimlet-redux/selectors.adoc[selectors].
