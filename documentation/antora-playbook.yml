@@ -10,6 +10,10 @@ content:
       start_path: documentation
       edit_url: ~
       #worktrees: true # Used for local testing
+antora:
+  extensions:
+    - '@antora/lunr-extension'
+
 ui:
   bundle:
     url: ./ui-bundle.zip
