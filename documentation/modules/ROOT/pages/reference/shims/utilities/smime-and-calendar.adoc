@@ -1,0 +1,219 @@
+= S/MIME and calendar
+
+Four exports of `@zimbra-client/util` for S/MIME and for calendar events in the xref:reference/glossary.adoc#modern-ui[Modern UI]. S/MIME signs and encrypts email. Use them to check that S/MIME is available and to hand a request to the desktop app. Use them also to list the calendars where the user can add events and to close the tab of an event. Examples are a xref:reference/glossary.adoc#zimlet[Zimlet] that adds S/MIME controls only when the license allows them, and one that imports events into a calendar. The Modern UI shares these exports with every Zimlet, so the build does not copy them into yours. See xref:reference/shims/utilities.adoc[Utilities] for the other areas.
+
+[#members]
+== Members
+
+<<smime-handler,`smimeHandler`>>::
+Hands an S/MIME request to the desktop app.
+
+<<is-server-smime-feature-available,`isServerSMIMEFeatureAvailable`>>::
+Tells whether the license of the server includes S/MIME, in a browser.
+
+<<filter-non-insertable-calendars,`filterNonInsertableCalendars`>>::
+Lists the calendars where the user can add events.
+
+<<close-event-tab-thunk,`closeEventTabThunk`>>::
+Closes the tab of a calendar event.
+
+[#smime-handler]
+== smimeHandler
+
+Hands an S/MIME request to the desktop app, which reads certificates and signs, encrypts or decodes a message on the user's computer. Use it when your Zimlet runs in the desktop app and must read a certificate or sign a message with the keys of the user. In a browser it does nothing. No active Zimlet uses `smimeHandler`, so this entry documents what the code reads.
+
+=== Signature
+
+[source,js]
+----
+import { smimeHandler } from '@zimbra-client/util';
+
+const result = smimeHandler({ operation: 'get-cert', certData });
+----
+
+=== Parameters
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`params`
+|object
+|The request.
+
+|`params.operation`
+|string
+|The action to run: `get-ident`, `get-cert`, `encode`, `decode` or `get-info`. The other fields of `params` depend on the operation, as the table under Returns shows.
+
+|===
+
+=== Returns
+
+In the desktop app, a promise of object that resolves with the result of the operation. It rejects when the operation fails, for example when a required field is missing. In a browser, `undefined`.
+
+[cols="2,5,5",options="header"]
+|===
+|Operation |Fields of `params` |Fields of the result
+
+|`get-ident`
+|`email` (string) and `usage` (string). The Modern UI passes `sign`.
+|`isTrusted` (boolean), `certificate` (object), `certData` (string, in base64) and `isExpired` (boolean).
+
+|`get-cert`
+|`certData` (string, in base64). Required.
+|`certificate` (object), `isExpired` (boolean) and `leafCertData` (string).
+
+|`encode`
+|`data` (object, the message, required), `sign` (boolean, default `false`), `encrypt` (boolean, default `false`) and `certificates` (array of string, the public certificates to encrypt for).
+|`encodedMessage` and `base64Message`: the signed or encrypted message.
+
+|`decode`
+|`data` (string, the text of the message). Required.
+|`signers` and `message`: who signed it, and the decoded message.
+
+|`get-info`
+|None.
+|`name`, `platform`, `digest` and `isfips`.
+
+|===
+
+=== Usage notes
+
+* Call it only when xref:reference/shims/errors-platform-and-pwa.adoc#get-platform-type[`getPlatformType()`] returns `PLATFORM_TYPES.ELECTRON`. In a browser the call returns `undefined`, and `.then` on it throws a `TypeError`. See xref:go-deeper/platform-checks.adoc[Platform checks].
+* The desktop app owns the operations and their fields. S/MIME is available only in the desktop app on macOS and Windows.
+* `encode` rejects a request with neither `sign` nor `encrypt`, and a request with `encrypt` and without `sign`.
+* In a browser, use <<is-server-smime-feature-available,`isServerSMIMEFeatureAvailable`>> to find out whether the server handles S/MIME.
+
+[#is-server-smime-feature-available]
+== isServerSMIMEFeatureAvailable
+
+Tells whether the license of the server includes S/MIME, when the Modern UI runs in a browser. Use it to show S/MIME controls only when the server can sign and encrypt. An active Zimlet checks it before it registers its S/MIME settings and slots.
+
+=== Signature
+
+[source,js]
+----
+import { isServerSMIMEFeatureAvailable } from '@zimbra-client/util';
+
+const isAvailable = isServerSMIMEFeatureAvailable(license);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`license`
+|object
+a|The `license` of the signed-in account, with these fields:
+
+* `status` (string): the state of the license.
+* `attr` (array of object): the license attributes, each with `name` and `_content`.
+
+In a component, read it from `data.accountInfo.license` of xref:reference/shims/hooks/account-and-preferences.adoc#use-account-info[`useAccountInfo`]. A missing `license` gives `false`.
+
+|===
+
+=== Returns
+
+The text of the `SMIME` license attribute, when the license is active and has that attribute. Otherwise `false`. It is always `false` in the desktop app. The license is active when its `status` is `OK`, `LICENSE_GRACE_PERIOD` or `ACTIVATION_GRACE_PERIOD`.
+
+=== Usage notes
+
+* The result is the text of the attribute, not a boolean. Use it in a condition.
+* A license with an active `status` and no `attr` list throws a `TypeError`.
+* In the desktop app, the result is `false` even when the license includes S/MIME. See xref:go-deeper/platform-checks.adoc[Platform checks].
+
+[#filter-non-insertable-calendars]
+== filterNonInsertableCalendars
+
+Returns the calendars where the user can add events, from a list of calendars and their subcalendars. Use it to fill a calendar picker, for example when your Zimlet imports events and the user chooses the target calendar. Take the list from xref:reference/shims/hooks/calendar-and-metadata.adoc#use-calendars-data[`useCalendarsData`].
+
+=== Signature
+
+[source,js]
+----
+import { filterNonInsertableCalendars } from '@zimbra-client/util';
+
+const calendars = filterNonInsertableCalendars(allCalendars);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`calendars`
+|array of object
+a|The calendars to filter. Each item needs an `id` (string) and can have these fields:
+
+* `folders` and `linkedFolders` (array of object): its subcalendars and the calendars linked to it.
+* `permissions` (string): the rights of the user, as letters. The letter `i` stands for insert.
+* `url`, `owner` and `oname` (string): the address of a subscribed calendar, the owner of a shared one, and the name of the root.
+
+A missing `calendars` gives an empty array.
+
+|===
+
+=== Returns
+
+An array of object: one flat list that holds each calendar followed by its subcalendars, and not these:
+
+* The Trash, the user's own or a shared one.
+* A calendar whose `permissions` does not include `i`. A calendar with no `permissions` stays.
+* A holiday calendar: one with a `url` that contains `holiday` and no `owner`.
+* The root of the calendars, whose `oname` is `USER_ROOT`.
+
+The items are the objects of `calendars`, not copies. The call does not change `calendars`.
+
+=== Usage notes
+
+* The `calendarsToSelect` of `useCalendarsData` still holds the Trash. This function removes it.
+* A calendar inside the Trash stays in the result. Only the Trash itself is left out.
+* An item with no `id`, or with a number as its `id`, throws a `TypeError`.
+* It returns a new array on each call. In a component, keep the result with `useMemo` when a child compares it by identity.
+
+[#close-event-tab-thunk]
+== closeEventTabThunk
+
+Closes the tab of a calendar event the way the Modern UI closes its own event tabs. It asks the user first when the event has unsaved changes, and it clears the event data that the Modern UI keeps for the tab. Use it as the `onClose` of an event tab that your Zimlet opens, so the tab does not stay behind after the user closes it. It is a thunk: you dispatch it to the store of the Modern UI.
+
+=== Signature
+
+[source,js]
+----
+import { closeEventTabThunk } from '@zimbra-client/util';
+
+dispatch(closeEventTabThunk(tab));
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`tab`
+|object
+|The tab to close, as the Modern UI passes it to the `onClose` of a tab. It reads `tabId` and `url`, and removes the tab that has this `tabId` and the same `type`. See xref:reference/shims/hocs/environment-and-ui-behaviour.adoc#with-tab-manager-tab[Fields of a tab].
+
+|===
+
+=== Returns
+
+A function `(dispatch: (action: any) => any, getState: () => object) => void`. Dispatch it with `useDispatch` of `react-redux`. See xref:go-deeper/redux.adoc[Redux]. The dispatch returns nothing.
+
+=== Usage notes
+
+* An event without unsaved changes closes at once. The tab is removed from its area, and the data of the event is cleared.
+* An event with unsaved changes stays open. The Modern UI goes to the `url` of the tab, and the event form shows its dialog to discard the changes.
+* A tab that has no stored event data counts as having no unsaved changes, so it closes at once.
+* Call it from the `onClose` of the tab. When a tab has an `onClose`, the Modern UI does not remove the tab itself.
+* Calling it without a `tab` throws a `TypeError`.
+
+[#next-step]
+== Next step
+
+Read the hooks that the Modern UI shares in xref:reference/shims/hooks.adoc[Hooks].

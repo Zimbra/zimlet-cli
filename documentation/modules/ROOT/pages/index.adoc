@@ -19,7 +19,7 @@ See xref:getting-started/concepts.adoc[How Zimlets work] for the short mental mo
 [#who-this-guide-is-for]
 == Who this guide is for
 
-This guide is for anyone who wants to extend the Modern UI with a new feature. You can be a Zimbra developer or come from outside Zimbra. You need working knowledge of JavaScript and Node.js. Use Preact and JSX for the user interface. The Modern UI is built with Preact, and the Zimlets that Zimbra provides use it. Other frameworks may have limitations. See xref:getting-started/prerequisites.adoc[What you need before you start] for the full list.
+This guide is for anyone who wants to extend the Modern UI with a new feature. You can be a Zimbra developer or come from outside Zimbra. You need working knowledge of JavaScript and Node.js. Use Preact and JSX for the user interface. The Modern UI is built with Preact, and the Zimlets that Zimbra provides use it. Other frameworks may have limitations. See xref:getting-started/prerequisites.adoc[Prerequisites] for the full list.
 
 If you only deploy a Zimlet that someone else built, you are an administrator. Start with xref:run-package-deploy/deploy.adoc[Deploy].
 
@@ -71,7 +71,7 @@ Decide whether a Zimlet fits your need::
 xref:getting-started/concepts.adoc[How Zimlets work]
 
 Try a Zimlet quickly::
-xref:getting-started/concepts.adoc[How Zimlets work], xref:getting-started/prerequisites.adoc[What you need before you start], xref:getting-started/setup-environment.adoc[Set up your machine] and xref:getting-started/quickstart.adoc[Your first Zimlet], in this order
+xref:getting-started/concepts.adoc[How Zimlets work], xref:getting-started/prerequisites.adoc[Prerequisites], xref:getting-started/setup-environment.adoc[Set up your machine] and xref:getting-started/quickstart.adoc[Your first Zimlet], in this order
 
 Build a production Zimlet::
 The Get started and Fundamentals parts, then the recipes you need from Build by goal, then Go deeper, then Run, package, deploy

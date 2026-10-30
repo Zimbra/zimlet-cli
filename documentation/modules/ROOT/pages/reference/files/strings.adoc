@@ -1,0 +1,65 @@
+= en_US.json
+
+The `src/intl/en_US.json` file holds the label and description of a xref:reference/glossary.adoc#zimlet[Zimlet] and the texts that its components show. Every other language has a file with the same structure. Look up here how to write a placeholder, a plural or a nested text, or why `zimlet package` complains about the label. See xref:go-deeper/localization.adoc[Localization] to load the texts and show them in components.
+
+[#strings-files]
+== Files
+
+[[en-us]]pass:[<a class="anchor" href="#en-us"></a>]`src/intl/en_US.json`::
+The English texts, and the file that every Zimlet needs. `zimlet package` reads the label and the description from it, and the wrapper of the default template loads it as the fallback for every other language. The file is one JSON object. JSON allows no comments and no trailing commas.
+
+[[locale-files]]pass:[<a class="anchor" href="#locale-files"></a>]`src/intl/<locale>.json`::
+The texts of another language, for example `de.json` or `fr_FR.json`. The file name is the locale code of the language. The file has the same blocks and keys as `en_US.json`, with translated values. A key that the file leaves out shows its English text. See xref:go-deeper/localization.adoc#add-locale[Add a locale] for the codes and the steps.
+
+[#strings-zimlet-block]
+== The zimlet block
+
+The `zimlet` block names the Zimlet for the Modern UI settings and the Admin Console.
+
+[[zimlet]]pass:[<a class="anchor" href="#zimlet"></a>]`zimlet`::
+An object with two strings, `label` and `description`. Put it in every language file.
+
+[[zimlet-label]]pass:[<a class="anchor" href="#zimlet-label"></a>]`zimlet.label` (string)::
+The display name of the Zimlet. `zimlet package` writes it into the descriptor and into a `.properties` file. Do not use `"`, `&` or `<` in it, because the descriptor does not escape them. See xref:fundamentals/project-structure.adoc#strings-label[Label and description].
+
+[[zimlet-description]]pass:[<a class="anchor" href="#zimlet-description"></a>]`zimlet.description` (string)::
+One sentence on what the Zimlet does. It is used like the label, and it has the same character limits.
+
+[[zimlet-missing]]pass:[<a class="anchor" href="#zimlet-missing"></a>]When the block is missing::
+The descriptor takes the label and the description from `en_US.json`. Without both strings there, `zimlet package` prints a deprecation warning and uses `--label` and `--description`, and it stops with an error when they are missing too. A language file without both strings gives a `.properties` file with the value `undefined`. See xref:reference/cli.adoc#package[`zimlet package`] and xref:go-deeper/localization.adoc#label-description[Label and description].
+
+[#strings-texts]
+== Your texts
+
+[[namespace]]pass:[<a class="anchor" href="#namespace"></a>]Namespace block::
+A block named after your Zimlet, for example `my-zimlet`, that holds the texts of your components. The template creates it with `menuItem` and `helloWorld`. The id of a text is the block name, a dot and the key. Name the block after your Zimlet. When an id is the same as an id of the Modern UI, the Modern UI text appears and yours does not.
+
+[[keys]]pass:[<a class="anchor" href="#keys"></a>]Keys and nesting::
+A key can hold a string or another object, so you can group texts. The id joins the names with dots: the key `title` inside `dialog` inside `my-zimlet` has the id `my-zimlet.dialog.title`. Do not put a dot in a key name, because the lookup cannot reach it. An id that stops at an object instead of a string is a mistake, see <<plurals,Plural forms>>.
+
+[[values]]pass:[<a class="anchor" href="#values"></a>]Values::
+A string, shown as it is after its placeholders are filled in. Where a text is missing, the `Text` component shows its content instead, and nothing when it has none.
+
+[#strings-placeholders]
+== Placeholders
+
+[[placeholders]]pass:[<a class="anchor" href="#placeholders"></a>]`&#123;&#123;field&#125;&#125;`::
+A value that the component fills in. The component passes the values in the `fields` prop of `Text`, for example `fields={{ count: 3 }}` for `+{{count}}+`. A field name has letters, digits, `_`, `-` and `.`. A name with a dot reads a nested field: `+{{user.name}}+` takes `name` from the `user` object. A field that has no value gives an empty text, so `Hi +{{name}}+!` becomes `Hi !` when `name` is missing. Keep the same placeholders in every language file.
+
+[#plurals]
+== Plural forms
+
+[[plural-object]]pass:[<a class="anchor" href="#plural-object"></a>]Plural object::
+A key whose value is an object with the forms of one text. The number that the component passes in the `plural` prop of `Text` chooses the form. Placeholders work inside each form. These forms are available:
++
+* `singular` and `plural`: `singular` for 1, and `plural` for every other number, 0 included.
+* `zero` (or `none`), `one` and `other`: `zero` for 0, `one` for 1, and `other` for every other number. When `zero` is missing, 0 uses `other`.
++
+`one` also reads `singular`, and `other` also reads `some`, `many` and `plural`, so the two sets can be mixed. When `plural` is not set in `Text`, the value must not be an object.
++
+WARNING: A key that holds an object and is shown without the `plural` prop throws the error `e.replace is not a function` while the text is looked up. Pass `plural` for every plural key, and use a string for a text that has one form.
+
+[#next-step]
+== Next step
+
+Load and show these texts in a component with xref:go-deeper/localization.adoc[Localization], or return to the xref:reference/files.adoc[Files] to look up another file.

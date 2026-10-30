@@ -1,0 +1,361 @@
+= Dialogs
+
+The dialogs of `@zimbra-client/components`. They are a dialog with a header, content and buttons, a yes or no question, and a drawer that fills a small window. One component picks between the dialog and the drawer by window width, and one shows a certificate. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] must ask for input, confirm an action or show details. They look like the Modern UI dialogs. `@zimbra-client/blocks` has its own xref:reference/shims/blocks/dialogs-and-overlays.adoc#modal-dialog[`ModalDialog`], which is only the frame and a different component.
+
+[#members]
+== Members
+
+<<modal-dialog,`ModalDialog`>>::
+A dialog over the window, with a title, content and a row of buttons.
+
+<<confirm-modal-dialog,`ConfirmModalDialog`>>::
+A dialog that asks a yes or no question and reports the answer.
+
+<<modal-drawer,`ModalDrawer`>>::
+A panel that slides in from the right and fills the window, for small screens.
+
+<<modal-drawer-toolbar,`ModalDrawerToolbar`>>::
+The toolbar of a drawer, with a title and the same buttons as a dialog.
+
+<<responsive-modal,`ResponsiveModal`>>::
+A dialog on a wide window and a drawer on a narrow one.
+
+<<certificate-modal,`CertificateModal`>>::
+A dialog that shows the details of a certificate.
+
+[#modal-dialog]
+== ModalDialog
+
+A dialog over the window with a title, a close button, your content and a row of buttons. Use it when your Zimlet needs input or must show a notice, and the user answers or dismisses it before going on. Use <<confirm-modal-dialog,`ConfirmModalDialog`>> for a yes or no question, and <<responsive-modal,`ResponsiveModal`>> when the content must also work on a small screen.
+
+WARNING: The dialog does not close itself. Set <<modal-dialog-on-close,`onClose`>> and remove the dialog in it. Without it, the close button, *Cancel* and the *Escape* key do nothing, and the user cannot leave the dialog.
+
+=== Signature
+
+[source,js]
+----
+import { ModalDialog } from '@zimbra-client/components';
+
+<ModalDialog title={title} onAction={handleSave} onClose={handleClose}>
+	{content}
+</ModalDialog>
+----
+
+=== Props
+
+[[modal-dialog-title]]pass:[<a class="anchor" href="#modal-dialog-title"></a>]`title` (string or xref:reference/glossary.adoc#node[node])::
+The heading of the dialog. A string is the id of a text, and the dialog shows that text, or the string itself when no text has that id. Pass a `<Text>` element for a text of your Zimlet.
+[[modal-dialog-children]]pass:[<a class="anchor" href="#modal-dialog-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the dialog.
+[[modal-dialog-on-action]]pass:[<a class="anchor" href="#modal-dialog-on-action"></a>]`onAction` (function `(event: event) => void`)::
+Called with the click event when the user presses the primary button. Its return value is ignored. The dialog stays open.
+[[modal-dialog-on-close]]pass:[<a class="anchor" href="#modal-dialog-on-close"></a>]`onClose` (function `(event: event) => void`)::
+Called with the event when the user presses the close button or the cancel button, presses *Escape* or clicks outside the dialog. Its return value is ignored.
+[[modal-dialog-on-click-outside]]pass:[<a class="anchor" href="#modal-dialog-on-click-outside"></a>]`onClickOutside` (function `(event: event) => void`)::
+The same as <<modal-dialog-on-close,`onClose`>>, and used only when `onClose` is not set. The close and cancel buttons call it too.
+[[modal-dialog-action-label]]pass:[<a class="anchor" href="#modal-dialog-action-label"></a>]`actionLabel` (string, default `buttons.ok`)::
+The id of the text on the primary button. The button shows the string itself when no text has that id. It has no effect with <<modal-dialog-buttons,`buttons`>>.
+[[modal-dialog-cancel-label]]pass:[<a class="anchor" href="#modal-dialog-cancel-label"></a>]`cancelLabel` (string, default `buttons.cancel`)::
+The id of the text on the cancel button.
+[[modal-dialog-buttons]]pass:[<a class="anchor" href="#modal-dialog-buttons"></a>]`buttons` (boolean or xref:reference/glossary.adoc#node[node])::
+`false` removes the primary button. A node replaces it, for example your own buttons. The cancel button stays unless <<modal-dialog-cancel-button,`cancelButton`>> is `false`.
+[[modal-dialog-cancel-button]]pass:[<a class="anchor" href="#modal-dialog-cancel-button"></a>]`cancelButton` (boolean, default `true`)::
+`false` removes the cancel button.
+[[modal-dialog-disable-primary]]pass:[<a class="anchor" href="#modal-dialog-disable-primary"></a>]`disablePrimary` (boolean)::
+Disables the primary button, for example until a form is valid. It has no effect with <<modal-dialog-buttons,`buttons`>>.
+[[modal-dialog-brand]]pass:[<a class="anchor" href="#modal-dialog-brand"></a>]`brand` (string, default `primary`)::
+The colour of the primary button: `primary`, `success`, `info`, `warning` or `danger`. See xref:reference/shims/blocks/buttons-and-progress.adoc#button-brand[`brand` of `Button`]. It has no effect with <<modal-dialog-buttons,`buttons`>>.
+[[modal-dialog-supplemental-footer]]pass:[<a class="anchor" href="#modal-dialog-supplemental-footer"></a>]`supplementalFooter` (xref:reference/glossary.adoc#node[node])::
+Content after the buttons in the footer, such as a link.
+[[modal-dialog-pending]]pass:[<a class="anchor" href="#modal-dialog-pending"></a>]`pending` (boolean)::
+Shows a spinner, disables the primary button, and dims the content so that it ignores clicks. The cancel button and the close button stay active.
+[[modal-dialog-error]]pass:[<a class="anchor" href="#modal-dialog-error"></a>]`error` (xref:reference/glossary.adoc#node[node])::
+A message that the dialog shows in an alert above the content.
+[[modal-dialog-error-icon]]pass:[<a class="anchor" href="#modal-dialog-error-icon"></a>]`errorIcon` (xref:reference/glossary.adoc#node[node])::
+An icon that the dialog shows before the message of <<modal-dialog-error,`error`>>. It has no effect without `error`.
+[[modal-dialog-header]]pass:[<a class="anchor" href="#modal-dialog-header"></a>]`header` (boolean, default `true`)::
+`false` removes the header with the title and the close button.
+[[modal-dialog-footer]]pass:[<a class="anchor" href="#modal-dialog-footer"></a>]`footer` (boolean, default `true`)::
+`false` removes the footer with all buttons, and the content then uses the space.
+[[modal-dialog-hide-close]]pass:[<a class="anchor" href="#modal-dialog-hide-close"></a>]`hideClose` (boolean)::
+Hides the close button of the header. The cancel button stays.
+[[modal-dialog-scrollable]]pass:[<a class="anchor" href="#modal-dialog-scrollable"></a>]`scrollable` (boolean, default `false`)::
+Gives the dialog a height of 328 px. The content then scrolls between the header and the footer.
+[[modal-dialog-disable-escape]]pass:[<a class="anchor" href="#modal-dialog-disable-escape"></a>]`disableEscape` (boolean, default `false`)::
+Ignores the *Escape* key. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-disable-escape[`disableEscape` of `Dialog`].
+[[modal-dialog-disable-outside-click]]pass:[<a class="anchor" href="#modal-dialog-disable-outside-click"></a>]`disableOutsideClick` (boolean, default `false`)::
+Ignores clicks outside the dialog. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-disable-outside-click[`disableOutsideClick` of `Dialog`].
+[[modal-dialog-autofocus-child-index]]pass:[<a class="anchor" href="#modal-dialog-autofocus-child-index"></a>]`autofocusChildIndex` (number, default `0`)::
+The position of the element that gets the focus when the dialog opens, counted among its focusable elements. The close button of the header is the first, so `1` is the first element of your content. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-autofocus-child-index[`autofocusChildIndex` of `Dialog`].
+[[modal-dialog-aria-label]]pass:[<a class="anchor" href="#modal-dialog-aria-label"></a>]`ariaLabel` (string)::
+The accessible name of the dialog. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-aria-label[`ariaLabel` of `Dialog`].
+[[modal-dialog-into]]pass:[<a class="anchor" href="#modal-dialog-into"></a>]`into` (string, default `body`)::
+A CSS selector for the element that holds the dialog. The first match is used.
+[[modal-dialog-class]]pass:[<a class="anchor" href="#modal-dialog-class"></a>]`class` (string)::
+A class name added to the dialog box.
+[[modal-dialog-inner-class]]pass:[<a class="anchor" href="#modal-dialog-inner-class"></a>]`innerClass` (string)::
+A class name added to the inner panel that holds the header, the content and the footer.
+[[modal-dialog-header-class]]pass:[<a class="anchor" href="#modal-dialog-header-class"></a>]`headerClass` (string)::
+A class name added to the header.
+[[modal-dialog-content-class]]pass:[<a class="anchor" href="#modal-dialog-content-class"></a>]`contentClass` (string)::
+A class name added to the content area.
+[[modal-dialog-footer-class]]pass:[<a class="anchor" href="#modal-dialog-footer-class"></a>]`footerClass` (string)::
+A class name added to the footer.
+[[modal-dialog-overlay-class]]pass:[<a class="anchor" href="#modal-dialog-overlay-class"></a>]`overlayClass` (string)::
+A class name added to the layer that covers the window.
+
+=== Returns
+
+A layer that covers the window, with the dialog box in it. It is drawn into the element that <<modal-dialog-into,`into`>> names. The box is 432 px wide, or the full width of a narrower window. It holds the header, the error alert, the content and the footer.
+
+=== Usage notes
+
+* Show the dialog from a handler with xref:reference/context/store/zimlet-redux/actions.adoc#add-modal[`addModal`], and close it with xref:reference/context/store/zimlet-redux/actions.adoc#remove-modal[`removeModal`]. See xref:build-by-goal/recipe-app-events.adoc#modal-dialog[The ModalDialog component] for a dialog in use.
+* The Modern UI draws the dialog outside your Zimlet. Wrap your component with `withIntl` so that a `Text` in the content, and an id in a label prop, find the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization].
+* The dialog reads only the props above. Any other prop is ignored, and `className` is not read: use `class`.
+* With a header, the close button is the first focusable element, so it has the focus when the dialog opens. Set <<modal-dialog-autofocus-child-index,`autofocusChildIndex`>> to focus a field of your content instead.
+* The title is not linked to the dialog as its name, so a screen reader announces no name. Set <<modal-dialog-aria-label,`ariaLabel`>>.
+* Do not remove every way to close the dialog, with `hideClose`, `cancelButton`, `disableEscape` and `disableOutsideClick`, unless your code is sure to close it.
+* The frame without header and buttons is xref:reference/shims/blocks/dialogs-and-overlays.adoc#modal-dialog[`ModalDialog` of `@zimbra-client/blocks`].
+
+[#confirm-modal-dialog]
+== ConfirmModalDialog
+
+A dialog that asks a question and reports the answer: yes, no, or closed without an answer. Use it to confirm an action, such as removing an item, before your Zimlet does it. Use <<modal-dialog,`ModalDialog`>> when the content is your own and one main action is enough.
+
+=== Signature
+
+[source,js]
+----
+import { ConfirmModalDialog } from '@zimbra-client/components';
+
+<ConfirmModalDialog title={title} cancelButton={false} onResult={handleResult}>
+	{question}
+</ConfirmModalDialog>
+----
+
+=== Props
+
+[[confirm-modal-dialog-children]]pass:[<a class="anchor" href="#confirm-modal-dialog-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The question or the explanation.
+[[confirm-modal-dialog-on-result]]pass:[<a class="anchor" href="#confirm-modal-dialog-on-result"></a>]`onResult` (function `(result: boolean | null) => void`)::
+Required. Called with `true` for the accept button and `false` for the reject button. It gets `null` for the close button, the cancel button, the *Escape* key and a click outside. Its return value is ignored. The dialog does not close itself: remove it in this function.
+[[confirm-modal-dialog-accept-text]]pass:[<a class="anchor" href="#confirm-modal-dialog-accept-text"></a>]`acceptText` (string, default `buttons.yes`)::
+The id of the text on the accept button, which has the primary look. The button is empty when no text has that id.
+[[confirm-modal-dialog-reject-text]]pass:[<a class="anchor" href="#confirm-modal-dialog-reject-text"></a>]`rejectText` (string, default `buttons.no`)::
+The id of the text on the reject button. The button is empty when no text has that id.
+[[confirm-modal-dialog-cancel-button]]pass:[<a class="anchor" href="#confirm-modal-dialog-cancel-button"></a>]`cancelButton` (boolean, default `true`)::
+Shows a third button, *Cancel*, after the other two. `false` removes it. Use `false` when the reject button already stops the action.
+[[confirm-modal-dialog-other-props]]pass:[<a class="anchor" href="#confirm-modal-dialog-other-props"></a>]Any other prop (any)::
+Passed to <<modal-dialog,`ModalDialog`>>, such as <<modal-dialog-title,`title`>>, <<modal-dialog-cancel-label,`cancelLabel`>>, <<modal-dialog-error,`error`>> and <<modal-dialog-class,`class`>>. The props `buttons`, `onClose` and `onClickOutside` have no effect, because the dialog sets its own buttons and closes through `onResult`.
+
+=== Returns
+
+A <<modal-dialog,`ModalDialog`>> with the accept button, the reject button and, unless `cancelButton` is `false`, the cancel button.
+
+=== Usage notes
+
+* Without `onResult`, no button does anything, and the user cannot close the dialog.
+* The labels take ids only, so a `<Text>` element does not work. Wrap your component with `withIntl` so that the dialog finds the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization].
+* The dialog is drawn like <<modal-dialog,`ModalDialog`>>. Its notes apply, including `addModal` and `removeModal`. See xref:build-by-goal/recipe-app-events.adoc#confirm-modal-dialog[The ConfirmModalDialog component] for the dialog in use.
+
+[#modal-drawer]
+== ModalDrawer
+
+A panel that slides in from the right and fills the window. It has a toolbar with a back button, an optional heading and your content. Use it for a screen that is a full-window panel on a phone or a tablet, such as a form that opens from a list. Use <<responsive-modal,`ResponsiveModal`>> to get a dialog on a wide window as well.
+
+=== Signature
+
+[source,js]
+----
+import { ModalDrawer } from '@zimbra-client/components';
+
+<ModalDrawer title={title} onClickOutside={handleClose}>
+	{content}
+</ModalDrawer>
+----
+
+=== Props
+
+[[modal-drawer-children]]pass:[<a class="anchor" href="#modal-drawer-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the drawer.
+[[modal-drawer-title]]pass:[<a class="anchor" href="#modal-drawer-title"></a>]`title` (string or xref:reference/glossary.adoc#node[node])::
+The heading below the toolbar. A string is the id of a text, and the drawer shows that text, or the string itself when no text has that id.
+[[modal-drawer-prop-toolbar]]pass:[<a class="anchor" href="#modal-drawer-prop-toolbar"></a>]`toolbar` (xref:reference/glossary.adoc#node[node])::
+A toolbar in place of the default one, which has only a back button. Use <<modal-drawer-toolbar,`ModalDrawerToolbar`>> to build one with buttons.
+[[modal-drawer-prop-toolbar-children]]pass:[<a class="anchor" href="#modal-drawer-prop-toolbar-children"></a>]`toolbarChildren` (xref:reference/glossary.adoc#node[node])::
+Content after the back button in the default toolbar. It has no effect with <<modal-drawer-prop-toolbar,`toolbar`>>.
+[[modal-drawer-on-click-outside]]pass:[<a class="anchor" href="#modal-drawer-on-click-outside"></a>]`onClickOutside` (function `() => void`)::
+Called 250 ms after the user presses the back button, presses *Escape* or clicks outside the drawer. The drawer slides out in that time. It gets no argument, and its return value is ignored. The drawer does not close itself: remove it in this function. Without it, those three actions do nothing.
+[[modal-drawer-prevent-collapse]]pass:[<a class="anchor" href="#modal-drawer-prevent-collapse"></a>]`preventCollapse` (boolean)::
+Keeps the drawer in place instead of sliding it out. <<modal-drawer-on-click-outside,`onClickOutside`>> is still called after 250 ms.
+[[modal-drawer-mounted]]pass:[<a class="anchor" href="#modal-drawer-mounted"></a>]`mounted` (boolean)::
+Change it to `false` to close the drawer from your own code. The drawer then behaves as if the user had pressed the back button.
+[[modal-drawer-pending]]pass:[<a class="anchor" href="#modal-drawer-pending"></a>]`pending` (boolean)::
+Shows a spinner over the drawer.
+[[modal-drawer-error]]pass:[<a class="anchor" href="#modal-drawer-error"></a>]`error` (xref:reference/glossary.adoc#node[node])::
+A message that the drawer shows above the content.
+[[modal-drawer-header-class]]pass:[<a class="anchor" href="#modal-drawer-header-class"></a>]`headerClass` (string)::
+A class name added to the heading.
+[[modal-drawer-container-class]]pass:[<a class="anchor" href="#modal-drawer-container-class"></a>]`containerClass` (string)::
+A class name added to the panel that holds the toolbar, the heading and the content.
+[[modal-drawer-class]]pass:[<a class="anchor" href="#modal-drawer-class"></a>]`class` (string)::
+A class name added to the dialog element.
+[[modal-drawer-other-props]]pass:[<a class="anchor" href="#modal-drawer-other-props"></a>]Any other prop (any)::
+Passed to the xref:reference/shims/blocks/dialogs-and-overlays.adoc#modal-dialog[`ModalDialog` of `@zimbra-client/blocks`], such as <<modal-dialog-disable-escape,`disableEscape`>>, <<modal-dialog-aria-label,`ariaLabel`>>, <<modal-dialog-autofocus-child-index,`autofocusChildIndex`>> and <<modal-dialog-into,`into`>>.
+
+=== Returns
+
+A layer that covers the window, with a panel that takes its full width and height. The panel holds the toolbar, the heading, the error message and the content. It slides in from the right when it appears.
+
+=== Usage notes
+
+* The user cannot close the drawer with the back button, *Escape* or a click outside unless you set <<modal-drawer-on-click-outside,`onClickOutside`>>.
+* A drawer with your own <<modal-drawer-prop-toolbar,`toolbar`>> has no back button. The toolbar then needs its own way to close the drawer, such as the cancel button of <<modal-drawer-toolbar,`ModalDrawerToolbar`>>.
+* The drawer fills the whole window, so it suits a small screen. The Slack Zimlet shows it only on a window that is 769 px wide or narrower. Use <<responsive-modal,`ResponsiveModal`>> to choose by width.
+* Show and remove the drawer as <<modal-dialog,`ModalDialog`>> notes say, with `addModal` and `removeModal`, and wrap your component with `withIntl`.
+
+[#modal-drawer-toolbar]
+== ModalDrawerToolbar
+
+The toolbar of a drawer. It has an optional title and the same buttons as a dialog: a primary button, a cancel button and your own extras. Use it as the `toolbar` of a <<modal-drawer,`ModalDrawer`>>, so that the drawer offers the actions that the dialog shows in its footer.
+
+=== Signature
+
+[source,js]
+----
+import { ModalDrawerToolbar } from '@zimbra-client/components';
+
+<ModalDrawerToolbar
+	actionLabel={actionLabel}
+	cancelLabel={cancelLabel}
+	onAction={handleSave}
+	onClose={handleClose}
+/>
+----
+
+=== Props
+
+[[modal-drawer-toolbar-title]]pass:[<a class="anchor" href="#modal-drawer-toolbar-title"></a>]`title` (string)::
+The id of a text for the title of the toolbar. The toolbar shows the string itself when no text has that id.
+[[modal-drawer-toolbar-action-label]]pass:[<a class="anchor" href="#modal-drawer-toolbar-action-label"></a>]`actionLabel` (string)::
+The id of the text on the primary button. The button shows the string itself when no text has that id. Unlike the dialog, the toolbar has no default, so the button has no label when you leave it out.
+[[modal-drawer-toolbar-cancel-label]]pass:[<a class="anchor" href="#modal-drawer-toolbar-cancel-label"></a>]`cancelLabel` (string, default `buttons.cancel`)::
+The id of the text on the cancel button.
+[[modal-drawer-toolbar-on-action]]pass:[<a class="anchor" href="#modal-drawer-toolbar-on-action"></a>]`onAction` (function `(event: event) => void`)::
+Called with the click event when the user presses the primary button. Its return value is ignored.
+[[modal-drawer-toolbar-on-close]]pass:[<a class="anchor" href="#modal-drawer-toolbar-on-close"></a>]`onClose` (function `(event: event) => void`)::
+Called with the click event when the user presses the cancel button. Its return value is ignored. Remove the drawer in this function.
+[[modal-drawer-toolbar-buttons]]pass:[<a class="anchor" href="#modal-drawer-toolbar-buttons"></a>]`buttons` (boolean or xref:reference/glossary.adoc#node[node])::
+`false` removes the primary button. A node replaces it.
+[[modal-drawer-toolbar-cancel-button]]pass:[<a class="anchor" href="#modal-drawer-toolbar-cancel-button"></a>]`cancelButton` (boolean, default `true`)::
+`false` removes the cancel button.
+[[modal-drawer-toolbar-disable-primary]]pass:[<a class="anchor" href="#modal-drawer-toolbar-disable-primary"></a>]`disablePrimary` (boolean)::
+Disables the primary button. It has no effect with <<modal-drawer-toolbar-buttons,`buttons`>>.
+[[modal-drawer-toolbar-pending]]pass:[<a class="anchor" href="#modal-drawer-toolbar-pending"></a>]`pending` (boolean)::
+Disables the primary button while a request runs. The cancel button stays active. It has no effect with <<modal-drawer-toolbar-buttons,`buttons`>>.
+[[modal-drawer-toolbar-supplemental-toolbar]]pass:[<a class="anchor" href="#modal-drawer-toolbar-supplemental-toolbar"></a>]`supplementalToolbar` (xref:reference/glossary.adoc#node[node])::
+Content after the buttons.
+[[modal-drawer-toolbar-class]]pass:[<a class="anchor" href="#modal-drawer-toolbar-class"></a>]`class` (string)::
+A class name added to the toolbar.
+
+=== Returns
+
+A toolbar `div` that holds the title and, after it, the primary button, the cancel button and `supplementalToolbar`.
+
+=== Usage notes
+
+* The toolbar does not read the props of the drawer or the dialog. Pass `onAction`, `onClose` and the labels to it yourself, as <<responsive-modal,`ResponsiveModal`>> shows.
+* The toolbar has no back button. A drawer with this toolbar closes with the cancel button, with *Escape* or with a click outside. Set <<modal-drawer-on-click-outside,`onClickOutside`>> on the drawer for the last two.
+* The toolbar reads only the props above. Any other prop is ignored.
+
+[#responsive-modal]
+== ResponsiveModal
+
+A dialog on a window that is 1025 px wide or wider, and a drawer on a narrower one. Use it when a form of your Zimlet must be a dialog on a desktop and a full-window panel on a phone or a tablet. Use <<modal-dialog,`ModalDialog`>> alone when the dialog is small enough for every screen.
+
+WARNING: The dialog and the drawer read different props, and the drawer ignores `onClose`. Set <<modal-drawer-on-click-outside,`onClickOutside`>> as well as <<modal-dialog-on-close,`onClose`>>, or the *Escape* key and a click outside do nothing on a narrow window.
+
+=== Signature
+
+[source,js]
+----
+import { ModalDrawerToolbar, ResponsiveModal } from '@zimbra-client/components';
+
+<ResponsiveModal
+	title={title}
+	actionLabel={actionLabel}
+	onAction={handleSave}
+	onClose={handleClose}
+	onClickOutside={handleClose}
+	drawerProps={{
+		toolbar: (
+			<ModalDrawerToolbar actionLabel={actionLabel} onAction={handleSave} onClose={handleClose} />
+		)
+	}}
+>
+	{content}
+</ResponsiveModal>
+----
+
+=== Props
+
+[[responsive-modal-dialog-props]]pass:[<a class="anchor" href="#responsive-modal-dialog-props"></a>]`dialogProps` (object)::
+Props for the <<modal-dialog,`ModalDialog`>> only. They win over the other props of the same name.
+[[responsive-modal-drawer-props]]pass:[<a class="anchor" href="#responsive-modal-drawer-props"></a>]`drawerProps` (object)::
+Props for the <<modal-drawer,`ModalDrawer`>> only, such as `toolbar`. They win over the other props of the same name.
+[[responsive-modal-other-props]]pass:[<a class="anchor" href="#responsive-modal-other-props"></a>]Any other prop (any)::
+Passed to the dialog on a wide window and to the drawer on a narrow one. A prop that only one of them reads, such as <<modal-dialog-action-label,`actionLabel`>> or <<modal-drawer-prop-toolbar,`toolbar`>>, has no effect on the other. Props that both read are <<modal-dialog-title,`title`>>, <<modal-dialog-children,`children`>>, <<modal-dialog-pending,`pending`>>, <<modal-dialog-error,`error`>> and <<modal-dialog-class,`class`>>.
+
+=== Returns
+
+A <<modal-dialog,`ModalDialog`>> when the window is at least 1025 px wide, and a <<modal-drawer,`ModalDrawer`>> when it is narrower.
+
+=== Usage notes
+
+* The component follows the width of the window while it is open. A resize across the limit replaces the dialog with the drawer, or the drawer with the dialog. The content is created again, so state that the content holds is lost.
+* The drawer shows the buttons of the dialog only when you build them with <<modal-drawer-toolbar,`ModalDrawerToolbar`>> and pass them in `drawerProps.toolbar`. The toolbar does not read the props of the modal, so give it the same handlers and labels.
+* Show and remove it as <<modal-dialog,`ModalDialog`>> notes say, with `addModal` and `removeModal`, and wrap your component with `withIntl`.
+
+[#certificate-modal]
+== CertificateModal
+
+A dialog that shows the details of a certificate. It lists who the certificate was issued to and by, how long it is valid, and its serial number and algorithm. Use it when your Zimlet lists S/MIME (Secure/Multipurpose Internet Mail Extensions) certificates and the user wants to read one. The secure mail Zimlet uses it on the certificate of a message and in the settings.
+
+=== Signature
+
+[source,js]
+----
+import { CertificateModal } from '@zimbra-client/components';
+
+<CertificateModal cert={cert} onClose={handleClose} />
+----
+
+=== Props
+
+[[certificate-modal-cert]]pass:[<a class="anchor" href="#certificate-modal-cert"></a>]`cert` (object)::
+Required. The certificate, with these fields. A field that is missing leaves its row out, and a section without rows is left out. All labels come from the Modern UI.
++
+* `subject` (object) is the holder of the certificate, in the section *Issued to*. Its fields are `email`, `orgName`, `orgCountry`, `orgState`, `orgLocality` and `orgUnit`, all strings.
+* `issuer` (object) is the authority that issued it, in the section *Issued by*. Its fields are `commonName`, `orgName`, `orgCountry`, `orgState`, `orgLocality` and `orgUnit`, all strings.
+* `notBefore` (string) is the first day of validity, and `notAfter` (string) is the last. Both are dates that `moment` reads, such as an ISO 8601 date. The dialog shows them as month name, day and year, in the section *Period of Validity*.
+* `isExpired` (boolean) changes the label of `notAfter` from *Ends on* to *Ended on*.
+* `serial` (string) is the serial number. The dialog shows it in capital letters, in groups of two characters.
+* `algorithm` (string) is the signature algorithm. `serial` and `algorithm` are in the section *Signature*.
+[[certificate-modal-on-close]]pass:[<a class="anchor" href="#certificate-modal-on-close"></a>]`onClose` (function `(event: event) => void`)::
+Called with the event when the user presses the close button, presses *Escape* or clicks outside the dialog. Its return value is ignored. The dialog does not close itself: stop rendering it in this function.
+
+=== Returns
+
+A layer that covers the window, with a dialog titled *Certificate* that is 770 px wide. It has a close button and no other button.
+
+=== Usage notes
+
+* The component throws an error when `cert` is missing. Render it only while you have a certificate.
+* The dialog reads the flat shape above. Map the certificate that your server data gives you to it first.
+* Without `onClose`, the user cannot close the dialog.
+
+[#next-step]
+== Next step
+
+Find the components that warn the user, show help and show an error in xref:reference/shims/components/warnings-and-help.adoc[Warnings and help].

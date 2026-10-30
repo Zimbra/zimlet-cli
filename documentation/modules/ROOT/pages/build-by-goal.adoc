@@ -28,12 +28,24 @@ Choose it for a menu item that opens a link or runs an action. The slots `settin
 xref:build-by-goal/recipe-app-content.adoc[Run an app-wide feature]::
 Choose it for a feature that starts when the app has loaded and has no screen, such as an overlay, a dialog or a listener. The slot `app` is not tied to a screen.
 
+xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar]::
+Choose it for a control in the search bar, or for a second search that replaces the Modern UI field on request. The slot `web-search-toggle` adds a button before the field, and the slot `web-search` replaces the field.
+
 ==== Mail
+
+xref:build-by-goal/recipe-message-banner.adoc[Show a banner above the message text]::
+Choose it for a note or a warning above the text of an open message. The slot `message-body-top` passes the message as `emailData` and the element of its text as `viewerRef`.
 
 xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]::
 Choose it for an action on the open or selected message. The slot `action-menu-mail-more` adds to the three menus of a message. The slot `mail-overflow-menu-option` adds to the toolbar menu only.
 
+xref:build-by-goal/recipe-composer.adoc[Add to the composer]::
+Choose it for an option that reads or changes the message that the user is writing, such as inserting a text or changing the subject. The slot `compose-sender-options-menu` adds to the menu of the composer and passes the functions that work on the message.
+
 ==== Calendar
+
+xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an action to a calendar event menu]::
+Choose it for an action on one event. The slot `action-menu-event-context-menu` adds to the menu that opens when the user right-clicks an event. The slot `action-menu-event-more` adds to the *More Options* menu of an open event. Both pass the event as `eventToDisplay`.
 
 xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field]::
 Choose it for a control that sets the meeting platform of an event, such as a video call link. The slot `calendar-appointment-edit-video-call` fills the *Meeting Platform* field, which the editor shows only when a Zimlet fills the slot.
@@ -93,9 +105,9 @@ Every recipe starts from the default project. Name it `my-zimlet`, so that the i
 
 Every recipe that registers a handler depends on the exact key it registers under. The Modern UI does not check the key: `plugins.register` accepts any name. A handler registered under a key that the Modern UI never calls does not run, and no error tells you so.
 
-Before you copy a registration into your own Zimlet, check that the slot or key exists in the xref:reference/slots.adoc[slot index]. Then read the page of the feature you extend, if there is one, for rules that apply to it. xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] explains how handlers are called and how to read what a slot passes.
+Before you copy a registration into your own Zimlet, check that the slot or key exists in the xref:reference/slots.adoc[slot index]. Then read the page of the feature you extend, if there is one, for rules that apply to it. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how handlers are called and how to read what a slot passes.
 
 [#next-step]
 == Next step
 
-Start with the most common goal. If you do not know where your feature belongs, start with xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].
+Open the recipe for your goal. If you do not know where your feature belongs, start with the first recipe, xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget].

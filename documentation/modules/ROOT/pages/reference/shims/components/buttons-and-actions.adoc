@@ -1,0 +1,307 @@
+= Buttons and actions
+
+The buttons of `@zimbra-client/components` and two components that act on data of the xref:reference/glossary.adoc#modern-ui[Modern UI]. They are the button of the toolbars, a plain button, a close button and a help button. Two more act on data: the S/MIME drop-down of the composer and a wrapper that deletes Briefcase files. Use them when a screen of your xref:reference/glossary.adoc#zimlet[Zimlet] needs an action that looks and behaves like the Modern UI's own. For a menu that holds actions, see xref:reference/shims/components/menus.adoc[Menus]. For the small `Button` and its variants, see xref:reference/shims/blocks/buttons-and-progress.adoc[Buttons and progress].
+
+[#members]
+== Members
+
+<<action-button,`ActionButton`>>::
+The button of the Modern UI toolbars, with an optional icon and label.
+
+<<naked-button,`NakedButton`>>::
+A button with no look of its own, for text that acts as a link.
+
+<<close-button,`CloseButton`>>::
+An icon button with a cross, to close a panel or a dialog.
+
+<<help-button,`HelpButton`>>::
+A round question mark that opens a short help text.
+
+<<smime-operation-drop-down,`SMIMEOperationDropDown`>>::
+The drop-down of the composer that sets how a message is signed and encrypted.
+
+<<delete-wrapper,`DeleteWrapper`>>::
+A component that gives its children the functions that delete Briefcase files and folders.
+
+[#action-button]
+== ActionButton
+
+The button of the Modern UI toolbars. It has a flat look, an optional icon and label, and a loading state. Use it for an action in a toolbar or a dialog of your Zimlet. The button then looks like the buttons of the Modern UI. Use xref:reference/shims/blocks/buttons-and-progress.adoc#button[`Button`] for a button with a filled style.
+
+=== Signature
+
+[source,js]
+----
+import { ActionButton } from '@zimbra-client/components';
+
+<ActionButton icon={PlusIcon} onClick={handleClick}>
+	{label}
+</ActionButton>
+----
+
+=== Props
+
+[[action-button-children]]pass:[<a class="anchor" href="#action-button-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The label. It shows after the icon, and not with <<action-button-icon-only,`iconOnly`>>.
+[[action-button-icon]]pass:[<a class="anchor" href="#action-button-icon"></a>]`icon` (component)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library. Pass the component, not a name.
+[[action-button-custom-icon]]pass:[<a class="anchor" href="#action-button-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for an icon that `lucide-preact` does not have. See xref:reference/shims/blocks/display-and-layout.adoc#icon-custom-icon[`customIcon` of `Icon`].
+[[action-button-icon-only]]pass:[<a class="anchor" href="#action-button-icon-only"></a>]`iconOnly` (boolean)::
+Shows only the icon.
+[[action-button-icon-size]]pass:[<a class="anchor" href="#action-button-icon-size"></a>]`iconSize` (string)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`. The default is `smd` with `iconOnly` and `sm` without it. See xref:reference/shims/blocks/display-and-layout.adoc#icon-size[`size` of `Icon`] for the pixel sizes.
+[[action-button-custom-icon-size]]pass:[<a class="anchor" href="#action-button-custom-icon-size"></a>]`customIconSize` (number)::
+The size of the icon in pixels. It replaces <<action-button-icon-size,`iconSize`>> for the icon.
+[[action-button-icon-stroke-width]]pass:[<a class="anchor" href="#action-button-icon-stroke-width"></a>]`iconStrokeWidth` (number)::
+The line width of the icon. See xref:reference/shims/blocks/display-and-layout.adoc#icon-stroke-width[`strokeWidth` of `Icon`].
+[[action-button-icon-class]]pass:[<a class="anchor" href="#action-button-icon-class"></a>]`iconClass` (string)::
+A class name added to the icon.
+[[action-button-spacing-size]]pass:[<a class="anchor" href="#action-button-spacing-size"></a>]`spacingSize` (string)::
+The padding of an icon-only button: `xs` (none), `sm` (4 px at each side), `md` (8 px) or `lg` (12 px). Without it, the padding follows <<action-button-icon-size,`iconSize`>>. A value that is not in the list, such as `smd`, leaves the default padding. It has no effect without `iconOnly`.
+[[action-button-monotone]]pass:[<a class="anchor" href="#action-button-monotone"></a>]`monotone` (boolean)::
+The icon takes the colour of the button, so that a class that sets the colour of the button also colours the icon.
+[[action-button-colored]]pass:[<a class="anchor" href="#action-button-colored"></a>]`colored` (boolean)::
+Uses the brand colour for the icon, and for the text while the pointer is over the button.
+[[action-button-outline]]pass:[<a class="anchor" href="#action-button-outline"></a>]`outline` (boolean)::
+Draws a border of 1 px around the button and adds a small space at its right.
+[[action-button-active]]pass:[<a class="anchor" href="#action-button-active"></a>]`active` (boolean)::
+Sets `aria-expanded` on the button while the value is `true`. Use it for a button that opens a menu or a panel, while that stays open. A `false` value sets nothing.
+[[action-button-loading]]pass:[<a class="anchor" href="#action-button-loading"></a>]`loading` (boolean)::
+Replaces the icon with a spinner and draws the button in its pressed look. It has no effect on a button without `icon` or `customIcon`.
++
+WARNING: The button stays enabled while it loads. Ignore the click yourself, or set `disabled`, so that a second click does not send a second request.
+[[action-button-href]]pass:[<a class="anchor" href="#action-button-href"></a>]`href` (string)::
+Draws a link to an address of the Modern UI in place of a button. The address opens without a page load.
+[[action-button-type]]pass:[<a class="anchor" href="#action-button-type"></a>]`type` (string, default `button`)::
+The `type` of the button. It has no effect with `href`. The default stops the button from submitting a form.
+[[action-button-text-class]]pass:[<a class="anchor" href="#action-button-text-class"></a>]`textClass` (string)::
+A class name added to the label.
+[[action-button-data-skip-link-item]]pass:[<a class="anchor" href="#action-button-data-skip-link-item"></a>]`dataSkipLinkItem` (boolean)::
+Marks the button as a stop of the skip links of the Modern UI, with the attribute `data-skip-link-item`.
+[[action-button-class]][[action-button-class-name]]pass:[<a class="anchor" href="#action-button-class"></a>]`class`, `className` (string)::
+A class name added to the button. You can set both.
+[[action-button-other]]pass:[<a class="anchor" href="#action-button-other"></a>]Any other prop (any)::
+Set on the button or the link, such as `onClick`, `disabled`, `title` and `aria-label`.
+
+=== Returns
+
+A `button`, or a link (`a`) when `href` is set. It holds the icon, or a spinner while it loads, and the label.
+
+=== Usage notes
+
+* A prop such as `title` or `aria-label` can hold a `<Text>` element. The button replaces it with the translated text. See xref:go-deeper/localization.adoc[Localization].
+* An icon-only button has no name for a screen reader. Set `aria-label`, and `title` for the tooltip.
+* The button has a disabled look when `disabled` is set, and the browser stops its clicks.
+* For a button that opens a menu, use xref:reference/shims/components/menus.adoc#action-menu[`ActionMenu`]. It sets `active` and the keyboard handling for you.
+
+
+[#naked-button]
+== NakedButton
+
+A button with no padding and no frame. Use it for text or a small control that must act as a button and sit inline with other text, such as a *Copy* link. Use <<action-button,`ActionButton`>> when the button needs the flat look of a toolbar.
+
+=== Signature
+
+[source,js]
+----
+import { NakedButton } from '@zimbra-client/components';
+
+<NakedButton linkColor type="button" onClick={handleClick}>
+	{label}
+</NakedButton>
+----
+
+=== Props
+
+[[naked-button-children]]pass:[<a class="anchor" href="#naked-button-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the button.
+[[naked-button-link-color]]pass:[<a class="anchor" href="#naked-button-link-color"></a>]`linkColor` (boolean)::
+Draws the content in the link colour of the Modern UI.
+[[naked-button-class]]pass:[<a class="anchor" href="#naked-button-class"></a>]`class` (string)::
+A class name added to the button.
+[[naked-button-other]]pass:[<a class="anchor" href="#naked-button-other"></a>]Any other prop (any)::
+Set on the `button`, such as `onClick`, `type`, `disabled` and `title`.
+
+=== Returns
+
+A `button` that holds `children`.
+
+=== Usage notes
+
+* The button has no default `type`, so inside a form it submits the form. Set `type="button"` for an action that must not submit.
+* A disabled button is faded and ignores the pointer.
+* A prop such as `title` or `aria-label` can hold a `<Text>` element. The button replaces it with the translated text. See xref:go-deeper/localization.adoc[Localization].
+
+
+[#close-button]
+== CloseButton
+
+An icon button with a cross, 34 px square. Use it to close a panel or a dialog of your Zimlet.
+
+=== Signature
+
+[source,js]
+----
+import { CloseButton } from '@zimbra-client/components';
+
+<CloseButton onClick={handleClose} />
+----
+
+=== Props
+
+[[close-button-on-click]]pass:[<a class="anchor" href="#close-button-on-click"></a>]`onClick` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user selects the button. Its return value is ignored.
+[[close-button-inverse]]pass:[<a class="anchor" href="#close-button-inverse"></a>]`inverse` (boolean)::
+Uses the background of the page, and not the grey one, while the pointer is over the button.
+[[close-button-icon-size]]pass:[<a class="anchor" href="#close-button-icon-size"></a>]`iconSize` (string)::
+The size of the cross, as for <<action-button-icon-size,`iconSize` of `ActionButton`>>. Without it, the cross is 20 px.
+[[close-button-title]]pass:[<a class="anchor" href="#close-button-title"></a>]`title` (string)::
+The tooltip. The default is the text *Close*, in the language of the user.
+[[close-button-class]]pass:[<a class="anchor" href="#close-button-class"></a>]`class` (string)::
+A class name added to the button.
+[[close-button-other]]pass:[<a class="anchor" href="#close-button-other"></a>]Any other prop (any)::
+Passed to <<action-button,`ActionButton`>>, such as `aria-label` and `disabled`. The button always sets `icon`, `iconOnly`, `spacingSize` and `class` itself, so your values for them have no effect.
+
+=== Returns
+
+An <<action-button,`ActionButton`>> that shows only the cross.
+
+=== Usage notes
+
+* The button has a tooltip, but no `aria-label`. Set `aria-label` so that a screen reader names it.
+* It closes nothing by itself. Close the panel in `onClick`.
+
+
+[#help-button]
+== HelpButton
+
+A round question mark that opens a short help box beside it, with a cross to close it. Use it to explain a field or a setting where a tooltip is too short. No active Zimlet uses it.
+
+=== Signature
+
+[source,js]
+----
+import { HelpButton } from '@zimbra-client/components';
+
+<HelpButton title={heading}>
+	<p>{text}</p>
+</HelpButton>
+----
+
+=== Props
+
+[[help-button-children]]pass:[<a class="anchor" href="#help-button-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The help text. Pass elements, such as a `p`.
++
+WARNING: A plain text child shows as `[object Object]`. Wrap the text in an element.
+[[help-button-title]]pass:[<a class="anchor" href="#help-button-title"></a>]`title` (xref:reference/glossary.adoc#node[node])::
+A short heading above the help text.
+[[help-button-more]]pass:[<a class="anchor" href="#help-button-more"></a>]`more` (string or boolean)::
+Adds a *More help* link below the text, in the language of the user. A string is the address of the link. Any other true value links to `/help`.
+[[help-button-icon]]pass:[<a class="anchor" href="#help-button-icon"></a>]`icon` (component, default `CircleQuestionMarkIcon`)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn in the button.
+[[help-button-anchor]]pass:[<a class="anchor" href="#help-button-anchor"></a>]`anchor` (string, default `center`)::
+The edge of the button that the help box lines up with: `start`, `end` or `center`. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover-anchor[`anchor` of `Popover`].
+[[help-button-class]]pass:[<a class="anchor" href="#help-button-class"></a>]`class` (string)::
+A class name added to the button.
+
+=== Returns
+
+A xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover[`Popover`] with the button. The help box is 380 px wide. It holds the cross button, the heading, the text and the *More help* link.
+
+=== Usage notes
+
+* The cross button inside the box has no `aria-label`, so a screen reader reads it with no name.
+* The component ignores every prop that the list does not name.
+
+
+[#smime-operation-drop-down]
+== SMIMEOperationDropDown
+
+The drop-down of the composer that sets how a message is signed and encrypted with S/MIME (Secure/Multipurpose Internet Mail Extensions). It lists three choices, each with an icon. Use it when your Zimlet adds S/MIME to the composer, as the secure mail Zimlet does in the `mail-composer-smime-dropdown` slot. The slot is in xref:reference/slots/mail/composer.adoc[Composer slots].
+
+=== Signature
+
+[source,js]
+----
+import { SMIMEOperationDropDown } from '@zimbra-client/components';
+
+<SMIMEOperationDropDown
+	smimeOperation={smimeOperation}
+	changeSmimeOperation={changeSmimeOperation}
+/>
+----
+
+=== Props
+
+[[smime-operation-drop-down-smime-operation]]pass:[<a class="anchor" href="#smime-operation-drop-down-smime-operation"></a>]`smimeOperation` (string)::
+The chosen operation: `noSignOrEnc` (neither signed nor encrypted), `sign` or `signAndEnc` (signed and encrypted). Any other value shows the label of `signAndEnc` and no icon.
+[[smime-operation-drop-down-change-smime-operation]]pass:[<a class="anchor" href="#smime-operation-drop-down-change-smime-operation"></a>]`changeSmimeOperation` (function `(operation: string) => void`)::
+Called with `noSignOrEnc`, `sign` or `signAndEnc` when the user chooses an entry. Its return value is ignored. Keep the operation in your state, and pass it back in `smimeOperation`.
+
+=== Returns
+
+A `div` with an xref:reference/shims/components/menus.adoc#action-menu[`ActionMenu`] and, in a window wider than 1024 px, a separator line after it.
+
+=== Usage notes
+
+* The slot `mail-composer-smime-dropdown` passes both props to your handler. Pass them on as they are.
+* The button shows the icon of the operation. It adds the label when the window is wider than 1024 px and the address of the page has the `full` parameter.
+* The labels come from the Modern UI, in the language of the user. You cannot change them.
+* The component reads the address of the page from the store of the Modern UI, so it works only inside the Modern UI.
+
+
+[#delete-wrapper]
+== DeleteWrapper
+
+A component that deletes Briefcase files and folders. It draws nothing itself. It gives the functions that do the work to the function in `children`, and you put them on your own button. Use it when a screen of your Zimlet removes a file from the Briefcase of the user. The document editor Zimlet uses it to remove a shared file.
+
+=== Signature
+
+[source,js]
+----
+import { DeleteWrapper } from '@zimbra-client/components';
+
+<DeleteWrapper attachment={file}>
+	{({ handleSharedFileDelete }) => (
+		<ActionButton onClick={handleSharedFileDelete}>{label}</ActionButton>
+	)}
+</DeleteWrapper>
+----
+
+=== Props
+
+[[delete-wrapper-children]]pass:[<a class="anchor" href="#delete-wrapper-children"></a>]`children` (function `(actions: object) => node`)::
+Required. Called on every render with an object, and returns what the wrapper shows. The object has these members:
++
+* `handleDelete` (function `({ item }) => void`) deletes the items that the user selected in Briefcase, or `item` when you pass one. A click handler can use it as it is, because it then deletes the selection.
+* `handleInlineDelete` (function `(item) => (event) => void`) returns a click handler for one item. The handler stops the event and deletes the item.
+* `handleFolderDelete` (function `({ deletedSelected, item }) => void`) deletes Briefcase folders. `deletedSelected` is a string with their ids, separated by commas.
+* `handleSharedFileDelete` (function `() => void`) deletes the file in `attachment`.
+* `enableDelete` (boolean) is `true` when the user may delete the items of `documentList` or `folderList`.
+[[delete-wrapper-attachment]]pass:[<a class="anchor" href="#delete-wrapper-attachment"></a>]`attachment` (object or array of object)::
+The file that `handleSharedFileDelete` deletes. It needs an `id`, or an `sfid` that takes precedence. For an array, the wrapper uses the `sfid` of the first item.
+[[delete-wrapper-document-list]]pass:[<a class="anchor" href="#delete-wrapper-document-list"></a>]`documentList` (array of object)::
+The Briefcase files that the buttons act on. `enableDelete` uses it to check the right to delete in the folders of the files. A non-empty list also makes `handleDelete` delete files, and not folders.
+[[delete-wrapper-folder-list]]pass:[<a class="anchor" href="#delete-wrapper-folder-list"></a>]`folderList` (array of object)::
+The Briefcase folders that the buttons act on. `enableDelete` uses it to check the right to delete each folder.
+[[delete-wrapper-select-next-item]]pass:[<a class="anchor" href="#delete-wrapper-select-next-item"></a>]`selectNextItem` (function `(versionIds?: string[]) => void`)::
+Called after files or versions are deleted, so that you select the next row. Its return value is ignored.
+
+=== Returns
+
+What the function in `children` returns. The wrapper adds no element.
+
+=== Usage notes
+
+* A file moves to the Trash folder. It is deleted for good when the Briefcase screen shows the Trash folder. The same holds for a folder.
+* An item whose `id` has the form `fileId_version` is a version of a file. The wrapper deletes that version. It does not delete the current version of a file unless the file is selected too. It opens a warning for the user in that case.
+* Without `item`, `handleDelete` works on the selection of the Briefcase screen. A Zimlet that is not on that screen passes `item` or uses `attachment`.
+* The wrapper reads and changes the data and the store of the Modern UI, so it works only inside the Modern UI.
+
+
+[#next-step]
+== Next step
+
+Find the dialogs that these buttons open in xref:reference/shims/components/dialogs.adoc[Dialogs].

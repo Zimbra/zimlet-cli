@@ -1,0 +1,11 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds confidentiality options to the composer."
+	},
+	"my-zimlet": {
+		"insertNotice": "Insert confidentiality notice",
+		"markSubject": "Mark subject as confidential",
+		"notice": "This message is confidential. Do not forward it."
+	}
+}

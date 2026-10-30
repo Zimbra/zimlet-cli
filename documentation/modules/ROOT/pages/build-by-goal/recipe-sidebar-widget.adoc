@@ -172,4 +172,4 @@ The block is wider than the panel.::
 [#next-step]
 == Next step
 
-Add an action to the menus of a message with xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].
+Add items to the menus that the gear icon and the avatar open in xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

@@ -1,0 +1,178 @@
+= Briefcase
+
+Three hooks for Briefcase, the document store of a mailbox: one shares a document, one reads the Briefcase folders and one saves a document. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] creates documents, opens a message attachment as a document, or changes who can read a document. All three come from `@zimbra-client/hooks/graphql`.
+
+[#members]
+== Members
+
+<<use-document-action,`useDocumentAction`>>::
+Returns a function that shares a document or stops sharing it.
+
+<<use-briefcase-folders-query,`useBriefcaseFoldersQuery`>>::
+Reads the Briefcase folders and the folders that others shared.
+
+<<use-save-document-mutation,`useSaveDocumentMutation`>>::
+Returns a function that creates a document or saves an attachment as one.
+
+[#use-document-action]
+== useDocumentAction
+
+Returns a function that shares a Briefcase document with someone, or stops sharing it. Use it when your Zimlet changes who can read a document. To rename, tag, flag or move a document, use xref:reference/shims/hooks/mail.adoc#use-item-action-mutation[useItemActionMutation].
+
+WARNING: The action changes who can read a document when you call the function. Call it only from a user action, such as a click, and never while a component renders.
+
+=== Signature
+
+[source,js]
+----
+import { useDocumentAction } from '@zimbra-client/hooks/graphql';
+
+const [documentAction, result] = useDocumentAction();
+
+documentAction({ variables: { action: { id, op, grant } } });
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An array. Its first element is the function `documentAction` `(options: object) => promise`. Its second element describes the last call, with `loading`, `error` and `data`. `documentAction` takes an object with the property `variables`, which holds the object `action`:
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`id`
+|string
+|Required. The id of the document.
+
+|`op`
+|string
+|Required. `grant` shares the document. `!grant` stops sharing it.
+
+|`grant`
+|{ address: string, granteeType: string, permissions: string }
+|The share to add or change, for `grant`. It has `address`, `granteeType` and `permissions`. `granteeType` is, for example, `usr` for a user or `pub` for the public.
+
+|`zimbraId`
+|string
+|The id of the grantee whose share to remove, for `!grant`.
+
+|===
+
+`documentAction` returns a promise. It rejects when the request fails. It resolves with the result in `data.documentAction.action`.
+
+=== Usage notes
+
+* Call the hook while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks]. Call `documentAction` from an event handler.
+* The request is `DocumentActionRequest`.
+
+[#use-briefcase-folders-query]
+== useBriefcaseFoldersQuery
+
+Reads the Briefcase folders of the signed-in user and the Briefcase folders that other users shared with the user. Use it to offer a folder picker for documents, or to check the permission on a folder.
+
+=== Signature
+
+[source,js]
+----
+import { useBriefcaseFoldersQuery } from '@zimbra-client/hooks/graphql';
+
+const { folders, allFolders, sharedFolders, loading, refetch } = useBriefcaseFoldersQuery(options);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`options`
+|object
+|Optional. The options of the other data hooks, such as `fetchPolicy`. See xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[usePreferences] for their values. Here the default of `fetchPolicy` is `cache-and-network`.
+
+|===
+
+=== Returns
+
+An object with these properties:
+
+* `folders` (array of object): the Briefcase folders of the user, each with its own `folders`.
+* `allFolders` (object): the root folder, which holds the folders of every kind. It is `undefined` until the data has loaded.
+* `sharedFolders` (array of object): the Briefcase folders that others shared with the user. It is empty when sharing is not enabled for the account.
+* `loading` (boolean): `true` while the request runs.
+* `refetch` (function `() => promise`): sends the request again.
+
+Each folder has fields such as `id`, `name`, `absFolderPath`, `parentFolderId`, `permissions` and `folders`.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* The first folder request of the page always uses `cache-and-network`, whatever `fetchPolicy` you pass. Later requests use your value.
+* While the Modern UI is offline, the hook reads the cache only.
+* The request is `GetFolderRequest`.
+
+[#use-save-document-mutation]
+== useSaveDocumentMutation
+
+Returns a function that creates a Briefcase document, or saves a message attachment as one. Use it when your Zimlet starts a new document or opens an attachment for editing.
+
+=== Signature
+
+[source,js]
+----
+import { useSaveDocumentMutation } from '@zimbra-client/hooks/graphql';
+
+const [saveDocument, result] = useSaveDocumentMutation();
+
+saveDocument({ variables: { document: { name, folderId, action, type } } });
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An array. Its first element is the function `saveDocument` `(options: object) => promise`. Its second element describes the last call, with `loading`, `error` and `data`. `saveDocument` takes an object with the property `variables`, which holds the object `document`:
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`name`
+|string
+|The name of the document.
+
+|`folderId`
+|string
+|The id of the folder that receives the document.
+
+|`action`
+|string
+|`create` makes a new document.
+
+|`type`
+|string
+|The kind of a new document: `document`, `presentation` or `spreadsheet`.
+
+|`messageData`
+|{ messageId: string, attachmentPart: string }
+|Saves an attachment as a document. It has `messageId`, the id of the message, and `attachmentPart`, the part of the attachment.
+
+|===
+
+`saveDocument` returns a promise. It rejects when the request fails. It resolves with the saved documents in `data.saveDocument.document`, a list of objects with `id`, `version` and `name`.
+
+=== Usage notes
+
+* Call the hook while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks]. Call `saveDocument` from an event handler.
+* To create a document, send `name`, `folderId`, `action` and `type`. To save an attachment, send `name` and `messageData`.
+* The request is `SaveDocumentRequest`.
+
+[#next-step]
+== Next step
+
+Read calendars and the metadata of an item in xref:reference/shims/hooks/calendar-and-metadata.adoc[Calendar and metadata].

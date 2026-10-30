@@ -1,0 +1,235 @@
+= Extend the search bar
+
+This recipe adds a button to the search bar of the xref:reference/glossary.adoc#modern-ui[Modern UI]. When the user presses it, the search field turns into a field that searches your knowledge base in a new browser tab. Pressing the button again brings the Modern UI field back. Use the same pattern when users need a second place to search without leaving their screen. Examples are an intranet, a document store or a web search. The button and the field are two components that a xref:reference/glossary.adoc#zimlet[Zimlet] registers for two xref:fundamentals/extending-the-ui.adoc[slots] of the search bar.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose the slots that extend the search bar.
+* Add a button to the search bar with `ActionButton`.
+* Replace the search field while the button is on, and bring it back when the field no longer applies.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-slot]
+== Choose the slot
+
+The use case needs two places in the search bar: a button that the user presses, and the field that replaces the Modern UI field. The example therefore fills two slots of the search bar.
+
+[#the-slots]
+=== The slots
+
+Look up each slot in the xref:reference/slots.adoc[slot index].
+
+`slot::web-search-toggle`::
+The search bar, before the search field. The example uses it for the button, because a control that changes the field belongs next to the field. It passes three props. `viewLabel` is a label for the area that is open. `showAdvanced` is `true` while the advanced search panel is open. `isMobile` is `true` in the layout for small screens. The example reads `showAdvanced` and `isMobile`.
+
+`slot::web-search`::
+The search bar, in place of the Modern UI field. The example uses it for the knowledge base field. It is a xref:fundamentals/extending-the-ui.adoc#render-prop-slots[render-prop slot]. The search bar shows the Modern UI field only when no handler returns content, and shows the content of every handler otherwise. The slot passes the prop `isMobile`, which the example does not use.
+
+NOTE: A handler for `web-search` replaces the Modern UI field for as long as it is registered. Register it only while the user asks for it, as <<register-the-field,Register the field>> shows.
+
+[#other-slots]
+=== Other slots
+
+`slot::searchInputPlaceholder`::
+The hint of the Modern UI field. Choose it when you only want to change the word that completes `Search your …`, as xref:fundamentals/extending-the-ui.adoc#render-prop-slots[Render-prop slots] shows.
+
+`slot::search-tips-link`::
+The link to the search tips. Choose it to point users to your own help page. See xref:reference/slots/app-shell/search.adoc[Search] for the slots of the search bar.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the button. It replaces the generated file.
+** `constants/index.js` holds the address of the knowledge base search page. It replaces the generated file.
+** `components/knowledge-base-toggle/index.js` is the button, and decides when the field replaces the Modern UI field.
+** `components/knowledge-base-search/index.js` and `style.less` are the field.
+. Merge the texts into `src/intl/en_US.json`. The button and the field show these texts.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$knowledge-base-search/intl/en_US.json[]
+----
+
+[#add-the-button]
+== Add the button
+
+The `KnowledgeBaseToggle` component keeps one fact, whether the user switched the knowledge base field on. It shows a button, and it asks `index.js` to register or remove the field when that fact changes. Wrap the component with `withIntl` to load the texts of your Zimlet.
+
+The field replaces the Modern UI field only while all of these hold:
+
+* The user switched the button on.
+* The layout is not the small screen layout (`isMobile` is `false`). The button returns `null` there, so the user does not see it.
+* The advanced search panel is not open (`showAdvanced` is `false`). The panel belongs to the Modern UI field.
+
+The `useEffect` hook registers the field when these hold. The function that the effect returns removes the field again. Preact calls it when a condition stops holding, when the user switches the button off, and when the button leaves the screen.
+
+.components/knowledge-base-toggle/index.js
+[source,js]
+----
+include::example$knowledge-base-search/components/knowledge-base-toggle/index.js[]
+----
+
+[#action-button]
+=== The ActionButton component
+
+`ActionButton` draws a button in the style of the toolbar buttons of the Modern UI. It comes from `@zimbra-client/components`. Choose it for a button with an icon and no frame, such as the button of a toolbar or of a search bar.
+
+*Without it:* a plain `<button>` works, but it has none of the styling of the other buttons. It looks different from its neighbours.
+
+*With it:* pass the icon as `icon`, and set `iconOnly` when the button has no visible label.
+
+[source,js]
+----
+<ActionButton icon={BookOpenIcon} iconOnly onClick={handleClick} />
+----
+
+The example uses these props:
+
+`icon`::
+The icon component, from `lucide-preact`. See xref:fundamentals/shared-libraries.adoc#icons[Icons] for how to pass it.
+
+`iconOnly`::
+Shows only the icon. Set `title` and `aria-label` for it, because a screen reader has no text to read otherwise.
+
+`colored`::
+Draws the icon in the brand colour. The example sets it while the field is on, so that the button shows its state.
+
+`spacingSize`::
+The space around an icon-only button. The example uses `md`, which gives it the size of a field button.
+
+`type`::
+The `type` of the button. The default, `button`, does not submit a form. The field uses `submit`, so that the button sends the form.
+
+`title` and `aria-label`::
+The tooltip and the name for a screen reader. They hold a `<Text>` element, which the button replaces with the translated text.
+
+`aria-pressed`::
+Tells a screen reader that the button is a switch, and whether it is on. The button passes it to the `button` element.
+
+Look up the rest of the props in xref:reference/shims/components/buttons-and-actions.adoc#action-button[Buttons and actions].
+
+[#add-the-field]
+== Add the field
+
+The `KnowledgeBaseSearch` component is the field. It holds the text that the user types, and on submit it opens the knowledge base search page in a new tab. Pressing Enter and choosing the search button both submit the form. The text goes through `encodeURIComponent`, so that a character such as `&` stays part of the search. The address is a constant that you replace with the search page of your own knowledge base. Wrap the component with `withIntl`, as for the button.
+
+.constants/index.js
+[source,js]
+----
+include::example$knowledge-base-search/constants/index.js[]
+----
+
+.components/knowledge-base-search/index.js
+[source,js]
+----
+include::example$knowledge-base-search/components/knowledge-base-search/index.js[]
+----
+
+The style puts the field and the button in one frame that has the look of the Modern UI field. The frame takes the brand colour while the field has the focus.
+
+.components/knowledge-base-search/style.less
+[source,less]
+----
+include::example$knowledge-base-search/components/knowledge-base-search/style.less[]
+----
+
+[#text-input]
+=== The TextInput component
+
+The example draws the text field with `TextInput`, as xref:build-by-goal/recipe-settings/new-section.adoc#text-input[The TextInput component] describes. Here it needs `value` and `onInput`. It also gets `placeholder`, the hint of the empty field. With `autofocus`, the cursor is in the field when it appears, so that the user can type at once.
+
+[#register-the-field]
+== Register the field
+
+Register the button in `init()` with `plugins.register`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The handler passes the props of the slot to the button, together with the two functions that show and hide the field.
+
+Registering and removing the field happens later, while the Zimlet runs, and not in `init()`. Each call of `plugins.register` or `plugins.unregister` makes the slot draw again. `plugins.unregister` removes a handler only when you give it the same function that you registered. The example therefore keeps one function, `renderKnowledgeBaseSearch`, and uses it for both calls. Removing a handler that is not registered does nothing, so the button can call it without a check.
+
+Read xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for a slot work.
+
+.index.js
+[source,js]
+----
+include::example$knowledge-base-search/index.js[]
+----
+
+[#limits]
+== Know the limits
+
+* The knowledge base field replaces the Modern UI field and its advanced search while it is on. Users who need a mailbox search switch the button off first.
+* The button shows only in the layout for large screens. The small screen layout keeps the Modern UI field.
+* The advanced search panel opens over the button, so users cannot press the button while the panel is open.
+* The button is off after the Modern UI loads. The Zimlet does not remember the choice of the user.
+* A handler of another Zimlet for `web-search` shows next to yours. The search bar shows the content of every handler.
+* The address in `constants/index.js` is a placeholder. Replace it with the search page of your knowledge base.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Make the browser window wide, and open *Mail*. A book icon shows before the search field, and the field shows *Search your mailbox*.
++
+.The search bar with the new button, before the field
+image::knowledge-base-search-toggle-off.png["The Mail view of the Modern UI. In the header, a red outline surrounds a grey book icon that is before the search field. The field shows the hint Search your mailbox."]
++
+The outlined book icon is your button.
+. Choose the book icon. A field with the hint *Search the knowledge base* replaces the Modern UI field. The cursor is in it, and the book icon turns blue.
++
+.The search bar with the knowledge base field
+image::knowledge-base-search-toggle-on.png["The Mail view of the Modern UI. In the header, a red outline surrounds a blue book icon and a field with the hint Search the knowledge base and a magnifier at its right end."]
++
+The outlined button and field are yours.
+. Type `vpn` and press Enter. A new browser tab opens with an address that ends in `/knowledge-base/search?q=vpn`, and the Modern UI stays open.
+. Type `vpn` again and choose the magnifier button at the right end of the field. The same kind of tab opens.
+. Choose the book icon again. The *Search your mailbox* field returns, and the icon turns grey.
+. Switch the field on and open *Calendar*, then *Contacts*. The book icon and the knowledge base field stay in the header.
+. Make the window as narrow as a phone. The book icon disappears, and the search of the Modern UI works as usual.
+
+[#expected-result]
+== Expected result
+
+* A book icon shows before the search field on large screens.
+* Choosing it replaces the Modern UI field with a knowledge base field, and the icon turns blue.
+* Enter and the magnifier button each open the knowledge base search page in a new tab, with the text of the user in the address.
+* Choosing the icon again brings the Modern UI field back.
+* The field and the button follow the user from Mail to Calendar and Contacts.
+* On a small screen the button is not shown, and the Modern UI field is used.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The book icon is not in the search bar.::
+* Cause: The Zimlet is not loaded, or the page was not reloaded after you loaded it. The window can also be in the small screen layout, or the handler can be registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows *Running*. Check that the key is `slot::web-search-toggle` and that you register in `init()`. Widen the window and reload the page.
+
+The icon turns blue, but the Modern UI field stays.::
+* Cause: The field is registered under another key.
+* Fix: Check that the key in `index.js` is `slot::web-search`.
+
+Two search fields show.::
+* Cause: Another Zimlet registers a handler for `slot::web-search`. The search bar shows the content of every handler.
+* Fix: Switch the other Zimlet off, or let only one Zimlet fill the slot.
+
+Enter does nothing.::
+* Cause: The field is empty. The example ignores a text of spaces only.
+* Fix: Type a text and press Enter again.
+
+The hint or the tooltip shows as a key, or not at all.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or a component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around both components.
+
+[#next-step]
+== Next step
+
+Show a note above the text of an open message in xref:build-by-goal/recipe-message-banner.adoc[Show a banner above the message text]. Let an administrator set the address instead of fixing it in the code, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

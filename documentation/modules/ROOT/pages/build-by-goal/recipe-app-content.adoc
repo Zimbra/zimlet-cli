@@ -185,4 +185,4 @@ The screen stays blurred after you return to the Modern UI.::
 [#next-step]
 == Next step
 
-Add a menu item that opens a page or runs an action in xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
+Add an action to the menus of a message in xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].

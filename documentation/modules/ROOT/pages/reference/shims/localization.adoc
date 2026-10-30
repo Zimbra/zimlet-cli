@@ -1,0 +1,426 @@
+= Localization (`@zimbra/preact-i18n`)
+
+The components, hooks and functions of `@zimbra/preact-i18n` look up an id in the texts of your xref:reference/glossary.adoc#zimlet[Zimlet]. They show the text in the language of the user. Use them wherever a component shows a label or a message, so that the text follows the language that the user chose. The xref:reference/glossary.adoc#modern-ui[Modern UI] shares version 4 of the module with every Zimlet. Import it by name, and the build does not copy it into your Zimlet. The texts come from the wrapper that `withIntlWrapper` adds to a component. See xref:reference/shims/hocs/localization.adoc[Localization HOCs] for the wrapper, and xref:go-deeper/localization.adoc[Localization] for the language files and the steps.
+
+[#members]
+== Members
+
+xref:reference/shims/localization.adoc#text[`Text`]::
+Shows the text of an id as plain text. The most common choice.
+
+xref:reference/shims/localization.adoc#markup-text[`MarkupText`]::
+Shows the text of an id with its HTML tags, such as a link inside a sentence.
+
+xref:reference/shims/localization.adoc#unsafe-html[`unsafeHtml`]::
+Marks a value of `MarkupText` that is inserted as it is.
+
+xref:reference/shims/localization.adoc#localizer[`Localizer`]::
+Replaces `Text` elements in the props of a child element with their text, such as a `placeholder`.
+
+xref:reference/shims/localization.adoc#use-text[`useText`]::
+Returns texts as strings inside a function component.
+
+xref:reference/shims/localization.adoc#with-text[`withText`]::
+Passes texts as props to a component, such as a class component.
+
+xref:reference/shims/localization.adoc#translate[`translate`]::
+Looks up one text in a dictionary that you pass, in any code.
+
+xref:reference/shims/localization.adoc#intl-context[`IntlContext`]::
+Holds the texts that the nearest provider made available.
+
+xref:reference/shims/localization.adoc#intl-provider[`IntlProvider`]::
+Makes texts available to the components below it.
+
+xref:reference/shims/localization.adoc#intl[`intl`]::
+Wraps a component in an `IntlProvider`. Also the default export.
+
+[#show-text]
+== Show text
+
+Use these in markup. `Text` covers most cases.
+
+[#text]
+=== Text
+
+Shows the text of an id in the language of the user. Use it for every label and message in your markup. Use `useText` instead when you need a string, for example for an attribute or a function call.
+
+==== Signature
+
+[source,js]
+----
+import { Text } from '@zimbra/preact-i18n';
+
+<Text id="my-zimlet.title" fields={{ name }} plural={count}>Fallback</Text>
+----
+
+==== Props
+
+[[text-id]]pass:[<a class="anchor" href="#text-id"></a>]`id` (string)::
+Required. The id of the text. Dots go down one level of the language file: `my-zimlet.title` is the `title` key inside `my-zimlet`. The scope of the nearest provider goes in front of the id.
+
+[[text-fields]]pass:[<a class="anchor" href="#text-fields"></a>]`fields` (object)::
+The values for the `+{{name}}+` placeholders of the text. A name can have dots, as in `+{{user.first}}+`. A value that is missing becomes empty text. A `Text` element as a value shows its own text.
+
+[[text-plural]]pass:[<a class="anchor" href="#text-plural"></a>]`plural` (number)::
+A count that selects a plural form. It works when the entry of the language file is an array or an object. Use a number, not a string. An array gives the item at the index of the count, or the first item when there is none. An object gives `none` or `zero` for 0, `one` or `singular` for 1, and for other counts the first of `some`, `many`, `plural` and `other`. An entry that is a string ignores it.
+
+[[text-children]]pass:[<a class="anchor" href="#text-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The fallback that shows when the language file has no text for the id.
+
+==== Returns
+
+The text, as a string. Without a text and without `children`, it renders nothing.
+
+==== Usage notes
+
+* The text shows as plain text. A tag in it appears as characters. Use <<markup-text,`MarkupText`>> for markup.
+* An id must reach a string. An id that reaches a group of keys throws a `TypeError` unless `plural` selects a form. A missing `id` also throws when a provider has loaded texts.
+* `Text` finds only the texts of the providers above it. Below the wrapper of `withIntlWrapper` it finds your ids. Without a provider, it shows `children`.
+* A placeholder name has letters, digits, `_`, `.` or `-`.
+* To put a text in an attribute, use <<localizer,`Localizer`>> or <<use-text,`useText`>>. A `Text` element in an attribute shows as `[object Object]`.
+
+[#markup-text]
+=== MarkupText
+
+Shows the text of an id with its HTML tags. Use it when a message holds a link or an emphasis inside the sentence. Use <<text,`Text`>> when the text has no markup.
+
+==== Signature
+
+[source,js]
+----
+import { MarkupText } from '@zimbra/preact-i18n';
+
+<MarkupText id="my-zimlet.help" fields={{ url }} />
+----
+
+==== Props
+
+[[markup-text-id]]pass:[<a class="anchor" href="#markup-text-id"></a>]`id` (string)::
+Required. The id of the text, as for <<text-id,`Text`>>.
+
+[[markup-text-fields]]pass:[<a class="anchor" href="#markup-text-fields"></a>]`fields` (object)::
+The values for the `+{{name}}+` placeholders. Each value is HTML encoded before it goes in, so a value with a tag shows the characters of the tag. Do not encode a value yourself, because it would be encoded twice. A value from <<unsafe-html,`unsafeHtml`>> goes in as it is. A value that starts with a script protocol, such as `javascript:` or `data:`, becomes empty. A `Text` element as a value shows its own text.
+
+[[markup-text-plural]]pass:[<a class="anchor" href="#markup-text-plural"></a>]`plural` (number)::
+A count that selects a plural form, as for <<text-plural,`Text`>>.
+
+[[markup-text-children]]pass:[<a class="anchor" href="#markup-text-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The fallback that shows, inside a `span`, when the language file has no text for the id.
+
+[[markup-text-other]]pass:[<a class="anchor" href="#markup-text-other"></a>]Other props::
+Every other prop, such as `class`, goes to the `Markup` component of `preact-markup`. See xref:reference/shims/libraries.adoc#preact-markup[`preact-markup`].
+
+==== Returns
+
+A `div` with the class `markup` that holds the text as elements. It renders nothing when the id has no text and there is no `children`.
+
+==== Usage notes
+
+* The text of the language file is not encoded. Write markup only in your own language files.
+* Use a placeholder only as element text or in the `href` of a link. Do not use it in a `style` or an `on…` attribute: encoding does not make those safe.
+* Other `Text` rules apply: the id must reach a string, or `plural` must select a form.
+
+[#unsafe-html]
+=== unsafeHtml
+
+Marks a value of a `MarkupText` field so that it is inserted as it is, without encoding. Use it only for markup that you build yourself and trust, such as a bold word. No active Zimlet uses `unsafeHtml`, so this entry documents what the code reads.
+
+WARNING: Never pass text from a user, a message or a server response. It reaches the page as markup and can run a script. Pass such a value as a plain field, which `MarkupText` encodes.
+
+==== Signature
+
+[source,js]
+----
+import { unsafeHtml } from '@zimbra/preact-i18n';
+
+<MarkupText id="my-zimlet.note" fields={{ word: unsafeHtml('<b>new</b>') }} />
+----
+
+==== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`value`
+|string or xref:reference/glossary.adoc#element[element]
+|Required. The markup to insert. A `Text` element is replaced by its text first, and that text is inserted as it is.
+
+|===
+
+==== Returns
+
+An object that marks the value. Pass it as a value of `fields`. It is not a string.
+
+==== Usage notes
+
+* It has an effect in the `fields` of `MarkupText`. `Text` never parses its text, so a tag shows as characters there.
+* A value that starts with `javascript:` passes through too, because nothing is checked.
+
+[#localizer]
+=== Localizer
+
+Replaces the `Text` elements in the props of a child element with their text. Use it when an attribute needs a translated string and you want to stay in markup, as for the `placeholder` of an input. Use <<use-text,`useText`>> when you also need the string in code.
+
+==== Signature
+
+[source,js]
+----
+import { Localizer, Text } from '@zimbra/preact-i18n';
+
+<Localizer>
+	<input placeholder={<Text id="my-zimlet.placeholder">Search</Text>} />
+</Localizer>
+----
+
+==== Props
+
+[[localizer-children]]pass:[<a class="anchor" href="#localizer-children"></a>]`children` (xref:reference/glossary.adoc#element[element] or array of xref:reference/glossary.adoc#element[element])::
+The elements whose props are translated. The fallback of a `Text` element is its own `children`.
+
+==== Returns
+
+The same elements, with each prop that holds a `Text` element replaced by the text, as a string. A prop whose text is missing, with no fallback, becomes `null`.
+
+==== Usage notes
+
+* It works on the props of its direct children only. An element deeper in the tree keeps its `Text` elements.
+* A prop that holds a plain string stays as it is. The string is not read as an id.
+
+[#read-text]
+== Read text in code
+
+Use these when you need a text as a string, or when the component is a class.
+
+[#use-text]
+=== useText
+
+A hook that returns texts as strings. Use it in a function component when you need a text for an attribute, a title or a call. Use <<with-text,`withText`>> in a class component, which cannot call a hook.
+
+==== Signature
+
+[source,js]
+----
+import { useText } from '@zimbra/preact-i18n';
+
+const texts = useText(mapping);
+----
+
+==== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`mapping`
+|string, array of string, object or function `(state: { intl: object }) => string \| string[] \| object`
+|Required. The texts to get. A string holds one id, or ids that a comma separates. An array of string holds one id for each item. For both, each result field is named after the last part of its id: `my-zimlet.title` gives `title`. An object maps a field name to an id (string) or to a `Text` element. Use the `Text` element when you need `fields`, `plural` or a fallback. A function returns one of these forms. It runs on every render and receives `state.intl`, which holds `scope`, `dictionary` and `mark`.
+
+|===
+
+==== Returns
+
+An object that holds one string for each field. The value is `null` when an id has no text and there is no fallback. Without a provider, every value is `null`.
+
+==== Usage notes
+
+* Call it at the top of a function component, like every hook. See xref:reference/shims/libraries.adoc#preact-hooks[`preact/hooks`].
+* The object is new on every render. Use its strings, not the object, as the dependency of another hook.
+* It reads the texts of the nearest provider above the component.
+
+[#with-text]
+=== withText
+
+A higher-order component that passes texts to a component as props. Use it on a class component, which cannot call <<use-text,`useText`>>.
+
+==== Signature
+
+[source,js]
+----
+import { withText } from '@zimbra/preact-i18n';
+
+const Enhanced = withText(mapping)(Component);
+----
+
+==== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`mapping`
+|string, array of string, object or function `(props: object, state: { intl: object }) => string \| string[] \| object`
+|Required. The same forms as the `mapping` of <<use-text,`useText`>>. The function form also receives the props of the component, first.
+
+|===
+
+==== Returns
+
+A function `(Component: component) => component`. The new component renders `Component` with all its own props and one added prop for each field of the mapping. An added prop replaces a prop of the same name that the parent passes, even when its text is `null`. The new component has a `getWrappedComponent` function that returns `Component`.
+
+==== Usage notes
+
+* Apply it once, outside any component, as in `export default withText({ title: 'my-zimlet.title' })(Component)`. A call inside a render makes a new component on every render.
+* In a function component, use <<use-text,`useText`>>.
+
+[#translate]
+=== translate
+
+Looks up one text in a dictionary that you pass, and fills its placeholders. Use it where no component renders, such as in a callback that builds the message of a notification. Use <<text,`Text`>> or <<use-text,`useText`>> in a component.
+
+==== Signature
+
+[source,js]
+----
+import { translate } from '@zimbra/preact-i18n';
+
+const text = translate(id, scope, dictionary, fields, plural, fallback, encodeFields);
+----
+
+==== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`id`
+|string
+|Required. The id of the text, with dots for levels.
+
+|`scope`
+|string
+|Optional. A path that goes in front of `id`, joined with a dot. It can hold dots.
+
+|`dictionary`
+|object
+|Optional. The nested object that holds the texts. Without it, the result is the fallback. Read it from <<intl-context,`IntlContext`>>.
+
+|`fields`
+|object
+|Optional. The values for the `+{{name}}+` placeholders, as for <<text-fields,`Text`>>.
+
+|`plural`
+|number
+|Optional. A count that selects a plural form, as for <<text-plural,`Text`>>.
+
+|`fallback`
+|string
+|Optional. The result when the id has no text.
+
+|`encodeFields`
+|boolean
+|Optional, default `false`. HTML encodes each field value, as `MarkupText` does.
+
+|===
+
+==== Returns
+
+The text (string), or the fallback, or `null` when there is neither.
+
+==== Usage notes
+
+* It reads nothing from the page, so you can call it anywhere. Pass `intl.scope` and `intl.dictionary` from <<intl-context,`IntlContext`>> to get the texts of the current provider.
+* An id that reaches a group of keys throws a `TypeError` unless `plural` is a number that selects a form. A `false` for `plural` does not select one.
+
+[#provide-the-dictionary]
+== Provide the dictionary
+
+The wrapper of `withIntlWrapper` provides the texts of your Zimlet, so most Zimlets use none of these to provide texts. Use them to read the whole dictionary, or to give texts to markup that you render yourself.
+
+[#intl-context]
+=== IntlContext
+
+The context that holds the texts of the nearest provider. Use it in a function component that needs the whole dictionary, for example to pass it to <<translate,`translate`>> or to <<intl-provider,`IntlProvider`>>. Use <<use-text,`useText`>> when you need only a few texts.
+
+==== Type
+
+A Preact context. Its value is `{ intl: { scope: string, dictionary: object, mark: boolean } }`. Without a provider above it, the value is `{ intl: {} }`, so `scope`, `dictionary` and `mark` are not set. `scope` is set only when a provider set it.
+
+==== Usage notes
+
+* Read it with `useContext` of `preact/hooks`. In a class component, use xref:reference/shims/hocs/localization.adoc#with-intl-consumer[`withIntlConsumer`]. See xref:reference/shims/libraries.adoc#preact-hooks[`preact/hooks`].
+* The dictionary holds the merged texts of every provider above the component. Check that `dictionary` exists before you read it.
+* Do not set its value yourself. Use <<intl-provider,`IntlProvider`>>.
+
+[#intl-provider]
+=== IntlProvider
+
+Makes texts available to the components below it. Use it for markup that your wrapper does not reach. An example is a tree that you turn into a string with `render` of `preact-render-to-string`, which starts with no texts. Pass the dictionary that you read from <<intl-context,`IntlContext`>>. Do not use it to load language files. `withIntlWrapper` does that.
+
+==== Signature
+
+[source,js]
+----
+import { IntlProvider } from '@zimbra/preact-i18n';
+
+<IntlProvider definition={dictionary} scope={scope} mark={false}>{children}</IntlProvider>
+----
+
+==== Props
+
+[[intl-provider-definition]]pass:[<a class="anchor" href="#intl-provider-definition"></a>]`definition` (object)::
+The texts to add, as a nested object. They merge into the texts of the providers above. A key that already has a value above keeps that value, and the new text fills only the missing keys. An empty string above counts as missing.
+
+[[intl-provider-scope]]pass:[<a class="anchor" href="#intl-provider-scope"></a>]`scope` (string)::
+A path that goes in front of every id below, and replaces the scope of the provider above. It does not move `definition`: the texts must already sit under that key.
+
+[[intl-provider-mark]]pass:[<a class="anchor" href="#intl-provider-mark"></a>]`mark` (boolean, default `false`)::
+Highlights every `Text` and `MarkupText` below, and shows the id as a tooltip. Green marks a text from the dictionary, yellow marks a fallback, and orange marks an id that shows nothing. Use it to find missing ids while you develop. A page address with `intl=show` after `?`, `&` or `#` turns it on for every provider. The highlight adds a `mark` element, which can change the layout.
+
+[[intl-provider-children]]pass:[<a class="anchor" href="#intl-provider-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content that receives the texts.
+
+==== Returns
+
+Its `children`, with no element of its own.
+
+==== Usage notes
+
+* A tree that you render outside the page, for example to a string, does not see the texts of the page. Pass `definition={intl.dictionary}` from <<intl-context,`IntlContext`>> to give it the same texts.
+* The rule that the providers above win applies to the Modern UI too. An id that the Modern UI defines shows the Modern UI text. Start each id with the name of your Zimlet.
+
+[#intl]
+=== intl
+
+Wraps a component in an <<intl-provider,`IntlProvider`>>. Use it when a component needs a dictionary of its own that you pass in code, such as the English texts bundled with it. It does not load language files and does not follow the language of the user. Use `withIntlWrapper` for that. It is also the default export, so `import intl from '@zimbra/preact-i18n'` gives the same function.
+
+==== Signature
+
+[source,js]
+----
+import { intl } from '@zimbra/preact-i18n';
+
+const Enhanced = intl(Component, options);
+const withTexts = intl(options);
+----
+
+==== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`Component`
+|component
+|The component to wrap. Leave it out to get a function that wraps a component later, as in `intl(options)(Component)`.
+
+|`options`
+|object
+|Optional. The props of <<intl-provider,`IntlProvider`>>: `definition`, `scope` and `mark`.
+
+|===
+
+==== Returns
+
+A component, or a function `(Component: component) => component` when you pass one argument. The component renders `Component` with all its props, inside an `IntlProvider` with `options`. It has a `getWrappedComponent` function that returns `Component`.
+
+==== Usage notes
+
+* Apply it once, outside any component. A call inside a render makes a new component on every render.
+* The providers above win, as for <<intl-provider-definition,`definition`>>.
+
+[#next-step]
+== Next step
+
+Continue with the xref:reference/shims/blocks.adoc[Blocks UI kit], the visual components that Zimlets share.

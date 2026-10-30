@@ -124,7 +124,7 @@ Whether the box is ticked. The example sets it from `value`.
 `onChange`::
 Called when the user changes the box. The new state is in `event.target.checked`.
 
-Look up the rest in xref:reference/shims/components/form-inputs.adoc[Form inputs].
+Look up the rest in xref:reference/shims/blocks/form-inputs-and-choices.adoc#choice-input[Form inputs and choices].
 
 [#text-input]
 === The TextInput component
@@ -154,14 +154,14 @@ Turns the field off. The example turns it off while the check box is not ticked.
 `type`, `min`, `max` and `id`::
 Go to the `input` element. `id` ties the field to its `<label>`.
 
-Look up the rest in xref:reference/shims/components/form-inputs.adoc[Form inputs].
+Look up the rest in xref:reference/shims/components/form-fields.adoc#text-input[Form fields].
 
 [#register-the-section]
 == Register the section
 
 Register the section in `init()` with `plugins.register`. The key is `settings`, with no `slot::` prefix, because the Settings dialog collects the objects and does not render a slot. The handler is the object with the keys that xref:build-by-goal/recipe-settings.adoc#where-settings-fit[Where a settings section fits] describes.
 
-Look up the `settings` key in the xref:reference/slots.adoc[slot index], and read xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for these keys work.
+Look up the `settings` key in the xref:reference/slots.adoc[slot index], and read xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for these keys work.
 
 .index.js
 [source,js]
@@ -221,4 +221,4 @@ The section shows the default value after you saved a value.::
 [#next-step]
 == Next step
 
-Read the saved values in your Zimlet, and let an administrator give them a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on a saved value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.
+Add one control to a page that the Settings dialog already has in xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page]. Read the saved values in your Zimlet, and let an administrator give them a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on a saved value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.

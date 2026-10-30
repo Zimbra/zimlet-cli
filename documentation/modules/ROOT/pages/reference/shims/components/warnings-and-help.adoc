@@ -1,0 +1,129 @@
+= Warnings and help
+
+The components of `@zimbra-client/components` that guard, explain and report. One catches a click on a link so that your code can ask before the user leaves. One shows a short help text behind a question mark button. One shows an error message. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] adds a page or a settings section that must look and behave like the Modern UI. For a dialog that asks the user to confirm, see xref:reference/shims/components/dialogs.adoc[Dialogs].
+
+[#members]
+== Members
+
+<<capture-before-unload,`CaptureBeforeUnload`>>::
+Holds back a click on a link outside its content until your code allows it.
+
+<<help-tooltip,`HelpTooltip`>>::
+A question mark button that opens a short help text.
+
+<<error-alert,`ErrorAlert`>>::
+A block of text in the error colours that screen readers announce.
+
+[#capture-before-unload]
+== CaptureBeforeUnload
+
+Holds back the click on a link that lies outside its content and calls your function first. Use it on a page with unsaved changes. The function can ask the user, and then open the link or keep the user on the page. Use xref:reference/shims/components/dialogs.adoc#confirm-modal-dialog[`ConfirmModalDialog`] to ask the question.
+
+WARNING: Despite its name, it does not react to the browser leaving the page. Closing the tab, reloading and the browser Back button are not caught. Neither is a page change that your code or the Modern UI starts without a click on a link. It reacts only to a click on a link.
+
+=== Signature
+
+[source,js]
+----
+import { CaptureBeforeUnload } from '@zimbra-client/components';
+
+<CaptureBeforeUnload onBeforeUnload={handleBeforeUnload}>
+	{content}
+</CaptureBeforeUnload>
+----
+
+=== Props
+
+[[capture-before-unload-children]]pass:[<a class="anchor" href="#capture-before-unload-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the page. A click on a link inside it is not held back.
+[[capture-before-unload-on-before-unload]]pass:[<a class="anchor" href="#capture-before-unload-on-before-unload"></a>]`onBeforeUnload` (function `(handleAfterUnload: (preventNavigateAway?: boolean) => void) => void`)::
+Called when the user clicks a link outside the content, for example a folder in the sidebar. Its return value is ignored. The link does not open until you call `handleAfterUnload`. Call it with a falsy value (or none) to open the link, and with `true` to keep the user on the page. Without this prop, no click is held back.
++
+WARNING: Call `handleAfterUnload` exactly once for each call of `onBeforeUnload`. Until you do, the component ignores the clicks that follow, and the links open without a question.
+
+=== Returns
+
+Its `children`. It adds no element of its own.
+
+=== Usage notes
+
+* The component listens to clicks while it is mounted, and stops when it is removed.
+* A click is held back only when it comes from a link and the link leads to another address than the current one. A right click, a click that is not on a link, and a click on a link of the current page pass.
+* The component does not remember the answer. Each click on a link calls `onBeforeUnload` again, once the previous call has been answered.
+
+[#help-tooltip]
+== HelpTooltip
+
+A question mark button that opens a short help text next to it. Use it beside the label of a field when the label alone does not explain the field, as the settings of the Modern UI do.
+
+WARNING: Do not put it inside a `form` element. The button has no `type`, so pressing it submits the form. Put it next to the form, or outside it.
+
+=== Signature
+
+[source,js]
+----
+import { HelpTooltip } from '@zimbra-client/components';
+
+<HelpTooltip position="right" customStyle={style.tooltip}>
+	{help}
+</HelpTooltip>
+----
+
+=== Props
+
+[[help-tooltip-children]]pass:[<a class="anchor" href="#help-tooltip-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The help text, shown in the tooltip. The tooltip is at least 200 and at most 350 px wide, and the text wraps.
+[[help-tooltip-position]]pass:[<a class="anchor" href="#help-tooltip-position"></a>]`position` (string, default `left`)::
+The side of the button where the tooltip opens: `top` (above), `left`, `bottom` (below) or `right`.
+[[help-tooltip-custom-style]]pass:[<a class="anchor" href="#help-tooltip-custom-style"></a>]`customStyle` (string)::
+A class name added to the tooltip box, for example one that changes its padding or its width.
+
+=== Returns
+
+A container with the button, which shows a question mark icon. When the user presses the button, the tooltip opens next to it, with your `children` and a close button. The accessible name of the button is the text `buttons.moreInfo`, which reads *More Info* in English.
+
+=== Usage notes
+
+* The tooltip closes when the user presses the close button, presses *Escape* or clicks outside it.
+* The state of the tooltip is local to the component. The tooltip opens only from the button, and a parent cannot open or close it.
+* Wrap your component with `withIntl` so that a `Text` in the help text finds the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization]. The recipe xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page] uses it beside a field.
+* The component reads only the props above. Any other prop is ignored.
+
+[#error-alert]
+== ErrorAlert
+
+A block of text in the error colours of the Modern UI that a screen reader announces at once. Use it to show why an action failed, such as a rejected file, near the field that caused it. Use xref:reference/shims/components/layout.adoc#info-bar[`InfoBar`] for a message that is not an error.
+
+=== Signature
+
+[source,js]
+----
+import { ErrorAlert } from '@zimbra-client/components';
+
+<ErrorAlert>{message}</ErrorAlert>
+----
+
+=== Props
+
+[[error-alert-children]]pass:[<a class="anchor" href="#error-alert-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The message.
+[[error-alert-class]]pass:[<a class="anchor" href="#error-alert-class"></a>]`class` (string)::
+A class name added to the block, for example one that sets a margin.
+[[error-alert-other-props]]pass:[<a class="anchor" href="#error-alert-other-props"></a>]Any other prop (any)::
+Passed to the `p` element. A `role` or `aria-live` prop replaces the default one.
+
+=== Returns
+
+A `p` element with the padding, the rounded corners and the colours of an error. It has `role="alert"` and `aria-live="assertive"`.
+
+=== Usage notes
+
+* Render it only while there is a message, as in `+{error && <ErrorAlert>{error}</ErrorAlert>}+`. The `role` makes a screen reader read the text when the block appears.
+* It renders a `p` element, so put text and inline content in it, not a `p` or a `div`.
+* Wrap your component with `withIntl` so that a `Text` in the message finds the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization].
+* The block has no close button and no timeout. Remove it in your code, for example when the user changes the field.
+
+[#next-step]
+== Next step
+
+Continue with the components that let the user enter or pick a value, in xref:reference/shims/components/form-fields.adoc[Form fields].
