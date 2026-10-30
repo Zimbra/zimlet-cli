@@ -174,7 +174,7 @@ The route tells the Modern UI when to show your screen. The Modern UI asks every
 include::example$tab-and-route/components/meetings-route/index.js[]
 ----
 
-The handler calls `useMeetingsPath` on every call, with no condition. xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] describes the rules for hooks in a handler. The screen that the route shows follows in the next section.
+The handler calls `useMeetingsPath` on every call, with no condition. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] describes the rules for hooks in a handler. The screen that the route shows follows in the next section.
 
 [#add-the-screen]
 == Add the screen
@@ -279,4 +279,4 @@ A *Join* link opens a page that does not load.::
 [#next-step]
 == Next step
 
-Make your screen read and change data on the server in xref:build-by-goal/recipe-server-data.adoc[Manage server data].
+Add options of your Zimlet to the Settings dialog in xref:build-by-goal/recipe-settings.adoc[Add a settings]. To make your screen read and change data on the server, see xref:build-by-goal/recipe-server-data.adoc[Manage server data].

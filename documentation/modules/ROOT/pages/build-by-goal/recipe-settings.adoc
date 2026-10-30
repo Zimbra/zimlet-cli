@@ -33,7 +33,7 @@ The values that the section saves. Each field names the kind of value and the na
 `afterSave`::
 An optional function that runs when the user chooses *Save*.
 
-See xref:reference/slots.adoc[the slot index] for the `settings` key, and xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for these keys work.
+See xref:reference/slots.adoc[the slot index] for the `settings` key, and xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for these keys work.
 
 [#fields]
 == Fields

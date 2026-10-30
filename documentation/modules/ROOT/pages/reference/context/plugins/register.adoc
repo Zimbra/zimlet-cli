@@ -19,7 +19,7 @@ plugins.register(name, handler)
 
 |`name`
 |string
-|The key. A slot key has the form `slot::<slot-name>`, such as `slot::message-body-top`. See xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+|The key. A slot key has the form `slot::<slot-name>`, such as `slot::message-body-top`. See xref:fundamentals/extending-the-ui.adoc[Slots and handlers].
 
 |`handler`
 |function, or any other value

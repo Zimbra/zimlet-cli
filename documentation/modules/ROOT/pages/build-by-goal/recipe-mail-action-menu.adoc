@@ -210,4 +210,4 @@ The tag is not in the *Tags* list after the first use.::
 [#next-step]
 == Next step
 
-To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].
+Set a value of an event while the user fills in the form in xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

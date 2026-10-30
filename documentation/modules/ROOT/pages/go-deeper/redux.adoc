@@ -2,6 +2,16 @@
 
 Add state of your own to the Redux store of the xref:reference/glossary.adoc#modern-ui[Modern UI] when handlers must share a value. An example is a toggle that one component sets and another reads. Your Zimlet adds a section to the state with a reducer. It changes the section with actions and reads it in components. The state lives only until the page reloads. See the https://redux.js.org/introduction/getting-started[Redux documentation^] if Redux is new to you.
 
+[#when-to-use]
+== When to use Redux
+
+Use Redux when several components or handlers of your Zimlet that have no common parent need the same value, and must change together when it changes. Do not use it in these cases:
+
+* Only one component needs the value. Keep it in the state of that component, with `useState` from the https://preactjs.com/guide/v10/hooks/[Preact hooks guide^]. It is simpler.
+* The value must survive a page reload. The state of Redux does not. Keep such a value on the server, as xref:go-deeper/server-data.adoc[Server data] describes, for example in xref:go-deeper/server-data/metadata.adoc[mailbox metadata].
+
+Other Zimlets can use your state too, when you publish actions and selectors for it, as <<more>> describes.
+
 [#add-state]
 == Add your state
 
@@ -43,7 +53,14 @@ include::example$redux/store/reducer.js[]
 [#more]
 == Share state with other Zimlets
 
-To let other Zimlets use your actions and selectors, publish them. See xref:reference/context/store/zimlet-redux.adoc[Zimlet state] for `addActions`, `addSelectors` and the members that read what others published.
+Handlers of your own Zimlet can use the state, actions and selectors that you wrote directly. Another Zimlet is a separate bundle and cannot import your code. It can reach only what you publish.
+
+* Publish your action creators with xref:reference/context/store/zimlet-redux/add-actions.adoc[`addActions`], so that other Zimlets change your state by name. Other code finds them in xref:reference/context/store/zimlet-redux/actions.adoc[`actions`], and passes what an action creator returns to xref:reference/context/store/dispatch.adoc[`dispatch`].
+* Publish your selectors with xref:reference/context/store/zimlet-redux/add-selectors.adoc[`addSelectors`], so that other Zimlets read your state without knowing how it is laid out. Other code finds them in xref:reference/context/store/zimlet-redux/selectors.adoc[`selectors`], and passes them the state from xref:reference/context/store/get-state.adoc[`getState`].
+* Publish in `init()`, under a namespace that starts with the name of your Zimlet. Calling the method again with the same namespace replaces what you published. A namespace of the Modern UI wins over the same namespace of a Zimlet.
+* Stop offering them with xref:reference/context/store/zimlet-redux/remove-actions.adoc[`removeActions`] and xref:reference/context/store/zimlet-redux/remove-selectors.adoc[`removeSelectors`], for example when your Zimlet turns the feature off. The reducer stays.
+
+When you use what another Zimlet published, read it each time you need it, and check that its namespace exists. The other Zimlet may not be installed for the account, or may not have run `init()` yet.
 
 [#next-step]
 == Next step

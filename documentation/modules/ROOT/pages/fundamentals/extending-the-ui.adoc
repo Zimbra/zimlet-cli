@@ -1,18 +1,18 @@
-= Extend the UI with slots
+= Slots and handlers
 
 A slot is a named place on a screen of the xref:reference/glossary.adoc#modern-ui[Modern UI] where a xref:reference/glossary.adoc#zimlet[Zimlet] adds content. You register a plugin handler for the slot, and the screen shows what the handler returns. Everything visible that a Zimlet adds to the Modern UI goes through a slot. Read this before you build a feature that appears on a screen, and when a handler shows nothing, shows too much or loses its state.
 
 [#how-slots-work]
 == How slots work
 
-The Modern UI draws slots at fixed places in its screens. Examples are the footer of the mail sidebar and the area above the text of an open message. Each slot has a name. Your Zimlet registers a plugin handler under that name, and the slot calls the handler each time the slot renders.
+The Modern UI has many slots, at fixed places in its screens. Examples are the footer of the mail sidebar and the area above the text of an open message. Each slot has a name, and the xref:reference/slots.adoc[slot index] lists them all. Your Zimlet registers a plugin handler under that name, and the slot calls the handler each time the slot renders.
 
 .How a slot gets its content from the handlers of Zimlets
-image::diagrams/slot-rendering.svg["Your Zimlet registers a handler for a slot and can add or remove it later. When a screen of the Modern UI draws the slot, the slot calls each handler and shows the results in order."]
+image::diagrams/slot-rendering.svg["Several Zimlets can each register a handler for the same slot. A screen of the Modern UI contains the slot, which calls each handler in order and renders the results in the same order. When a handler is added or removed, the slot renders again."]
 
 The slot works like this:
 
-* Any number of Zimlets can register a handler for the same slot. The slot calls the handlers in the order in which they were registered and shows all their results.
+* Any number of Zimlets can register a handler for the same slot. The slot calls the handlers in the order in which they were registered and renders all their results.
 * The slot calls the handlers again every time it renders, not once. Keep a handler fast and free of side effects.
 * The slot renders again when a handler is registered or removed for it, so a handler that you register later appears at once.
 * A slot that no Zimlet fills shows nothing.
@@ -111,19 +111,22 @@ Find the slot for your feature in the running Modern UI. Add `?zimletSlots=show`
 
 The xref:reference/slots.adoc[slot index] lists every slot and extension point with its props. Look up a name there to see which props the handler receives.
 
-[#slots-and-invoke-plugin]
-== Slots and `invokePlugin` extension points
+[#handlers-that-return-data]
+== Handlers that return data
 
-A slot is one kind of extension point. It shows what the handlers return. The other kind is an `invokePlugin` extension point. The Modern UI code calls the handlers under a key and uses the results itself, for example to change message text. Nothing is drawn for such a key.
+Every handler is registered with `plugins.register` under a key. When the Modern UI needs the handlers of a key, it collects the results of all of them with xref:reference/context/zimlets/invoke-plugin.adoc[`invokePlugin`]. What happens to the results depends on the key:
 
-You register both kinds in the same way, with `plugins.register`. The difference is the key. A slot key starts with `slot::`. The key of an `invokePlugin` extension point has no prefix, such as `settings` or `messageProcessors:emailProcessor`. The xref:reference/slots.adoc[slot index] lists both kinds.
+* **A slot key** starts with `slot::`, such as `slot::mail-sidebar-footer`. The slot calls the handlers and renders what they return.
+* **A data key** has no prefix, such as `settings` or `messageProcessors:emailProcessor`. The Modern UI code calls the handlers itself and uses the results as data, for example to add a section to the Settings dialog or to change message text. Nothing is drawn, so such a handler returns the data that the Modern UI expects and not an element.
 
-Your Zimlet can also define a key of its own and collect the answers of other Zimlets with xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin].
+The xref:reference/slots.adoc[slot index] lists both kinds of keys. The keys that your Zimlet is most likely to use are in <<other-registration-keys>>.
+
+Your Zimlet can also define a data key of its own. Register your handlers under the key, and collect the answers of other Zimlets with `zimlets.invokePlugin`, as xref:reference/context/zimlets/invoke-plugin.adoc[invokePlugin] describes.
 
 [#render-prop-slots]
 == Render-prop slots
 
-Some screens pass a function to the slot instead of letting the slot draw the results. This pattern is called a render prop. The slot calls all handlers, collects their results in a list and gives the list to that function. The screen shows what the function returns. Your handler provides data, and the screen decides how to use it.
+Some screens pass a function to the slot instead of letting the slot render the results. This pattern is called a render prop. The slot calls all handlers, collects their results in a list and gives the list to that function. The screen shows what the function returns. Your handler provides data, and the screen decides how to use it.
 
 The `searchInputPlaceholder` slot is an example. The search box asks it for the word that completes its hint, `Search your <word>`. The slot passes `pathType`, the area that is open, such as `email` or `briefcase`. Your handler returns the word as text, or nothing to keep the default word.
 
@@ -157,4 +160,4 @@ To pick the slot or key for a goal, see xref:build-by-goal.adoc#choose-a-recipe[
 [#next-step]
 == Next step
 
-Learn which libraries a Zimlet imports from the Modern UI in xref:fundamentals/shared-libraries.adoc[Shared libraries and imports].
+Learn which libraries a Zimlet imports from the Modern UI in xref:fundamentals/shared-libraries.adoc[Shared libraries].

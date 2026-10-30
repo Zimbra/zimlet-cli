@@ -38,7 +38,7 @@ An array with one result for each handler, in the order of registration.
 * A handler that is a function is called with `args`. Any other value is returned as it is.
 * If a handler throws, its result is the error, and the name of its Zimlet is in `error.sourceZimlet`. The other handlers still run.
 * A result that is a promise is not awaited.
-* Use it when you need the answers of several Zimlets, which an event cannot give. An event such as xref:reference/context/zimlets/emit.adoc[emit] returns nothing to the sender.
+* Use it when you need the answers of several Zimlets. An event does not give the sender an answer.
 * The key is yours to define. Start it with the name of your Zimlet and describe it, so that other Zimlets know what to register.
 
 [#example]

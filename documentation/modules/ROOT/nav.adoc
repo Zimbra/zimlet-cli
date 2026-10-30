@@ -1,15 +1,15 @@
 * xref:index.adoc[Home]
 * Getting started
 ** xref:getting-started/concepts.adoc[How Zimlets work]
-** xref:getting-started/prerequisites.adoc[What you need before you start]
+** xref:getting-started/prerequisites.adoc[Prerequisites]
 ** xref:getting-started/setup-environment.adoc[Set up your machine]
 ** xref:getting-started/quickstart.adoc[Your first Zimlet]
 * Fundamentals
 ** xref:fundamentals/project-structure.adoc[Project structure]
 ** xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle]
-** xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots]
-** xref:fundamentals/shared-libraries.adoc[Shared libraries and imports]
 ** xref:fundamentals/host-context.adoc[The context object]
+** xref:fundamentals/extending-the-ui.adoc[Slots and handlers]
+** xref:fundamentals/shared-libraries.adoc[Shared libraries]
 * Go deeper
 ** xref:go-deeper/server-data.adoc[Server data]
 *** xref:go-deeper/server-data/data-hooks.adoc[Data hooks]

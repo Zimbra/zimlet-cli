@@ -1,4 +1,4 @@
-= Shared libraries and imports
+= Shared libraries
 
 A xref:reference/glossary.adoc#zimlet[Zimlet] takes Preact, the components, hooks and helper functions of the xref:reference/glossary.adoc#modern-ui[Modern UI] from the Modern UI itself. It bundles every other package that it imports. Knowing which imports are which keeps the bundle small and keeps the Zimlet on the same Preact as the Modern UI. It also explains three early failures: a package added for nothing, JSX that fails when it runs, and the `Export … was not found` error. Read it before you add a package to a Zimlet, or when an import does not work.
 
@@ -95,4 +95,4 @@ An error such as `+TypeError: ... is not a function+` is different. It means tha
 [#next-step]
 == Next step
 
-Learn what the Modern UI hands to your Zimlet in xref:fundamentals/host-context.adoc[The context object].
+Learn how a Zimlet reads and stores data on the Zimbra server in xref:go-deeper/server-data.adoc[Server data]. To put the fundamentals to work first, choose a recipe in xref:build-by-goal.adoc[Build by goal].

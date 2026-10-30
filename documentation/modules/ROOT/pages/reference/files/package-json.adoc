@@ -56,7 +56,7 @@ The packages below are recommended: the template and the Zimlets that Zimbra mai
 [#dependencies]
 === Libraries in `dependencies`
 
-The libraries that your code imports, which end up in your bundle. Do not add libraries that the Modern UI already provides, such as Preact. See xref:fundamentals/shared-libraries.adoc[Shared libraries and imports]. The template imports two of the libraries below.
+The libraries that your code imports, which end up in your bundle. Do not add libraries that the Modern UI already provides, such as Preact. See xref:fundamentals/shared-libraries.adoc[Shared libraries]. The template imports two of the libraries below.
 
 [#bundled-interface]
 ==== Interface and styles

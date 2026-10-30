@@ -5,7 +5,7 @@ agent: agent
 model: Claude Sonnet 5.5
 ---
 
-Work on page `${input:pageId}` of the Zimlet developer guide. Give the page as its id (`P04`), its file name (`prerequisites` or `getting-started/prerequisites.adoc`) or its title (`What you need before you start`). For a new page that the plan does not list, give the title and, if you know it, the part and the file name. Optional scope: `${input:scope:whole page, section names to add or update, or specific plan/reference changes to apply}`.
+Work on page `${input:pageId}` of the Zimlet developer guide. Give the page as its id (`P04`), its file name (`prerequisites` or `getting-started/prerequisites.adoc`) or its title (`Prerequisites`). For a new page that the plan does not list, give the title and, if you know it, the part and the file name. Optional scope: `${input:scope:whole page, section names to add or update, or specific plan/reference changes to apply}`.
 
 The plan is `.agents/plans/zimlet-documentation-plan.md`. Look every page up in it first. Follow its section 2 and do not restate its content or the rules here. The open claims are in `.agents/plans/zimlet-documentation-claims.md`. Do not read that file whole: read only the rows for the page, as `doc-guide/claims.md` section 7 describes.
 

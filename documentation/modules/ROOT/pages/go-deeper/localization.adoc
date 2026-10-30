@@ -39,7 +39,7 @@ Two parts make a text appear in a component:
 * A wrapper that loads `en_US.json` and the file for the language of the user. The template has it in `src/enhancers/index.js` as `withIntl`.
 * The `Text` component from `@zimbra/preact-i18n`, which looks up an id and shows the text.
 
-A Zimlet adds a reminder to the footer of the mail sidebar. The `Reminder` component wraps itself with `withIntl()`, shows its text with `Text` and fills the placeholder through `fields`. The files go in the folders shown in their titles. The slot is explained in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+A Zimlet adds a reminder to the footer of the mail sidebar. The `Reminder` component wraps itself with `withIntl()`, shows its text with `Text` and fills the placeholder through `fields`. The files go in the folders shown in their titles. The slot is explained in xref:fundamentals/extending-the-ui.adoc[Slots and handlers].
 
 .index.js
 [source,js]
@@ -123,4 +123,4 @@ The browser console shows `Error loading translations for <code> from zimlet.` w
 [#next-step]
 == Next step
 
-Keep your Zimlet safe in the shared page of the Modern UI with xref:go-deeper/security-and-best-practices.adoc[Security and best practices].
+Combine what you have learned into a working feature with a recipe from xref:build-by-goal.adoc[Build by goal].

@@ -283,4 +283,4 @@ The domains are asked for again after the next login.::
 [#next-step]
 == Next step
 
-Build the Zimlet and package it for your server in xref:run-package-deploy/build-and-package.adoc[Build and package].
+Run your Zimlet in the Modern UI and find problems in xref:run-package-deploy/run-and-debug.adoc[Run and debug]. When it works, build and package it in xref:run-package-deploy/build-and-package.adoc[Build and package].

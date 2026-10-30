@@ -124,7 +124,7 @@ include::example$help-desk-menu/components/report-problem/index.js[]
 
 Register one handler for each slot in `init()`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. Each handler is a function that returns an element, and the slot shows it in the menu. The two links share `MenuLink` and differ in their address, icon and label. None of these slots passes xref:fundamentals/extending-the-ui.adoc#props-and-payload[props] to your handler.
 
-Read xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for a slot work.
+Read xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for a slot work.
 
 .index.js
 [source,js]
@@ -178,4 +178,4 @@ Two items look highlighted after you move the pointer onto a link item.::
 [#next-step]
 == Next step
 
-Let an administrator set the addresses instead of fixing them in the code, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes. To add an item to the menus of a message, read xref:build-by-goal.adoc#choose-a-slot[Choose a slot] and open the recipe for mail.
+Run a feature that needs no place on a screen in xref:build-by-goal/recipe-app-content.adoc[Run an app-wide feature]. Let an administrator set the addresses instead of fixing them in the code, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes.

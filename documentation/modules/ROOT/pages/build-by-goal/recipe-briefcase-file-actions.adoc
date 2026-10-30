@@ -247,4 +247,4 @@ The dialog shows keys such as `my-zimlet.dialogTitle`.::
 [#next-step]
 == Next step
 
-Add an action for a message in a menu with xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].
+Give your Zimlet a tab and a screen of its own in xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

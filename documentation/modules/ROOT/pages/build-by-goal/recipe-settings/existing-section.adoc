@@ -173,7 +173,7 @@ Without the `settings` handler the control is drawn, but the dialog does not kno
 include::example$settings-existing-section/index.js[]
 ----
 
-Look up the `settings` key and the slot in the xref:reference/slots.adoc[slot index]. Read xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for these keys work.
+Look up the `settings` key and the slot in the xref:reference/slots.adoc[slot index]. Read xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for these keys work.
 
 [#verify]
 == Verify the result
@@ -220,4 +220,4 @@ The control shows an empty field after you saved a value.::
 [#next-step]
 == Next step
 
-Read the saved value in your Zimlet, and let an administrator give it a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on the value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.
+Change the text that the Modern UI shows for a message or an event in xref:build-by-goal/recipe-message-processing.adoc[Transform messages]. Read the saved value in your Zimlet, and let an administrator give it a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on the value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.

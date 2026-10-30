@@ -31,7 +31,7 @@ Audit every claim on the page with the method in [doc-guide/claims.md](./doc-gui
 
 ## 3. Other checks
 
-Each topic has its own rule file in [doc-guide/](./doc-guide/). Read each file named below in full before you review the page, as the writing rules do, and judge the page against the sections named. Read [slots.md](./doc-guide/slots.md) only when the page documents a slot or `invokePlugin` extension point. The table says what to check; the rule files say what the rules are.
+Each topic has its own rule file in [doc-guide/](./doc-guide/). Read each file named below in full before you review the page, as the writing rules do, and judge the page against the sections named. Read [slots.md](./doc-guide/slots.md) only when the page documents a slot or a data key. The table says what to check; the rule files say what the rules are.
 
 | Rule file | Sections | Check on the page |
 |---|---|---|
@@ -42,7 +42,7 @@ Each topic has its own rule file in [doc-guide/](./doc-guide/). Read each file n
 | [doc-guide/accessibility.md](./doc-guide/accessibility.md) | 6 | The page meets the accessibility rules. |
 | [doc-guide/style.md](./doc-guide/style.md) | 9 | The page follows the style rules. |
 | [doc-guide/finish.md](./doc-guide/finish.md) | 8, "Rules check" | Answer each point of the rules check yourself, from the page. A point the page does not meet is a finding. |
-| [doc-guide/slots.md](./doc-guide/slots.md) | whole file, on demand | When the page documents a `ZimletSlot` or `invokePlugin` extension point, it follows the slot rules. |
+| [doc-guide/slots.md](./doc-guide/slots.md) | whole file, on demand | When the page documents a `ZimletSlot` or a data key, it follows the slot rules. |
 
 Site checks, done in the preview:
 

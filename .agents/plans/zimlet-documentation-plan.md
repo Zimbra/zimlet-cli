@@ -57,7 +57,7 @@ _Purpose: take a newcomer from nothing to a working first Zimlet. Give only what
   - How a Zimlet communicates with the Modern UI – four short points, each with a link: the context that the factory receives (P08, P11), shared libraries, so that a Zimlet imports Preact and host libraries instead of bundling copies (P10), events (P21) and data, meaning the store and server requests (P20). Plain language, no API names.
   - Try it while you develop – how `zimlet watch` and the sideloader load a Zimlet during development.
   - Brief: about one screen of text, plain language. Sources: `architecture.md`, `runtime.md`. Internals do not belong here: shim mechanism goes to P10, shared iframe, reload after a save and dev versus production loading to P26, server bundle and version filtering to P28 and P29. Diagram: build, package, deploy, load, `init()`, slot (simplified from `architecture.md` §1).
-- **P04 `getting-started/prerequisites.adoc` – What you need before you start** (Drafted)
+- **P04 `getting-started/prerequisites.adoc` – Prerequisites** (Drafted)
   - Get a Zimbra server – what a Zimbra server must provide to develop against: Modern UI, shell or admin console access, a test account, the Modern UI version, the sideloader. State plainly that a Modern UI server is required, either a test or a production server, and that it must have the sideloader Zimlet available. There is no stand-alone or hosted environment for partners without a server.
   - Find the Modern UI version – the About-dialog steps and the `--zimbraXVersion` default. Other pages link to this section (`getting-started/prerequisites.adoc#find-modern-ui-version`) and do not repeat it.
   - Technology table – each technology needed, why, the level required and a link to its official documentation, so the guide does not re-teach it.
@@ -103,7 +103,12 @@ _Purpose: teach what every Zimlet author must understand, one topic per page. Gi
   - Register and unregister conditionally – register only when a condition holds and remove with the same function reference.
   - Headless Zimlets – a Zimlet with no UI that only reacts to events or processes data (link to P12.4 and P12.6).
   - Brief: sources `authoring.md` §2, `runtime.md`. Include that the host calls the factory with `new` when it is constructible and as a plain call otherwise, and that for a Zimlet disabled for the account the factory still runs but `init()` is skipped, so keep factories free of side effects. Examples: factory example; lifecycle diagram.
-- **P09 `fundamentals/extending-the-ui.adoc` – Extend the UI with slots** (Not started)
+- **P11 `fundamentals/host-context.adoc` – The context object** (Drafted)
+  - What the host hands to a Zimlet – open with what the Modern UI passes through `context`.
+  - Fields by job – only the `context` fields that have a page in the reference, other than the Deprecated page, grouped by what they are for. Each job gets a short explanation of what the field is for, when to pick it and how it relates to the other fields of that job, with a link to the concept page that teaches it (`plugins` and `zimlets` to P09, `store`, `zimbraBatchClient` and `zimbraOrigin` to P20), and to its page in P43 to P43.9 only when no concept page is planned (`meta`, `hostName`, `keyBindings`, `shortcutCommandHandler`). No deprecated fields. No types, arguments or examples here.
+  - Zimlets that load from the server share one name – the effect on `plugins.unregisterAll()`.
+  - Brief: concept page, source `context-and-shims.md` §1. The field detail is in P43 and P43.1 to P43.10, which are the only full `context` inventory in the guide.
+- **P09 `fundamentals/extending-the-ui.adoc` – Slots and handlers** (Not started)
   - How slots work – where slots render and how handlers are called.
   - Register a handler – `plugins.register` for a slot, with a minimal example.
   - Handler return types – an element, a function, a component or a plain value.
@@ -111,12 +116,12 @@ _Purpose: teach what every Zimlet author must understand, one topic per page. Gi
   - Hooks in handlers – using hooks without breaking the render.
   - Error isolation – a failing handler does not affect other handlers.
   - Find a slot – locate a slot in the running UI (`?zimletSlots=show`, see P26) and in the slot index (P34).
-  - Slots and `invokePlugin` extension points – the difference and when each applies.
+  - Handlers that return data – every key is collected with `invokePlugin`; a `slot::` key is drawn by the slot, and a key with no prefix gives data to the Modern UI code. A Zimlet can define a data key of its own.
   - Render-prop slots and `RemovableSectionZimlet` slots – slots that give your handler a function to call, and the slots of that component.
   - Other registration keys – one short paragraph each for `settings` (see P12.3 and its children) and `messageProcessors:*` (see P12.4).
   - Choose a slot – a short checklist of questions, and a table by goal (add content, add an action, add a settings page, add a tab and screen) with the slot to use and the recipe that applies it.
   - Brief: sources `slot-behavior.md`, `authoring.md` §3, `verticals.md`, `zimlet-slots.yml`. Confirm slot choices against the catalog. Slots are in scope end to end here, but per-slot placement and payload detail (all `unclassified` today) is a later phase: keep the structure open so it can be added per slot. This page owns slot mechanics only; complete examples are the recipes P12.1 to P12.4, and the full list is P34. Examples: minimal registration; slot rendering diagram.
-- **P10 `fundamentals/shared-libraries.adoc` – Shared libraries and imports** (Drafted)
+- **P10 `fundamentals/shared-libraries.adoc` – Shared libraries** (Drafted)
   - How shims work – a two-to-three-sentence overview, no internals: a shim is the host's own copy of a library that the Modern UI shares with Zimlets. At build time the CLI replaces an import of a shimmed module with a small stub that, at run time, takes the module from the host (the `shims` map). The Zimlet therefore uses the same Preact, components and hooks as the host and does not bundle its own copy. Anything that is neither shimmed nor bundled fails at run time with the `Export … was not found` error. No aliases, generated files or `shims.js` details (the full list is P32).
   - What you may import – the modules a Zimlet imports from the host: libraries, components, hooks and helper functions.
   - What gets bundled – what a build puts in `index.js`: your code and every import that is not shared; how shimmed imports are replaced with the host's own copies and what that means for bundle size.
@@ -125,11 +130,6 @@ _Purpose: teach what every Zimlet author must understand, one topic per page. Gi
   - Icons – pass a component as an icon instead of a string name.
   - The `Export … was not found` error – what it means and how to fix it.
   - Brief: sources `context-and-shims.md` §2, `authoring.md` §4, trimmed to what authors use; the "How shims work" overview is the only mechanism text, kept to a few sentences and checked against `cli-commands.md` (compile-time aliases) and `context-and-shims.md`. The full list of shimmed modules is P32. Examples: short import examples.
-- **P11 `fundamentals/host-context.adoc` – The context object** (Drafted)
-  - What the host hands to a Zimlet – open with what the Modern UI passes through `context`.
-  - Fields by job – only the `context` fields that have a page in the reference, other than the Deprecated page, grouped by what they are for. Each job gets a short explanation of what the field is for, when to pick it and how it relates to the other fields of that job, with a link to the concept page that teaches it (`plugins` and `zimlets` to P09, `store`, `zimbraBatchClient` and `zimbraOrigin` to P20), and to its page in P43 to P43.9 only when no concept page is planned (`meta`, `hostName`, `keyBindings`, `shortcutCommandHandler`). No deprecated fields. No types, arguments or examples here.
-  - Zimlets that load from the server share one name – the effect on `plugins.unregisterAll()`.
-  - Brief: concept page, source `context-and-shims.md` §1. The field detail is in P43 and P43.1 to P43.10, which are the only full `context` inventory in the guide.
 
 ### Part 3 – Build by goal
 
@@ -498,18 +498,11 @@ _Purpose: complete facts for lookup, no tutorial text. Every API, property, opti
   - `resolve(path)`.
 - **P43.6 `reference/context/zimlets.adoc` – Zimlet manager** (Drafted)
   - Group page for `zimlets`.
-- **P43.6.1 `reference/context/zimlets/on.adoc` – on** (Drafted)
-  - `on(event, handler)`.
-- **P43.6.2 `reference/context/zimlets/off.adoc` – off** (Drafted)
-  - `off(event, handler)`.
-- **P43.6.3 `reference/context/zimlets/emit.adoc` – emit** (Drafted)
-  - `emit(event, data)`.
+- **P43.6.1 to P43.6.3 and P43.6.6** (dropped: `on`, `off`, `emit` and custom events have no page; the numbers are kept so that no page is renumbered)
 - **P43.6.4 `reference/context/zimlets/zimlets-initialized.adoc` – zimlets-initialized** (Drafted)
   - Event: Zimlets have finished loading.
 - **P43.6.5 `reference/context/zimlets/plugins-changed.adoc` – plugins::changed** (Drafted)
   - Event: a handler was added or removed.
-- **P43.6.6 `reference/context/zimlets/custom-events.adoc` – Custom events** (Drafted)
-  - Events that Zimlets name themselves.
 - **P43.6.7 `reference/context/zimlets/invoke-plugin.adoc` – invokePlugin** (Drafted)
   - `invokePlugin(name, ...args)`.
 - **P43.6.8 `reference/context/zimlets/is-slot-active.adoc` – isSlotActive** (Drafted)
@@ -550,7 +543,7 @@ _Purpose: complete facts for lookup, no tutorial text. Every API, property, opti
   - Brief for P43.1 to P43.10 and all their child pages (`context.getApolloClient()` is deliberately not documented: the guide leaves out GraphQL and Apollo, rule in `write-doc.md` section 2. `context.styles` is deliberately not documented too: the build already calls it for every Zimlet, and a call of your own replaces all the CSS from the `.less` files, so authors use `.less` and CSS Modules instead; see P22): one description-list entry for each field and member, with its type, arguments, return value and limits, with no example for now (these pages were written before the member page template gained its `Example` section, so they keep their current form until the user asks to update them; the example files stay in `examples/reference-context/`, unlinked). Verify each entry in the code. Each page is short (about 30 to 90 lines); the structure follows the one-page-per-API style of API references, but fields with almost nothing to say share P43.9 so that no page is nearly empty.
 - **P34 `reference/slots.adoc` – Slots and extension points** (Not started)
   - Landing page, written as a nested list and not as a table. Each group links to its page, with its screen pages nested under it as links. A link to P09 for how slots behave.
-  - Brief: source `zimlet-slots.yml` (155 catalog names: 146 `ZimletSlot` slots and 9 direct `invokePlugin` calls), `slot-behavior.md`, `verticals.md`. The 36 names that repeat for each vertical (`<vertical>-tab-item`, `<vertical>-default-tab`, `<vertical>-landing-page`, `-description`, `-videos`) are documented once for each pattern, with the verticals they apply to, so the guide has **124 entries**. Groups and screens come from the host file that renders the slot (the catalog `usages`), not from the name. All `placementAreas` are `unclassified` (KI-15): write each entry with its name, where it renders and "details pending", then research the payloads (`slots.md`) in the order of the slots that active Zimlets register. Entries follow the slot rule in `doc-guide/types.md` section 3. Re-check the groups when the catalog is regenerated (KI-16).
+  - Brief: source `zimlet-slots.yml` (155 catalog names: 146 `ZimletSlot` slots and 9 data keys, which the host reads with direct `invokePlugin` calls), `slot-behavior.md`, `verticals.md`. The 36 names that repeat for each vertical (`<vertical>-tab-item`, `<vertical>-default-tab`, `<vertical>-landing-page`, `-description`, `-videos`) are documented once for each pattern, with the verticals they apply to, so the guide has **124 entries**. Groups and screens come from the host file that renders the slot (the catalog `usages`), not from the name. All `placementAreas` are `unclassified` (KI-15): write each entry with its name, where it renders and "details pending", then research the payloads (`slots.md`) in the order of the slots that active Zimlets register. Entries follow the slot rule in `doc-guide/types.md` section 3. Re-check the groups when the catalog is regenerated (KI-16).
   - **P34.1 `reference/slots/app-shell.adoc` – App shell** (Not started)
     - Group page, 35 entries.
     - **P34.1.1 `reference/slots/app-shell/navigation-and-tabs.adoc` – Navigation and tabs** (Not started)
@@ -593,7 +586,7 @@ _Purpose: complete facts for lookup, no tutorial text. Every API, property, opti
       - 10: `dynamic-settings`, `general-setting-bottom`, `set-default-client`, `compose-direction-setting`, `delegates-setting`, `writing-email-post-composer-settings`, `writting-email-additional-settings`, `additional-signature-settings`, `filter-options`, `additional-filter-settings`.
     - **P34.6.2 `reference/slots/settings/calendar-and-reminders.adoc` – Calendar and reminders** (Not started)
       - 7: `browser-calendar-notification-setting`, `calendar-and-reminders-video-call-preferences`, `declined-event-setting`, `default-calendar-setting`, `free-busy-permission-setting`, `show-event-timezone-setting`, `workday-time-zone-setting`.
-  - **P34.7 `reference/slots/invoke-plugin.adoc` – Direct invokePlugin extension points** (Not started)
+  - **P34.7 `reference/slots/data-keys.adoc` – Data keys** (Not started)
     - 9, documented apart from the slots (`slots.md`): `messageProcessors:attachPopover`, `messageProcessors:composerProcessor`, `messageProcessors:dateInfoPopover`, `messageProcessors:emailProcessor`, `messageProcessors:eventExcerptProcessor`, `messageProcessors:eventLocationProcessor`, `messageProcessors:eventNotesProcessor`, `messageProcessors:mailPrintProcessor`, `settings`.
       - The `settings` entry lists the keys of the object that a Zimlet registers: `id`, `title`, `component`, `fields` and the optional `afterSave`, each with its type, whether it is required and what it does. It names the props that the dialog passes to `component` (`value`, `onFieldChange`, `activeId`, `handleValidityOfTabs`) and the keys of a field (`type`, `key`, `defaultValue`, and the optional `toJS` and `fromJS`). Check each against `settings-modal.js` (`loadSettingsFromZimlets`, `addSettings`, `handleSave`) and `settings/constants.js`, because the usage comment in the host omits `afterSave`. Link to P12.3.1 and P12.3.2 for the recipes.
   - **P34.8 `reference/slots/all-slots.adoc` – All slots A to Z** (Not started)

@@ -15,7 +15,7 @@ The Redux store: `getState`, `dispatch`, `subscribe`, and `zimletRedux` for your
 Sends requests to the Zimbra server: `jsonRequest`, `origin` and `resolve`.
 
 [[zimlets]]pass:[<a class="anchor" href="#zimlets"></a>]xref:reference/context/zimlets.adoc[`zimlets`]::
-The Zimlet manager: `invokePlugin`, `isSlotActive`, `on`, `off`, `emit` and its events.
+The Zimlet manager: `invokePlugin`, `isSlotActive` and the events that tell when the Zimlets have loaded and when a handler changes.
 
 [[key-bindings]]pass:[<a class="anchor" href="#key-bindings"></a>]xref:reference/context/keyboard-shortcuts.adoc[`keyBindings` and `shortcutCommandHandler`]::
 Add keyboard shortcuts: key bindings and command handlers.
@@ -42,4 +42,4 @@ Do not use these in new Zimlets. The xref:reference/context/deprecated.adoc[Depr
 [#next-step]
 == Next step
 
-Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Slots and handlers].

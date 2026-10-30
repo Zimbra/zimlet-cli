@@ -161,7 +161,7 @@ Look up the rest in xref:reference/shims/components/form-inputs.adoc[Form inputs
 
 Register the section in `init()` with `plugins.register`. The key is `settings`, with no `slot::` prefix, because the Settings dialog collects the objects and does not render a slot. The handler is the object with the keys that xref:build-by-goal/recipe-settings.adoc#where-settings-fit[Where a settings section fits] describes.
 
-Look up the `settings` key in the xref:reference/slots.adoc[slot index], and read xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] for how handlers for these keys work.
+Look up the `settings` key in the xref:reference/slots.adoc[slot index], and read xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for these keys work.
 
 .index.js
 [source,js]
@@ -221,4 +221,4 @@ The section shows the default value after you saved a value.::
 [#next-step]
 == Next step
 
-Read the saved values in your Zimlet, and let an administrator give them a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on a saved value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.
+Add one control to a page that the Settings dialog already has in xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page]. Read the saved values in your Zimlet, and let an administrator give them a default, in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. To act on a saved value on a screen, pick the slot as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.

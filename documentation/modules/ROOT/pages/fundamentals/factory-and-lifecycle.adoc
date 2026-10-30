@@ -8,7 +8,7 @@ The entry file of a xref:reference/glossary.adoc#zimlet[Zimlet] default-exports 
 The diagram shows what the Modern UI does with your Zimlet, from loading it to the point where your handlers work.
 
 .From loading a Zimlet to running its handlers
-image::diagrams/factory-lifecycle.svg["The Modern UI calls the factory function with the context and the factory returns an object. If the Zimlet is enabled for the account, the Modern UI calls the setup method, which registers handlers now or after asynchronous work. The handlers then run as the user works, and the Zimlet can remove a handler it no longer needs. An error in the factory or the setup method logs a warning and skips the later setup."]
+image::diagrams/factory-lifecycle.svg["The Modern UI calls the factory. If the Zimlet is enabled for the account, the Modern UI calls init(), which registers handlers, and the handlers then run until your code removes them. If the Zimlet is not enabled, init() is not called. An error in the factory logs a warning, and init() is not called for any Zimlet loaded together with it. An error in init() logs a warning, and init() is not called for the Zimlets after it."]
 
 In words:
 
@@ -17,7 +17,8 @@ In words:
 . `init()` registers handlers, now or after asynchronous work.
 . The handlers run as the user works, for example when a slot shows content or when an event arrives.
 . Your own code can remove a handler it no longer needs with `plugins.unregister`. The Modern UI does not remove handlers while your Zimlet runs.
-. An error in the factory or in `init()` logs a warning, and the Modern UI skips the setup that comes later.
+. An error in the factory logs a warning, and the Modern UI calls `init()` for none of the Zimlets that load together with yours.
+. An error in `init()` logs a warning, and the Modern UI does not call `init()` for the Zimlets that come after yours in the same load.
 
 [#default-export-factory]
 == The default export factory
@@ -101,4 +102,4 @@ See xref:build-by-goal/recipe-app-events.adoc[React to app events] for a complet
 [#next-step]
 == Next step
 
-Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+Learn what the Modern UI hands to your Zimlet in xref:fundamentals/host-context.adoc[The context object].

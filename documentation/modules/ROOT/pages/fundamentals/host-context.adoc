@@ -31,7 +31,7 @@ Talk to the server::
 Use `xref:go-deeper/server-data/batch-client.adoc[zimbraBatchClient]` to send requests to the Zimbra server. It adds the CSRF token to its requests, and its `jsonRequest` method covers requests that have no method of their own. When your Zimlet makes its own `fetch` calls instead, `xref:go-deeper/server-data/fetch.adoc[zimbraOrigin]` gives the prefix for the address and `xref:go-deeper/server-data/fetch.adoc[csrfToken]` gives the token that goes in the header of such requests.
 
 Work with other Zimlets::
-Use `xref:fundamentals/extending-the-ui.adoc[zimlets]`, the Zimlet manager. `invokePlugin` collects the answers of every handler that is registered under a key, which lets other Zimlets contribute to a feature of yours. `isSlotActive` tells whether a slot already has content. `on`, `off` and `emit` send and receive events, such as the Zimlets having finished loading or a custom event of your own.
+Use `xref:fundamentals/extending-the-ui.adoc[zimlets]`, the Zimlet manager. `invokePlugin` collects the answers of every handler that is registered under a key, which lets other Zimlets contribute to a feature of yours. `isSlotActive` tells whether a slot already has content. The manager also raises events, such as the Zimlets having finished loading.
 
 Learn about the Modern UI::
 Use `xref:reference/context/values/meta.adoc[meta]` for the version and build details of the Modern UI, for example to add them to an error report. Use `xref:reference/context/values/host-name.adoc[hostName]` for the host name of the page, for example to behave differently on a test server.
@@ -49,4 +49,4 @@ WARNING: `plugins.unregisterAll()` removes the handlers of every Zimlet that loa
 [#next-step]
 == Next step
 
-Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Slots and handlers].

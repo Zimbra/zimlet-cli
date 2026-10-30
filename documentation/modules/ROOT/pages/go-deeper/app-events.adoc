@@ -139,4 +139,4 @@ include::example$app-events/remove-listener.js[]
 [#next-step]
 == Next step
 
-Build a complete Zimlet that delays sending a message and delays logout in xref:build-by-goal/recipe-app-events.adoc[React to app events].
+Make your Zimlet fit the look of the Modern UI, including its light and dark modes, in xref:go-deeper/styling.adoc[Styling]. To build a complete Zimlet that delays sending a message and delays logout, see xref:build-by-goal/recipe-app-events.adoc[React to app events].

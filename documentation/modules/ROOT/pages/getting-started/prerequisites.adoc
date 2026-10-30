@@ -1,4 +1,4 @@
-= What you need before you start
+= Prerequisites
 
 Before you build a Zimlet, you need a Zimbra server that runs the xref:reference/glossary.adoc#modern-ui[Modern UI] and working knowledge of a few web technologies. This page tells you what the server must provide and how much of each technology you need. The guide does not teach those technologies. It links to their official documentation. Use it as a checklist of what to arrange before you install anything.
 

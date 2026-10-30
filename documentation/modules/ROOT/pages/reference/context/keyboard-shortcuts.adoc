@@ -25,4 +25,4 @@ include::example$reference-context/keyboard-shortcuts/shortcut.js[]
 [#next-step]
 == Next step
 
-Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+Learn how handlers show content in the Modern UI in xref:fundamentals/extending-the-ui.adoc[Slots and handlers].

@@ -323,4 +323,4 @@ The settings of the Zimlet went back to their defaults after an update.::
 
 == Next step
 
-If the Zimlet does not load, continue with xref:help-and-migration/troubleshooting.adoc[Troubleshooting].
+Look up a command or an option of the `zimlet` tool in the xref:reference/cli.adoc[CLI reference].

@@ -93,9 +93,9 @@ Every recipe starts from the default project. Name it `my-zimlet`, so that the i
 
 Every recipe that registers a handler depends on the exact key it registers under. The Modern UI does not check the key: `plugins.register` accepts any name. A handler registered under a key that the Modern UI never calls does not run, and no error tells you so.
 
-Before you copy a registration into your own Zimlet, check that the slot or key exists in the xref:reference/slots.adoc[slot index]. Then read the page of the feature you extend, if there is one, for rules that apply to it. xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] explains how handlers are called and how to read what a slot passes.
+Before you copy a registration into your own Zimlet, check that the slot or key exists in the xref:reference/slots.adoc[slot index]. Then read the page of the feature you extend, if there is one, for rules that apply to it. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how handlers are called and how to read what a slot passes.
 
 [#next-step]
 == Next step
 
-Start with the most common goal. If you do not know where your feature belongs, start with xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].
+Open the recipe for your goal. If you do not know where your feature belongs, start with the first recipe, xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget].

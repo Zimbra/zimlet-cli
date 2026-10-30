@@ -47,7 +47,7 @@ The notes of an event in the invitation that a message contains.
 
 Each key changes one place. To change a message in the viewer and in the printout, register the processor under both keys. A processor of one key does not run for another. The processors of all kinds receive the content as a `Document`.
 
-Two more keys, `messageProcessors:attachPopover` and `messageProcessors:dateInfoPopover`, do not take a processor. They let a Zimlet add a popover to dates in a message. See xref:reference/slots/invoke-plugin.adoc[Direct invokePlugin extension points] for every key and its arguments.
+Two more keys, `messageProcessors:attachPopover` and `messageProcessors:dateInfoPopover`, do not take a processor. They let a Zimlet add a popover to dates in a message. See xref:reference/slots/data-keys.adoc[Data keys] for every key and its arguments.
 
 A processor changes content as it is prepared. It does not react to something the user does. To run code when the user sends a message or logs out, listen to an app event instead, as xref:build-by-goal/recipe-app-events.adoc[React to app events] shows.
 
@@ -179,4 +179,4 @@ A ticket number is not a link although it matches the keys.::
 [#next-step]
 == Next step
 
-Run code when the user sends a message or logs out, instead of changing what a message shows, in xref:build-by-goal/recipe-app-events.adoc[React to app events].
+Read, create and remove data on the Zimbra server in xref:build-by-goal/recipe-server-data.adoc[Manage server data]. To run code when the user sends a message or logs out, see xref:build-by-goal/recipe-app-events.adoc[React to app events].

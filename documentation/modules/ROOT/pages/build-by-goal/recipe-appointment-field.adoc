@@ -170,4 +170,4 @@ The text that the user typed disappears.::
 [#next-step]
 == Next step
 
-To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].
+Mark contacts and act on them in the card that opens over an address in xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].
