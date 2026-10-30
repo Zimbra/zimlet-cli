@@ -1,0 +1,99 @@
+= Composition
+
+Two higher-order components (HOCs) that shape a component without changing its code. `withProps` adds props that you compute from the props the component already has. `branch` chooses what to render, depending on those props. Use them when a class component, which cannot call a hook, needs a derived value or must render nothing under some condition. Both come from `@zimbra-client/util`. See xref:reference/shims/hocs.adoc[Higher-order components (HOCs)] for the other areas.
+
+[#members]
+== Members
+
+<<with-props,`withProps`>>::
+Adds props that you derive from the props of the component, or sets fixed props.
+
+<<branch,`branch`>>::
+Renders one wrapper or another, or nothing, depending on a test of the props.
+
+[#with-props]
+== withProps
+
+Adds props to a component. Use it to turn the props of the parent into the values that the component needs, such as a filtered list. You can also set props that never change. In a function component, compute the same values in the body of the component, and skip the HOC. No hook replaces it. An active xref:reference/glossary.adoc#zimlet[Zimlet] uses it to filter a list of calendars before it draws them.
+
+=== Signature
+
+[source,js]
+----
+import { withProps } from '@zimbra-client/util';
+
+const Enhanced = withProps(createProps)(Component);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`createProps`
+|object or function `(props: object) => object`
+|Required. The props to add. A function receives all props of the component and returns an object. An object is added as it is.
+
+|===
+
+=== Returns
+
+A function `(Component: component) => component`. The new component renders `Component` with all its own props and the added props. The added props replace props of the same name that the parent passes. The function runs on every render.
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default withProps(createProps)(Component)`. A call inside a render makes a new component on every render, and the child loses its state each time.
+* The function does not remember its result. It returns a new object or array on every render, so a child that compares its props sees a change each time.
+* The function receives the props that reach the wrapper: those of the parent and those that any wrapper above it adds. It does not see the props that a wrapper below it adds.
+
+[#branch]
+== branch
+
+Renders one of two wrappers, chosen on every render from a test of the props. Unless you give a second wrapper, it renders the component as it is. Use it to draw nothing, or a different component, depending on a prop, for example nothing while a feature is off. In a function component, return `null` from the body instead. No hook replaces it. An active Zimlet uses it to draw nothing while a list is empty.
+
+=== Signature
+
+[source,js]
+----
+import { branch } from '@zimbra-client/util';
+
+const Enhanced = branch(test, left, right)(Component);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`test`
+|function `(props: object) => boolean`
+|Required. Receives all props of the component on every render. A truthy result selects `left`, and any other result selects `right`.
+
+|`left`
+|function `(Component: component) => component`, or `null`
+a|Optional. A HOC for the case that `test` is truthy. It receives `Component` once, when you apply `branch`, and the component it returns is rendered with the props. Pass `null`, or leave it out, to render nothing.
+
+WARNING: Pass a HOC, not a component. A function that you pass is called with `Component` and must return a component. A function component passed as it is returns an element instead, so the branch fails when it renders. A class component throws when you apply `branch`. To render another component, pass `() => OtherComponent`.
+
+|`right`
+|function `(Component: component) => component`, or `null`
+|Optional. A HOC for the case that `test` is not truthy, with the same rules as `left`. Without it, `Component` is rendered as it is. Pass `null` to render nothing.
+
+|===
+
+=== Returns
+
+A function `(Component: component) => component`. The new component calls `test` with its props and renders the selected component with the same props, or renders nothing when that choice is `null`.
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default branch(test, null)(Component)`. A call inside a render makes a new component on every render, and the child loses its state each time.
+* The selected HOC can be the result of another HOC, such as `withProps`, to change the props for one case only. See <<with-props,`withProps`>>.
+* When the result of `test` changes, the component of the old case unmounts, and it loses its state. The component of the new case mounts.
+
+[#next-step]
+== Next step
+
+Show a text in the language of the user with xref:reference/shims/localization.adoc[Localization (`@zimbra/preact-i18n`)].

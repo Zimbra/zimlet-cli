@@ -126,7 +126,7 @@ image::run-and-debug-slot-labels.png["The Mail screen with a label over each slo
 
 A slot that passes its content to a function and draws nothing of its own has no label. It writes `non-visible ZimletSlot name=<slot-name>` to the console instead. Labels can overlap where slots sit close together. The flag stays on until you reload the page without it.
 
-Find the slot you need, then see xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots] to register for it. The xref:reference/slots.adoc[slot index] lists every slot and its properties.
+Find the slot you need, then see xref:fundamentals/extending-the-ui.adoc[Slots and handlers] to register for it. The xref:reference/slots.adoc[slot index] lists every slot and its properties.
 
 [#expected-result]
 == Expected result
@@ -152,4 +152,4 @@ The terminal prints `Build failed!`.::
 
 == Next step
 
-Build and package your Zimlet in xref:run-package-deploy/build-and-package.adoc[Build and package].
+Check your code for problems before you package it in xref:run-package-deploy/lint-your-code.adoc[Lint].

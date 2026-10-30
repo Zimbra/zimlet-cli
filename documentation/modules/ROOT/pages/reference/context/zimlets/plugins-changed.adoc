@@ -18,7 +18,7 @@ zimlets.on('plugins::changed', handler)
 |Name |Type |Description
 
 |`handler`
-|function
+|function `(key: string) => void`
 |Called with the key that changed.
 
 |===
@@ -49,4 +49,4 @@ include::example$reference-context/zimlets/plugins-changed.js[]
 [#next-step]
 == Next step
 
-Learn how to send events of your own in xref:reference/context/zimlets/custom-events.adoc[Custom events].
+Check whether a slot has a handler with xref:reference/context/zimlets/is-slot-active.adoc[isSlotActive].

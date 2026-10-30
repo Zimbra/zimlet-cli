@@ -1,0 +1,13 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Warns above the text of a message that came from outside your organization."
+	},
+	"my-zimlet": {
+		"external": "This message came from outside your organization.",
+		"sentFrom": "Sent from {{domain}}",
+		"links": "Links in the message: {{count}}",
+		"tips": "Security tips",
+		"dismiss": "Dismiss"
+	}
+}

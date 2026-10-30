@@ -1,0 +1,203 @@
+= Signatures and files
+
+Four components of `@zimbra-client/components`: an email signature editor, a PDF viewer, a card that the user drags and the application logo. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] adds a signature to the settings or shows a PDF file. They also serve a Zimlet that offers an item to drag into a message, or shows the logo as the xref:reference/glossary.adoc#modern-ui[Modern UI] does. The additional signature Zimlet uses `SignatureBox`, and the welcome tour Zimlet uses `ClientLogo`. For the form that edits an appointment, see xref:reference/shims/components/appointment-edit.adoc[AppointmentEdit].
+
+[#members]
+== Members
+
+<<signature-box,`SignatureBox`>>::
+An editor for one signature, with a switch between formatted text and plain text.
+
+<<pdfjs-viewer,`PdfjsViewer`>>::
+A viewer that draws every page of a PDF file.
+
+<<draggable-card,`DraggableCard`>>::
+A card that the user can drag, with data that the Modern UI drop areas read.
+
+<<client-logo,`ClientLogo`>>::
+The logo of the application, as a picture or as a link.
+
+[#signature-box]
+== SignatureBox
+
+An editor for one email signature, as the signature settings of the Modern UI draw it. It has a rich text editor for a formatted signature and a text area for a plain text one, with a switch between them. Use it when your Zimlet adds a signature to the settings, as the additional signature Zimlet does in the `additional-signature-settings` xref:fundamentals/extending-the-ui.adoc[slot]. The box does not keep the signature: it shows the one that you pass and reports every change.
+
+WARNING: In the formatted editor, a dropped or pasted image is saved at once to the Briefcase, the file storage of the account. This happens before the user saves the signature. The signature then refers to the image in the Briefcase.
+
+=== Signature
+
+[source,js]
+----
+import { SignatureBox } from '@zimbra-client/components';
+
+<SignatureBox
+	signature={signature}
+	onChange={handleChange}
+	signatureMaxLengthError={tooLong}
+/>
+----
+
+=== Props
+
+[[signature-box-signature]]pass:[<a class="anchor" href="#signature-box-signature"></a>]`signature` (object)::
+The signature to edit. Always set it. These fields are read:
++
+* `id` (string): keys the spell check results of the box. Give each signature on a screen its own `id`.
+* `name` (string): the title. See <<signature-box-additional-signature-actions,`additionalSignatureActions`>>.
+* `content` (array of object): the box uses the first item. Its `_content` (string) holds the text or the HTML, and its `type` (string) is `text/html` or `text/plain`. A `text/plain` type shows the text area. Any other value shows the formatted editor.
+[[signature-box-on-change]]pass:[<a class="anchor" href="#signature-box-on-change"></a>]`onChange` (function `(event: Event | null, content: string, type?: string) => void`)::
+Called when the content or the format changes. Always set it: the format switch and the plain text area throw an error without it. `content` is the new text or HTML. `event` is the event that caused the change, or `null` after a spell check correction and after the user confirms the switch to plain text. `type` is `text/plain` or `text/html` when the user changes the format, and in plain text mode. It is not set when the formatted editor changes. Keep the current type then. The formatted editor calls it a short time after the user stops typing. Its return value is ignored. Store `content` and `type`, and pass them back in <<signature-box-signature,`signature`>>.
+[[signature-box-signature-max-length-error]]pass:[<a class="anchor" href="#signature-box-signature-max-length-error"></a>]`signatureMaxLengthError` (boolean)::
+Shows an error below the box that names the maximum length of a signature, which the box reads from the account. The box does not measure the signature. Compare the length with the limit in your <<signature-box-on-change,`onChange`>> and set this prop.
+[[signature-box-additional-signature-actions]]pass:[<a class="anchor" href="#signature-box-additional-signature-actions"></a>]`additionalSignatureActions` (function `(request: { signature: object, value: any, action: string }) => void`)::
+Turns the box into one of the additional signatures. Without it, `name` is the key of a text in the localization dictionary in scope, and a key with no entry shows no title. With it, the title is a name field that holds `name` and is required, and a *Remove* button draws next to the format switch. The button calls the function with the `signature`, a `value` of `null` and the action `delete`. Its return value is ignored. The `additional-signature-settings` slot passes this function. See xref:reference/slots/settings/general-and-writing.adoc[General and writing settings slots].
+[[signature-box-handle-name-change]]pass:[<a class="anchor" href="#signature-box-handle-name-change"></a>]`handleNameChange` (function `(event: Event) => void`)::
+Called with the input event each time the user types in the name field. Read the new name from `event.target.value`. The field draws only with <<signature-box-additional-signature-actions,`additionalSignatureActions`>>. Its return value is ignored.
+[[signature-box-other-props]]pass:[<a class="anchor" href="#signature-box-other-props"></a>]Any other prop (any)::
+Has no effect.
+
+=== Returns
+
+A `div` with a title row and the editor. The title row has the name, the plain text switch and, for an additional signature, the *Remove* button. The editor is a text area in plain text mode. In formatted mode it is a rich text editor with its toolbar and an area for dropped images. A confirmation dialog, an error and a dialog for image conflicts draw when they are needed.
+
+=== Usage notes
+
+* The box reads the default font, font size, colour and writing direction of the editor from the preferences of the account. It reads the attachment size limits of the account for images.
+* The switch to plain text asks the user to confirm when the signature has content, because it discards the formatting and the images. The switch back to formatted text turns the text into HTML.
+* The formatted editor accepts dropped or pasted image files. It refuses SVG, TIFF and icon files and shows an error that names the supported types. It refuses an image that is over the size limit, and shows a notice.
+* When the Briefcase already holds a file with the same name, a dialog asks the user which version to use.
+* The formatted editor is a xref:reference/shims/components/recipients-and-rich-text.adoc#tiny-mce-composer[TinyMceComposer]. It draws the `composer` slot with the `editorType` `signature`.
+
+[#pdfjs-viewer]
+== PdfjsViewer
+
+A viewer that draws every page of a PDF file, one below the other. Use it to show a PDF file inside a part of your screen, as the Modern UI does in its file preview. Give it the address of the file and put it in an element that scrolls. The code of the viewer loads when the first viewer draws. Until then it draws an empty `div`.
+
+=== Signature
+
+[source,js]
+----
+import { PdfjsViewer } from '@zimbra-client/components';
+
+<PdfjsViewer src={pdfUrl} scale={1} onError={handleError} />
+----
+
+=== Props
+
+[[pdfjs-viewer-src]]pass:[<a class="anchor" href="#pdfjs-viewer-src"></a>]`src` (string)::
+The address of the PDF file. Without it the viewer draws nothing. The request sends the cookies of the user. A new value resets the viewer and loads the new file.
+[[pdfjs-viewer-scale]]pass:[<a class="anchor" href="#pdfjs-viewer-scale"></a>]`scale` (number, default `1`)::
+The zoom. At `1` a page is 90 percent of the width of the viewer. A new value draws the pages near the current page again.
+[[pdfjs-viewer-container]]pass:[<a class="anchor" href="#pdfjs-viewer-container"></a>]`container` (object)::
+The scrolling parent of the viewer, as an object with the `instance.wrapperComponent` field. That field holds the https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^] that scrolls. The viewer listens to its scroll events to find the current page. Without `container` the viewer cannot follow the scroll position, and a click on a page does nothing.
+[[pdfjs-viewer-overscan]]pass:[<a class="anchor" href="#pdfjs-viewer-overscan"></a>]`overscan` (number, default `2`)::
+The number of pages before and after the current page that the viewer draws. A <<pdfjs-viewer-scale,`scale`>> below `1` doubles it.
+[[pdfjs-viewer-disable-caching]]pass:[<a class="anchor" href="#pdfjs-viewer-disable-caching"></a>]`disableCaching` (boolean, default `false`)::
+By default the viewer keeps the loaded files by address, up to 50, and reuses a file that it has loaded before. Set `true` for a file that can change at the same address, such as a document that the user edits. The viewer then loads the file again each time it is created or when <<pdfjs-viewer-src,`src`>> changes.
+[[pdfjs-viewer-on-load-document]]pass:[<a class="anchor" href="#pdfjs-viewer-on-load-document"></a>]`onLoadDocument` (function `(result: { src: string, pdfDoc: object }) => void`)::
+Called when the file has loaded. `pdfDoc` is the file as PDF.js gives it. See https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib-PDFDocumentProxy.html[PDFDocumentProxy^] in the PDF.js documentation. Its return value is ignored.
+[[pdfjs-viewer-on-change-page]]pass:[<a class="anchor" href="#pdfjs-viewer-on-change-page"></a>]`onChangePage` (function `(page: number) => void`)::
+Called with the number of the current page, counted from `1`. It is called with `1` after the file loads, when the user clicks a page and when the scroll position changes with a <<pdfjs-viewer-container,`container`>>. Its return value is ignored.
+[[pdfjs-viewer-on-load-page]]pass:[<a class="anchor" href="#pdfjs-viewer-on-load-page"></a>]`onLoadPage` (function `(page: number) => void`)::
+Called with the page number each time the viewer has drawn a page. It is called again when a new <<pdfjs-viewer-scale,`scale`>> redraws the page. Its return value is ignored.
+[[pdfjs-viewer-on-error]]pass:[<a class="anchor" href="#pdfjs-viewer-on-error"></a>]`onError` (function `(error: Error) => void`)::
+Called when the file cannot load. The error has an extra `src` field with the address. The viewer also writes the error to the browser console. Its return value is ignored.
+[[pdfjs-viewer-class]]pass:[<a class="anchor" href="#pdfjs-viewer-class"></a>]`class` (string)::
+A class name. The viewer sets it on its container and on every page. Use `class`, because `className` reaches only the pages.
+[[pdfjs-viewer-other-props]]pass:[<a class="anchor" href="#pdfjs-viewer-other-props"></a>]Any other prop (any)::
+Set on every page `canvas` as it is.
+
+=== Returns
+
+A `div` with one `canvas` for each page, centred and in page order. It has no pages until the file has loaded.
+
+=== Usage notes
+
+* The viewer does not scroll. Put it in an element that scrolls, and pass that element in <<pdfjs-viewer-container,`container`>>.
+* The viewer draws the pages that are near the current page. The other pages stay blank until the user scrolls to them. Without a <<pdfjs-viewer-container,`container`>> the viewer draws only the pages around page 1.
+* The viewer does not read an `onLoad` prop.
+
+[#draggable-card]
+== DraggableCard
+
+A card that the user can drag. It is a xref:reference/shims/blocks/display-and-layout.adoc#card[Card] of `@zimbra-client/blocks` that stores what it stands for when the drag starts. Use it for an item that the user can drop on a drop area of the Modern UI. The attach area of the message composer is one.
+
+=== Signature
+
+[source,js]
+----
+import { DraggableCard } from '@zimbra-client/components';
+
+<DraggableCard data={attachment} onDragStart={handleDragStart}>
+	{children}
+</DraggableCard>
+----
+
+=== Props
+
+[[draggable-card-data]]pass:[<a class="anchor" href="#draggable-card-data"></a>]`data` (object, default `{}`)::
+The item that the card stands for. When the drag starts, the card does three things with it. It sets the `name` field as the text of the drag, or an empty text when there is none. It sets the `url` field, or the `href` field when there is no `url`, as the address of the drag, made absolute. It stores the whole object as the drag data of the Modern UI. The card does not set `data` on its element. The attach area of the message composer reads the stored data when the user drops the card there, and adds it as an attachment. Pass an attachment object for that, as the media menu of the composer does.
+[[draggable-card-draggable]]pass:[<a class="anchor" href="#draggable-card-draggable"></a>]`draggable` (boolean, default `true`)::
+Set `false` to switch dragging off. The steps of <<draggable-card-data,`data`>> and <<draggable-card-on-drag-start,`onDragStart`>> run only when the value is `true`.
+[[draggable-card-on-drag-start]]pass:[<a class="anchor" href="#draggable-card-on-drag-start"></a>]`onDragStart` (function `(event: DragEvent) => void`)::
+Called with the drag event after the card has set the data. Its return value is ignored. It runs only when <<draggable-card-draggable,`draggable`>> is `true`. With another value it goes to the card as it is.
+[[draggable-card-other-props]]pass:[<a class="anchor" href="#draggable-card-other-props"></a>]Any other prop (any)::
+Passed to the xref:reference/shims/blocks/display-and-layout.adoc#card[Card]. They include `onClick`, `href`, `componentClass`, `square`, `scrim`, `scrimProps`, `onHover`, `class` and the children. By default the card is a square and dims while the pointer is on it. Set `square` or `scrim` to `false` to change this.
+
+=== Returns
+
+The xref:reference/shims/blocks/display-and-layout.adoc#card[Card], with its children.
+
+=== Usage notes
+
+* The lists of the Modern UI, such as the mail list and the contact list, store their own items in the same drag data. A drop area reads that data in its own way. Test your `data` on each area where the user can drop the card.
+
+[#client-logo]
+== ClientLogo
+
+The logo of the application, as a picture or as a link. Use it where your Zimlet shows the brand of the Modern UI, as the welcome tour Zimlet does in its dialog. The logo follows the branding of the Modern UI and of the domain, so it needs no address from you.
+
+=== Signature
+
+[source,js]
+----
+import { ClientLogo } from '@zimbra-client/components';
+
+<ClientLogo class={logoClass} isSecondaryLogo />
+----
+
+=== Props
+
+[[client-logo-is-secondary-logo]]pass:[<a class="anchor" href="#client-logo-is-secondary-logo"></a>]`isSecondaryLogo` (boolean)::
+Chooses the second logo of the branding. The picture is the first of these that exists:
++
+. The `zimbraSkinLogoLoginBanner` setting of the domain, when this prop is set.
+. The `zimbraSkinLogoAppBanner` setting of the domain.
+. The file `secondarylogo.svg` in the assets of the Modern UI branding, when this prop is set and the branding has a second logo.
+. The file `logo.svg` in the same assets.
++
+Without this prop, the first and the third step are skipped.
+[[client-logo-href]]pass:[<a class="anchor" href="#client-logo-href"></a>]`href` (string)::
+Makes the logo a link to this address. Without <<client-logo-target,`target`>>, it is a `Link` of xref:reference/shims/libraries.adoc#preact-router-link[`preact-router`], which navigates inside the Modern UI without loading the page again.
+[[client-logo-target]]pass:[<a class="anchor" href="#client-logo-target"></a>]`target` (string)::
+The browsing context of the link, such as `_blank`. With `href`, the logo is then a plain link with `rel="noopener noreferrer"`. Without `href` it has no effect.
+[[client-logo-title]]pass:[<a class="anchor" href="#client-logo-title"></a>]`title` (string)::
+The tooltip. It is set on the link when there is an <<client-logo-href,`href`>>, and on the picture otherwise.
+[[client-logo-class]]pass:[<a class="anchor" href="#client-logo-class"></a>]`class` (string)::
+A class name added to the `span` around the picture. It is not set on the link.
+[[client-logo-other-props]]pass:[<a class="anchor" href="#client-logo-other-props"></a>]Any other prop (any)::
+Has no effect.
+
+=== Returns
+
+A `span` that holds the `img` of the logo, inside a link when there is an <<client-logo-href,`href`>>.
+
+=== Usage notes
+
+* The picture has the client name of the Modern UI, such as *Zimbra*, as its alternative text. When the picture cannot load, the text is *Brand Logo Missing*.
+* The picture is 32 pixels high and at most 200 pixels wide. The variables `--logo-height` and `--logo-max-width` set this. To change the size, set them on the element that you pass in <<client-logo-class,`class`>> or on one above it. See xref:go-deeper/styling/shared-styles.adoc[Style library].
+
+[#next-step]
+== Next step
+
+Continue with the sidebar and the folder tree, in xref:reference/shims/components/navigation.adoc[Navigation].

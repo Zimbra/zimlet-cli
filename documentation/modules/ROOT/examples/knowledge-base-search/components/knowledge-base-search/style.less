@@ -1,0 +1,21 @@
+.form {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	border: 1px solid var(--input-border-color);
+	border-radius: var(--radius-sm);
+	background-color: var(--body-bg);
+
+	// The form draws the focus border, so the field inside has none of its own.
+	&:focus-within {
+		border-color: var(--brand-primary-500);
+	}
+
+	.input,
+	.input:focus {
+		flex: 1;
+		border: 0;
+		outline: none;
+		background: transparent;
+	}
+}

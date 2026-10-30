@@ -1,0 +1,230 @@
+= Form fields
+
+The components of `@zimbra-client/components` that take a value in a form. They are a drop-down list, a text field and a row for a label and its field. A fourth component is a button that adds a row to a list of settings. Use them in a dialog or a settings section of your xref:reference/glossary.adoc#zimlet[Zimlet]. The fields then look like the rest of the xref:reference/glossary.adoc#modern-ui[Modern UI]. Pick `Select` for one value from a list and `TextInput` for free text. Use `FormGroup` to lay out a row and `AddMore` for a list that the user can extend. For dates, see xref:reference/shims/components/dates-and-calendars.adoc[Dates and calendars]. For recipients and rich text, see xref:reference/shims/components/recipients-and-rich-text.adoc[Recipients and rich text].
+
+`@zimbra-client/blocks` also has a `Select`. It is a different component with its own props. See xref:reference/shims/blocks/form-inputs-and-choices.adoc#select[`Select` of the Blocks UI kit].
+
+[#members]
+== Members
+
+<<select,`Select`>>::
+A drop-down list of the browser, with the border and the arrow of the Modern UI.
+
+<<text-input,`TextInput`>>::
+A single line text field with a placeholder that you can translate.
+
+<<form-group,`FormGroup`>>::
+A row that holds a label and its field, with spacing and an optional separator.
+
+<<add-more,`AddMore`>>::
+A small button that adds one more row to a list of settings.
+
+[#select]
+== Select
+
+A drop-down list of the browser (a `select` element) in the style of the Modern UI. Use it when the user picks one value from a short list in a dialog or a settings section. You give it `option` elements as children. Use xref:reference/shims/blocks/form-inputs-and-choices.adoc#select[`Select` of the Blocks UI kit] for a list that is built from `Option` components and drawn by the Modern UI.
+
+=== Signature
+
+[source,js]
+----
+import { Select } from '@zimbra-client/components';
+
+<Select value={current} onChange={handleChange} fullWidth>
+	<option value="daily">{dailyLabel}</option>
+	<option value="weekly">{weeklyLabel}</option>
+</Select>
+----
+
+=== Props
+
+[[select-children]]pass:[<a class="anchor" href="#select-children"></a>]`children` (array of xref:reference/glossary.adoc#element[element])::
+The `option` elements, or `optgroup` elements that hold them.
+[[select-value]]pass:[<a class="anchor" href="#select-value"></a>]`value` (string or number)::
+The value of the selected option. Set it from your state and change it in your change handler. With <<select-collapse-label,`collapseLabel`>>, the label follows it.
+[[select-on-change]]pass:[<a class="anchor" href="#select-on-change"></a>]`onChange` (function `(event: Event) => void`)::
+Called when the user picks an option. Its return value is ignored. Read the new value from `event.target.value`, which is a string. It is replaced by <<select-on-dropdown-change,`onDropdownChange`>> when you set that prop.
+[[select-on-dropdown-change]]pass:[<a class="anchor" href="#select-on-dropdown-change"></a>]`onDropdownChange` (function `(value: string) => void`)::
+Called with the value of the selected option when the user picks an option. Its return value is ignored. When you set it, the component ignores <<select-on-change,`onChange`>>.
+[[select-on-click]]pass:[<a class="anchor" href="#select-on-click"></a>]`onClick` (function `(event?: MouseEvent) => void`)::
+Called when the user clicks the select, and with <<select-collapse-label,`collapseLabel`>> also when the user clicks the label. A call from the label has no argument. Its return value is ignored.
+[[select-disabled]]pass:[<a class="anchor" href="#select-disabled"></a>]`disabled` (boolean)::
+Disables the select and draws it in the disabled look.
+[[select-full-width]]pass:[<a class="anchor" href="#select-full-width"></a>]`fullWidth` (boolean)::
+Stretches the container and the select to the width of the parent.
+[[select-no-border]]pass:[<a class="anchor" href="#select-no-border"></a>]`noBorder` (boolean)::
+Removes the border. The select then gets a light background while the pointer is over it or while it has the focus.
+[[select-no-hover]]pass:[<a class="anchor" href="#select-no-hover"></a>]`noHover` (boolean)::
+Keeps the background transparent while the pointer is over the select or it has the focus. It has no effect without <<select-no-border,`noBorder`>>.
+[[select-bold]]pass:[<a class="anchor" href="#select-bold"></a>]`bold` (boolean)::
+Draws the selected text in bold.
+[[select-collapse-label]]pass:[<a class="anchor" href="#select-collapse-label"></a>]`collapseLabel` (boolean)::
+Draws the text of the selected option as a label, and makes the select itself transparent. The label is read from the selected option when the component mounts and every time `value` changes. It does not follow a change of the options alone.
+[[select-inline-arrow]]pass:[<a class="anchor" href="#select-inline-arrow"></a>]`inlineArrow` (boolean)::
+Draws the arrow right after the label text and not at the right edge. The arrow is part of the label, so it shows only with <<select-collapse-label,`collapseLabel`>>. Without it, no arrow is drawn.
+[[select-truncate-long-text]]pass:[<a class="anchor" href="#select-truncate-long-text"></a>]`truncateLongText` (boolean)::
+Cuts a long label with an ellipsis, and shows the full text as the tooltip of the container. Use it with <<select-collapse-label,`collapseLabel`>>, because the label and the tooltip text come from it.
+[[select-no-arrow]]pass:[<a class="anchor" href="#select-no-arrow"></a>]`noArrow` (boolean)::
+Has no effect. The arrow is still drawn.
+[[select-class]]pass:[<a class="anchor" href="#select-class"></a>]`class` (string)::
+A class name added to the select, and to the label with <<select-collapse-label,`collapseLabel`>>.
+[[select-container-class]]pass:[<a class="anchor" href="#select-container-class"></a>]`containerClass` (string)::
+A class name added to the container that holds the arrow, the label and the select.
+[[select-other-props]]pass:[<a class="anchor" href="#select-other-props"></a>]Any other prop (any)::
+Set on the `select` element, such as `id`, `name`, `required` and `aria-label`.
+
+=== Returns
+
+A `div` that holds the arrow icon, the label (with `collapseLabel`) and the `select` element.
+
+=== Usage notes
+
+* The options are plain `option` elements. An `option` can hold a `<Text>` element for its label. See xref:go-deeper/localization.adoc[Localization].
+* The select has no label of its own. Name it for a screen reader with `aria-label`, or with a `label` element for its `id`.
+* Without `value`, the browser selects the first option, and `collapseLabel` shows that option.
+
+[#text-input]
+== TextInput
+
+A single line text field with the border, padding and colours of the Modern UI. Use it for free text in a dialog or a settings section. It translates its placeholder, and it can mark a wrong value. It is a field only: add the label yourself.
+
+=== Signature
+
+[source,js]
+----
+import { TextInput } from '@zimbra-client/components';
+
+<TextInput
+	value={name}
+	onInput={handleInput}
+	placeholderId="myZimlet.namePlaceholder"
+	wide
+/>
+----
+
+=== Props
+
+[[text-input-value]]pass:[<a class="anchor" href="#text-input-value"></a>]`value` (string)::
+The text of the field. When the field loses the focus with another text, <<text-input-on-auto-complete,`onAutoComplete`>> is called.
+[[text-input-wide]]pass:[<a class="anchor" href="#text-input-wide"></a>]`wide` (boolean)::
+Stretches the field to the full width of the parent, and lets it grow in a flex row.
+[[text-input-invalid]]pass:[<a class="anchor" href="#text-input-invalid"></a>]`invalid` (boolean)::
+Draws the border in the danger colour, with a shadow. It does not set `aria-invalid`. Set `aria-invalid` yourself so that a screen reader reports the error.
+[[text-input-placeholder]]pass:[<a class="anchor" href="#text-input-placeholder"></a>]`placeholder` (string or xref:reference/glossary.adoc#element[element])::
+The placeholder. Pass a `<Text>` element to translate it. See xref:go-deeper/localization.adoc[Localization].
+[[text-input-placeholder-id]]pass:[<a class="anchor" href="#text-input-placeholder-id"></a>]`placeholderId` (string)::
+The id of a translation. It replaces <<text-input-placeholder,`placeholder`>>. A short form of `placeholder={<Text id="..." />}`.
+[[text-input-input-ref]]pass:[<a class="anchor" href="#text-input-input-ref"></a>]`inputRef` (function `(input: HTMLInputElement | null) => void`)::
+Called with the `input` element when it is created, and with `null` when it is removed. Its return value is ignored.
+[[text-input-on-auto-complete]]pass:[<a class="anchor" href="#text-input-on-auto-complete"></a>]`onAutoComplete` (function `(event: FocusEvent) => void`)::
+Called when the field loses the focus and the text of the field is not equal to `value`. It runs before <<text-input-on-blur,`onBlur`>>. Its return value is ignored. Use it to take text that the browser fills in without an `input` event, such as the autocomplete of iOS.
++
+Without `value`, the texts always differ, so the function is called every time the field loses the focus.
+[[text-input-on-blur]]pass:[<a class="anchor" href="#text-input-on-blur"></a>]`onBlur` (function `(event: FocusEvent) => void`)::
+Called when the field loses the focus. Its return value is ignored.
+[[text-input-autofocus]]pass:[<a class="anchor" href="#text-input-autofocus"></a>]`autofocus` (boolean)::
+Moves the focus to the field when the component mounts.
+[[text-input-type]]pass:[<a class="anchor" href="#text-input-type"></a>]`type` (string, default `text`)::
+The `type` of the `input` element, such as `password` or `email`.
+[[text-input-class]]pass:[<a class="anchor" href="#text-input-class"></a>]`class` (string)::
+A class name added to the `input` element.
+[[text-input-other-props]]pass:[<a class="anchor" href="#text-input-other-props"></a>]Any other prop (any)::
+Set on the `input` element, such as `onInput`, `onChange`, `onFocus`, `name`, `disabled` and `aria-label`. A prop that holds a `<Text>` element is replaced by the translated text.
+
+=== Returns
+
+An `input` element, with no wrapper.
+
+=== Usage notes
+
+* `className` is ignored. Use `class`.
+* A placeholder is not a name for a screen reader. Set `aria-label` (a `<Text>` element works), or add a `label` element for the `id` of the field.
+* To move the focus from your code, keep a reference to the component with `ref` and call its `focus()` method. To reach the `input` element itself, use `inputRef`.
+* Wrap your component with `withIntl` so that a `<Text>` finds the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization]. A translation that does not exist gives an empty placeholder.
+
+[#form-group]
+== FormGroup
+
+A row that holds a label and its field, with the spacing of the Modern UI forms. Use it to line up the fields of a dialog or a settings section, one row for each field. It can also turn the row into a button, for a row that the user clicks.
+
+=== Signature
+
+[source,js]
+----
+import { FormGroup } from '@zimbra-client/components';
+
+<FormGroup compact separator>
+	{label}
+	{field}
+</FormGroup>
+----
+
+=== Props
+
+[[form-group-children]]pass:[<a class="anchor" href="#form-group-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the row, usually a label and a field. The children sit side by side and are centred vertically, unless you set <<form-group-rows,`rows`>>.
+[[form-group-compact]]pass:[<a class="anchor" href="#form-group-compact"></a>]`compact` (boolean)::
+Reduces the space below the row from 16 px to 8 px.
+[[form-group-large]]pass:[<a class="anchor" href="#form-group-large"></a>]`large` (boolean)::
+Increases the space below the row from 16 px to 24 px.
+[[form-group-separator]]pass:[<a class="anchor" href="#form-group-separator"></a>]`separator` (boolean)::
+Draws a line below the row, with a padding below the content that is as large as the space below the row.
+[[form-group-rows]]pass:[<a class="anchor" href="#form-group-rows"></a>]`rows` (boolean)::
+Stacks the children one below the other, aligned to the start, and not side by side.
+[[form-group-on-click]]pass:[<a class="anchor" href="#form-group-on-click"></a>]`onClick` (function `(event: MouseEvent | KeyboardEvent) => void`)::
+Turns the row into a `button`. It is called when the user clicks the row, and when the user presses *Enter* on it. Its return value is ignored. A `button` cannot hold interactive content, so do not put a field, a link or another button in a row that has `onClick`.
+[[form-group-class]]pass:[<a class="anchor" href="#form-group-class"></a>]`class` (string)::
+A class name added to the row.
+[[form-group-other-props]]pass:[<a class="anchor" href="#form-group-other-props"></a>]Any other prop (any)::
+Set on the element, such as `id`, `title` and `aria-label`.
+
+=== Returns
+
+A `div` that holds the children, or a `button` (with `type="button"`) when you set `onClick`.
+
+=== Usage notes
+
+* The row fills the width of its parent and leaves 16 px below it.
+* It draws no label. A `label` element, or the `Label` of xref:reference/shims/blocks/form-inputs-and-choices.adoc#label[Form inputs and choices], goes in `children`.
+
+[#add-more]
+== AddMore
+
+A small secondary button with a translated label, for a settings section that lists rows. Use it below the rows to let the user add one more, as the button of the additional signature settings does. The button does nothing by itself: add the row in `onClick`.
+
+=== Signature
+
+[source,js]
+----
+import { AddMore } from '@zimbra-client/components';
+
+<AddMore label="myZimlet.addRow" onClick={handleAdd} />
+----
+
+=== Props
+
+[[add-more-label]]pass:[<a class="anchor" href="#add-more-label"></a>]`label` (string)::
+The id of a translation of your Zimlet. Pass the id, not the text.
+[[add-more-on-click]]pass:[<a class="anchor" href="#add-more-on-click"></a>]`onClick` (function `(event: MouseEvent) => void`)::
+Called when the user clicks the button. Its return value is ignored.
+[[add-more-disabled]]pass:[<a class="anchor" href="#add-more-disabled"></a>]`disabled` (boolean)::
+Disables the button. It is drawn half transparent.
+[[add-more-class]]pass:[<a class="anchor" href="#add-more-class"></a>]`class` (string)::
+A class name added to the button.
+[[add-more-other-props]]pass:[<a class="anchor" href="#add-more-other-props"></a>]Any other prop (any)::
+Passed to the `Button`. A prop such as `styleType` or `size` replaces the default of `AddMore`. A prop that holds a `<Text>` element, such as `aria-label`, is replaced by the translated text.
+
+=== Returns
+
+A xref:reference/shims/blocks/buttons-and-progress.adoc#button[`Button`] of `@zimbra-client/blocks` with the `secondary` style and the `small` size. It shows the translated label and leaves a space above it.
+
+=== Usage notes
+
+* A `label` that the dictionary does not hold gives a button with no text, because there is no fallback text.
+* Wrap your component with `withIntl` so that the label finds the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization].
+* The button has no icon. Add `aria-label` when the label alone does not say what is added.
+
+[#next-step]
+== Next step
+
+Continue with the components for dates and times, in xref:reference/shims/components/dates-and-calendars.adoc[Dates and calendars].

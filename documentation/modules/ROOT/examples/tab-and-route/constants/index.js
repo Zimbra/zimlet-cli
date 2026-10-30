@@ -1,4 +1,4 @@
-// The last part of the screen address, after the Video area.
+// The last part of the screen address, after the Video vertical.
 export const SLUG = 'meeting-rooms';
 
 // Replace these with the rooms of your own meeting service.

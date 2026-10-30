@@ -1,0 +1,28 @@
+= Blocks UI kit
+
+The `@zimbra-client/blocks` module holds the small UI parts of the xref:reference/glossary.adoc#modern-ui[Modern UI]: buttons, icons, dialogs, popovers, form controls and layout helpers. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a control that matches the rest of the Modern UI, such as `Button` and `Icon` in a slot handler. Its parts are in five areas. For larger parts of the Modern UI screens, such as menus and contact widgets, see xref:reference/shims/components.adoc[Components].
+
+The Modern UI shares the module with every Zimlet, so the build does not copy it into your Zimlet. Import a name as in `import { Button } from '@zimbra-client/blocks';`. See xref:fundamentals/shared-libraries.adoc[Shared libraries] for how shared modules work.
+
+[#areas]
+== Areas
+
+[[buttons-and-progress]]pass:[<a class="anchor" href="#buttons-and-progress"></a>]xref:reference/shims/blocks/buttons-and-progress.adoc[Buttons and progress]::
+Use these to start an action and to show that work is running. Exports: `Button`, `AnimatedButton`, `ProgressButton`, `Spinner` and `LoaderBar`.
+
+[[dialogs-and-overlays]]pass:[<a class="anchor" href="#dialogs-and-overlays"></a>]xref:reference/shims/blocks/dialogs-and-overlays.adoc[Dialogs and overlays]::
+Use these to show content above the page: dialogs, popovers and tooltips, with `Scrim` as a translucent layer. `@zimbra-client/components` also has a `ModalDialog`, which is a different component. Exports: `Dialog`, `FixedDialog`, `ModalDialog`, `Scrim`, `Popover` and `Tooltip`.
+
+[[form-inputs-and-choices]]pass:[<a class="anchor" href="#form-inputs-and-choices"></a>]xref:reference/shims/blocks/form-inputs-and-choices.adoc[Form inputs and choices]::
+Use these to let the user pick a value or switch between tabs. `@zimbra-client/components` also has a `Select`, which is a different component. Exports: `Select`, `Option`, `Tabs`, `Tab`, `ChoiceInput`, `StyledChoiceInput`, `ColorPicker` and `Label`.
+
+[[display-and-layout]]pass:[<a class="anchor" href="#display-and-layout"></a>]xref:reference/shims/blocks/display-and-layout.adoc[Display and layout]::
+Use these to show information in a card, with an icon or in a warning banner. `AffixBottom` keeps an element at the bottom of its container. Exports: `Card`, `Icon`, `WarningBanner` and `AffixBottom`.
+
+[[behaviour-helpers-and-constants]]pass:[<a class="anchor" href="#behaviour-helpers-and-constants"></a>]xref:reference/shims/blocks/behaviour-helpers-and-constants.adoc[Behaviour helpers and constants]::
+Use these to close a layer on an outside click or a key press, to measure a container, and to read key codes and colours. Exports: `ClickOutsideDetector`, `CloseOnClickOrKeydown`, `ContainerSize`, `KeyCodes` and `COLORS`.
+
+[#next-step]
+== Next step
+
+Find the larger parts of the Modern UI screens, such as menus and contact widgets, in xref:reference/shims/components.adoc[Components].

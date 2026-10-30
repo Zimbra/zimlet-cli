@@ -1,4 +1,4 @@
-// The last part of the screen address, after the Contacts area.
+// The last part of the screen address, after the Contacts vertical.
 export const SLUG = 'partners';
 
 // The address book that holds the partners. The Zimlet creates it when it is missing.

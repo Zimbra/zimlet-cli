@@ -26,7 +26,7 @@ zimbraBatchClient.jsonRequest(options)
 [#returns]
 == Returns
 
-A promise for the content of the matching response. The promise rejects when the server answers with a fault.
+A `promise of any` for the content of the matching response. The promise rejects when the server answers with a fault.
 
 [#usage-notes]
 == Usage notes
