@@ -3,7 +3,7 @@
 Section 4 of the writing rules in [write-doc.md](../write-doc.md). Read it in full together with that file.
 
 ## 4. Examples
-
+- Do not add any examples for reference type pages.
 - Give a working example for every topic that tells the reader to write code or configuration, and for every slot or extension point page. Registering a slot always needs one.
 - When writing a complete, runnable Zimlet example, use the [Zimlet creation workflow](../../workflow/create-zimlet.md).
 - Examples must follow [authoring.md](../authoring.md): `createElement` imported from `preact` in JSX files, only shimmed imports, plugins registered inside `init()`, and `en_US.json` structure for strings. Also follow the coding style of the default template: tab indentation (the `indent_style = tab` rule of its `.editorconfig`), single quotes, a line width of 100 (its `.prettierrc`), and `createElement` as the JSX pragma. Prettier takes the tab setting from `.editorconfig`, so a file that is linted without an `.editorconfig` next to it or above it reports tabs as errors; this is not a defect of the example. Packaging and `config_template.xml` examples must follow [packaging-deployment.md](../packaging-deployment.md).

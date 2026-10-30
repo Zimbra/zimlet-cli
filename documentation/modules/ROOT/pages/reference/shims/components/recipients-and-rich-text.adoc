@@ -1,0 +1,248 @@
+= Recipients and rich text
+
+The components of `@zimbra-client/components` for entering people and formatted text. A recipient field turns typed addresses into pills and suggests contacts as the user types. A rich text editor edits HTML, and an emoji picker lets the user choose an emoji. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] collects addresses or formatted text and should look and behave like the xref:reference/glossary.adoc#modern-ui[Modern UI]. For dates and times, see xref:reference/shims/components/dates-and-calendars.adoc[Dates and calendars].
+
+[#members]
+== Members
+
+<<address-field,`AddressField`>>::
+A recipient field with pills and suggestions from the contacts of the user.
+
+<<tiny-mce-composer,`TinyMceComposer`>>::
+A rich text editor with a toolbar, as in the mail composer.
+
+<<picker,`Picker`>>::
+An emoji picker from a third-party library.
+
+[#address-field]
+== AddressField
+
+A field that holds a list of recipients. The user types an address, a name or a list of them, and each one becomes a pill. After three characters, the field suggests contacts. Use it when your Zimlet asks for people, as the document editor Zimlet does for the people to share a document with. You hold the list in your state and the field reports every change.
+
+=== Signature
+
+[source,js]
+----
+import { AddressField } from '@zimbra-client/components';
+
+<AddressField value={recipients} onChange={handleChange} />
+----
+
+=== Props
+
+[[address-field-value]]pass:[<a class="anchor" href="#address-field-value"></a>]`value` (array of object)::
+The recipients to show. Always set it, with an empty array for no recipients: the field throws an error when it is missing or is not an array. Each item has an `address` (string) and a `name` (string). An item that the field creates has more fields, such as `id` and `isGroup`. Keep the items as the field gave them.
+[[address-field-on-change]]pass:[<a class="anchor" href="#address-field-on-change"></a>]`onChange` (function `(change: { value: object[], valueUpdated?: boolean }) => void`)::
+Called when the user adds, removes or edits a recipient. Its return value is ignored. `value` is the whole new list. Store it and pass it back as <<address-field-value,`value`>>, because the field shows only what you pass. `valueUpdated` is `true` when the user adds or removes a recipient.
++
+With <<address-field-address-field-type,`addressFieldType`>>, `value` is an object that holds the list under that name.
+[[address-field-placeholder]]pass:[<a class="anchor" href="#address-field-placeholder"></a>]`placeholder` (string)::
+The text shown while the field holds no recipient. Pass the translated text. A `<Text>` element works when the field is a child of a `Localizer`. See xref:go-deeper/localization.adoc[Localization].
+[[address-field-validate-token]]pass:[<a class="anchor" href="#address-field-validate-token"></a>]`validateToken` (function `(text: string, token: object) => boolean`)::
+Called for each pill, with the text that the pill shows and the recipient. Return `false` to draw the pill as invalid, with a tooltip about the address. The pill stays in the list. The default accepts a valid email address.
+[[address-field-disabled]]pass:[<a class="anchor" href="#address-field-disabled"></a>]`disabled` (boolean)::
+Disables the text field.
+[[address-field-max-tokens]]pass:[<a class="anchor" href="#address-field-max-tokens"></a>]`maxTokens` (number)::
+The most recipients that the user can type. The text field becomes read only when the list holds this many.
+[[address-field-on-focus]]pass:[<a class="anchor" href="#address-field-on-focus"></a>]`onFocus` (function `(focused: boolean) => void`)::
+Called with `true` when the text field gets the focus, and with `false` when it loses it. Its return value is ignored.
+[[address-field-on-ctrl-enter-key-down]]pass:[<a class="anchor" href="#address-field-on-ctrl-enter-key-down"></a>]`onCtrlEnterKeyDown` (function `() => void`)::
+Called when the user presses *Ctrl+Enter* in the text field. Its return value is ignored.
+[[address-field-is-gal-only]]pass:[<a class="anchor" href="#address-field-is-gal-only"></a>]`isGalOnly` (boolean)::
+Suggests only people from the global address list of the organization, and not the contacts of the user.
+[[address-field-was-previously-selected]]pass:[<a class="anchor" href="#address-field-was-previously-selected"></a>]`wasPreviouslySelected` (function `(suggestion: object) => boolean`)::
+Called for each suggestion, which has an `email` field. Return `true` to mark the suggestion as already chosen. The user cannot choose it again. Use it for people that your Zimlet already holds elsewhere, such as the owner of a document.
+[[address-field-previously-selected-label]]pass:[<a class="anchor" href="#address-field-previously-selected-label"></a>]`previouslySelectedLabel` (string or function `(suggestion: object) => string`)::
+The id of a translation. The text is shown at the end of a suggestion that <<address-field-was-previously-selected,`wasPreviouslySelected`>> marked. A function gives an id for each suggestion. Wrap your component with `withIntl` so that the id finds the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization].
+[[address-field-cal-resource-type]]pass:[<a class="anchor" href="#address-field-cal-resource-type"></a>]`calResourceType` (string)::
+`Location` or `Equipment`. The field then takes calendar resources and not people. It suggests only the resources of that type from the global address list. Text that the user leaves in the field is added to the list as plain text, so an item of <<address-field-value,`value`>> can be a string.
+[[address-field-type]]pass:[<a class="anchor" href="#address-field-type"></a>]`type` (string)::
+Has no effect.
+[[address-field-class]]pass:[<a class="anchor" href="#address-field-class"></a>]`class` (string)::
+A class name added to the container of the field.
+[[address-field-token-input-class]]pass:[<a class="anchor" href="#address-field-token-input-class"></a>]`tokenInputClass` (string)::
+A class name added to the outer box of the field.
+[[address-field-tokens-wrapper-class]]pass:[<a class="anchor" href="#address-field-tokens-wrapper-class"></a>]`tokensWrapperClass` (string)::
+A class name added to the inner element that holds the pills and the text field.
+[[address-field-token-input-style]]pass:[<a class="anchor" href="#address-field-token-input-style"></a>]`tokenInputStyle` (string)::
+A class name added to the `input` element of the text field. Despite its name, it takes a class name and not a style object.
+[[address-field-form-size]]pass:[<a class="anchor" href="#address-field-form-size"></a>]`formSize` (boolean)::
+Adds 1 px of padding below the box. The calendar forms of the Modern UI set it.
+[[address-field-busy-tokens]]pass:[<a class="anchor" href="#address-field-busy-tokens"></a>]`busyTokens` (array of string)::
+The addresses of the recipients to draw as busy. The pill of a busy recipient has red text.
+[[address-field-draggable]]pass:[<a class="anchor" href="#address-field-draggable"></a>]`draggable` (boolean)::
+Lets the user drag pills. Drop them on another field that sets <<address-field-remove-and-add-pills,`removeAndAddPills`>> to move them.
+[[address-field-address-field-type]]pass:[<a class="anchor" href="#address-field-address-field-type"></a>]`addressFieldType` (string)::
+The name of the field in a form with several recipient fields, such as `to`, `cc` and `bcc` of the mail composer. It changes the shape of <<address-field-on-change,`onChange`>>, and it shows <<address-field-label,`label`>> before the field. The field also hands this name to the drop handler.
+[[address-field-label]]pass:[<a class="anchor" href="#address-field-label"></a>]`label` (xref:reference/glossary.adoc#node[node])::
+The label before the field. It shows only with <<address-field-address-field-type,`addressFieldType`>>. It is a button when the user has the contacts or the address list feature, and it calls <<address-field-on-open,`onOpen`>>.
+[[address-field-label-class]]pass:[<a class="anchor" href="#address-field-label-class"></a>]`labelClass` (string)::
+A class name added to the container of the label.
+[[address-field-on-open]]pass:[<a class="anchor" href="#address-field-on-open"></a>]`onOpen` (function `(event: MouseEvent) => void`)::
+Called when the user clicks the label. Its return value is ignored. It is called only when <<address-field-matches-screen-md,`matchesScreenMd`>> is `true`.
+[[address-field-matches-screen-md]]pass:[<a class="anchor" href="#address-field-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+Set it to `true` on a wide window, so that the label calls <<address-field-on-open,`onOpen`>>.
+[[address-field-handle-drag-enter]]pass:[<a class="anchor" href="#address-field-handle-drag-enter"></a>]`handleDragEnter` (function `(address?: string) => void`)::
+Called when a dragged item enters a pill, with the address of the pill, and when it enters the text field, with no argument. Its return value is ignored.
+[[address-field-remove-and-add-pills]]pass:[<a class="anchor" href="#address-field-remove-and-add-pills"></a>]`removeAndAddPills` (function `(selected: object[], source: string, destination: string) => void`)::
+Called when the user drops pills from another field. `selected` holds the dragged recipients. `source` is the <<address-field-address-field-type,`addressFieldType`>> of the field that they came from, and `destination` is the one of this field. Remove the recipients from the first list and add them to the second. Its return value is ignored.
+[[address-field-is-search-input]]pass:[<a class="anchor" href="#address-field-is-search-input"></a>]`isSearchInput` (boolean)::
+Used by the search box of the Modern UI. The field then calls <<address-field-on-change,`onChange`>> also with the typed text, as `{ input: string, addTokens: function, keyPressed: number, isBlur: boolean }`. Do not set it in a Zimlet.
+[[address-field-on-cert-data-change]]pass:[<a class="anchor" href="#address-field-on-cert-data-change"></a>]`onCertDataChange` (function `(contact: object, addressFieldType: string) => void`)::
+Called with a recipient and its certificate data. Only the desktop app of the Modern UI calls it, for S/MIME (Secure/Multipurpose Internet Mail Extensions). The web Modern UI never does.
+[[address-field-show-cert-badge]]pass:[<a class="anchor" href="#address-field-show-cert-badge"></a>]`showCertBadge` (boolean)::
+Lets the desktop app of the Modern UI look up the S/MIME certificate of each recipient and show a badge on the pill. It has no effect in the web Modern UI.
+[[address-field-other-props]]pass:[<a class="anchor" href="#address-field-other-props"></a>]Any other prop (any)::
+Ignored.
+
+=== Returns
+
+A `div` that holds the label (with `addressFieldType`), the pills and the text field. The suggestions open from the text field.
+
+=== Usage notes
+
+* The user adds a recipient with *Enter*, *Tab*, a comma or a semicolon, or by leaving the field. Text with several addresses, or in the form `"Name" <address>`, becomes several pills.
+* A double click on a pill edits its address. *Backspace* and *Delete* remove the selected pills. *Ctrl+C* and *Ctrl+X* copy and cut them as `"Name" <address>;` text.
+* The suggestions come from the contacts of the user and from the global address list, and show after the user types three characters.
+* Each pill draws the `address-pill` slot, so a Zimlet that fills it adds to your pills too. See the xref:reference/slots.adoc[slot index].
+* The field holds no list of its own. If your `onChange` does not store the new list, the pill that the user adds disappears.
+
+[#tiny-mce-composer]
+== TinyMceComposer
+
+A rich text editor with a formatting toolbar, built on TinyMCE. It is the editor of the mail composer, the appointment notes, the signatures and the Briefcase documents. Use it when your Zimlet lets the user write formatted text and reads the text as HTML.
+
+WARNING: Every editor that you draw also draws the `composer` slot, with `getComposer` and `editorType`. A Zimlet that fills the slot decides by `editorType` whether to add its content, so it can add its content below your editor. Choose an `editorType` that matches your editor. See xref:build-by-goal/recipe-composer.adoc#other-slots[Other slots] of the composer recipe.
+
+=== Signature
+
+[source,js]
+----
+import { TinyMceComposer } from '@zimbra-client/components';
+
+<div id="my-zimlet-editor-Toolbar" />
+<TinyMceComposer
+	composerDomId="my-zimlet-editor"
+	editorType="notes"
+	value={html}
+	onEditorChange={handleChange}
+	customFonts={[]}
+/>
+----
+
+=== Props
+
+[[tiny-mce-composer-value]]pass:[<a class="anchor" href="#tiny-mce-composer-value"></a>]`value` (string)::
+The HTML of the editor. When it changes to text that the editor does not hold, the editor shows the new text. The editor wraps the text in a `div` that carries the default font, colour and direction.
+[[tiny-mce-composer-initial-value]]pass:[<a class="anchor" href="#tiny-mce-composer-initial-value"></a>]`initialValue` (string or function `(props: object) => string`)::
+The HTML to start with when <<tiny-mce-composer-value,`value`>> is not a string. A function gets the props of the editor and returns the HTML. It is read once, when the editor starts.
+[[tiny-mce-composer-on-editor-change]]pass:[<a class="anchor" href="#tiny-mce-composer-on-editor-change"></a>]`onEditorChange` (function `(event: Event, content: string) => void`)::
+Called with the HTML of the editor after the user changes the text. Its return value is ignored. It is called once a second at most, and at once when the editor loses the focus or is removed. `content` has the server address taken out of the image addresses that <<tiny-mce-composer-zimbra-origin,`zimbraOrigin`>> added. Store it and pass it back as <<tiny-mce-composer-value,`value`>>.
+[[tiny-mce-composer-on-click]]pass:[<a class="anchor" href="#tiny-mce-composer-on-click"></a>]`onClick` (function `(event: MouseEvent) => void`)::
+Called when the user clicks in the text. Its return value is ignored.
+[[tiny-mce-composer-on-editor-paste]]pass:[<a class="anchor" href="#tiny-mce-composer-on-editor-paste"></a>]`onEditorPaste` (function `(event: ClipboardEvent) => void`)::
+Called when the user pastes into the text. Its return value is ignored. The editor then scrolls to the pasted content.
+[[tiny-mce-composer-on-send-via-shortcut]]pass:[<a class="anchor" href="#tiny-mce-composer-on-send-via-shortcut"></a>]`onSendViaShortcut` (function `() => void`)::
+Called when the user presses *Ctrl+Enter* in the text. Its return value is ignored.
+[[tiny-mce-composer-on-editor-embed]]pass:[<a class="anchor" href="#tiny-mce-composer-on-editor-embed"></a>]`onEditorEmbed` (function `(files: File[]) => void`)::
+Called with the files that the user picks with the image menu, from the computer. Its return value is ignored. The editor does not insert the images: do it in the function. Set it for the `composer` and `signature` editor types. Without it, picking a file from the computer throws an error.
+[[tiny-mce-composer-supported-inline-image-type]]pass:[<a class="anchor" href="#tiny-mce-composer-supported-inline-image-type"></a>]`supportedInlineImageType` (string, default `image/*`)::
+The file types that the file chooser of <<tiny-mce-composer-on-editor-embed,`onEditorEmbed`>> offers, as in the `accept` attribute of an `input` element.
+[[tiny-mce-composer-handle-mention]]pass:[<a class="anchor" href="#tiny-mce-composer-handle-mention"></a>]`handleMention` (function `(contact: object | string, removed?: boolean) => void`)::
+Turns on mentions. When the user types `@` and three characters, the editor suggests contacts, and a chosen contact becomes a `mailto:` link with the name. Its return value is ignored. The function is called with the contact when the user chooses one. It is called with the address of the contact, as a string, and `true` when the user deletes the link.
+[[tiny-mce-composer-is-dirty-value]]pass:[<a class="anchor" href="#tiny-mce-composer-is-dirty-value"></a>]`isDirtyValue` (boolean, default `false`)::
+Marks the starting text as already changed, in the TinyMCE sense of unsaved changes. The editor calls <<tiny-mce-composer-on-editor-change,`onEditorChange`>> only for a changed text.
+[[tiny-mce-composer-composer-dom-id]]pass:[<a class="anchor" href="#tiny-mce-composer-composer-dom-id"></a>]`composerDomId` (string)::
+The `id` of the editor element. The toolbar is drawn in the element with the id `<composerDomId>-Toolbar`. Without it, the editor takes an id with a number, so you cannot know the id of its toolbar element.
+[[tiny-mce-composer-editor-type]]pass:[<a class="anchor" href="#tiny-mce-composer-editor-type"></a>]`editorType` (string)::
+The kind of editor. It decides the toolbar and the size of the editor. The values are:
++
+* `composer`: a large editor with the full toolbar, including the image menu.
+* `notes`: a compact editor with the full toolbar and no image menu.
+* `briefcase`: a large editor with the image menu, which offers only an image from a web address.
+* `signature`: a compact editor with a short toolbar and the image menu.
++
+Any other value, or none, gives a compact editor with a short toolbar and no image menu.
+[[tiny-mce-composer-disabled]]pass:[<a class="anchor" href="#tiny-mce-composer-disabled"></a>]`disabled` (boolean)::
+Makes the editor read only. You can change it after the editor has started.
+[[tiny-mce-composer-init]]pass:[<a class="anchor" href="#tiny-mce-composer-init"></a>]`init` (object `{ setup?: (editor: object) => void }`)::
+Options for the editor. Only `setup` is used. It is called with the TinyMCE editor while the editor starts, before the editor is ready. Use it to add a button or an event handler. See the https://www.tiny.cloud/docs/tinymce/latest/apis/tinymce.editor/[TinyMCE editor API^].
+[[tiny-mce-composer-zimbra-origin]]pass:[<a class="anchor" href="#tiny-mce-composer-zimbra-origin"></a>]`zimbraOrigin` (string)::
+The address of the Zimbra server. Take it from the `zimbraOrigin` field of the xref:fundamentals/host-context.adoc[context]. The editor adds it before the `/home/` image addresses that it shows, so that the images load in the Modern UI. It takes it out again from the HTML that it reports.
+[[tiny-mce-composer-zimbra-pref-html-editor-default-font-color]]pass:[<a class="anchor" href="#tiny-mce-composer-zimbra-pref-html-editor-default-font-color"></a>]`zimbraPrefHtmlEditorDefaultFontColor` (string, default `inherit`)::
+The text colour of new text, as a CSS colour.
+[[tiny-mce-composer-zimbra-pref-html-editor-default-font-family]]pass:[<a class="anchor" href="#tiny-mce-composer-zimbra-pref-html-editor-default-font-family"></a>]`zimbraPrefHtmlEditorDefaultFontFamily` (string, default `roboto`)::
+The font of new text, as a CSS font family.
+[[tiny-mce-composer-zimbra-pref-html-editor-default-font-size]]pass:[<a class="anchor" href="#tiny-mce-composer-zimbra-pref-html-editor-default-font-size"></a>]`zimbraPrefHtmlEditorDefaultFontSize` (string, default `14px`)::
+The size of new text, as a CSS length.
+[[tiny-mce-composer-zimbra-pref-compose-direction]]pass:[<a class="anchor" href="#tiny-mce-composer-zimbra-pref-compose-direction"></a>]`zimbraPrefComposeDirection` (string, default `LTR`)::
+The writing direction of the text, `LTR` or `RTL`.
+[[tiny-mce-composer-convert-url]]pass:[<a class="anchor" href="#tiny-mce-composer-convert-url"></a>]`convertUrl` (boolean, default `true`)::
+Lets TinyMCE rewrite the addresses of links and images (its `convert_urls` option). Set it to `false` to keep them as they are, as the signature editor does.
+[[tiny-mce-composer-custom-fonts]]pass:[<a class="anchor" href="#tiny-mce-composer-custom-fonts"></a>]`customFonts` (array of string)::
+Fonts to add to the font list, each written as `Name=font family`, for example `My Font=my font,sans-serif`. Always set it, with an empty array for none. Without it, the editor throws an error when it starts.
+[[tiny-mce-composer-set-ref]]pass:[<a class="anchor" href="#tiny-mce-composer-set-ref"></a>]`setRef` (function `(composer: object) => void`)::
+Called once with the editor component while the editor starts. Its return value is ignored. Use it to call the methods in the usage notes. A `ref` does not work, because the component loads when it is first drawn.
+[[tiny-mce-composer-on-editor-after-render]]pass:[<a class="anchor" href="#tiny-mce-composer-on-editor-after-render"></a>]`onEditorAfterRender` (function `() => void`)::
+Called when the editor is ready. Its return value is ignored.
+[[tiny-mce-composer-spell-check-id]]pass:[<a class="anchor" href="#tiny-mce-composer-spell-check-id"></a>]`spellCheckId` (string)::
+The id under which the spell checker keeps the state of this editor. Without it, the editor uses the id of the current tab, so two editors in one tab share their spell check state. Set it when you draw more than one editor in a tab.
+[[tiny-mce-composer-tinymce-browser-spell-check]]pass:[<a class="anchor" href="#tiny-mce-composer-tinymce-browser-spell-check"></a>]`tinymceBrowserSpellCheck` (boolean)::
+Has no effect. The editor reads the `tinymceBrowserSpellCheck` key of the client configuration of the Modern UI, and uses `true` when the key is not set.
+[[tiny-mce-composer-other-props]]pass:[<a class="anchor" href="#tiny-mce-composer-other-props"></a>]Any other prop (any)::
+Ignored.
+
+=== Returns
+
+The editor `div`, followed by the output of the `composer` slot. The toolbar is drawn into the element that <<tiny-mce-composer-composer-dom-id,`composerDomId`>> names. The component draws a blank `div` until it has loaded.
+
+=== Usage notes
+
+* Render an element with the id `<composerDomId>-Toolbar` before the editor. The signature, appointment notes and document editors of the Modern UI do this.
+* The editor uses TinyMCE version 8 with the plugins `autolink`, `link`, `table`, `advlist`, `lists`, `image`, `charmap`, `emoticons` and `code`.
+* The component that <<tiny-mce-composer-set-ref,`setRef`>> gives has these methods. Call them after <<tiny-mce-composer-on-editor-after-render,`onEditorAfterRender`>>.
+** `getEditor()` returns the TinyMCE editor.
+** `getEditorContent()` returns the HTML, as <<tiny-mce-composer-on-editor-change,`onEditorChange`>> reports it.
+** `setEditorContent(html)` replaces the text.
+** `focus()` moves the focus to the editor.
+** `flushEditorChange(promisified?: boolean)` calls a waiting <<tiny-mce-composer-on-editor-change,`onEditorChange`>> at once. With `true` it returns a promise that resolves after 100 ms.
+
+[#picker]
+== Picker
+
+An emoji picker: a panel with a search field and the emojis in groups. It is the `Picker` of the third-party library Emoji Mart, shared with Zimlets through its React wrapper. Use it when your Zimlet lets the user add an emoji, as the chat Zimlet does. Emoji Mart documents the options.
+
+=== Signature
+
+[source,js]
+----
+import { Picker } from '@zimbra-client/components';
+
+<Picker data={emojiData} onEmojiSelect={handleEmojiSelect} />
+----
+
+=== Props
+
+[[picker-data]]pass:[<a class="anchor" href="#picker-data"></a>]`data` (object)::
+The emoji data, in the format of the `@emoji-mart/data` package. The chat Zimlet ships its own file with the emojis it supports.
++
+WARNING: Without it, the picker loads the data from a public content delivery network when it starts. That needs access to the internet from the browser of the user. Pass `data` so that the picker works without that request.
+[[picker-on-emoji-select]]pass:[<a class="anchor" href="#picker-on-emoji-select"></a>]`onEmojiSelect` (function `(emoji: object) => void`)::
+Called when the user chooses an emoji. Its return value is ignored. The `native` field of `emoji` holds the character.
+[[picker-other-props]]pass:[<a class="anchor" href="#picker-other-props"></a>]Any other prop (any)::
+An option of the picker, such as `theme`, `perLine`, `set`, `i18n` and `previewPosition`. See the https://github.com/missive/emoji-mart[Emoji Mart documentation^].
+
+=== Returns
+
+A `div` that holds the picker.
+
+=== Usage notes
+
+* The picker starts once, when the component is first drawn. Later changes of the props are passed to it.
+* The `i18n` option translates the labels of the picker. The picker uses English when you leave it out.
+* Show the picker only when it is needed, and remove it after a choice, as the chat Zimlet does.
+
+[#next-step]
+== Next step
+
+Continue with the components for contacts, in xref:reference/shims/components/contacts.adoc[Contacts].

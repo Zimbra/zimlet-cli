@@ -1,0 +1,302 @@
+= Buttons and progress
+
+The buttons and the waiting indicators of `@zimbra-client/blocks`. Use them to give your xref:reference/glossary.adoc#zimlet[Zimlet] the controls of the xref:reference/glossary.adoc#modern-ui[Modern UI]. A button starts an action, and an indicator shows that work is running. Pick the member by what the user waits for. `Button` finishes at once, `AnimatedButton` starts a request, and `ProgressButton` reports a percentage. `Spinner` and `LoaderBar` show a wait in any other place.
+
+[#members]
+== Members
+
+<<button,`Button`>>::
+A button or a link that looks like a button.
+
+<<animated-button,`AnimatedButton`>>::
+A button that shows a spinner while a request runs and that can shake.
+
+<<progress-button,`ProgressButton`>>::
+A button that fills with a progress bar.
+
+<<spinner,`Spinner`>>::
+A small rotating circle for a wait.
+
+<<loader-bar,`LoaderBar`>>::
+A thin bar with a moving highlight for a wait.
+
+[#button]
+== Button
+
+A button in the style of the Modern UI. Use it for any click action, such as the main action of a screen, or for a link that looks like a button. Use <<animated-button,`AnimatedButton`>> instead when the click starts a request and the button must show that it waits.
+
+=== Signature
+
+[source,js]
+----
+import { Button } from '@zimbra-client/blocks';
+
+<Button styleType="primary" brand="primary" onClick={handler}>{label}</Button>
+----
+
+=== Props
+
+[[button-style-type]]pass:[<a class="anchor" href="#button-style-type"></a>]`styleType` (string)::
+The look of the button: `primary`, `secondary`, `floating`, `tertiary`, `text` or `coloredText`. Without it the button has the plain base style.
+
+[[button-brand]]pass:[<a class="anchor" href="#button-brand"></a>]`brand` (string)::
+The colour variant: `primary`, `success`, `info`, `warning` or `danger`. It applies to the style types `primary`, `secondary`, `floating` and `coloredText`. The other types ignore it.
+
+[[button-size]]pass:[<a class="anchor" href="#button-size"></a>]`size` (string, default `regular`)::
+The size: `small`, `regular` or `large`.
+
+[[button-icon]]pass:[<a class="anchor" href="#button-icon"></a>]`icon` (component)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn beside the label. Pass the component, not a name.
+
+[[button-custom-icon]]pass:[<a class="anchor" href="#button-custom-icon"></a>]`customIcon` (array of array)::
+An icon node, an array of `[name, attributes]` pairs, for an icon that `lucide-preact` does not have, such as one from the https://github.com/Zimbra/lucide-lab[@zimbra/lucide-lab^] package. Install the package in your Zimlet, because the Modern UI does not share it. Use it when you have no `icon`.
+
+[[button-icon-position]]pass:[<a class="anchor" href="#button-icon-position"></a>]`iconPosition` (string, default `left`)::
+The side of the label that holds the icon: `left` or `right`.
+
+[[button-icon-size]]pass:[<a class="anchor" href="#button-icon-size"></a>]`iconSize` (string, default `smd`)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+
+[[button-icon-class]]pass:[<a class="anchor" href="#button-icon-class"></a>]`iconClass` (string)::
+A class name added to the icon.
+
+[[button-icon-only]]pass:[<a class="anchor" href="#button-icon-only"></a>]`iconOnly` (boolean, default `false`)::
+Set it on a button that has an icon and no label. The button then shows no shadow when the pointer is over it.
+
+[[button-align-left]]pass:[<a class="anchor" href="#button-align-left"></a>]`alignLeft` (boolean, default `false`)::
+Removes the left margin. A button has a margin of 5 px on every side.
+
+[[button-href]]pass:[<a class="anchor" href="#button-href"></a>]`href` (string)::
+Makes the button a link. The element is an `a` with `role="button"`.
+
+[[button-use-anchor]]pass:[<a class="anchor" href="#button-use-anchor"></a>]`useAnchor` (boolean, default `false`)::
+Renders a plain `a` element instead of the `Link` of xref:reference/shims/libraries.adoc[`preact-router`]. It matters only with `href`.
+
+[[button-type]]pass:[<a class="anchor" href="#button-type"></a>]`type` (string, default `button`)::
+The `type` of the `button` element, such as `submit`. It does not apply to a link.
+
+[[button-class]][[button-class-name]]pass:[<a class="anchor" href="#button-class"></a>]`class`, `className` (string)::
+Class names added to the button. You can set both.
+
+[[button-children]]pass:[<a class="anchor" href="#button-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The label, or other content of the button.
+
+[[button-other-props]]pass:[<a class="anchor" href="#button-other-props"></a>]Any other prop (any)::
+Set on the element as it is, such as `onClick`, `disabled`, `title` and `aria-label`.
+
+=== Returns
+
+A `button` element, or an `a` element when you set `href`.
+
+=== Usage notes
+
+* Without `type` or `href`, the button gets `type="button"`. It does not submit a form. Set `type="submit"` for a button that does.
+* Pass `icon` as an icon component, not as a name. A string such as `icon="star"` shows no icon, and the Modern UI logs `Icon => received name as string` in the browser console. See xref:fundamentals/shared-libraries.adoc#icons[Icons].
+* A button with only an icon has no text. Set `aria-label` on it, so that a screen reader can name it.
+* A value that the lists above do not name adds no style.
+* A prop such as `title` can hold a `<Text>` element. The button replaces it with the translated text. See xref:go-deeper/localization.adoc[Localization].
+* A disabled button is faded and ignores the pointer.
+* The style types look like this:
+** `primary`: a filled button.
+** `secondary`: an outlined button.
+** `floating`: no background and no border, with coloured text.
+** `tertiary`: a flat button that gets a background and a border when the pointer is over it.
+** `text`: underlined text, with no background and no border.
+** `coloredText`: coloured text without underline, with no background and no border.
+
+[#animated-button]
+== AnimatedButton
+
+A button that shows a spinner while a request runs and that can shake to flag a failure. Use it for the action that sends data, such as Save or Sign in, where the user must see that the click arrived. Use <<button,`Button`>> for an action that finishes at once, and <<progress-button,`ProgressButton`>> when you can report a percentage.
+
+=== Signature
+
+[source,js]
+----
+import { AnimatedButton } from '@zimbra-client/blocks';
+
+<AnimatedButton title={label} onClick={handler} loading={isLoading} disabled={isLoading} />
+----
+
+=== Props
+
+[[animated-button-title]]pass:[<a class="anchor" href="#animated-button-title"></a>]`title` (xref:reference/glossary.adoc#node[node])::
+The label of the button. Use it and not `children`.
+
+[[animated-button-tool-tip]]pass:[<a class="anchor" href="#animated-button-tool-tip"></a>]`toolTip` (string)::
+The text that the browser shows when the pointer rests on the button.
+
+[[animated-button-loading]]pass:[<a class="anchor" href="#animated-button-loading"></a>]`loading` (boolean)::
+Shows a spinner in the middle of the button. It does not disable the button.
+
+[[animated-button-disabled]]pass:[<a class="anchor" href="#animated-button-disabled"></a>]`disabled` (boolean)::
+Disables the button.
+
+[[animated-button-shake]]pass:[<a class="anchor" href="#animated-button-shake"></a>]`shake` (boolean)::
+Shakes the button sideways when it changes to `true`.
++
+WARNING: Also pass <<animated-button-after-shake,`afterShake`>>. Without it, the button throws a `TypeError` 250 ms after the shake starts.
+
+[[animated-button-after-shake]]pass:[<a class="anchor" href="#animated-button-after-shake"></a>]`afterShake` (function `() => void`)::
+Called without arguments, 250 ms after the shake starts. Its return value is ignored. Required when you set <<animated-button-shake,`shake`>>. Use it to set `shake` back to `false`.
+
+[[animated-button-icon]]pass:[<a class="anchor" href="#animated-button-icon"></a>]`icon` (component)::
+An icon component from `lucide-preact`, drawn before the label.
+
+[[animated-button-custom-icon]]pass:[<a class="anchor" href="#animated-button-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for an icon that `lucide-preact` does not have, such as one from the https://github.com/Zimbra/lucide-lab[@zimbra/lucide-lab^] package. Install the package in your Zimlet. Use it when you have no `icon`.
+
+[[animated-button-icon-size]]pass:[<a class="anchor" href="#animated-button-icon-size"></a>]`iconSize` (string, default `sm`)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+
+[[animated-button-children]]pass:[<a class="anchor" href="#animated-button-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The label, when you leave out `title`. See the usage notes.
+
+[[animated-button-other-props]]pass:[<a class="anchor" href="#animated-button-other-props"></a>]Any other prop (any)::
+Passed to <<button,`Button`>>, such as `styleType`, `brand`, `size`, `onClick` and `class`.
+
+=== Returns
+
+A `button` element with the icon, the label and, while `loading`, a spinner.
+
+=== Usage notes
+
+* `title` is the label on the button, and `toolTip` is the hover text. Do not mix them up.
+* The label comes from `children` only when it is text or a list of several children. A single element as `children` is not shown, so use `title`.
+* `loading` does not disable the button. Set `disabled` as well, so that the user cannot send the request twice.
+* `iconPosition` has no effect. The icon is always before the label.
+
+[#progress-button]
+== ProgressButton
+
+A primary button that fills with a progress bar. Use it for an action with a measurable progress, such as a file upload. Use <<animated-button,`AnimatedButton`>> when you cannot measure the progress.
+
+=== Signature
+
+[source,js]
+----
+import { ProgressButton } from '@zimbra-client/blocks';
+
+<ProgressButton
+	text={label}
+	onClick={handler}
+	inProgress={isRunning}
+	disabled={isRunning}
+	showProgress={isRunning}
+	remainingPercent={`${100 - donePercent}%`}
+/>
+----
+
+=== Props
+
+[[progress-button-text]]pass:[<a class="anchor" href="#progress-button-text"></a>]`text` (xref:reference/glossary.adoc#node[node])::
+The label of the button.
+
+[[progress-button-on-click]]pass:[<a class="anchor" href="#progress-button-on-click"></a>]`onClick` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user clicks the button. Its return value is ignored.
+
+[[progress-button-disabled]]pass:[<a class="anchor" href="#progress-button-disabled"></a>]`disabled` (boolean)::
+Disables the button.
+
+[[progress-button-in-progress]]pass:[<a class="anchor" href="#progress-button-in-progress"></a>]`inProgress` (boolean)::
+Marks the work as running. It does not disable the button, so pass `disabled` as well. The button shows `tooltip` as its hover text.
+
+[[progress-button-show-progress]]pass:[<a class="anchor" href="#progress-button-show-progress"></a>]`showProgress` (boolean or number)::
+Draws the progress bar when it is truthy.
+
+[[progress-button-remaining-percent]]pass:[<a class="anchor" href="#progress-button-remaining-percent"></a>]`remainingPercent` (string)::
+The width of the progress bar, such as `'60%'`. A number is a width in pixels.
+
+[[progress-button-tooltip]]pass:[<a class="anchor" href="#progress-button-tooltip"></a>]`tooltip` (string)::
+The hover text of the button. It shows only while `inProgress` is truthy.
+
+[[progress-button-class-name]]pass:[<a class="anchor" href="#progress-button-class-name"></a>]`className` (string)::
+A class name added to the button.
+
+[[progress-button-data-skip-link-item]]pass:[<a class="anchor" href="#progress-button-data-skip-link-item"></a>]`dataSkipLinkItem` (boolean)::
+Makes the button a target of the skip link. The skip link moves the keyboard focus to the first visible element that has this mark.
+
+=== Returns
+
+A `span` that holds a `button`.
+
+=== Usage notes
+
+* The button is always a primary button in the primary brand colour. You cannot change its style type.
+* The bar is drawn from the right edge of the button. Give `remainingPercent` the share that is still to do.
+* The component ignores every prop that the table does not list, such as `title` and `aria-label`.
+
+[#spinner]
+== Spinner
+
+A small rotating circle that shows that something loads. Use it next to a text that says what happens, or in the middle of an area that is still empty. Use <<loader-bar,`LoaderBar`>> for a thin bar along an area that loads.
+
+=== Signature
+
+[source,js]
+----
+import { Spinner } from '@zimbra-client/blocks';
+
+<Spinner size="md" />
+----
+
+=== Props
+
+[[spinner-size]]pass:[<a class="anchor" href="#spinner-size"></a>]`size` (string, default `sm`)::
+The size of the circle: `xs`, `sm`, `md`, `lg` or `xl`.
+
+[[spinner-block]]pass:[<a class="anchor" href="#spinner-block"></a>]`block` (boolean, default `false`)::
+Centres a large circle in an element that fills the width and the height of its parent.
+
+[[spinner-class]]pass:[<a class="anchor" href="#spinner-class"></a>]`class` (string)::
+A class name. With `block` it goes to the element around the circle.
+
+[[spinner-btn-spinner]]pass:[<a class="anchor" href="#spinner-btn-spinner"></a>]`btnSpinner` (boolean, default `false`)::
+A thicker, white circle for use inside a coloured button.
+
+[[spinner-floating]]pass:[<a class="anchor" href="#spinner-floating"></a>]`floating` (boolean, default `false`)::
+Draws the default colour of the circle, also with `btnSpinner`. Use it inside a floating button.
+
+[[spinner-dark]]pass:[<a class="anchor" href="#spinner-dark"></a>]`dark` (boolean, default `false`)::
+Swaps the colour of the circle, so that it shows on a dark background.
+
+=== Returns
+
+A `span` element. With `block`, a `div` element that holds the `span`.
+
+=== Usage notes
+
+* The sizes follow the font size around the circle. `xs` is half a line of text, `sm` one line, `md` one and a half, `lg` two and `xl` three.
+* The circle has no text and no role. Say what loads in the text next to it.
+
+[#loader-bar]
+== LoaderBar
+
+A thin bar with a moving highlight. Use it along the top of a list or a panel while its content loads, when you cannot tell how long it takes. Use <<spinner,`Spinner`>> for a small place, and <<progress-button,`ProgressButton`>> when you can report a percentage.
+
+=== Signature
+
+[source,js]
+----
+import { LoaderBar } from '@zimbra-client/blocks';
+
+<LoaderBar />
+----
+
+=== Props
+
+None.
+
+=== Returns
+
+A `div` element, 3 px high, that fills the width of its parent.
+
+=== Usage notes
+
+* The component ignores every prop. A `class` that you pass has no effect, so style the parent element instead.
+* The bar has no text and no role. Say what loads in the text near it.
+
+[#next-step]
+== Next step
+
+Learn how to show content above the page in xref:reference/shims/blocks/dialogs-and-overlays.adoc[Dialogs and overlays].

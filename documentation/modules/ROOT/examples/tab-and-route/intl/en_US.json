@@ -1,7 +1,7 @@
 {
 	"zimlet": {
 		"label": "My Zimlet",
-		"description": "Adds a Meeting rooms tab to the Video area."
+		"description": "Adds a Meeting rooms tab to the Video vertical."
 	},
 	"my-zimlet": {
 		"tabTitle": "Meeting rooms",

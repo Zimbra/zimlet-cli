@@ -53,7 +53,7 @@ The value of the field is an object with three keys. `zimlet` holds the name of 
 
 The Settings dialog finds the saved value by `name` only. Use a setting name that no other Zimlet uses, so that two Zimlets do not read each other's value.
 
-See xref:reference/slots/invoke-plugin.adoc[Direct invokePlugin extension points] for all keys of the `settings` registration and of a field.
+See xref:reference/slots/data-keys.adoc[Data keys] for all keys of the `settings` registration and of a field.
 
 [#read]
 == Read both values

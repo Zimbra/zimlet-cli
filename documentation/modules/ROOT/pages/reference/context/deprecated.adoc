@@ -11,7 +11,7 @@ localStorage.setItem('my-zimlet.count', JSON.stringify(3));
 ----
 
 [[shims]]pass:[<a class="anchor" href="#shims"></a>]`shims`::
-An object that holds the shared libraries of the Modern UI. Do not use it. Import the library from its module instead. See xref:fundamentals/shared-libraries.adoc[Shared libraries and imports].
+An object that holds the shared libraries of the Modern UI. Do not use it. Import the library from its module instead. See xref:fundamentals/shared-libraries.adoc[Shared libraries].
 +
 [source,js]
 ----

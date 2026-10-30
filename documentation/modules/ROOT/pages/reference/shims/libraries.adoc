@@ -1,0 +1,82 @@
+= Third-party libraries
+
+The Modern UI shares eleven third-party modules with every xref:reference/glossary.adoc#zimlet[Zimlet]: Preact and its companions, the Redux helpers, the router, Moment and DOMPurify. Find here the names that you can import from each module and the upstream documentation that applies. You import them like any package, and the build leaves them out of the bundle, as xref:fundamentals/shared-libraries.adoc[Shared libraries] explains. The Modern UI provides only some names of some modules. A name that it does not provide fails when the code runs, not when you build.
+
+Each entry names the major version that the current Modern UI uses. Read the upstream documentation for that version, because a Modern UI release can change it.
+
+[#whole-libraries]
+== Whole libraries
+
+Import these as the upstream documentation shows. The entries name the exceptions.
+
+[[preact]]pass:[<a class="anchor" href="#preact"></a>]`preact` (version 10)::
+The core of Preact: `createElement`, `h`, `Fragment`, `Component`, `render`, `createContext`, `createRef`, `cloneElement`, `hydrate`, `isValidElement`, `options` and `toChildArray`. Import `createElement` in every file that uses JSX, as xref:fundamentals/shared-libraries.adoc#jsx-and-createelement[JSX and createElement] explains. See the https://preactjs.com/guide/v10/api-reference[Preact API reference^].
+
+[[preact-hooks]]pass:[<a class="anchor" href="#preact-hooks"></a>]`preact/hooks` (version 10)::
+The Preact hooks: `useState`, `useEffect`, `useLayoutEffect`, `useMemo`, `useCallback`, `useRef`, `useReducer`, `useContext`, `useId`, `useImperativeHandle`, `useDebugValue` and `useErrorBoundary`. See the https://preactjs.com/guide/v10/hooks[Preact hooks guide^]. The hooks of the Modern UI are on xref:reference/shims/hooks.adoc[Hooks].
+
+[[preact-compat]]pass:[<a class="anchor" href="#preact-compat"></a>]`preact/compat` (version 10)::
+The React compatibility layer of Preact, with `memo`, `forwardRef`, `lazy`, `Suspense`, `createPortal`, `PureComponent`, `Children` and the rest of its exports. Imports of `react` and `react-dom` resolve to this module too. See https://preactjs.com/guide/v10/switching-to-preact[Switching to Preact^].
+
+[[preact-render-to-string]]pass:[<a class="anchor" href="#preact-render-to-string"></a>]`preact-render-to-string` (version 6)::
+`render(vnode, context)` turns an element into an HTML string. Its `vnode` argument is an xref:reference/glossary.adoc#element[element], and its optional `context` argument is an object. Use it when a handler needs markup as text instead of a rendered component. Import `render` by name. The other names of the upstream library do not work in a Zimlet. A call to `renderToString`, `renderToStaticMarkup`, `renderToStringAsync` or the default import fails, and `shallowRender` throws `Export … was not found`. See the https://github.com/preactjs/preact-render-to-string[preact-render-to-string documentation^].
+
+[[preact-markup]]pass:[<a class="anchor" href="#preact-markup"></a>]`preact-markup` (version 2)::
+The `Markup` component renders an HTML or XML string as Preact elements. Import the default export: `import Markup from 'preact-markup'`. Its main props are `markup` (string, the text to render), `type` (string, `xml` by default or `html`) and `components` (object). The `components` object maps element names to components. The `allow-scripts` and `allow-events` props keep `script` elements and turn `on…` attributes into functions. Leave them off. Sanitise markup that comes from outside with <<dompurify,`dompurify`>> first. See the https://github.com/developit/preact-markup[preact-markup documentation^].
+
+[[redux-actions]]pass:[<a class="anchor" href="#redux-actions"></a>]`redux-actions` (version 3)::
+Helpers for Redux actions and reducers: `createAction`, `createActions`, `createCurriedAction`, `combineActions`, `handleAction` and `handleActions`. Use `createAction` and `handleActions` to add state of your own, as xref:go-deeper/redux.adoc[Shared state with Redux] describes. See the https://redux-actions.js.org/[redux-actions documentation^].
+
+[[moment]]pass:[<a class="anchor" href="#moment"></a>]`moment` (version 2)::
+Parses, calculates and formats dates and times. Import the default export: `import moment from 'moment'`. See the https://momentjs.com/docs/[Moment documentation^].
+
+[[dompurify]]pass:[<a class="anchor" href="#dompurify"></a>]`dompurify` (version 3)::
+Removes markup that can run code from an HTML string. Import the default export and call `sanitize` on it: `import DOMPurify from 'dompurify'`, then `DOMPurify.sanitize(html, options)`. A named import such as `import { sanitize } from 'dompurify'` builds, but calling it fails. See xref:go-deeper/security-and-best-practices.adoc#sanitise-html[Sanitise HTML from outside] for how to use it, and the https://github.com/cure53/DOMPurify[DOMPurify documentation^] for the options.
++
+WARNING: The Modern UI sanitises the HTML of messages with the same copy, and it registers hooks on it. Pass options to `sanitize` on each call. Do not call `setConfig`, `addHook` or another method that changes the settings or hooks of the shared copy. The change also applies to the Modern UI. The hooks of the Modern UI also run on your calls. One of them sets `target="_blank"` on links.
+
+[#subsets]
+== Libraries with a subset of their exports
+
+The Modern UI provides only the names listed here. Another name of the same library builds, and then throws `Export … was not found` when the code calls it.
+
+[#react-redux]
+=== react-redux (version 9)
+
+Connects components to the Redux store of the Modern UI. Use `useSelector` to read state and `useDispatch` to send actions, as xref:go-deeper/redux.adoc[Shared state with Redux] shows. The Modern UI wraps the whole application in a `Provider`, so a component of your Zimlet reads the store without one. See the https://redux.js.org/react-redux/api/hooks[react-redux hooks documentation^].
+
+[[react-redux-use-selector]]pass:[<a class="anchor" href="#react-redux-use-selector"></a>]`useSelector(selector)`::
+Takes a `selector` (function `(state: object) => any`) and returns the value that it picks from the state. The component renders again when that value changes. Call it in a component or a hook. See https://redux.js.org/react-redux/api/hooks#useselector[useSelector^].
+
+[[react-redux-use-dispatch]]pass:[<a class="anchor" href="#react-redux-use-dispatch"></a>]`useDispatch()`::
+Returns the `dispatch` function of the store, a function `(action: object) => any`. Call it in a component or a hook. Outside a component, use `store.dispatch` from the context, as xref:reference/context/store/dispatch.adoc[dispatch] describes. See https://redux.js.org/react-redux/api/hooks#usedispatch[useDispatch^].
+
+[[react-redux-connect]]pass:[<a class="anchor" href="#react-redux-connect"></a>]`connect(mapStateToProps, mapDispatchToProps)`::
+Returns a function that wraps a component and passes it props from the state and action dispatchers. `mapStateToProps` (function `(state: object, ownProps: object) => object`) and `mapDispatchToProps` (function or object) are both optional. Use it for a class component, or when you prefer the wrapper to the hooks. See https://redux.js.org/react-redux/api/connect[connect^].
+
+[[react-redux-provider]]pass:[<a class="anchor" href="#react-redux-provider"></a>]`Provider`::
+The component that makes a store available to the components below it. A Zimlet seldom needs it, and no active Zimlet imports it. See https://redux.js.org/react-redux/api/provider[Provider^].
+
+[[react-redux-batch]]pass:[<a class="anchor" href="#react-redux-batch"></a>]`batch(fn)`::
+Calls `fn` (function `() => void`) at once. In this version of react-redux, it adds no batching of its own. Use it only to keep older code unchanged. See https://redux.js.org/react-redux/api/batch[batch^].
+
+[#preact-router]
+=== preact-router (version 4)
+
+The router of the Modern UI. Zimlets share its one instance, so that they can move between screens. Do not bring your own router. See the https://github.com/preactjs/preact-router[preact-router documentation^]. Names such as `Router`, `Route`, `getCurrentUrl` and `useRouter` are not provided.
+
+[[preact-router-route]]pass:[<a class="anchor" href="#preact-router-route"></a>]`route(url, replace)`::
+Goes to the address `url` (string) and shows the screen that matches it. It adds an entry to the browser history, or replaces the current entry when the optional `replace` (boolean, default `false`) is `true`. It returns a boolean: `true` when a router handled the address. When no router can handle it, the call changes nothing. See https://github.com/preactjs/preact-router#programmatically-triggering-route[Programmatically triggering route^].
+
+[[preact-router-link]]pass:[<a class="anchor" href="#preact-router-link"></a>]`Link`::
+An `a` element that goes to its `href` through the router, so that a click does not load the page again. It takes the props of an `a` element. The router handles a click only when all of these hold. `href` starts with `/`, `target` is not set or is `_self`, and no modifier key is held. The main button must be used, and a router must be able to handle the address. The browser follows any other click. It also follows every click on a link with the `native` attribute. See https://github.com/preactjs/preact-router[the preact-router documentation^].
+
+[#preact-router-match]
+=== preact-router/match (version 4)
+
+The companion module of the router. It provides one name.
+
+[[preact-router-match-match]]pass:[<a class="anchor" href="#preact-router-match-match"></a>]`Match`::
+A component that tells its children whether the current address matches a path. Its `path` prop (string) is the path to test. Its `children` prop is a function `(state: { url: string, path: string, matches: boolean }) => node`, where the return value is a xref:reference/glossary.adoc#node[node]. `matches` is `true` when the current address matches `path`. Use it to style a control of your own differently on the screen that it opens. The `Link` of `preact-router/match` is not provided. Use `Link` from <<preact-router-link,`preact-router`>>. See the active matching section of the https://github.com/preactjs/preact-router[preact-router documentation^].
+
+Next, see xref:reference/shims/components.adoc[Components] for the parts of the Modern UI screens that you can import.

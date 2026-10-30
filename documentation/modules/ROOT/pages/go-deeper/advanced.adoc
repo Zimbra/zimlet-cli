@@ -1,0 +1,111 @@
+= Advanced topics
+
+Two tasks go beyond the default setup of a xref:reference/glossary.adoc#zimlet[Zimlet]. One changes how the build assembles the Zimlet. The other reads data from a service outside Zimbra through the server. Use the first when the code must differ between development and production, or when it must import from somewhere the default build does not look. Use the second when a feature needs data that only another service holds.
+
+[#change-the-build]
+== Change the build
+
+`zimlet watch` and `zimlet build` read `zimlet.config.js` from the project folder. The file exports one function. It receives `config`, the build configuration, and `env`, which describes the run. It changes `config` in place. The default template ships the file with an empty function, so the build is unchanged until you edit it. For every setting that you can change, see xref:reference/files/zimlet-config.adoc[zimlet.config.js].
+
+The example Zimlet shows the status of a service in the sidebar footer. In `zimlet watch` it reads fixed data from a mock module, so you can develop before an administrator has allowed the service. In `zimlet build` it reads the live service. The Zimlet imports `service-client`, and `zimlet.config.js` chooses the file behind that name. The live client is in <<call-through-the-proxy,Call an external service through the proxy>>.
+
+.src/index.js
+[source,js]
+----
+include::example$advanced/index.js[]
+----
+
+.zimlet.config.js
+[source,js]
+----
+include::example$advanced/zimlet.config.js[]
+----
+
+.src/api/mock-client.js
+[source,js]
+----
+include::example$advanced/api/mock-client.js[]
+----
+
+`env.watch` is `true` for `zimlet watch` and missing for `zimlet build`. `config.resolve.alias` maps an import name to a module. `env.cwd` is the project folder. Build the path from it, because `__dirname` is not defined in this file.
+
+WARNING: Add your own entries to `config.resolve.alias`, and never replace the object. The build stores the aliases of the xref:fundamentals/shared-libraries.adoc[shared libraries] there. Without them, the Zimlet bundles its own copy of each library.
+
+To try the example:
+
+. Save `zimlet.config.js` in the project folder, and the files above and below in `src/`.
+. Run `zimlet watch` and load the Zimlet, as xref:run-package-deploy/run-and-debug.adoc[Run and debug] describes.
+. Stop `zimlet watch`, run `zimlet build`, and search the result for the mock text:
++
+[source,sh]
+----
+grep -c "mock data" build/index.js
+----
+
+The footer of the mail sidebar shows `Service status: operational (mock data)` while `zimlet watch` serves the Zimlet. The `grep` command prints `0`, because the built Zimlet holds the live client. Test the built Zimlet too, because `zimlet watch` never runs the live client.
+
+If an edit has no effect:
+
+* Stop `zimlet watch` and start it again. The build reads the file once, when the command starts.
+* Read the output of the command. An error in the function prints `Error executing transformer at <path>:`, and the build still ends with `Compiled successfully!`.
+* Export the function with `export default`. The build ignores an object, a named export and any other value without a message.
+
+[#call-through-the-proxy]
+== Call an external service through the proxy
+
+The Zimbra server can make a request to another service for the signed-in user. Send the request to `/service/proxy` with the address of the service in the `target` query parameter. The server answers with the response of the service. The server contacts only the domains that an administrator has allowed, so ask for your domain before you ship the Zimlet. See xref:go-deeper/security-and-best-practices.adoc#external-services[Call other services through the server] for what to check before you send user data to a service.
+
+An administrator allows a domain for the xref:reference/glossary.adoc#cos[class of service] of the users:
+
+[source,sh]
+----
+zmprov modifyCos <cos-name> +zimbraProxyAllowedDomains <domain>
+----
+
+An entry is a host name such as `zimbra.github.io`. An entry that starts with `*`, such as `*.example.com`, allows every host that ends with the text after the asterisk. A single `*` allows every host, so do not ask an administrator for it.
+
+The live client of the example reads the status from the placeholder address `https://zimbra.github.io/zimlet-cli/api/status`. Replace it with the address of your service.
+
+.src/api/live-client.js
+[source,js]
+----
+include::example$advanced/api/live-client.js[]
+----
+
+The request has these parts:
+
+Address::
+`zimbraOrigin` from the xref:fundamentals/host-context.adoc[context], then `/service/proxy?target=` and the address of the service. The address must be absolute. Encode it with `encodeURIComponent`.
+
+Session::
+Set `credentials: 'include'`, so that the browser sends the session of the user. The server refuses a request without a valid session. The proxy needs no request token. Do not send the token of the Modern UI, because the server passes the headers of the request on to the service.
+
+Method::
+`GET`, `POST`, `PUT` and `DELETE`. Any other method is refused. A `POST` or `PUT` sends its body and its `Content-Type` header to the service.
+
+Headers::
+The server passes the headers of your request on to the service. It drops these: `Accept` headers, `Cache-Control`, `Connection`, `Content-Length`, `Cookie`, `Host`, `Keep-Alive`, `Pragma` and `Transfer-Encoding`. It also drops the headers that name the original host, such as `X-Host`. It treats the headers of the response in the same way.
+
+Response::
+The status, the body and the headers of the service, except those the server drops. Read it as you read the response of any other `fetch`. A service that returns JSON needs `response.json()`, as the example does.
+
+These statuses come from the proxy itself and not from the service:
+
+`400`::
+The `target` parameter is missing, or the service answered with a redirect to a host that is not allowed.
+
+`401`::
+The request has no valid session. Check `credentials: 'include'`.
+
+`403`::
+The host is not on the list of the class of service, or its address is loopback, link-local or private. Ask the administrator to allow the domain. By default, the server also refuses a private address when the domain is on the list.
+
+`405`::
+The method is not one of the four above.
+
+A request that fails for another reason, such as a service that does not answer, ends with a server error status. Always add `.catch` and a check of `response.ok`, as the example does.
+
+[#next-step]
+== Next step
+
+Build the Zimlet for your users in xref:run-package-deploy/build-and-package.adoc[Build and package].

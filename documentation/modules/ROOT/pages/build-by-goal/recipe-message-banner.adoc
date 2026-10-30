@@ -1,0 +1,258 @@
+= Show a banner above the message text
+
+This recipe shows a warning banner above the text of an open message in the xref:reference/glossary.adoc#modern-ui[Modern UI]. The example warns when a message comes from outside the organization of the user. The banner names the sender's domain and counts the links in the text. It also offers a link to security tips and a button that hides it. Use the same pattern for a note that the user must see before reading a message, such as a warning about its content. A xref:reference/glossary.adoc#zimlet[Zimlet] adds the banner by registering one component for a xref:fundamentals/extending-the-ui.adoc[slot] of the message viewer.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose the slot that puts content above the text of a message.
+* Read the sender and the text of the message from the props of the slot.
+* Draw a banner with `WarningBanner`, `Button`, `NakedButton` and `Icon`.
+* Hide the banner when it does not apply, or when the user dismisses it.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of xref:go-deeper/server-data/data-hooks.adoc[data hooks], because the banner reads the account with one.
+
+[#choose-the-slot]
+== Choose the slot
+
+The banner must be in view when the user starts to read, and it concerns one message. The example therefore fills the slot that sits directly above the text of a message.
+
+[#the-slot]
+=== The slot
+
+`slot::message-body-top`::
+The message viewer, directly above the text of the message. It shows after the banners of the Modern UI itself, such as the one for blocked images. Every Zimlet that fills the slot adds its content there, one below the other. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::message-header-additional-buttons`::
+The header of the message viewer. Choose it for a button that acts on the message, not for a note that needs a line of its own.
+
+`slot::desktop-viewer-footer`::
+The row of actions below the text of the message, on large screens only. Choose it for an action that the user takes after reading, such as *Reply*.
+
+To add an item to the menus of a message, see xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the banner in `init()`. It replaces the generated file.
+** `constants/index.js` holds the address of the security tips. It replaces the generated file.
+** `utils/get-domain.js` takes the domain out of an address.
+** `hooks/use-link-count.js` counts the links in the text of the message.
+** `components/external-sender-banner/` is the banner.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$message-banner/intl/en_US.json[]
+----
+
+[#read-the-message]
+== Read the message
+
+The slot passes the props that describe the message. The example reads three of them. The slot passes two more, `setMessageText` and `sanitizeRef`, which the example does not use.
+
+`emailData`::
+The message, as an object. The sender is the entry of `emailAddresses` whose `type` is `f`, and its `address` is the address.
+
+`viewerRef`::
+A ref object. Its `current` is the element that holds the text of the message. The example reads it to find the links.
+
+`htmlUpdated`::
+The length of the text of the message. It changes when the text arrives or changes, and the example then reads the links again.
+
+The banner shows only when the domain of the sender differs from the domain of the account. It takes the account name from `useAccountInfo`, as xref:reference/shims/hooks/account-and-preferences.adoc#use-account-info[Account and preferences] describes.
+
+.utils/get-domain.js
+[source,js]
+----
+include::example$message-banner/utils/get-domain.js[]
+----
+
+The hook reads the links from the element that `viewerRef` points to. The text is not in that element before it has loaded, so the hook counts again when `htmlUpdated` changes. It counts only the links whose address starts with `http`.
+
+.hooks/use-link-count.js
+[source,js]
+----
+include::example$message-banner/hooks/use-link-count.js[]
+----
+
+[#draw-the-banner]
+== Draw the banner
+
+The `ExternalSenderBanner` component holds one fact of its own: whether the user dismissed the banner. It returns `null`, so that nothing shows, in four cases. The user dismissed it, the sender is not known yet, the account is not known yet, or both domains are the same. The Modern UI creates a new viewer for each message, so the choice to dismiss applies only to the message that is open. Wrap the component with `withIntl` to load the texts of your Zimlet. The text of the banner comes from `<Text>`, as xref:go-deeper/localization.adoc[Localization] describes.
+
+.components/external-sender-banner/index.js
+[source,js]
+----
+include::example$message-banner/components/external-sender-banner/index.js[]
+----
+
+.components/external-sender-banner/style.less
+[source,less]
+----
+include::example$message-banner/components/external-sender-banner/style.less[]
+----
+
+The lines of the banner wrap on a narrow window. The spaces use the CSS variables of the Modern UI, as xref:go-deeper/styling.adoc[Styling] describes.
+
+[#warning-banner]
+=== The WarningBanner component
+
+`WarningBanner` draws the block with the warning icon, the warning colour and your content. The recipe xref:build-by-goal/recipe-server-data.adoc#warning-banner[Manage server data] explains it. Here the content is not one sentence but three rows: the message, the facts and the actions. The banner keeps the default size. It underlines every button inside it, so the two actions read as links.
+
+[#button-as-link]
+=== The Button as a link
+
+`Button` is explained in xref:build-by-goal/recipe-server-data.adoc#button[Manage server data], and its `text` style in xref:build-by-goal/recipe-appointment-field.adoc#button-as-link[Enhance the event location field]. Here it opens a page in a new browser tab. The example uses these props in addition:
+
+`href` and `useAnchor`::
+`href` makes the button a link. Without `useAnchor`, the link goes through the router of the Modern UI, which is for addresses inside the app. `useAnchor` draws a plain link, so the address of another site opens as it should.
+
+`target` and `rel`::
+Set on the link as they are. `target="_blank"` opens a new tab, and `rel="noopener noreferrer"` keeps the new page from reaching the Modern UI.
+
+`icon`, `iconPosition` and `iconSize`::
+The icon component from `lucide-preact`, the side of the label that holds it, and its size. The example puts a small arrow after the label to show that the link leaves the Modern UI. The button sizes the icon, so you pass the component as it is.
+
+[#naked-button]
+=== The NakedButton component
+
+`NakedButton` draws a button with no padding and no frame. It comes from `@zimbra-client/components`. Choose it for a control that must sit in a line of text, such as *Dismiss* beside a link.
+
+*Without it:* a plain `<button>` works, but you must remove its padding and set its colour yourself.
+
+*With it:* render the label as the content, and set `linkColor` so that it has the colour of a link.
+
+[source,js]
+----
+<NakedButton linkColor type="button" onClick={handleDismiss}>
+	<Text id="my-zimlet.dismiss" />
+</NakedButton>
+----
+
+The example uses these props:
+
+`linkColor`::
+Draws the label in the link colour of the Modern UI.
+
+`type`::
+Works as on a `button`. The example sets `button`, so that a click never submits a form.
+
+`onClick`::
+Runs when the user chooses the button. The example hides the banner.
+
+NakedButton passes every other prop to the `button`. See xref:reference/shims/components/buttons-and-actions.adoc#naked-button[Buttons and actions] for the entry.
+
+[#icon]
+=== The Icon component
+
+`Icon` draws an icon at a standard size. It comes from `@zimbra-client/blocks`. Choose it for an icon that your own component draws, so that the size matches the Modern UI. A component that has an `icon` prop, such as `Button`, sizes the icon itself.
+
+*Without it:* you set the size of the `lucide-preact` icon in pixels, so it can differ from the sizes that the Modern UI uses.
+
+*With it:* pass the icon component as `name`, and choose a size.
+
+[source,js]
+----
+<Icon name={GlobeIcon} size="xs" aria-hidden="true" />
+----
+
+The example uses these props:
+
+`name`::
+The icon, as a component of `lucide-preact`. Pass the component, not a name. See xref:fundamentals/shared-libraries.adoc#icons[Icons].
+
+`size`::
+The size of the icon. `xs` is 12 pixels, which suits a mark beside small text.
+
+`aria-hidden`::
+Set on the icon as it is. The icon only decorates the text beside it, so a screen reader skips it.
+
+See xref:reference/shims/blocks/display-and-layout.adoc#icon[Display and layout] for the other props.
+
+[#register-the-banner]
+== Register the banner
+
+Register one handler in `init()` with `plugins.register`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The handler passes on the three props that the banner reads. Read xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for a slot work.
+
+.index.js
+[source,js]
+----
+include::example$message-banner/index.js[]
+----
+
+.constants/index.js
+[source,js]
+----
+include::example$message-banner/constants/index.js[]
+----
+
+[#limits]
+== Know the limits
+
+* The domains are compared as text. A message from a subdomain or from another domain of your organization counts as outside.
+* The banner returns when the user opens the message again, because it keeps the choice to dismiss only while the message is open.
+* The count covers the links in the text of the message. It does not cover attachments.
+* The slot shows the content of every handler. The banner of another Zimlet for the slot shows beside yours.
+* The address of the security tips in `constants/index.js` is a placeholder. Replace it with the page of your organization.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Send a message with two web links in its text to your account from an address on another domain. Open *Mail* and open the message. The banner shows above the text.
++
+.A message from another domain with the banner above its text
+image::message-banner-external-sender.png["The Mail view of the Modern UI with a message open. A red outline surrounds a yellow banner above the message text. The banner reads This message came from outside your organization, Sent from testdomain.com, Links in the message 2, and has the links Security tips and Dismiss."]
++
+The outlined banner is yours. It names the domain of the sender and counts the two links.
+. Open a message from your own domain. No banner shows.
+. Open the first message again and choose *Dismiss*. The banner disappears.
+. Open another message and then the first one again. The banner shows again.
+. Choose *Security tips*. A new browser tab opens with the address of the constant, and the Modern UI stays open.
+. Open an outside message that has no web link. The line with the number of links is not there.
+
+[#expected-result]
+== Expected result
+
+* A banner shows above the text of a message from another domain, and not above a message from your own domain.
+* It names the domain of the sender and, when the text has web links, how many there are.
+* *Security tips* opens the page in a new tab.
+* *Dismiss* hides the banner until the user opens the message again.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+No banner shows.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error. The message can also be from your own domain.
+* Fix: Check that the sideloader shows *Running*. Check that the key is `slot::message-body-top` and that you register in `init()`. Test with a message from another domain, and reload the page.
+
+The banner shows for a message that should not get it.::
+* Cause: The domains differ as text, for example when the message comes from a subdomain of your organization.
+* Fix: Change the test in the component, for example to accept a list of domains of your organization.
+
+The line with the number of links is missing, or the number is wrong.::
+* Cause: The links are not `http` or `https` links, or the text had not loaded when the hook counted.
+* Fix: Check the addresses in the message. The hook counts again when `htmlUpdated` changes, so pass that prop on as the example does.
+
+The texts show as keys.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or the component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around the component.
+
+[#next-step]
+== Next step
+
+Add a control to the message composer in xref:build-by-goal/recipe-composer.adoc[Add to the composer]. Change the text of a message itself in xref:build-by-goal/recipe-message-processing.adoc[Transform messages], which Zimlets often pair with a banner. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

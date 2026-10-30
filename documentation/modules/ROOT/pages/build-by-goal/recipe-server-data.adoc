@@ -1,6 +1,6 @@
 = Manage server data
 
-This recipe builds a xref:reference/glossary.adoc#zimlet[Zimlet] that reads, creates and removes data on the Zimbra server. The example adds a *Partners* tab to the Contacts area. The tab lists the email addresses of your partner companies and lets the user add and remove them. The Zimlet keeps each address as a contact in an address book of its own. Use it when your Zimlet owns a list of records that the xref:reference/glossary.adoc#modern-ui[Modern UI] has no screen or xref:go-deeper/server-data/data-hooks.adoc[data hook] for.
+This recipe builds a xref:reference/glossary.adoc#zimlet[Zimlet] that reads, creates and removes data on the Zimbra server. The example adds a *Partners* tab to the Contacts xref:reference/glossary.adoc#vertical[vertical]. The tab lists the email addresses of your partner companies and lets the user add and remove them. The Zimlet keeps each address as a contact in an address book of its own. Use it when your Zimlet owns a list of records that the xref:reference/glossary.adoc#modern-ui[Modern UI] has no screen or xref:go-deeper/server-data/data-hooks.adoc[data hook] for.
 
 [#what-you-will-learn]
 == What you will learn
@@ -249,7 +249,7 @@ Shows only the icon.
 `onClick`::
 Runs when the user chooses the button.
 
-The component also has a `loading` prop, which replaces the icon with a spinner while a request runs. See xref:reference/shims/components/menus-and-actions.adoc[Menus and actions] for the rest of the props.
+The component also has a `loading` prop, which replaces the icon with a spinner while a request runs. See xref:reference/shims/components/buttons-and-actions.adoc#action-button[Buttons and actions] for the rest of the props.
 
 [#add-a-partner]
 == Add a partner from a field
@@ -283,7 +283,7 @@ The trash button of a row calls `removePartner` of the screen with the `id` of t
 [#register-the-handlers]
 == Register the tab and the route
 
-Register the tab in the slot of the Contacts area, and the screen in `routes`. See xref:build-by-goal/recipe-tab-and-route.adoc#choose-the-slot[Choose the slot] for the slots of the other areas.
+Register the tab in the slot of the Contacts vertical, and the screen in `routes`. See xref:build-by-goal/recipe-tab-and-route.adoc#choose-the-slot[Choose the slot] for the slots of the other verticals.
 
 .index.js
 [source,js]
@@ -309,9 +309,9 @@ include::example$server-data-recipe/components/partners-route/index.js[]
 include::example$server-data-recipe/hooks/use-partners-path.js[]
 ----
 
-The tab and the route share one address, which `usePartnersPath` builds from the name of the Contacts area. xref:build-by-goal/recipe-tab-and-route.adoc#read-the-area-name[Read the area name] explains why. The tab uses `MenuItem`, which xref:build-by-goal/recipe-tab-and-route.adoc#menu-item[The MenuItem component] explains.
+The tab and the route share one address, which `usePartnersPath` builds from the name of the Contacts vertical. xref:build-by-goal/recipe-tab-and-route.adoc#read-the-vertical-name[Read the vertical name] explains why. The tab uses `MenuItem`, which xref:build-by-goal/recipe-tab-and-route.adoc#menu-item[The MenuItem component] explains.
 
-The route handler needs `zimbraBatchClient`, so `createPartnersRoute` takes it and returns the handler. The Modern UI calls the handler and puts the element that it returns into its router. The router reads the `path` from that element, so give `PartnersScreen` the `path`. Without it, the router fails and navigation stops in every area of the Modern UI. xref:build-by-goal/recipe-tab-and-route.adoc#add-a-route[Add a route] describes the handler.
+The route handler needs `zimbraBatchClient`, so `createPartnersRoute` takes it and returns the handler. The Modern UI calls the handler and puts the element that it returns into its router. The router reads the `path` from that element, so give `PartnersScreen` the `path`. Without it, the router fails and navigation stops in every vertical of the Modern UI. xref:build-by-goal/recipe-tab-and-route.adoc#add-a-route[Add a route] describes the handler.
 
 [#verify]
 == Verify the result
@@ -322,7 +322,7 @@ The route handler needs `zimbraBatchClient`, so `createPartnersRoute` takes it a
 . Choose *Add partner*, or press *Enter*. The field clears, and `ada@example.com` appears in the list. Add a second address the same way.
 +
 .The Partners screen with two partners
-image::server-data-recipe-partners-list.png["The Contacts area with the tab Partners, outlined in red and selected. The heading is Partners. The field Email address, the button Add partner and the list of two addresses, each with a trash button, are outlined in red."]
+image::server-data-recipe-partners-list.png["The Contacts vertical with the tab Partners, outlined in red and selected. The heading is Partners. The field Email address, the button Add partner and the list of two addresses, each with a trash button, are outlined in red."]
 +
 The outlined tab, the field, the button *Add partner* and the list are the parts that your code draws.
 . Choose the trash button of an address. The address leaves the list.
@@ -331,11 +331,11 @@ The outlined tab, the field, the button *Add partner* and the list are the parts
 [#expected-result]
 == Expected result
 
-* The Contacts area has a *Partners* tab that opens a screen at `/contacts/partners`.
+* The Contacts vertical has a *Partners* tab that opens a screen at `/contacts/partners`.
 * The first load creates the address book *Partners*, and later loads reuse it.
 * *Add partner* creates a contact with that email address in the address book, and it appears in the list.
 * The trash button moves the contact to the Trash, and it leaves the list.
-* The contacts are in the address book *Partners* of the Contacts area.
+* The contacts are in the address book *Partners* of the Contacts vertical.
 
 [#if-it-did-not-work]
 == If it didn't work
@@ -345,7 +345,7 @@ Navigation stops working in the Modern UI, and the browser console shows an erro
 * Fix: Return the screen with its `path` prop from the handler, as the example does.
 
 The *Partners* tab does not appear.::
-* Cause: The Zimlet is not loaded, or you are not in the Contacts area. A tab shows only in the area that its slot names.
+* Cause: The Zimlet is not loaded, or you are not in the Contacts vertical. A tab shows only in the vertical that its slot names.
 * Fix: Check that the sideloader shows *Running*, reload the page and open *Contacts*. Check that the key is `slot::contacts-tab-item`.
 
 The screen shows *The partners could not be loaded.*::

@@ -1,0 +1,64 @@
+= Descriptor XML
+
+The descriptor is the XML file that tells the Zimbra server what a xref:reference/glossary.adoc#zimlet[Zimlet] is. It holds the name, version, label and description, the files that belong to the Zimlet, and the Modern UI versions it supports. `zimlet package` writes it for you, so you never edit it. Look up here what each attribute and element means, where its value comes from, and what to check when the server rejects a package. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files] to produce one, and xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] for what the server does with it.
+
+[#descriptor-file]
+== The file
+
+[[file]]pass:[<a class="anchor" href="#file"></a>]`<name>.xml`::
+The descriptor of one Zimlet, named after the `--name` option of `zimlet package`. The command writes it to the `build` folder, and the zip file that it creates holds it at the top level. The file has one root element, `zimlet`, and no XML declaration. The command writes the file again on every run, so a change that you make by hand is lost.
+
+[#descriptor-zimlet]
+== The zimlet element
+
+The root element carries the identity of the Zimlet in its attributes. All five attributes are always present.
+
+[[zimlet]]pass:[<a class="anchor" href="#zimlet"></a>]`<zimlet>`::
+The root element. Its attributes are the five entries below, and its children are the file entries of the <<descriptor-files,next section>>.
+
+[[name]]pass:[<a class="anchor" href="#name"></a>]`name` (string)::
+The name of the Zimlet. It comes from `--name`, which has no default, and it is also the name of the zip file and of the descriptor file. Use the `name` of your `package.json`, as the `package` script of the default template does. The server identifies a Zimlet by this name, so it must differ from every other Zimlet on the server. The command does not check the value, so a name with a space gives a descriptor and a zip file with that space.
+
+[[version]]pass:[<a class="anchor" href="#version"></a>]`version` (string)::
+The version of the Zimlet. It comes from `--pkg-version`, which has no default. Use `x.y.z`, as the `package` script does with the `version` of your `package.json`. The command does not check the format. See xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] for what a deployment does with a version that is new or the same.
+
+[[label]]pass:[<a class="anchor" href="#label"></a>]`label` (string)::
+The display name of the Zimlet. It comes from `zimlet.label` in `src/intl/en_US.json`. Only when that file has no label and description, the command uses `--label` and prints a deprecation warning. It stops with an error when it has neither. See xref:reference/files/strings.adoc[en_US.json] for the block.
+
+[[description]]pass:[<a class="anchor" href="#description"></a>]`description` (string)::
+A short text on what the Zimlet does. It comes from `zimlet.description` in `src/intl/en_US.json`, and from `--description` under the same condition as the label.
++
+WARNING: The command writes `label`, `description` and `name` into the attributes as they are. A `&`, a `"` or a `<` in one of them makes the descriptor invalid XML, so the server cannot read it. Leave these characters out of the label and the description, and out of the name.
+
+[[compatible]]pass:[<a class="anchor" href="#compatible"></a>]`zimbraXZimletCompatibleSemVer` (string)::
+The xref:reference/glossary.adoc#semver-range[semver range] of Modern UI versions that the Zimlet supports, such as `^4.0.0`. It comes from `--zimbraXVersion`, and it is `>=1.0.0` when you omit the option, which accepts every version. The server loads the Zimlet only for a Modern UI whose version falls inside the range. The command does not check that the value is a range. See xref:run-package-deploy/build-and-package.adoc#choose-range[Choose the Modern UI versions your Zimlet supports] to find and set it.
+
+[#descriptor-files]
+== The file entries
+
+The children of `zimlet` list the files of the Zimlet. Each one holds a file name or a folder name from the top level of the build folder, as its text.
+
+[[include]]pass:[<a class="anchor" href="#include"></a>]`<include>`::
+A JavaScript file of the Zimlet. The command writes one for each file whose name ends in `.js`. The default template builds a single file, `index.js`. A file that ends in `.mjs` is not matched and becomes a `resource`.
+
+[[include-css]]pass:[<a class="anchor" href="#include-css"></a>]`<includeCSS>`::
+A style sheet of the Zimlet. The command writes one for each file whose name ends in `.css`.
+
+[[resource]]pass:[<a class="anchor" href="#resource"></a>]`<resource>`::
+Any other file or folder of the build folder, such as `config_template.xml`, a `fonts` folder or a `scripts` folder. A folder is one entry, and its files are not listed. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] for `config_template.xml`.
+
+[#descriptor-rules]
+== How the entries are chosen
+
+The command reads the top level of the build folder at the time it runs, so the entries are only as good as that folder.
+
+* The entries follow the order in which the file system lists the folder, so do not rely on an order. An entry has no attribute and no children.
+* The command leaves out the `.properties` files and the descriptor it is writing.
+* The command does not empty the build folder. A descriptor of an earlier `zimlet package` run with another `--name` stays there. It is listed as a `resource` and is zipped with the rest. Delete the `build` folder and run `zimlet build` again before you package.
+* The matching of the file name is case sensitive, so `Style.CSS` is a `resource`.
+* A build folder that does not exist stops the command with `Failed to read` and the folder name.
+
+[#next-step]
+== Next step
+
+Package your Zimlet with the steps in xref:run-package-deploy/build-and-package.adoc[Build and package], and hand the zip file to an administrator as xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] describes.
