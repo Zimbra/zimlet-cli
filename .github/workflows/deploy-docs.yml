@@ -45,6 +45,14 @@ jobs:
       - name: Build Antora site
         run: npm run build:docs
 
+      - name: Upload docs preview artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-preview
+          path: documentation/build
+          retention-days: 7
+
       - name: Upload Pages artifact
         if: github.event_name == 'workflow_dispatch' && inputs.deploy == true
         uses: actions/upload-pages-artifact@v3

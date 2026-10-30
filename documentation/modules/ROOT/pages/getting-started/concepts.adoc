@@ -25,7 +25,7 @@ The descriptor tells the Zimbra server what the Zimlet is. It holds the name, ve
 A Zimlet and the Modern UI work together in a few ways:
 
 * *The context.* When the Modern UI loads a Zimlet, it calls the xref:fundamentals/factory-and-lifecycle.adoc[factory] in your entry file and passes it the xref:fundamentals/host-context.adoc[context]. Through the context, your Zimlet registers what it adds, reads the state of the Modern UI, sends requests to the server and works with other Zimlets.
-* *Shared libraries.* The Modern UI already contains libraries such as Preact. Import them as usual, and your Zimlet uses the Modern UI's copy instead of bundling its own. Any other library you import is added to your bundle and makes it larger. See xref:fundamentals/shared-libraries.adoc[Shared libraries and imports].
+* *Shared libraries.* The Modern UI already contains libraries such as Preact. Import them as usual, and your Zimlet uses the Modern UI's copy instead of bundling its own. Any other library you import is added to your bundle and makes it larger. See xref:fundamentals/shared-libraries.adoc[Shared libraries].
 * *Events.* The Modern UI announces things that happen, such as a message being sent, and your Zimlet can listen for them and react. Zimlets can also send events to each other. See xref:go-deeper/app-events.adoc[App events].
 * *Data.* Your Zimlet reads and shares state through the store of the Modern UI, and gets data from the Zimbra server with requests. See xref:go-deeper/redux.adoc[Shared state with Redux] and xref:go-deeper/server-data.adoc[Server data].
 

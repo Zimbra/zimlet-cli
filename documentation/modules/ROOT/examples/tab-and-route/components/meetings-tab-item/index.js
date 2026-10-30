@@ -5,7 +5,7 @@ import { VideoIcon } from 'lucide-preact';
 import { withIntl } from '../../enhancers';
 import useMeetingsPath from '../../hooks/use-meetings-path';
 
-// The tab in the Video area that opens the meeting rooms screen.
+// The tab in the Video vertical that opens the meeting rooms screen.
 const MeetingsTabItem = () => {
 	const path = useMeetingsPath();
 

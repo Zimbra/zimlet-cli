@@ -6,7 +6,7 @@ export default function Zimlet(context) {
 
 	return {
 		init() {
-			// Adds the tab to the Contacts area.
+			// Adds the tab to the Contacts vertical.
 			plugins.register('slot::contacts-tab-item', PartnersTabItem);
 			// Adds the screen that the tab opens, with the client that sends the requests.
 			plugins.register('slot::routes', createPartnersRoute(zimbraBatchClient));

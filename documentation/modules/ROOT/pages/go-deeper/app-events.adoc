@@ -5,7 +5,7 @@ The Modern UI announces what the user does, such as sending a message or logging
 [#get-the-emitter]
 == Get the emitter and the event names
 
-Import `zimletEventEmitter` from `@zimbra-client/util` and `ZIMBRA_ZIMLET_EVENTS` from `@zimbra-client/constants`. Use the constant for the event name, not the text.
+Import `zimletEventEmitter` from `@zimbra-client/util` and `ZIMBRA_ZIMLET_EVENTS` from `@zimbra-client/constants`. Use the constant for the event name, not the text. See xref:reference/shims/constants.adoc#zimbra-zimlet-events[`ZIMBRA_ZIMLET_EVENTS`] for its members.
 
 [source,js]
 ----
@@ -139,4 +139,4 @@ include::example$app-events/remove-listener.js[]
 [#next-step]
 == Next step
 
-Build a complete Zimlet that delays sending a message and delays logout in xref:build-by-goal/recipe-app-events.adoc[React to app events].
+Make your Zimlet fit the look of the Modern UI, including its light and dark modes, in xref:go-deeper/styling.adoc[Styling]. To build a complete Zimlet that delays sending a message and delays logout, see xref:build-by-goal/recipe-app-events.adoc[React to app events].

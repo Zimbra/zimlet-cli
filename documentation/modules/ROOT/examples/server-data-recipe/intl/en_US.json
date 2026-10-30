@@ -1,7 +1,7 @@
 {
 	"zimlet": {
 		"label": "My Zimlet",
-		"description": "Adds a Partners tab to the Contacts area, where you keep the email addresses of your partner companies."
+		"description": "Adds a Partners tab to the Contacts vertical, where you keep the email addresses of your partner companies."
 	},
 	"my-zimlet": {
 		"tabTitle": "Partners",

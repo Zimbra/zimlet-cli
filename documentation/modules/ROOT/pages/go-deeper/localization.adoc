@@ -15,7 +15,7 @@ The `label` and `description` of the Zimlet. See <<label-description,Label and d
 A block named after your Zimlet::
 The texts of your components, as keys. The id of a text is the block name, a dot and the key. For `my-zimlet` and the key `reminder`, the id is `my-zimlet.reminder`.
 
-Name the block after your Zimlet. Where an id is the same as an id of the Modern UI, the Modern UI text appears and yours does not.
+Name the block after your Zimlet. Where an id is the same as an id of the Modern UI, the Modern UI text appears and yours does not. See xref:reference/files/strings.adoc[en_US.json] for nested keys, placeholders and plural forms.
 
 A text can hold a placeholder in double braces, such as `+{{count}}+`, that the component fills in. Every language file uses the same keys and the same placeholders.
 
@@ -36,10 +36,10 @@ include::example$localization/intl/de.json[]
 
 Two parts make a text appear in a component:
 
-* A wrapper that loads `en_US.json` and the file for the language of the user. The template has it in `src/enhancers/index.js` as `withIntl`.
+* A wrapper that loads `en_US.json` and the file for the language of the user. The template has it in `src/enhancers/index.js` as `withIntl`. See xref:reference/shims/hocs/localization.adoc[Localization HOCs] for its parameters.
 * The `Text` component from `@zimbra/preact-i18n`, which looks up an id and shows the text.
 
-A Zimlet adds a reminder to the footer of the mail sidebar. The `Reminder` component wraps itself with `withIntl()`, shows its text with `Text` and fills the placeholder through `fields`. The files go in the folders shown in their titles. The slot is explained in xref:fundamentals/extending-the-ui.adoc[Extend the UI with slots].
+A Zimlet adds a reminder to the footer of the mail sidebar. The `Reminder` component wraps itself with `withIntl()`, shows its text with `Text` and fills the placeholder through `fields`. The files go in the folders shown in their titles. The slot is explained in xref:fundamentals/extending-the-ui.adoc[Slots and handlers].
 
 .index.js
 [source,js]
@@ -123,4 +123,4 @@ The browser console shows `Error loading translations for <code> from zimlet.` w
 [#next-step]
 == Next step
 
-Keep your Zimlet safe in the shared page of the Modern UI with xref:go-deeper/security-and-best-practices.adoc[Security and best practices].
+Combine what you have learned into a working feature with a recipe from xref:build-by-goal.adoc[Build by goal].

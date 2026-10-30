@@ -146,7 +146,7 @@ None.
 |`--config`
 |string
 |`./zimlet.config.js`
-|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[The zimlet.config.js file]. A path that does not exist prints a warning, and the command goes on without it.
+|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[zimlet.config.js]. A path that does not exist prints a warning, and the command goes on without it.
 |===
 
 === Output
@@ -207,7 +207,7 @@ None.
 |`--config`
 |string
 |`./zimlet.config.js`
-|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[The zimlet.config.js file]. A path that does not exist prints a warning, and the command goes on without it.
+|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[zimlet.config.js]. A path that does not exist prints a warning, and the command goes on without it.
 |===
 
 === Output
