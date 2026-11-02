@@ -158,7 +158,7 @@ Where the tooltip opens. The default is `left`. The example uses `right`.
 `customStyle`::
 A class for the tooltip. The example sets its width.
 
-The children are the content of the tooltip. Look up the rest in xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback].
+The children are the content of the tooltip. Look up the rest in xref:reference/shims/components/warnings-and-help.adoc#help-tooltip[Warnings and help].
 
 [#register-the-control]
 == Register the control

@@ -22,7 +22,7 @@ plugins.unregister(name, handler)
 |The key under which you registered the handler, such as `slot::message-body-top`.
 
 |`handler`
-|function
+|function `(...args: any[]) => any`
 |The same function that you gave to xref:reference/context/plugins/register.adoc[register]. A function with the same code but another reference does not match.
 
 |===

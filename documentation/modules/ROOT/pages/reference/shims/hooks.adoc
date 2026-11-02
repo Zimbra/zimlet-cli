@@ -1,0 +1,33 @@
+= Hooks
+
+The hooks that the xref:reference/glossary.adoc#modern-ui[Modern UI] shares with every xref:reference/glossary.adoc#zimlet[Zimlet]. A hook gives a component data, a function that changes data, or a fact about the environment, without a request that you write. Use one before you send a request yourself, because the Modern UI shares what it has already loaded. Find a hook by the area that it works on. Each area page lists the hooks with their parameters and results.
+
+Hooks come from two modules, `@zimbra-client/hooks` and `@zimbra-client/hooks/graphql`. Four hooks of the first module also load or change server data: `usePreferences`, `useSendMessageMutation`, `useItemActionMutation` and `useMessageSearchQuery`. The import path therefore does not tell a data hook from the others. Every hook documents its own path.
+
+Call a hook while a component renders. See xref:go-deeper/server-data/data-hooks.adoc[Data hooks] for how to use one, and xref:fundamentals/shared-libraries.adoc[Shared libraries] for how shared modules work.
+
+[#areas]
+== Areas
+
+[[environment]]pass:[<a class="anchor" href="#environment"></a>]xref:reference/shims/hooks/environment.adoc[Environment]::
+Use these to read the client configuration, report to analytics, react to the size of the window and reach the shared context. Hooks: `useClientConfig`, `useTracking`, `useMediaQuery` and `useZimbraContext`.
+
+[[account-and-preferences]]pass:[<a class="anchor" href="#account-and-preferences"></a>]xref:reference/shims/hooks/account-and-preferences.adoc[Account and preferences]::
+Use these to read the preferences and the account of the signed-in user, and the languages that the user can choose. Hooks: `usePreferences`, `useAccountInfo` and `useAvailableLocalesQuery`.
+
+[[mail]]pass:[<a class="anchor" href="#mail"></a>]xref:reference/shims/hooks/mail.adoc[Mail]::
+Use these to send a message, to act on a mail item and to search messages. Hooks: `useSendMessageMutation`, `useOriginalMsgHeader`, `useItemActionMutation` and `useMessageSearchQuery`.
+
+[[folders]]pass:[<a class="anchor" href="#folders"></a>]xref:reference/shims/hooks/folders.adoc[Folders]::
+Use these to read the folder tree, to create a folder and to change one. Hooks: `useFoldersQuery`, `useCreateFolderMutation` and `useFolderActionMutation`.
+
+[[briefcase]]pass:[<a class="anchor" href="#briefcase"></a>]xref:reference/shims/hooks/briefcase.adoc[Briefcase]::
+Use these to share a document, to read the Briefcase folders and to save a document. Hooks: `useDocumentAction`, `useBriefcaseFoldersQuery` and `useSaveDocumentMutation`.
+
+[[calendar-and-metadata]]pass:[<a class="anchor" href="#calendar-and-metadata"></a>]xref:reference/shims/hooks/calendar-and-metadata.adoc[Calendar and metadata]::
+Use these to read the calendars of the user and to read and write the custom metadata of an item. Hooks: `useCalendarsData`, `useCustomMetaData` and `useCustomMetaDataMutation`.
+
+[#next-step]
+== Next step
+
+Start with the hooks that read the environment in xref:reference/shims/hooks/environment.adoc[Environment].

@@ -1,0 +1,62 @@
+= Security and best practices
+
+A xref:reference/glossary.adoc#zimlet[Zimlet] runs in the session of the signed-in user and has the same rights as the Modern UI itself. A flaw in a Zimlet is therefore a flaw in the session of every user who receives it. A few habits keep users and their data safe. Read this before your Zimlet shows content that it did not write, handles a secret or sends data to another service.
+
+[#shared-frame]
+== What the Zimlet frame does not protect
+
+The Modern UI runs every Zimlet in one hidden frame that comes from the same address as the Modern UI. The frame keeps the variable names of Zimlets apart. It is not a security boundary. All Zimlets share one `window`, the browser storage of the Modern UI and the signed-in session. A Zimlet can read what another Zimlet sets on `window`. It can reach the page of the Modern UI through `window.parent`. It can send the same server requests as the user.
+
+Write your Zimlet with that in mind:
+
+* Do not keep data on `window`. Keep state in your components, or in the namespace of your Zimlet in xref:go-deeper/redux.adoc[Shared state with Redux].
+* Do not store secrets or personal data in `localStorage`. Every Zimlet can read it, and the Modern UI keeps its own request token there.
+* Treat data that comes from another Zimlet, such as an app event, like any other input from outside.
+* Deploy only Zimlets that you trust. An administrator who deploys a Zimlet gives its code the rights of every user who receives it. See xref:run-package-deploy/deploy.adoc[Deploy a Zimlet].
+
+[#sanitise-html]
+== Sanitise HTML from outside
+
+Preact escapes text that you put in braces, so `+{value}+` is safe. The risk starts when you insert a string as HTML, for example with `innerHTML`. A string from a message, a contact, a service or a user can then run script. The script has the rights of the user. Sanitise the string first with DOMPurify, a library that removes the markup that can run code. The Modern UI shares its copy with Zimlets, so import `dompurify` and do not bundle your own. See xref:fundamentals/shared-libraries.adoc[Shared libraries].
+
+The Zimlet below lets a user paste the HTML of a note, for example copied from a web page, and shows a preview. The options of `sanitize` list the tags and attributes to keep. Event attributes such as `onclick`, `script` elements and `javascript:` links are removed. The preview shows only the clean result.
+
+.index.js
+[source,js]
+----
+include::example$security/index.js[]
+----
+
+* Sanitise right before you insert the string, and insert the result unchanged. A change after sanitising can undo it.
+* Allow the fewest tags and attributes that you need, as the example does. See the https://github.com/cure53/DOMPurify[DOMPurify documentation^] for the options.
+
+WARNING: Pass options to `sanitize` on each call. Do not call `setConfig`, `addHook` or other methods that change the settings or hooks of the shared copy. The Modern UI sanitises the HTML of messages with the same copy, so such a call changes how the Modern UI itself sanitises.
+
+[#secrets-and-tokens]
+== Keep secrets and tokens out of the Zimlet
+
+The server sends the code of a Zimlet to every signed-in user whose xref:reference/glossary.adoc#cos[class of service] includes the Zimlet. The browser can show that code. The Modern UI also receives the settings that an administrator sets for the Zimlet with the account data of the user. Anything in the source or in those settings is readable by every user of the Zimlet.
+
+* Do not write API keys, passwords, private keys or internal host names in the source or in `config_template.xml`.
+* If a service needs a secret, call a service of your own that holds the secret and checks who asks. Use a key in the Zimlet only when the provider issues it for use in a browser.
+* Send the request token of the Modern UI only to the Zimbra server, as xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch] describes. Do not show it, store it or put it in an address.
+* Do not log the `context` object, a request header or a token. The context holds the `csrfToken` field, and a log line can end up in a bug report.
+
+[#external-services]
+== Call other services through the server
+
+Send a request to another service through the Zimbra server proxy at `/service/proxy` and not straight from the browser. The server makes the request for the signed-in user. It contacts only the hosts on the list that an administrator sets for the class of service in the `zimbraProxyAllowedDomains` attribute. It refuses a host that resolves to a loopback, link-local or private address. So the administrator decides which services your Zimlet can reach. Tell the administrator which domain to allow when you hand over the Zimlet. See xref:go-deeper/advanced.adoc[Advanced topics] for how to build the request.
+
+Before your Zimlet sends user data to a service, check these points:
+
+* You trust the service, and its address starts with `https`.
+* The request holds only the fields that the service needs, and not a whole message or address book.
+* The user knows that the data leaves the Modern UI, and the Zimlet sends it only after an action of the user.
+* The request has no credential of the Modern UI or of the Zimbra server.
+
+WARNING: The proxy passes the headers of your request on to the other service. It drops only cookies, `Accept` headers, caching and connection headers, and the headers that name the original host. Do not add the request token of the Modern UI or an `Authorization` header meant for Zimbra to a proxied request.
+
+[#next-step]
+== Next step
+
+Learn to change the build and to call other services in xref:go-deeper/advanced.adoc[Advanced topics].

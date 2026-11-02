@@ -287,19 +287,16 @@ _Purpose: cover the options and details of one feature area per page, for author
   - `zimlet.label` and `zimlet.description` – define the label and description for the admin console and the UI.
   - Add a locale.
   - Brief: sources `authoring.md` §6, repo `AGENTS.md` (translation pointer), and for Add a locale the `Adding other languages` section of the default template's `README.md` (file names are locale codes; the administrator command that lists the codes). Examples: `en_US.json`, `de.json`, `enhancers/index.js` and a component.
-- **P24 `go-deeper/security-and-best-practices.adoc` – Security and best practices** (Not started)
-  - What the browser sandbox does not give you – the shared same-origin iframe is not a security boundary (shared `window`).
-  - Sanitise HTML – use the shimmed `dompurify` before rendering untrusted content.
-  - Secrets and tokens – the bundle is served to every user, so keep secrets out of it and never log tokens.
-  - Calls to external services – use the server proxy; what to check before sending user data out.
+- **P24 `go-deeper/security-and-best-practices.adoc` – Security and best practices** (Drafted)
+  - What the Zimlet frame does not protect – the shared same-origin iframe is not a security boundary (shared `window`, browser storage and session).
+  - Sanitise HTML from outside – use the shimmed `dompurify` before inserting a string as HTML, with options on each call and no change to the shared copy. Example: a note preview.
+  - Keep secrets and tokens out of the Zimlet – the code and the settings reach every user of the Zimlet, so keep secrets out of them and never log tokens.
+  - Call other services through the server – the proxy and its allowed domains, what to check before sending user data out, and no Zimbra token in a proxied request.
   - Brief: new page for partners. No source file covers this; research from `runtime.md`, `context-and-shims.md` (the `dompurify` shim) and the host code, and mark what cannot be confirmed as unverified. Engineering reviews this page last, after all pages are drafted.
-- **P25 `go-deeper/advanced.adoc` – Advanced topics** (Not started)
-  - Customise webpack (`zimlet.config.js`) – change the build, with a small example.
-  - Non-Preact UI – write a Zimlet in another framework and what is lost.
-  - Call external services through `/service/proxy`.
-  - Assets and `publicPath` – load images and fonts correctly in a deployed Zimlet.
-  - OAuth client – use it for services that need a login.
-  - Brief: sources `cli-commands.md` (webpack), `packaging-deployment.md` §3. Signatures live in P32. Example: `zimlet.config.js`, starting from the default template's.
+- **P25 `go-deeper/advanced.adoc` – Advanced topics** (Drafted)
+  - Change the build (`zimlet.config.js`) – choose a module for each build with `env.watch` and `config.resolve.alias`, check the result and fix an edit that has no effect. Settings live in P31.5.
+  - Call an external service through the proxy – the `/service/proxy` request (address, session, methods, headers, response), allowing a domain with `zimbraProxyAllowedDomains`, and the statuses that the proxy returns. What to check before sending user data is in P24.
+  - Brief: sources `cli-commands.md` (webpack), the server proxy code (allowed domains, address checks, header filter, statuses) and the default template's `zimlet.config.js`. One example Zimlet (`examples/advanced/`) shows a service status in the sidebar footer; the config picks a mock client for watch and the live proxy client for build.
 
 ### Part 5 – Run, package, deploy
 
@@ -367,90 +364,20 @@ _Purpose: complete facts for lookup, no tutorial text. Every API, property, opti
 - **P31.4 `reference/files/config-template.adoc` – config_template.xml** (Not started)
   - Structure of the admin settings file.
   - Brief: sources `packaging-deployment.md` §2 and `authoring.md`. Example: a `config_template.xml` file.
-- **P31.5 `reference/files/zimlet-config.adoc` – zimlet.config.js** (Not started)
-  - Shape of the build configuration function.
-  - Brief: sources `authoring.md` and the default template. Example: a `zimlet.config.js` file.
-- **P31.6 `reference/files/strings.adoc` – en_US.json** (Not started)
-  - Structure of the strings file.
-  - Brief: sources `authoring.md` and the default template. Example: an `en_US.json` file.
-- **P32 `reference/shims.adoc` – Shared modules** (Not started)
-  - Landing page, written as a nested list and not as a table. Each item is a group with a link to its page, and the area pages are nested under it as links, so the reader sees every subpage at a glance. Each item names its shimmed modules in a short line. The page does not list exports; they are on the linked pages. Modules that the guide does not document are listed last as "not documented in this guide", without a reason. The groups and links are:
-    - Third-party libraries (P32.1): `preact`, `preact/hooks`, `preact/compat`, `preact-render-to-string`, `preact-markup`, `redux-actions`, `moment`, `dompurify`, `react-redux`, `preact-router`, `preact-router/match`.
-    - Components (P32.2): `@zimbra-client/components`, with its five area pages (P32.2.1 to P32.2.5).
-    - HOCs (P32.3): `@zimbra-client/enhancers` and the HOCs of `@zimbra-client/util`, with three area pages (P32.3.1 to P32.3.3).
-    - Localization (P32.4): `@zimbra/preact-i18n`.
-    - Blocks (P32.5): `@zimbra-client/blocks`, with five area pages (P32.5.1 to P32.5.5).
-    - Utilities (P32.6): `@zimbra-client/util`, with three area pages (P32.6.1 to P32.6.3).
-    - Hooks (P32.7): `@zimbra-client/hooks` and `@zimbra-client/hooks/graphql`, with six area pages (P32.7.1 to P32.7.6).
-    - Constants (P32.8): `@zimbra-client/constants`.
-    - Errors, platform and PWA (P32.9): `@zimbra-client/errors`, `@zimbra-client/platform`, `@zimbra-client/browser`, `@zimbra-client/util/contacts`, `@zimbra-client/pwa-utils`.
-    - Not documented: `@zimbra-client/graphql`, `@apollo/client`, `@apollo/client/react/hoc`, `@apollo/client/react/components`.
-  - Brief: source `context-and-shims.md` §2 and `shims.js`. The only full list of shimmed modules in the guide. P32.1 to P32.9 are the shim reference pages and follow the shim reference page rule in `doc-guide/types.md` section 3. Export lists below come from `shims.js`; verify each against its source before writing. Left out: `ZimbraProvider`, and the paths that the CLI aliases but the host does not provide (`@zimbra-client/util/redux`, `preact/jsx-runtime`; KI-12, KI-10).
-  - **P32.1 `reference/shims/libraries.adoc` – Third-party libraries** (Not started)
-    - Whole-module shims, one line each with a link to the upstream docs: `preact`, `preact/hooks`, `preact/compat`, `preact-render-to-string`, `preact-markup`, `redux-actions`, `moment`, `dompurify`.
-    - Subsets, listing only what the host exposes: `react-redux` (`Provider`, `connect`, `useSelector`, `useDispatch`, `batch`), `preact-router` (`route`, `Link`), `preact-router/match` (`Match`).
-  - **P32.2 `reference/shims/components.adoc` – Components** (Not started)
-    - Group page for `@zimbra-client/components` (53 exports).
-    - **P32.2.1 `reference/shims/components/layout-and-navigation.adoc` – Layout and navigation** (Not started)
-      - 11: `Sidebar`, `MailSidebar`, `FolderList`, `FolderListLight`, `FolderListGroup`, `SmartList`, `GenericMobileUIToolbar`, `GenericMobileUISidebar`, `InfiniteScroll`, `ZimletSlot`, `InfoBar`. `ZimletSlot` links to P09.
-    - **P32.2.2 `reference/shims/components/menus-and-actions.adoc` – Menus and actions** (Not started)
-      - 14: `MenuItem`, `ActionMenu`, `DropDownWrapper`, `ActionMenuItem`, `ActionMenuGroup`, `ActionMenuMoveFolder`, `NestedActionMenuItem`, `ContextMenu`, `ActionButton`, `NakedButton`, `CloseButton`, `HelpButton`, `SMIMEOperationDropDown`, `DeleteWrapper`.
-    - **P32.2.3 `reference/shims/components/dialogs-and-feedback.adoc` – Dialogs and feedback** (Not started)
-      - 9: `ModalDialog`, `ConfirmModalDialog`, `ModalDrawer`, `ModalDrawerToolbar`, `ResponsiveModal`, `CaptureBeforeUnload`, `HelpTooltip`, `ErrorAlert`, `CertificateModal`.
-    - **P32.2.4 `reference/shims/components/form-inputs.adoc` – Form inputs** (Not started)
-      - 10: `Select`, `TextInput`, `FormGroup`, `DateInput`, `CustomTimePicker`, `AddressField`, `AddMore`, `TinyMceComposer`, `Picker`, `CalendarOptionItem`.
-    - **P32.2.5 `reference/shims/components/domain-widgets.adoc` – Domain widgets** (Not started)
-      - 9: `ContactList`, `ContactEditor`, `ContactHoverCardWrapper`, `Avatar`, `AppointmentEdit`, `SignatureBox`, `PdfjsViewer`, `DraggableCard`, `ClientLogo`.
-  - **P32.3 `reference/shims/hocs.adoc` – Higher-order components (HOCs)** (Not started)
-    - Group page for the HOCs of `@zimbra-client/enhancers` and `@zimbra-client/util` (8 exports). Each section shows its own module path and, where one exists, links to the hook alternative.
-    - **P32.3.1 `reference/shims/hocs/environment-and-ui-behaviour.adoc` – Environment and UI behaviour** (Not started)
-      - 4: `withMediaQuery`, `withTabManager`, `withTracking`, `clientConfiguration`.
-    - **P32.3.2 `reference/shims/hocs/localization.adoc` – Localization** (Not started)
-      - 2: `withIntlWrapper` (alias `withZimletIntlWrapper`), `withIntlConsumer`. Link to P32.4 and P23.
-    - **P32.3.3 `reference/shims/hocs/composition.adoc` – Composition** (Not started)
-      - 2: `withProps`, `branch`.
-  - **P32.4 `reference/shims/localization.adoc` – Localization (`@zimbra/preact-i18n`)** (Not started)
-    - One page, 9 exports, in three headings. Show text: `Text`, `MarkupText`, `Localizer`. Read text in code: `useText`, `withText`, `translate`. Provide the dictionary: `IntlContext`, `IntlProvider`, `intl`. `IntlProvider` is for content rendered outside the wrapped component; the usual route is `withIntlWrapper` (P32.3.2). Split along the headings if the page is too long.
-  - **P32.5 `reference/shims/blocks.adoc` – Blocks UI kit** (Not started)
-    - Group page for `@zimbra-client/blocks` (45 exports, from the index of the `@zimbra/blocks` package).
-    - **P32.5.1 `reference/shims/blocks/buttons-and-progress.adoc` – Buttons and progress** (Not started)
-      - 7: `Button`, `AnimatedButton`, `ProgressButton`, `ProgressIndicator`, `Spinner`, `LoaderBar`, `Skeleton`.
-    - **P32.5.2 `reference/shims/blocks/dialogs-and-overlays.adoc` – Dialogs and overlays** (Not started)
-      - 8: `Dialog`, `FixedDialog`, `ModalDialog`, `Scrim`, `Popover`, `FixedPopover`, `Tooltip`, `TooltipManager`.
-    - **P32.5.3 `reference/shims/blocks/form-inputs-and-choices.adoc` – Form inputs and choices** (Not started)
-      - 12: `Select`, `Option`, `Tabs`, `Tab`, `ChoiceInput`, `StyledChoiceInput`, `ColorPicker`, `TimePicker`, `Label`, `AlignedForm`, `AlignedLabel`, `Selection`.
-    - **P32.5.4 `reference/shims/blocks/display-and-layout.adoc` – Display and layout** (Not started)
-      - 6: `Card`, `Icon`, `ContactAvatar`, `VerticalList`, `WarningBanner`, `AffixBottom`.
-    - **P32.5.5 `reference/shims/blocks/behaviour-helpers-and-constants.adoc` – Behaviour helpers and constants** (Not started)
-      - 12: `ClickOutsideDetector`, `CloseOnClickOrKeydown`, `ContainerSize`, `withModalManager`, `withGlobalFocusManager`, `useGlobalFocusManager`, `isElementVisible`, `Manager`, `Reference`, `Popper`, `KeyCodes`, `COLORS`.
-  - **P32.6 `reference/shims/utilities.adoc` – Utilities** (Not started)
-    - Group page for `@zimbra-client/util` (22 exports).
-    - **P32.6.1 `reference/shims/utilities/data-text-and-functions.adoc` – Data, text and functions** (Not started)
-      - 9: `array`, `isEmpty`, `pruneEmpty`, `htmlEncode`, `htmlToText`, `getDataTransferJSON`, `setDataTransferJSON`, `callWith`, `debounce`.
-    - **P32.6.2 `reference/shims/utilities/browser-and-app.adoc` – Browser and app** (Not started)
-      - 9: `PageVisibility`, `clipboard`, `getElectron`, `csrfStorage`, `closeNotification`, `getContext`, `startAttachmentDownloadProcess`, `breakpoints`, `zimletEventEmitter`. `zimletEventEmitter` links to P21.
-    - **P32.6.3 `reference/shims/utilities/smime-and-calendar.adoc` – S/MIME and calendar** (Not started)
-      - 4: `smimeHandler`, `isServerSMIMEFeatureAvailable`, `filterNonInsertableCalendars`, `closeEventTabThunk`.
-  - **P32.7 `reference/shims/hooks.adoc` – Hooks** (Not started)
-    - Group page for `@zimbra-client/hooks` and `@zimbra-client/hooks/graphql` (20 exports), grouped by area, not by module.
-    - **P32.7.1 `reference/shims/hooks/environment.adoc` – Environment** (Not started)
-      - 4, all from `@zimbra-client/hooks`: `useClientConfig`, `useTracking`, `useMediaQuery`, `useZimbraContext`.
-    - **P32.7.2 `reference/shims/hooks/account-and-preferences.adoc` – Account and preferences** (Not started)
-      - 3: `usePreferences`, `useAccountInfo`, `useAvailableLocalesQuery`.
-    - **P32.7.3 `reference/shims/hooks/mail.adoc` – Mail** (Not started)
-      - 4, all from `@zimbra-client/hooks`: `useSendMessageMutation`, `useOriginalMsgHeader`, `useItemActionMutation`, `useMessageSearchQuery`.
-    - **P32.7.4 `reference/shims/hooks/folders.adoc` – Folders** (Not started)
-      - 3: `useFoldersQuery`, `useCreateFolderMutation`, `useFolderActionMutation`.
-    - **P32.7.5 `reference/shims/hooks/briefcase.adoc` – Briefcase** (Not started)
-      - 3: `useDocumentAction`, `useBriefcaseFoldersQuery`, `useSaveDocumentMutation`.
-    - **P32.7.6 `reference/shims/hooks/calendar-and-metadata.adoc` – Calendar and metadata** (Not started)
-      - 3: `useCalendarsData`, `useCustomMetaData`, `useCustomMetaDataMutation`.
-  - **P32.8 `reference/shims/constants.adoc` – Constants** (Not started)
-    - 7, from `@zimbra-client/constants`: `ATTENDEE_ROLE`, `PARTICIPATION_STATUS`, `supportedMimes`, `ZIMBRA_ZIMLET_EVENTS`, `EMAIL_SEPARATOR_TAG_ID`, `USER_FOLDER_IDS`, `FLAGS`.
-  - **P32.9 `reference/shims/errors-platform-and-pwa.adoc` – Errors, platform and PWA** (Not started)
-    - 8: `errorMessage`, `faultCode` (`@zimbra-client/errors`); `getPlatformType`, `PLATFORM_TYPES` (`@zimbra-client/platform`); `openExternalBrowser` (`@zimbra-client/browser`); `getName` (`@zimbra-client/util/contacts`); `isStandalone`, `awaitInstallPrompt` (`@zimbra-client/pwa-utils`).
-- **P33** (removed: its shim areas moved under P32 as P32.6 to P32.9, `fetch` calls and the batch client are in P20.2, P20.3 and P43.5, and the server proxy and OAuth client have no page yet; the number is kept so that no page is renumbered)
-- **P40** (removed: the blocks pages moved under P32 as P32.5; the number is kept so that no page is renumbered)
+- **P31.5 `reference/files/zimlet-config.adoc` – zimlet.config.js** (Drafted)
+  - Loading the file – name and location, `--config`, the commands that read it, and that it is read once.
+  - The exported function – the accepted exports, `config`, every field of `env`, the return value, errors and `__dirname`.
+  - The file in the default template – what the commented examples do.
+  - Settings of config – each setting the build sets (`mode`, `context`, `entry`, `output`, `resolve.*`, `resolveLoader`, `module.rules`, `plugins`, `stats`).
+  - Settings that only `zimlet watch` sets – `watchOptions`, `devtool`, `devServer`.
+  - Brief: sources `cli-commands.md` (webpack), the build code (`transform-config.js`, `configure()`) and the default template. A file reference: description list entries with anchors, no example (the worked example is on P25). Every fact was run in a scratch project (`env` fields, accepted exports, errors, the effect of removing a shim alias).
+- **P31.6 `reference/files/strings.adoc` – en_US.json** (Drafted)
+  - Files – `en_US.json` and the `<locale>.json` files of other languages.
+  - The zimlet block – `label`, `description` and what happens when they are missing.
+  - Your texts – the namespace block, keys and nesting, values.
+  - Placeholders – `+{{field}}+`, the `fields` prop and nested fields.
+  - Plural forms – the plural object and the `plural` prop.
+  - Brief: sources `authoring.md`, the default template, the `package` command and the text library of the Modern UI (run in node for lookup, nesting, placeholders and plural forms). A file reference: description list entries with anchors, no example (the worked example is on P23).
 - **P43 `reference/context.adoc` – Context** (Drafted)
   - The entry page of the context reference: every `context` field with one line and a link to the page or anchor that documents it, in two groups (fields with members, single values and functions).
   - Brief: sources `context-and-shims.md` §1, §3. The overview and the shared-name warning are in P11. The detail pages below are in the navigation as a sub-list of P43 under reference. They are the child pages P43.1 to P43.10 and were added after P40, so no other page is renumbered.
@@ -541,13 +468,102 @@ _Purpose: complete facts for lookup, no tutorial text. Every API, property, opti
 - **P43.10 `reference/context/deprecated.adoc` – Deprecated** (Drafted)
   - The fields that no active Zimlet uses (including all their members) and that have an alternative: `cache`, `shims`, `config`, `utils`, `resourceUrl` (no replacement: it is not specific to a Zimlet), `zimbra` and `getAccount()` (marked deprecated by the code and by the host reference, and used by few Zimlets), `zimbraBatchClient.accountInfo()` (replaced by the `useAccountInfo` hook, or by `jsonRequest` with `GetInfo` outside a component; no active Zimlet uses it), and `csrfToken` (replaced by `csrfStorage.get()` from `@zimbra-client/util`, which reads the current token; `csrfToken` is a copy taken when the Zimlet loads. The org-chart Zimlet still uses it). One entry for each main field, with no entries for its members. Each entry says not to use it and names what to use instead, or says that no replacement exists yet (`utils`: no shimmed module exports `draftForMessage`, `colorForCalendar`, `newAlarm` and `filterNonEditableCalendars`). Unused items that have no alternative stay on their own pages until they are decided.
   - Brief for P43.1 to P43.10 and all their child pages (`context.getApolloClient()` is deliberately not documented: the guide leaves out GraphQL and Apollo, rule in `write-doc.md` section 2. `context.styles` is deliberately not documented too: the build already calls it for every Zimlet, and a call of your own replaces all the CSS from the `.less` files, so authors use `.less` and CSS Modules instead; see P22): one description-list entry for each field and member, with its type, arguments, return value and limits, with no example for now (these pages were written before the member page template gained its `Example` section, so they keep their current form until the user asks to update them; the example files stay in `examples/reference-context/`, unlinked). Verify each entry in the code. Each page is short (about 30 to 90 lines); the structure follows the one-page-per-API style of API references, but fields with almost nothing to say share P43.9 so that no page is nearly empty.
-- **P34 `reference/slots.adoc` – Slots and extension points** (Not started)
+- **P32 `reference/shims.adoc` – Shared modules** (Drafted)
+  - Landing page, written as a nested list and not as a table. Each item is a group with a link to its page, and the area pages are nested under it as links, so the reader sees every subpage at a glance. Each item names its shimmed modules in a short line. The page does not list exports; they are on the linked pages. Modules that the guide does not document are listed last as "not documented in this guide", without a reason. The groups and links are:
+    - Third-party libraries (P32.1): `preact`, `preact/hooks`, `preact/compat`, `preact-render-to-string`, `preact-markup`, `redux-actions`, `moment`, `dompurify`, `react-redux`, `preact-router`, `preact-router/match`.
+    - Components (P32.2): `@zimbra-client/components`, with its ten area pages (P32.2.1 to P32.2.10).
+    - HOCs (P32.3): `@zimbra-client/enhancers` and the HOCs of `@zimbra-client/util`, with three area pages (P32.3.1 to P32.3.3).
+    - Localization (P32.4): `@zimbra/preact-i18n`.
+    - Blocks (P32.5): `@zimbra-client/blocks`, with five area pages (P32.5.1 to P32.5.5).
+    - Utilities (P32.6): `@zimbra-client/util`, with three area pages (P32.6.1 to P32.6.3).
+    - Hooks (P32.7): `@zimbra-client/hooks` and `@zimbra-client/hooks/graphql`, with six area pages (P32.7.1 to P32.7.6).
+    - Constants (P32.8): `@zimbra-client/constants`.
+    - Errors, platform and PWA (P32.9): `@zimbra-client/errors`, `@zimbra-client/platform`, `@zimbra-client/browser`, `@zimbra-client/util/contacts`, `@zimbra-client/pwa-utils`.
+    - Not documented: `@zimbra-client/graphql`, `@apollo/client`, `@apollo/client/react/hoc`, `@apollo/client/react/components`.
+  - Brief: source `context-and-shims.md` §2 and `shims.js`. The only full list of shimmed modules in the guide. P32.1 to P32.9 are the shim reference pages and follow the shim reference page rule in `doc-guide/types.md` section 3. Export lists below come from `shims.js`; verify each against its source before writing. Left out: `ZimbraProvider`, and the paths that the CLI aliases but the host does not provide (`@zimbra-client/util/redux`, `preact/jsx-runtime`; KI-12, KI-10).
+  - **P32.1 `reference/shims/libraries.adoc` – Third-party libraries** (Not started)
+    - Whole-module shims, one line each with a link to the upstream docs: `preact`, `preact/hooks`, `preact/compat`, `preact-render-to-string`, `preact-markup`, `redux-actions`, `moment`, `dompurify`.
+    - Subsets, listing only what the host exposes: `react-redux` (`Provider`, `connect`, `useSelector`, `useDispatch`, `batch`), `preact-router` (`route`, `Link`), `preact-router/match` (`Match`).
+  - **P32.2 `reference/shims/components.adoc` – Components** (Drafted)
+    - Group page for `@zimbra-client/components` (52 documented exports of the 54 in the host `shims.js`; `ZimbraProvider` and `ZimletSlot` are left out with no mention (P09 owns `ZimletSlot`), and the generated CLI shim adds five exports that the host lacks, KI-33). Same form as P32.5: an opening paragraph that points to P32.5 for small controls, a paragraph on the import and the link to P10, then one description-list entry for each area page, with an anchor, its use and its exports. The dialogs and form field entries note that `@zimbra-client/blocks` has its own `ModalDialog` and `Select`. No example. Next step: P32.2.1.
+    - **P32.2.1 `reference/shims/components/layout.adoc` – Layout** (Drafted)
+      - 5: `InfoBar`, `GenericMobileUIToolbar`, `GenericMobileUISidebar`, `SmartList`, `InfiniteScroll`. A shared page like P32.5.1: one section for each export, with the member template (introduction, `Signature`, `Props` as a list with an anchor for each prop, `Returns`, `Usage notes`), no examples and no `Next step` per member. Split out of the former "Layout and navigation" page, which was too long (`write-doc.md` section 0); the sidebars and folder lists are P32.2.10, and `ZimletSlot` is not documented. `GenericMobileUIToolbar` and `GenericMobileUISidebar` are used by the tab and route recipe (P12.2) and by active Zimlets, and `InfoBar` by the voice composer Zimlet. `SmartList` and `InfiniteScroll` are used by no active Zimlet, so their entries document what the code reads. A `WARNING` is in the `hasMore` entry of `InfiniteScroll` (it throws without `loadMore`). `SmartList` notes that the *Home* key does nothing (KI-69) and that it draws the `top-mail-ad-item` slot (P34.1.5 ad slots). The toolbar and sidebar notes were confirmed by the user in the Modern UI with the tab and route example.
+    - **P32.2.2 `reference/shims/components/menus.adoc` – Menus** (Drafted)
+      - 8: `MenuItem`, `ActionMenu`, `DropDownWrapper`, `ActionMenuItem`, `ActionMenuGroup`, `ActionMenuMoveFolder`, `NestedActionMenuItem`, `ContextMenu`. A shared page like P32.5.1: one section for each export, with the member template (introduction, `Signature`, `Props` as a list with an anchor for each prop, `Returns`, `Usage notes`), no examples and no `Next step` per member. Split out of the former "Menus and actions" page, which was too long (`write-doc.md` section 0, 14 exports); the buttons are P32.2.3. `ActionMenuItem`, `ActionMenuGroup`, `NestedActionMenuItem`, `ActionMenu` and `DropDownWrapper` are used together by the file chooser Zimlets and the Slack Zimlet, `MenuItem` by the cloud storage and video Zimlets, and `ContextMenu` by the chat Zimlet. `ActionMenuMoveFolder` is used by no active Zimlet, so its entry documents what the code reads and what a scratch Zimlet showed in the Modern UI (the `folders` list of `useFoldersQuery`, and `flags` with `d`). The gear menu recipe (P12.1.2) and the tab and route recipe (P12.2) link here for the props of `ActionMenuItem` and `MenuItem`. A `ContextMenu` passes its other props to the container; `ActionMenu` passes its other props to `Popover` (link to P32.5.2).
+    - **P32.2.3 `reference/shims/components/buttons-and-actions.adoc` – Buttons and actions** (Drafted)
+      - 6: `ActionButton`, `NakedButton`, `CloseButton`, `HelpButton`, `SMIMEOperationDropDown`, `DeleteWrapper`. A shared page like P32.2.2. `ActionButton` is the button of the Modern UI toolbars (the server data recipe, P12.5, links here for its props), and `CloseButton` is built on it. `HelpButton` is used by no active Zimlet; a plain text child shows as `[object Object]` (KI-74). `SMIMEOperationDropDown` is the drop-down of the `mail-composer-smime-dropdown` slot (the secure mail Zimlet), and `DeleteWrapper` is a render-prop component for deleting Briefcase files (the document editor Zimlet uses its `handleSharedFileDelete`). Link to P32.2.2 for the menus that hold these buttons.
+    - **P32.2.4 `reference/shims/components/dialogs.adoc` – Dialogs** (Not started)
+      - 6: `ModalDialog`, `ConfirmModalDialog`, `ModalDrawer`, `ModalDrawerToolbar`, `ResponsiveModal`, `CertificateModal`. A shared page like P32.2.2: one section for each export, with the member template, no examples and no `Next step` per member. Split out of the former "Dialogs and feedback" page (9 exports; `write-doc.md` section 0); the rest is P32.2.5. Note that `@zimbra-client/blocks` has its own `ModalDialog` (P32.5.2). `ModalDialog` is the largest entry (about 120 lines of source).
+    - **P32.2.5 `reference/shims/components/warnings-and-help.adoc` – Warnings and help** (Not started)
+      - 3: `CaptureBeforeUnload`, `HelpTooltip`, `ErrorAlert`. A shared page like P32.2.2. Link to P32.2.4 for the dialogs. Check the length again before writing: the three components are small, so the page may be short.
+    - **P32.2.6 `reference/shims/components/form-fields.adoc` – Form fields** (Not started)
+      - 4: `Select`, `TextInput`, `FormGroup`, `AddMore`. A shared page like P32.2.2. Split out of the former "Form inputs" page (10 exports). Note that `@zimbra-client/blocks` has its own `Select` (P32.5.3). The dates, recipients and rich text are P32.2.7.
+    - **P32.2.7 `reference/shims/components/dates-recipients-and-rich-text.adoc` – Dates, recipients and rich text** (Not started)
+      - 6: `DateInput`, `CustomTimePicker`, `CalendarOptionItem`, `AddressField`, `TinyMceComposer`, `Picker`. A shared page like P32.2.2. `Picker` is the emoji picker of a third-party library (`@emoji-mart/react`): give a brief entry and link to its documentation. `AddressField` (about 360 lines of source) and `DateInput` (about 300) are the largest entries: check the length again (`write-doc.md` section 0) before writing.
+    - **P32.2.8 `reference/shims/components/contacts.adoc` – Contacts** (Not started)
+      - 4: `ContactList`, `ContactEditor`, `ContactHoverCardWrapper`, `Avatar`. A shared page like P32.2.2. Split out of the former "Domain widgets" page (9 exports). `ContactEditor` (about 1000 lines of source) and `ContactList` (about 580) have many props: check the length again before writing, and ask the user how to handle it if the page is too long.
+    - **P32.2.9 `reference/shims/components/appointments-signatures-and-files.adoc` – Appointments, signatures and files** (Not started)
+      - 5: `AppointmentEdit`, `SignatureBox`, `PdfjsViewer`, `DraggableCard`, `ClientLogo`. A shared page like P32.2.2. `DraggableCard` and `ClientLogo` are generic and have no feature of their own: they sit here because they are small. `AppointmentEdit` (about 1200 lines of source) and `SignatureBox` (about 450) have many props: check the length again before writing, and ask the user how to handle it if the page is too long.
+    - **P32.2.10 `reference/shims/components/navigation.adoc` – Navigation** (Not started)
+      - 5: `Sidebar`, `MailSidebar`, `FolderList`, `FolderListLight`, `FolderListGroup`. A shared page like P32.5.1. Split out of the former "Layout and navigation" page (see P32.2.1). `FolderList` has about 45 props: check the length again (`write-doc.md` section 0) before writing.
+  - **P32.3 `reference/shims/hocs.adoc` – Higher-order components (HOCs)** (Not started)
+    - Group page for the HOCs of `@zimbra-client/enhancers` and `@zimbra-client/util` (8 exports). Each section shows its own module path and, where one exists, links to the hook alternative.
+    - **P32.3.1 `reference/shims/hocs/environment-and-ui-behaviour.adoc` – Environment and UI behaviour** (Not started)
+      - 4: `withMediaQuery`, `withTabManager`, `withTracking`, `clientConfiguration`.
+    - **P32.3.2 `reference/shims/hocs/localization.adoc` – Localization** (Not started)
+      - 2: `withIntlWrapper` (alias `withZimletIntlWrapper`), `withIntlConsumer`. Link to P32.4 and P23.
+    - **P32.3.3 `reference/shims/hocs/composition.adoc` – Composition** (Not started)
+      - 2: `withProps`, `branch`.
+  - **P32.4 `reference/shims/localization.adoc` – Localization (`@zimbra/preact-i18n`)** (Not started)
+    - One page, 9 exports, in three headings. Show text: `Text`, `MarkupText`, `Localizer`. Read text in code: `useText`, `withText`, `translate`. Provide the dictionary: `IntlContext`, `IntlProvider`, `intl`. `IntlProvider` is for content rendered outside the wrapped component; the usual route is `withIntlWrapper` (P32.3.2). Split along the headings if the page is too long.
+  - **P32.5 `reference/shims/blocks.adoc` – Blocks UI kit** (Drafted)
+    - Group page for `@zimbra-client/blocks` (28 documented exports of the 45 in the index of the `@zimbra/blocks` package). The guide leaves out 17 exports, with no mention on the pages: `ProgressIndicator`, `Skeleton`, `FixedPopover`, `TooltipManager`, `TimePicker`, `AlignedForm`, `AlignedLabel`, `Selection`, `ContactAvatar`, `VerticalList`, `withModalManager`, `withGlobalFocusManager`, `useGlobalFocusManager`, `isElementVisible`, `Manager`, `Reference` and `Popper`. The generated CLI shim lacks all 17, so a named import is `undefined` (KI-66), and no active Zimlet uses them. `FontAwesome` and `TAG_COLORS` are in the CLI shim but not in the host, so they are not documented either. One description-list entry for each area page, with the exports of the area. The entries for the dialogs and form areas note that `@zimbra-client/components` has its own `ModalDialog` and `Select`.
+    - **P32.5.1 `reference/shims/blocks/buttons-and-progress.adoc` – Buttons and progress** (Drafted)
+      - 5: `Button`, `AnimatedButton`, `ProgressButton`, `Spinner`, `LoaderBar`. A shared page: one section for each export, with the member template (introduction, `Signature`, `Props` as a list with an anchor for each prop, `Returns`, `Usage notes`), no examples and no `Next step` per member. No warning after an introduction. A `WARNING` is in the `shake` entry of `AnimatedButton` (`shake` without `afterShake`). The `inProgress` entry of `ProgressButton` says that it does not disable. A string `icon` on `Button` and the ignored props of `LoaderBar` are usage notes.
+    - **P32.5.2 `reference/shims/blocks/dialogs-and-overlays.adoc` – Dialogs and overlays** (Drafted)
+      - 6: `Dialog`, `FixedDialog`, `ModalDialog`, `Scrim`, `Popover`, `Tooltip`. A shared page, like P32.5.1: one section for each export, with the member template (introduction, `Signature`, `Props` as a list with an anchor for each prop, `Returns`, `Usage notes`), no examples and no `Next step` per member. `FixedDialog` and `ModalDialog` list only what they add to `Dialog` and link to its props. A `WARNING` is in the `useMouseDownEvents` entry of `Popover` (the keyboard cannot open it). The `into` entry of `Popover` says that it takes an element, and that of the dialogs a selector.
+    - **P32.5.3 `reference/shims/blocks/form-inputs-and-choices.adoc` – Form inputs and choices** (Drafted)
+      - 8: `Select`, `Option`, `Tabs`, `Tab`, `ChoiceInput`, `StyledChoiceInput`, `ColorPicker`, `Label`. A shared page like P32.5.1: one section for each export, with the member template, no examples and no `Next step` per member. Function props show their signature in the type and say what the return value does (`doc-guide/types.md` section 3). A `WARNING` is in the `clearFocusAfterChange` entry of `ChoiceInput` (one shared reference for all inputs). `Tabs` says that `active` must be set, and `Select` that its children must be an array of `Option` elements.
+    - **P32.5.4 `reference/shims/blocks/display-and-layout.adoc` – Display and layout** (Drafted)
+      - 4: `Card`, `Icon`, `WarningBanner`, `AffixBottom`. A shared page like P32.5.1, with the member template, no examples and no `Next step` per member. The `Icon` section repeats the rule that `name` takes a component, and links to the Icons section of the shared libraries page.
+    - **P32.5.5 `reference/shims/blocks/behaviour-helpers-and-constants.adoc` – Behaviour helpers and constants** (Drafted)
+      - 5: `ClickOutsideDetector`, `CloseOnClickOrKeydown`, `ContainerSize`, `KeyCodes`, `COLORS`. A shared page like P32.5.1. The three components follow the component template. `KeyCodes` and `COLORS` follow the property template (`Type` and `Usage notes`): `KeyCodes` has a table of its names and values, and `COLORS` one table that compares the three palettes by number. `HOME` is documented as wrong (KI-69).
+  - **P32.6 `reference/shims/utilities.adoc` – Utilities** (Not started)
+    - Group page for `@zimbra-client/util` (22 exports).
+    - **P32.6.1 `reference/shims/utilities/data-text-and-functions.adoc` – Data, text and functions** (Not started)
+      - 9: `array`, `isEmpty`, `pruneEmpty`, `htmlEncode`, `htmlToText`, `getDataTransferJSON`, `setDataTransferJSON`, `callWith`, `debounce`.
+    - **P32.6.2 `reference/shims/utilities/browser-and-app.adoc` – Browser and app** (Not started)
+      - 9: `PageVisibility`, `clipboard`, `getElectron`, `csrfStorage`, `closeNotification`, `getContext`, `startAttachmentDownloadProcess`, `breakpoints`, `zimletEventEmitter`. `zimletEventEmitter` links to P21.
+    - **P32.6.3 `reference/shims/utilities/smime-and-calendar.adoc` – S/MIME and calendar** (Not started)
+      - 4: `smimeHandler`, `isServerSMIMEFeatureAvailable`, `filterNonInsertableCalendars`, `closeEventTabThunk`.
+  - **P32.7 `reference/shims/hooks.adoc` – Hooks** (Drafted)
+    - Group page for `@zimbra-client/hooks` and `@zimbra-client/hooks/graphql` (20 exports), grouped by area, not by module. An opening paragraph says what a hook is for and that a component calls it while it renders, and a second paragraph says that the import path does not tell a data hook from the others (KI-49). Then one description-list entry for each area page, with its hooks named. No example.
+    - Brief: sources `shims.js` and the hook definitions in the host `src/hooks`. The area pages are shared pages: one section for each hook, with the member template (introduction, `Signature` with the real import path, `Parameters`, `Returns`, `Usage notes`), no example and no `Next step` per hook. GraphQL and Apollo stay out (rule in `write-doc.md` section 2): a custom `query` argument is described only as an option to leave out, and the request that a hook sends is named by its Zimbra request. A `WARNING` is in the introduction of a hook that changes data (`useItemActionMutation`, `useFolderActionMutation`, `useDocumentAction`) and of `useSendMessageMutation`. A `WARNING` is in the `options` entry of a hook that throws without an argument (`useFoldersQuery`, `useMessageSearchQuery`, `useSendMessageMutation`). `useFoldersQuery` takes `fetchPolicy` beside `variables`, and the first folder request of the page ignores `fetchPolicy` (KI-73).
+    - **P32.7.1 `reference/shims/hooks/environment.adoc` – Environment** (Drafted)
+      - 4, all from `@zimbra-client/hooks`: `useClientConfig`, `useTracking`, `useMediaQuery`, `useZimbraContext`. Each links to its HOC alternative in P32.3.1 where one exists.
+    - **P32.7.2 `reference/shims/hooks/account-and-preferences.adoc` – Account and preferences** (Drafted)
+      - 3: `usePreferences` (from `@zimbra-client/hooks`), `useAccountInfo` and `useAvailableLocalesQuery` (from `@zimbra-client/hooks/graphql`). `usePreferences` owns the result and `options` description that the other data hooks link to.
+    - **P32.7.3 `reference/shims/hooks/mail.adoc` – Mail** (Drafted)
+      - 4, all from `@zimbra-client/hooks`: `useSendMessageMutation`, `useOriginalMsgHeader`, `useItemActionMutation`, `useMessageSearchQuery`.
+    - **P32.7.4 `reference/shims/hooks/folders.adoc` – Folders** (Drafted)
+      - 3, all from `@zimbra-client/hooks/graphql`: `useFoldersQuery`, `useCreateFolderMutation`, `useFolderActionMutation`.
+    - **P32.7.5 `reference/shims/hooks/briefcase.adoc` – Briefcase** (Drafted)
+      - 3, all from `@zimbra-client/hooks/graphql`: `useDocumentAction`, `useBriefcaseFoldersQuery`, `useSaveDocumentMutation`.
+    - **P32.7.6 `reference/shims/hooks/calendar-and-metadata.adoc` – Calendar and metadata** (Drafted)
+      - 3, all from `@zimbra-client/hooks/graphql`: `useCalendarsData`, `useCustomMetaData`, `useCustomMetaDataMutation`. `useCustomMetaDataMutation` returns the function, not an array.
+  - **P32.8 `reference/shims/constants.adoc` – Constants** (Not started)
+    - 7, from `@zimbra-client/constants`: `ATTENDEE_ROLE`, `PARTICIPATION_STATUS`, `supportedMimes`, `ZIMBRA_ZIMLET_EVENTS`, `EMAIL_SEPARATOR_TAG_ID`, `USER_FOLDER_IDS`, `FLAGS`.
+  - **P32.9 `reference/shims/errors-platform-and-pwa.adoc` – Errors, platform and PWA** (Not started)
+    - 8: `errorMessage`, `faultCode` (`@zimbra-client/errors`); `getPlatformType`, `PLATFORM_TYPES` (`@zimbra-client/platform`); `openExternalBrowser` (`@zimbra-client/browser`); `getName` (`@zimbra-client/util/contacts`); `isStandalone`, `awaitInstallPrompt` (`@zimbra-client/pwa-utils`).
+- **P33** (removed: its shim areas moved under P32 as P32.6 to P32.9, `fetch` calls and the batch client are in P20.2, P20.3 and P43.5, and the server proxy and OAuth client have no page yet; the number is kept so that no page is renumbered)
+- **P40** (removed: the blocks pages moved under P32 as P32.5; the number is kept so that no page is renumbered)
+- **P34 `reference/slots.adoc` – Slots and extension points** (Drafted)
   - Landing page, written as a nested list and not as a table. Each group links to its page, with its screen pages nested under it as links. A link to P09 for how slots behave.
-  - Brief: source `zimlet-slots.yml` (155 catalog names: 146 `ZimletSlot` slots and 9 data keys, which the host reads with direct `invokePlugin` calls), `slot-behavior.md`, `verticals.md`. The 36 names that repeat for each vertical (`<vertical>-tab-item`, `<vertical>-default-tab`, `<vertical>-landing-page`, `-description`, `-videos`) are documented once for each pattern, with the verticals they apply to, so the guide has **124 entries**. Groups and screens come from the host file that renders the slot (the catalog `usages`), not from the name. All `placementAreas` are `unclassified` (KI-15): write each entry with its name, where it renders and "details pending", then research the payloads (`slots.md`) in the order of the slots that active Zimlets register. Entries follow the slot rule in `doc-guide/types.md` section 3. Re-check the groups when the catalog is regenerated (KI-16).
-  - **P34.1 `reference/slots/app-shell.adoc` – App shell** (Not started)
+  - Brief: source `zimlet-slots.yml` (155 catalog names: 146 `ZimletSlot` slots and 9 data keys, which the host reads with direct `invokePlugin` calls), `slot-behavior.md`, `verticals.md`. The 36 names that repeat for each vertical (`<vertical>-tab-item`, `<vertical>-default-tab`, `<vertical>-landing-page`, `-description`, `-videos`) are documented once for each pattern, with the verticals they apply to, so the guide has **124 entries**. Groups and screens come from the host file that renders the slot (the catalog `usages`), not from the name. All `placementAreas` are `unclassified`: write each entry with its name, where it renders and "details pending", then research the payloads (`slots.md`) in the order of the slots that active Zimlets register. Entries follow the slot rule in `doc-guide/types.md` section 3. Re-check the groups when the catalog is regenerated (KI-16).
+  - **P34.1 `reference/slots/app-shell.adoc` – App shell** (Drafted)
     - Group page, 35 entries.
-    - **P34.1.1 `reference/slots/app-shell/navigation-and-tabs.adoc` – Navigation and tabs** (Not started)
-      - 5: `<vertical>-tab-item`, `<vertical>-default-tab`, `menu`, `vertical-menu-item`, `header-menu-item`.
+    - **P34.1.1 `reference/slots/app-shell/navigation-and-tabs.adoc` – Navigation and tabs** (Drafted)
+      - 5: `<area>-tab-item`, `<area>-default-tab`, `menu`, `vertical-menu-item`, `header-menu-item`.
     - **P34.1.2 `reference/slots/app-shell/landing-pages.adoc` – Landing pages** (Not started)
       - 3: `<vertical>-landing-page`, `<vertical>-landing-page-description`, `<vertical>-landing-page-videos`.
     - **P34.1.3 `reference/slots/app-shell/app-frame-and-sign-in.adoc` – App frame and sign-in** (Not started)
@@ -592,7 +608,7 @@ _Purpose: complete facts for lookup, no tutorial text. Every API, property, opti
   - **P34.8 `reference/slots/all-slots.adoc` – All slots A to Z** (Not started)
     - A description list of every catalog name with a link to its entry, generated from `zimlet-slots.yml` with a script so it can be refreshed. A name that is a vertical pattern links to its pattern entry.
 - **P35 `reference/glossary.adoc` – Glossary** (Drafted)
-  - One short entry per term, in alphabetical order, each linking to the page that owns the topic. Only short, stable terms that have no concept page of their own: class of service (COS), HMR, Modern UI, semver range, Zimlet, `zmzimletctl`. A concept that has its own page (context, factory, plugin handler, shim, descriptor, sideloader, slot, vertical) is not in the glossary; pages link to the concept page (rule in `write-doc.md` section 2). Remove a term from the glossary when its concept page is planned.
+  - One short entry per term, in alphabetical order, each linking to the page that owns the topic. Only short, stable terms that have no concept page of their own: class of service (COS), element (a Preact element, linked from the type `element`), HMR, Modern UI, node (a value that a component can render, linked from the type `node` in the reference pages), semver range, Zimlet, `zmzimletctl`. A concept that has its own page (context, factory, plugin handler, shim, descriptor, sideloader, slot, vertical) is not in the glossary; pages link to the concept page (rule in `write-doc.md` section 2). Remove a term from the glossary when its concept page is planned.
 
 ### Part 7 – Help and migration
 

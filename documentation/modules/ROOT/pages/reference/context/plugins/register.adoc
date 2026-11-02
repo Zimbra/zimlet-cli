@@ -22,7 +22,7 @@ plugins.register(name, handler)
 |The key. A slot key has the form `slot::<slot-name>`, such as `slot::message-body-top`. See xref:fundamentals/extending-the-ui.adoc[Slots and handlers].
 
 |`handler`
-|function, or any other value
+|function `(...args: any[]) => any`, or any other value
 |A function is called by the code that owns the key, with the arguments that the owner chooses. For a slot these are the props of the slot. Any other value is used as it is.
 
 |===

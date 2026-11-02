@@ -22,7 +22,7 @@ store.zimletRedux.injectAsyncReducer(namespace, reducer)
 |The key of the state tree, so the state is at `state[namespace]`.
 
 |`reducer`
-|function
+|function `(state: any, action: object) => any`
 |A Redux reducer, `(state, action) => newState`. Give `state` a default value.
 
 |===

@@ -1,0 +1,366 @@
+= Dialogs and overlays
+
+The parts of `@zimbra-client/blocks` that show content above the page: three dialog frames, a popover, a tooltip and a translucent layer. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a layer of its own. Examples are a dialog with custom content, a card that opens beside a control and a hint next to an element.
+
+Pick the member by how the content appears. `ModalDialog` covers the page. `Dialog` and `FixedDialog` give a frame only. `Popover` opens from a trigger, `Tooltip` sits beside its parent and `Scrim` dims an area.
+
+`@zimbra-client/components` also has a `ModalDialog`. It is a different component. It adds a header, a content area and buttons around the frame that `@zimbra-client/blocks` provides. See xref:reference/shims/components/dialogs.adoc#modal-dialog[Dialogs].
+
+[#members]
+== Members
+
+<<dialog,`Dialog`>>::
+A dialog frame that stays in its place in the page.
+
+<<fixed-dialog,`FixedDialog`>>::
+A dialog frame that is drawn on the page body and stays in place when the page scrolls.
+
+<<modal-dialog,`ModalDialog`>>::
+A dialog frame, centred over a layer that covers the window.
+
+<<scrim,`Scrim`>>::
+A translucent layer that dims an area.
+
+<<popover,`Popover`>>::
+Content that opens beside a trigger.
+
+<<tooltip,`Tooltip`>>::
+A small box placed beside its parent element.
+
+[#dialog]
+== Dialog
+
+The frame of a dialog, with no header, buttons or layer. It keeps the keyboard focus inside, stops the page from scrolling and reports a click outside or the *Escape* key. Use it when you build the whole dialog yourself and want it where you place it in the page. Use <<modal-dialog,`ModalDialog`>> for a dialog over the whole window, and <<fixed-dialog,`FixedDialog`>> for one that does not move with the page.
+
+=== Signature
+
+[source,js]
+----
+import { Dialog } from '@zimbra-client/blocks';
+
+<Dialog centered onClickOutside={handleClose}>{content}</Dialog>
+----
+
+=== Props
+
+[[dialog-on-click-outside]]pass:[<a class="anchor" href="#dialog-on-click-outside"></a>]`onClickOutside` (function `(event: Event) => void`)::
+Called with the event when the user clicks or right-clicks outside the dialog, moves the focus into an iframe or presses *Escape*. Its return value is ignored. The dialog does not close itself, so remove it in this function. Without it, neither the click nor the key does anything.
+
+[[dialog-disable-outside-click]]pass:[<a class="anchor" href="#dialog-disable-outside-click"></a>]`disableOutsideClick` (boolean, default `false`)::
+Ignores clicks outside the dialog. *Escape* still calls <<dialog-on-click-outside,`onClickOutside`>>.
+
+[[dialog-disable-escape]]pass:[<a class="anchor" href="#dialog-disable-escape"></a>]`disableEscape` (boolean, default `false`)::
+Ignores the *Escape* key. A click outside still calls <<dialog-on-click-outside,`onClickOutside`>>.
+
+[[dialog-centered]]pass:[<a class="anchor" href="#dialog-centered"></a>]`centered` (boolean, default `false`)::
+Centres the dialog on its closest positioned ancestor element. Without it, the dialog is placed by your own styles.
+
+[[dialog-aria-label]]pass:[<a class="anchor" href="#dialog-aria-label"></a>]`ariaLabel` (string)::
+The accessible name of the dialog. Set it when the dialog has no visible heading that names it.
+
+[[dialog-autofocus-child-index]]pass:[<a class="anchor" href="#dialog-autofocus-child-index"></a>]`autofocusChildIndex` (number, default `0`)::
+The position of the element that gets the focus when the dialog opens, counted among the focusable elements inside it. `0` is the first.
+
+[[dialog-body-class]]pass:[<a class="anchor" href="#dialog-body-class"></a>]`bodyClass` (string)::
+A class name added to the page body while the dialog is open, in place of the class that stops the page from scrolling. The page scrolls behind the dialog unless your class stops it.
+
+[[dialog-class]]pass:[<a class="anchor" href="#dialog-class"></a>]`class` (string)::
+A class name added to the dialog.
+
+[[dialog-children]]pass:[<a class="anchor" href="#dialog-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the dialog.
+
+[[dialog-other-props]]pass:[<a class="anchor" href="#dialog-other-props"></a>]Any other prop (any)::
+Set on the dialog element as it is, such as `id` and `aria-labelledby`.
+
+=== Returns
+
+A `div` element with `role="dialog"` and `aria-modal="true"`.
+
+=== Usage notes
+
+* The dialog has no background, border or padding. Style your content, or the page shows through.
+* The dialog is not hidden by a prop. Show it by rendering it, and hide it by no longer rendering it. A Zimlet that opens a dialog from an event handler passes it to xref:reference/context/store/zimlet-redux/actions.adoc#add-modal[`addModal`].
+* Only the dialog or popover that opened last reacts to *Escape* and to a click outside. An open <<popover,`Popover`>> in a dialog closes first.
+* The keyboard focus stays inside the dialog while it is open. When the dialog closes, the focus returns to the element that had it, if that element is still visible.
+* A prop such as `ariaLabel` or `title` can hold a `<Text>` element. The dialog replaces it with the translated text. See xref:go-deeper/localization.adoc[Localization].
+
+[#fixed-dialog]
+== FixedDialog
+
+A <<dialog,`Dialog`>> that is drawn into the page body and stays in place when the page scrolls. Use it for a dialog that must stay in place while the page scrolls. It has no layer behind it. Use <<modal-dialog,`ModalDialog`>> when the page behind must be covered.
+
+=== Signature
+
+[source,js]
+----
+import { FixedDialog } from '@zimbra-client/blocks';
+
+<FixedDialog centered onClickOutside={handleClose}>{content}</FixedDialog>
+----
+
+=== Props
+
+[[fixed-dialog-into]]pass:[<a class="anchor" href="#fixed-dialog-into"></a>]`into` (string, default `body`)::
+A CSS selector for the element that holds the dialog. The first match is used.
+
+[[fixed-dialog-other-props]]pass:[<a class="anchor" href="#fixed-dialog-other-props"></a>]Any other prop (any)::
+Passed to <<dialog,`Dialog`>>. See its props, such as <<dialog-on-click-outside,`onClickOutside`>>, <<dialog-centered,`centered`>> and <<dialog-class,`class`>>.
+
+=== Returns
+
+The <<dialog,`Dialog`>> element, rendered into the element that `into` names.
+
+=== Usage notes
+
+* With <<dialog-centered,`centered`>>, the dialog is centred in the window, because its position is fixed.
+* The dialog is not centred unless you set `centered`. Unlike <<modal-dialog,`ModalDialog`>>, it has no default position.
+* The notes of <<dialog,`Dialog`>> apply: the dialog has no style of its own, and it does not close itself.
+
+[#modal-dialog]
+== ModalDialog
+
+A <<dialog,`Dialog`>> that is centred over a layer that covers the window. Use it when the user must answer or dismiss the dialog before going on. It is the frame only. Use the `ModalDialog` of xref:reference/shims/components/dialogs.adoc#modal-dialog[`@zimbra-client/components`] when you want a header, a close button and a row of buttons as well.
+
+=== Signature
+
+[source,js]
+----
+import { ModalDialog } from '@zimbra-client/blocks';
+
+<ModalDialog onClickOutside={handleClose} ariaLabel={label}>{content}</ModalDialog>
+----
+
+=== Props
+
+[[modal-dialog-overlay-class]]pass:[<a class="anchor" href="#modal-dialog-overlay-class"></a>]`overlayClass` (string)::
+A class name added to the layer around the dialog.
+
+[[modal-dialog-into]]pass:[<a class="anchor" href="#modal-dialog-into"></a>]`into` (string, default `body`)::
+A CSS selector for the element that holds the layer. The first match is used.
+
+[[modal-dialog-centered]]pass:[<a class="anchor" href="#modal-dialog-centered"></a>]`centered` (boolean, default `true`)::
+Centres the dialog in the layer. Set `centered` to `false` to place the dialog with your own styles.
+
+[[modal-dialog-other-props]]pass:[<a class="anchor" href="#modal-dialog-other-props"></a>]Any other prop (any)::
+Passed to <<dialog,`Dialog`>>, such as <<dialog-on-click-outside,`onClickOutside`>>, <<dialog-disable-escape,`disableEscape`>>, <<dialog-aria-label,`ariaLabel`>>, <<dialog-autofocus-child-index,`autofocusChildIndex`>> and <<dialog-class,`class`>>. The `class` goes to the dialog and not to the layer.
+
+=== Returns
+
+A `div` element that covers the window and holds the <<dialog,`Dialog`>> element. It is rendered into the element that `into` names.
+
+=== Usage notes
+
+* A click on the layer is a click outside the dialog, so it calls <<dialog-on-click-outside,`onClickOutside`>>. Set <<dialog-disable-outside-click,`disableOutsideClick`>> to keep the dialog open.
+* The layer scrolls when the dialog is taller than the window.
+* The notes of <<dialog,`Dialog`>> apply: the dialog has no style of its own, and it does not close itself.
+* To show the dialog from a Zimlet, pass it to xref:reference/context/store/zimlet-redux/actions.adoc#add-modal[`addModal`] and remove it with xref:reference/context/store/zimlet-redux/actions.adoc#remove-modal[`removeModal`]. See xref:build-by-goal/recipe-app-events.adoc#modal-dialog[The ModalDialog component] for a dialog of `@zimbra-client/components` in use.
+
+[#scrim]
+== Scrim
+
+A translucent black layer that fills the closest positioned ancestor. Use it to dim an area while the area is not available, for example while a panel saves. For a layer over the whole window, use <<modal-dialog,`ModalDialog`>>.
+
+=== Signature
+
+[source,js]
+----
+import { Scrim } from '@zimbra-client/blocks';
+
+<Scrim />
+----
+
+=== Props
+
+[[scrim-class]]pass:[<a class="anchor" href="#scrim-class"></a>]`class` (string)::
+A class name added to the layer.
+
+[[scrim-other-props]]pass:[<a class="anchor" href="#scrim-other-props"></a>]Any other prop (any)::
+Set on the element as it is, such as `onClick` and `style`.
+
+=== Returns
+
+A `div` element, with an opacity of 30 percent black and small rounded corners.
+
+=== Usage notes
+
+* The layer is positioned by `position: absolute` with all four offsets at zero. Give the parent a position, such as `position: relative`, or the layer fills a larger ancestor.
+* The layer has no text and no role. Say in the text near it why the area is dimmed.
+
+[#popover]
+== Popover
+
+Content that opens beside a trigger and closes on an outside click. Use it for a small card of details or a short list of actions that belongs to one control. Use <<dialog,`Dialog`>> when the user must act on the content before going on, and <<tooltip,`Tooltip`>> for a short hint that you show and hide yourself.
+
+=== Signature
+
+[source,js]
+----
+import { Popover } from '@zimbra-client/blocks';
+
+<Popover target={<Button>{label}</Button>} placement="bottom" anchor="start">
+	{content}
+</Popover>
+----
+
+=== Props
+
+[[popover-target]]pass:[<a class="anchor" href="#popover-target"></a>]`target` (xref:reference/glossary.adoc#node[node])::
+The content of the trigger. A click on the trigger opens and closes the popover. Use a focusable element such as a xref:reference/shims/blocks/buttons-and-progress.adoc#button[`Button`], so that the keyboard can reach it.
+
+[[popover-text]]pass:[<a class="anchor" href="#popover-text"></a>]`text` (xref:reference/glossary.adoc#node[node])::
+A label in the trigger, drawn before `target`.
+
+[[popover-tooltip]]pass:[<a class="anchor" href="#popover-tooltip"></a>]`tooltip` (string)::
+The text that the browser shows when the pointer rests on the trigger.
+
+[[popover-icon]]pass:[<a class="anchor" href="#popover-icon"></a>]`icon` (component)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn in the trigger. Pass the component, not a name.
+
+[[popover-custom-icon]]pass:[<a class="anchor" href="#popover-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for an icon that `lucide-preact` does not have. See xref:reference/shims/blocks/buttons-and-progress.adoc#button-custom-icon[`customIcon` of `Button`].
+
+[[popover-icon-position]]pass:[<a class="anchor" href="#popover-icon-position"></a>]`iconPosition` (string)::
+`left` draws the icon before the label. Any other value, or none, draws it after `target`.
+
+[[popover-icon-size]]pass:[<a class="anchor" href="#popover-icon-size"></a>]`iconSize` (string, default `md`)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+
+[[popover-icon-class]]pass:[<a class="anchor" href="#popover-icon-class"></a>]`iconClass` (string)::
+A class name added to the icon.
+
+[[popover-disabled]]pass:[<a class="anchor" href="#popover-disabled"></a>]`disabled` (boolean)::
+Marks the trigger as disabled. The trigger then ignores the pointer.
+
+[[popover-component]]pass:[<a class="anchor" href="#popover-component"></a>]`component` (string or component, default `div`)::
+The element type of both the container and the trigger. Use `span` to place the popover inside a line of text.
++
+A custom component is used twice, so it must accept both sets of props and pass them to one element. The container gets `class`, `children` and any other prop of the popover. The trigger gets `ref`, `class`, `children`, `title`, `disabled`, `onClick` (or `onMouseDown` with <<popover-use-mouse-down-events,`useMouseDownEvents`>>), `onDrag` and, with <<popover-hover-duration,`hoverDuration`>>, `onMouseEnter` and `onMouseLeave`. The `ref` must reach the element, or the popover cannot find the trigger.
+
+[[popover-placement]]pass:[<a class="anchor" href="#popover-placement"></a>]`placement` (string, default `bottom`)::
+The side of the trigger that holds the popover: `top`, `bottom`, `left` or `right`.
+
+[[popover-anchor]]pass:[<a class="anchor" href="#popover-anchor"></a>]`anchor` (string, default `start`)::
+The edge of the trigger that the popover lines up with: `start`, `end` or `center`.
+
+[[popover-arrow]]pass:[<a class="anchor" href="#popover-arrow"></a>]`arrow` (boolean)::
+Draws an arrow from the popover to the trigger.
+
+[[popover-is-menu]]pass:[<a class="anchor" href="#popover-is-menu"></a>]`isMenu` (boolean)::
+Gives the element around the content `role="menu"`. Set it when the content is a list of menu items.
+
+[[popover-active]]pass:[<a class="anchor" href="#popover-active"></a>]`active` (boolean)::
+Whether the popover is open. The popover starts open when it is `true`, and follows each later change of the prop. A click or hover still toggles it.
+
+[[popover-on-toggle]]pass:[<a class="anchor" href="#popover-on-toggle"></a>]`onToggle` (function `(isOpen: boolean) => void`)::
+Called with `true` when the popover opens and with `false` when it closes, whether by click, hover, an outside click or *Escape*. A change of <<popover-active,`active`>> does not call it.
+
+[[popover-hover-duration]]pass:[<a class="anchor" href="#popover-hover-duration"></a>]`hoverDuration` (number)::
+A time in milliseconds. The popover opens when the pointer rests on the trigger for that long. It closes when the pointer has been off both the trigger and the popover for that long. A click on the trigger still works. Without it, hover does nothing.
+
+[[popover-open-pop]]pass:[<a class="anchor" href="#popover-open-pop"></a>]`openPop` (boolean)::
+Keeps the popover open on an outside click and on *Escape*. The user then closes it with the trigger, or you close it with <<popover-active,`active`>>.
+
+[[popover-ignore-target-click-as-outside]]pass:[<a class="anchor" href="#popover-ignore-target-click-as-outside"></a>]`ignoreTargetClickAsOutside` (boolean)::
+Stops a click on the trigger from counting as an outside click. Set it when an open popover must close when the user clicks its trigger again.
+
+[[popover-use-mouse-down-events]]pass:[<a class="anchor" href="#popover-use-mouse-down-events"></a>]`useMouseDownEvents` (boolean, default `false`)::
+Opens and closes the popover when the mouse button goes down on the trigger, and not when the click ends.
++
+WARNING: With this prop, the keyboard cannot open the popover. A key press on a button gives a click and no mouse down. Set it only for a trigger that has another way to open the content.
+
+[[popover-on-dropdown-click]]pass:[<a class="anchor" href="#popover-on-dropdown-click"></a>]`onDropdownClick` (function `(event: MouseEvent) => void`)::
+Called with the click event on each click inside the content. Its return value is ignored.
+
+[[popover-into]]pass:[<a class="anchor" href="#popover-into"></a>]`into` (https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^], default `document.body`)::
+The element that holds the popover. Pass an element, not a selector. This differs from <<dialog,`Dialog`>> and its relatives, whose `into` is a selector. Pass `null` to draw the popover next to the trigger, inside the container.
+
+[[popover-full-width]]pass:[<a class="anchor" href="#popover-full-width"></a>]`fullWidth` (boolean)::
+Stops the container and the trigger from shrinking to the width of their content.
+
+[[popover-popover-class]]pass:[<a class="anchor" href="#popover-popover-class"></a>]`popoverClass` (string)::
+A class name added to the box around the content.
+
+[[popover-toggle-class]]pass:[<a class="anchor" href="#popover-toggle-class"></a>]`toggleClass` (string)::
+A class name added to the trigger.
+
+[[popover-title-class]]pass:[<a class="anchor" href="#popover-title-class"></a>]`titleClass` (string)::
+A class name added to the `text` label.
+
+[[popover-container-class]]pass:[<a class="anchor" href="#popover-container-class"></a>]`containerClass` (string)::
+A class name added to the container. The `class` prop does the same.
+
+[[popover-classes]]pass:[<a class="anchor" href="#popover-classes"></a>]`classes` (object)::
+The four class names above in one object, with the keys `popoverClass`, `toggleClass`, `titleClass` and `containerClass`. A key of `classes` replaces the matching separate prop.
+
+[[popover-class]]pass:[<a class="anchor" href="#popover-class"></a>]`class` (string)::
+A class name added to the container.
+
+[[popover-children]]pass:[<a class="anchor" href="#popover-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the popover. Each child element gets an `update` prop, a function that places the popover again. Call it without arguments after the content changes size.
+
+[[popover-other-props]]pass:[<a class="anchor" href="#popover-other-props"></a>]Any other prop (any)::
+Set on the container element, such as `id`.
+
+=== Returns
+
+The container, an element of the type that `component` names. It holds the trigger. While the popover is open, the content is drawn in the element that `into` names, and not inside the container.
+
+=== Usage notes
+
+* The content exists only while the popover is open. Its state is lost each time the popover closes.
+* The content is drawn in the page body, outside the container. Style it with `popoverClass`, and not with a rule that depends on the container.
+* The trigger is a `div` with no role and no tab stop. Keyboard users reach it only through a focusable `target`, such as a button.
+* The container and the trigger use the same element type. With `component="button"`, a button would sit inside a button, so choose `div` or `span`.
+* *Escape* closes an open popover, unless you set <<popover-open-pop,`openPop`>>. A popover inside a <<dialog,`Dialog`>> closes before the dialog.
+* `corners` and `href` are accepted and have no effect.
+
+[#tooltip]
+== Tooltip
+
+A small box that sits beside its parent element. Use it to show a hint or a short explanation next to an element, when you decide when it shows. The component has no hover or focus logic, so it appears whenever you render it.
+
+=== Signature
+
+[source,js]
+----
+import { Tooltip } from '@zimbra-client/blocks';
+
+<Tooltip position="top" anchor="left">{hint}</Tooltip>
+----
+
+=== Props
+
+[[tooltip-position]]pass:[<a class="anchor" href="#tooltip-position"></a>]`position` (string)::
+The side of the parent that holds the tooltip: `top`, `bottom`, `left` or `right`. Without it, the tooltip is not offset.
+
+[[tooltip-anchor]]pass:[<a class="anchor" href="#tooltip-anchor"></a>]`anchor` (string)::
+The edge of the parent that the tooltip lines up with: `top`, `bottom`, `left` or `right`. Use `left` or `right` with a `top` or `bottom` position, and `top` or `bottom` with a `left` or `right` position.
+
+[[tooltip-style]]pass:[<a class="anchor" href="#tooltip-style"></a>]`style` (string)::
+Extra CSS text added to the tooltip. Pass a string. An object is not supported.
+
+[[tooltip-class]]pass:[<a class="anchor" href="#tooltip-class"></a>]`class` (string)::
+A class name added to the tooltip.
+
+[[tooltip-children]]pass:[<a class="anchor" href="#tooltip-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the tooltip.
+
+[[tooltip-other-props]]pass:[<a class="anchor" href="#tooltip-other-props"></a>]Any other prop (any)::
+Set on the element as it is, such as `id`.
+
+=== Returns
+
+A `div` element with `role="tooltip"`.
+
+=== Usage notes
+
+* The tooltip is positioned by `position: absolute`. Give the parent a position, such as `position: relative`, or the tooltip is placed against a larger ancestor.
+* An invalid `position` or `anchor` throws an error in a development build of the Modern UI. A production build does not check the values.
+* The tooltip and the elements inside it have no padding and no margin. Add them with `class`.
+* The tooltip shows no arrow and does not close itself. To close it on an outside click, wrap it in xref:reference/shims/blocks/behaviour-helpers-and-constants.adoc[`CloseOnClickOrKeydown`].
+
+[#next-step]
+== Next step
+
+Learn how to let the user pick a value or switch between tabs in xref:reference/shims/blocks/form-inputs-and-choices.adoc[Form inputs and choices].

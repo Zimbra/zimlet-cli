@@ -106,7 +106,7 @@ Runs when the user chooses the item. Use it for an action, as the next section d
 `icon`::
 The icon component, from `lucide-preact`. See xref:fundamentals/shared-libraries.adoc#icons[Icons] for how to pass it. *Manage account* has none, like the built-in items of the account menu.
 
-Look up the rest of the props in xref:reference/shims/components/menus-and-actions.adoc[Menus and actions].
+Look up the rest of the props in xref:reference/shims/components/menus.adoc#action-menu-item[Menus].
 
 [#add-the-action-item]
 == Add the action item

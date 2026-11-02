@@ -1,0 +1,213 @@
+= Display and layout
+
+The parts of `@zimbra-client/blocks` that show information: a card, an icon and a warning banner. A helper keeps an element at the bottom of its container. Use them to present content in your xref:reference/glossary.adoc#zimlet[Zimlet] in the style of the xref:reference/glossary.adoc#modern-ui[Modern UI]. `Icon` is the one that nearly every Zimlet needs, because it draws icons from the shared icon library.
+
+[#members]
+== Members
+
+<<card,`Card`>>::
+A clickable block, often an image, that dims on hover.
+
+<<icon,`Icon`>>::
+An icon from the icon library, at a standard size.
+
+<<warning-banner,`WarningBanner`>>::
+A highlighted bar for a warning.
+
+<<affix-bottom,`AffixBottom`>>::
+Keeps an element at the bottom of the visible area while its container is in view.
+
+[#card]
+== Card
+
+A block that can be clicked and that dims when the pointer or the focus is on it. Use it for a tile with an image, such as a preview in a grid. By default the card is a square, and an `img` that is its direct child fills it.
+
+=== Signature
+
+[source,js]
+----
+import { Card } from '@zimbra-client/blocks';
+
+<Card onClick={handleClick}>
+	<img src={imageUrl} alt={description} />
+</Card>
+----
+
+=== Props
+
+[[card-on-click]]pass:[<a class="anchor" href="#card-on-click"></a>]`onClick` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user clicks the card. It also gives the card `role="button"`. Its return value is ignored.
+
+[[card-href]]pass:[<a class="anchor" href="#card-href"></a>]`href` (string)::
+Makes the card a link. The element is an `a`.
+
+[[card-component-class]]pass:[<a class="anchor" href="#card-component-class"></a>]`componentClass` (string or component)::
+The element type of the card. Without it, the card is an `a` with `href`, and a `div` otherwise. Use `button` for a card that the keyboard can reach.
+
+[[card-square]]pass:[<a class="anchor" href="#card-square"></a>]`square` (boolean, default `true`)::
+Makes the card as high as it is wide. A direct `img` child then fills the square, centred, and has a border. Set `false` to let the content decide the height.
+
+[[card-scrim]]pass:[<a class="anchor" href="#card-scrim"></a>]`scrim` (boolean or xref:reference/glossary.adoc#node[node], default `true`)::
+Draws a translucent layer over the card while the pointer or the focus is on it. Pass a node to draw it in place of the layer. Set `false` for no layer.
+
+[[card-scrim-props]]pass:[<a class="anchor" href="#card-scrim-props"></a>]`scrimProps` (object)::
+Props for the layer that `scrim` draws, such as `class`. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#scrim[`Scrim`].
+
+[[card-on-hover]]pass:[<a class="anchor" href="#card-on-hover"></a>]`onHover` (function `(isHovered: boolean) => void`)::
+Called with `true` when the pointer or the focus enters the card, and with `false` when it leaves. It is called also when `scrim` is `false`. Its return value is ignored.
+
+[[card-class]]pass:[<a class="anchor" href="#card-class"></a>]`class` (string)::
+A class name added to the card.
+
+[[card-children]]pass:[<a class="anchor" href="#card-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the card.
+
+[[card-other-props]]pass:[<a class="anchor" href="#card-other-props"></a>]Any other prop (any)::
+Set on the element as it is, such as `title`, `tabIndex` and `aria-label`.
+
+=== Returns
+
+An `a`, a `div` or the element of `componentClass`, with the content and, while hovered, the layer.
+
+=== Usage notes
+
+* Only one card shows its layer at a time. When the pointer or the focus moves to another card, the first card loses its layer.
+* A card has no padding, border or background, and the cursor over it is a pointer, also when it has no `onClick`.
+* The card is not a tab stop and has no key handler. Set `componentClass="button"` for a card that the keyboard can use. Its text is then aligned to the left.
+
+[#icon]
+== Icon
+
+An icon at a standard size. Use it for every icon that your own component draws, so that sizes match the Modern UI. Pass an icon component from the https://lucide.dev/guide/preact[lucide-preact^] library as `name`. Components that have an `icon` prop, such as `Button`, take the icon component itself and size it for you.
+
+=== Signature
+
+[source,js]
+----
+import { Icon } from '@zimbra-client/blocks';
+import { StarIcon } from 'lucide-preact';
+
+<Icon name={StarIcon} size="sm" />
+----
+
+=== Props
+
+[[icon-name]]pass:[<a class="anchor" href="#icon-name"></a>]`name` (component)::
+The icon, as a component of `lucide-preact`. Pass the component, not a name. See xref:fundamentals/shared-libraries.adoc#icons[Icons].
+
+[[icon-size]]pass:[<a class="anchor" href="#icon-size"></a>]`size` (string, default `md`)::
+The size of the icon: `xs` (12 px), `sm` (16 px), `smd` (20 px), `md` (24 px), `lg` (32 px) or `xl` (40 px).
+
+[[icon-custom-icon]]pass:[<a class="anchor" href="#icon-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for an icon that `lucide-preact` does not have. See xref:reference/shims/blocks/buttons-and-progress.adoc#button-custom-icon[`customIcon` of `Button`]. It replaces `name`.
+
+[[icon-custom-size]]pass:[<a class="anchor" href="#icon-custom-size"></a>]`customSize` (number)::
+A size in pixels. It replaces <<icon-size,`size`>>.
+
+[[icon-stroke-width]]pass:[<a class="anchor" href="#icon-stroke-width"></a>]`strokeWidth` (number, default `1.5`)::
+The line width of the icon.
+
+[[icon-class]][[icon-class-name]]pass:[<a class="anchor" href="#icon-class"></a>]`class`, `className` (string)::
+Class names added to the icon. You can set both.
+
+[[icon-important]]pass:[<a class="anchor" href="#icon-important"></a>]`important` (boolean)::
+Accepted and ignored.
+
+[[icon-other-props]]pass:[<a class="anchor" href="#icon-other-props"></a>]Any other prop (any)::
+Set on the `svg` element, such as `aria-label` and `title`.
+
+=== Returns
+
+An `svg` element with `role="img"`.
+
+=== Usage notes
+
+* A string as `name`, such as `name="star"`, shows no icon. The Modern UI logs `Icon => received name as string` in the browser console.
+* The icon has no text. Set `aria-label` on it, or put text beside it, so that a screen reader can name it. A prop such as `aria-label` can hold a `<Text>` element. The icon replaces it with the translated text. See xref:go-deeper/localization.adoc[Localization].
+* The icons of `lucide-preact` are vertically centred in a line of text.
+* Do not set a pixel size with `width`, or a number as `size`. Choose the closest value of <<icon-size,`size`>>, or set <<icon-custom-size,`customSize`>> when no value fits.
+
+[#warning-banner]
+== WarningBanner
+
+A bar with a warning icon, a warning colour and a thick border on its left side. Use it above content to tell the user about a condition that needs attention.
+
+=== Signature
+
+[source,js]
+----
+import { WarningBanner } from '@zimbra-client/blocks';
+
+<WarningBanner>{message}</WarningBanner>
+----
+
+=== Props
+
+[[warning-banner-children]]pass:[<a class="anchor" href="#warning-banner-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The message.
+
+[[warning-banner-size]]pass:[<a class="anchor" href="#warning-banner-size"></a>]`size` (string, default `lg`)::
+The size of the text and of the icon: `lg` (text of 14 px) or `md` (text of 12 px).
+
+[[warning-banner-icon]]pass:[<a class="anchor" href="#warning-banner-icon"></a>]`icon` (boolean, default `true`)::
+Set `false` to leave out the warning icon.
+
+[[warning-banner-class]]pass:[<a class="anchor" href="#warning-banner-class"></a>]`class` (string)::
+A class name added to the banner.
+
+=== Returns
+
+A `div` element. It has a bottom margin and slides in when it appears.
+
+=== Usage notes
+
+* The banner ignores every prop that the list does not name, such as `role` and `id`.
+* The banner has no role and is not a live region, so a screen reader does not announce it when it appears.
+* A `button` inside the banner is underlined, so it reads as a link.
+
+[#affix-bottom]
+== AffixBottom
+
+Keeps an element at the bottom of the visible area while a container is partly in view. Use it for a bar of actions below a long list or form. The actions stay reachable until the user scrolls to the end of the container.
+
+=== Signature
+
+[source,js]
+----
+import { AffixBottom } from '@zimbra-client/blocks';
+
+<AffixBottom container={() => containerElement}>
+	<div>{actions}</div>
+</AffixBottom>
+----
+
+=== Props
+
+[[affix-bottom-container]]pass:[<a class="anchor" href="#affix-bottom-container"></a>]`container` (https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^] or function `() => HTMLElement`)::
+The element that holds the content. The helper reads its position and size. Pass a function to read the element when it is needed. Without a container, the helper does nothing.
+
+[[affix-bottom-offset-top]]pass:[<a class="anchor" href="#affix-bottom-offset-top"></a>]`offsetTop` (number, default `0`)::
+A distance in pixels from the top of the container. The element sticks once the bottom of the visible area is at least this far below the top of the container.
+
+[[affix-bottom-viewport-offset-bottom]]pass:[<a class="anchor" href="#affix-bottom-viewport-offset-bottom"></a>]`viewportOffsetBottom` (number, default `0`)::
+A distance in pixels between the element and the bottom of the visible area, while the element sticks.
+
+[[affix-bottom-children]]pass:[<a class="anchor" href="#affix-bottom-children"></a>]`children` (xref:reference/glossary.adoc#element[element])::
+The element to keep in view. Pass one element. Only the first child is used.
+
+=== Returns
+
+A `div` that holds the element. While the element sticks, a placeholder of the same size sits below it, so that the layout does not jump.
+
+=== Usage notes
+
+* The element sticks with `position: fixed` at the bottom of the visible area of the closest scrolling ancestor of the container. When the user has scrolled to the end of the container, the element returns to its place.
+* While the container is still below the visible area, the element is positioned with `position: absolute`, `left: 0` and `top` set to `offsetTop`.
+* A container that is shorter than `offsetTop` does not stick the element.
+* The helper updates on scroll, on window resize and after a click. It does not update when the content of the container changes size without one of these.
+* A `style` that the child has already is kept, and the helper overrides its position, `left`, `top`, `bottom`, `width` and `z-index` while it sticks.
+
+[#next-step]
+== Next step
+
+Learn how to close a layer on an outside click, and how to read key codes and colours, in xref:reference/shims/blocks/behaviour-helpers-and-constants.adoc[Behaviour helpers and constants].

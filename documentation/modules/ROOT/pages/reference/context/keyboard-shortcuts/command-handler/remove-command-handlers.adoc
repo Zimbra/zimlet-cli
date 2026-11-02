@@ -18,7 +18,7 @@ shortcutCommandHandler.removeCommandHandlers(commandHandlers)
 |Name |Type |Description
 
 |`commandHandlers`
-|array of objects
+|array of object
 |The same form as for xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers]. Each `handler` must be the same function that you added.
 
 |===

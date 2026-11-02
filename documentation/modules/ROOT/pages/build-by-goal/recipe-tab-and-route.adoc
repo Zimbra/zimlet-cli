@@ -161,7 +161,7 @@ A component from `lucide-preact`, such as `VideoIcon`. Pass the component, not a
 Children::
 The label of the tab, a `<Text>` from `en_US.json`.
 
-Look up every prop of `MenuItem` in xref:reference/shims/components/menus-and-actions.adoc[Menus and actions].
+Look up every prop of `MenuItem` in xref:reference/shims/components/menus.adoc#menu-item[Menus].
 
 [#add-a-route]
 == Add a route
@@ -210,7 +210,7 @@ The styles use the CSS variables of the Modern UI, such as `--spacing-lg` and `-
 <GenericMobileUISidebar />
 ----
 
-In a narrow window they show a toolbar with the name of the area. A button on it opens a sidebar that lists the tabs of the area, including yours. In a wide window they add nothing that you can see. See xref:reference/shims/components/layout-and-navigation.adoc[Layout and navigation] for both.
+In a narrow window they show a toolbar with the name of the area. A button on it opens a sidebar that lists the tabs of the area, including yours. In a wide window they add nothing that you can see. See xref:reference/shims/components/layout.adoc[Layout] for both.
 
 [#register-the-handlers]
 == Register the handlers

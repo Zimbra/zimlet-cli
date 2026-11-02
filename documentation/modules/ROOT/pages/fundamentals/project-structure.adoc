@@ -82,7 +82,7 @@ Values that several files share. The template's `index.js` exports `SLUG`, the s
 Wrappers that give components a feature. The template's `index.js` exports `withIntl`, which lets a component show translated text. See <<strings-components,Texts in your components>>.
 
 [[src-intl]]pass:[<a class="anchor" href="#src-intl"></a>]`src/intl/`::
-The strings files, one for each language. See <<strings-file,src/intl/en_US.json>>.
+The strings files, one for each language. See <<strings-file,src/intl/en_US.json>> and xref:reference/files/strings.adoc[en_US.json].
 
 Put style files next to the component that uses them, in `src/components/`. The build turns the classes of every `.less` or `.css` file in `src/components/`, `src/screens/` and `src/pages/` into class names that are unique to your Zimlet. You use them as `style.wrapper` after `import style from './style.less'`. Style files in other folders keep their class names as written. See xref:go-deeper/styling.adoc[Styling].
 
@@ -93,7 +93,7 @@ Put style files next to the component that uses them, in `src/components/`. The 
 The name, version, entry file, scripts and dependencies. See xref:reference/files/package-json.adoc[The package.json file].
 
 [[root-zimlet-config]]pass:[<a class="anchor" href="#root-zimlet-config"></a>]`zimlet.config.js`::
-Optional build settings. See <<zimlet-config,zimlet.config.js>>.
+Optional build settings. See <<zimlet-config,zimlet.config.js>> and xref:reference/files/zimlet-config.adoc[zimlet.config.js].
 
 [[root-eslint]]pass:[<a class="anchor" href="#root-eslint"></a>]`eslint.config.mjs`::
 The rules that `npm run lint` checks. See xref:run-package-deploy/lint-your-code.adoc#eslint-config[Lint].
@@ -186,7 +186,7 @@ Add a `config_template.xml` file when administrators need to change settings wit
 [#zimlet-config]
 == zimlet.config.js
 
-Add a `zimlet.config.js` file when you need to change how the Zimlet is built. It default-exports a function that receives the build settings (`config`) and information about the run (`env`), and changes `config`. The build loads the file from the project folder when it exists. The file in the template has only commented-out examples, so it changes nothing until you edit it. See xref:reference/cli.adoc[CLI reference] for the `--config` option, which names another file.
+Add a `zimlet.config.js` file when you need to change how the Zimlet is built. It default-exports a function that receives the build settings (`config`) and information about the run (`env`), and changes `config`. The build loads the file from the project folder when it exists. The file in the template has only commented-out examples, so it changes nothing until you edit it. See xref:reference/files/zimlet-config.adoc[zimlet.config.js] for what the function receives and can change, and xref:reference/cli.adoc[CLI reference] for the `--config` option, which names another file.
 
 [#naming-rules]
 == Zimlet naming rules

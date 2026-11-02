@@ -1,0 +1,137 @@
+= zimlet.config.js
+
+The `zimlet.config.js` file in the root of your project changes how `zimlet watch` and `zimlet build` assemble your xref:reference/glossary.adoc#zimlet[Zimlet]. It exports one function that edits the build configuration. Use it, for example, to import code from a folder outside the project or to handle another file type. The entries below cover how the build loads the file, what the function receives and each setting that you can change. Use them when an edit has no effect, when the build prints an error about the file, or before you change a setting. A Zimlet needs the file only when the default build is not enough.
+
+[#zimlet-config-loading]
+== Loading the file
+
+[[location]]pass:[<a class="anchor" href="#location"></a>]File name and location::
+`zimlet.config.js` in the folder where you run the command. The default template has the file in the project root. The build does nothing when the default file is missing.
+
+[[config-option]]pass:[<a class="anchor" href="#config-option"></a>]`--config`::
+The option of `zimlet watch` and `zimlet build` that names another file. The default is `./zimlet.config.js`. A file that you name and that does not exist prints `zimlet-cli config could not be loaded!` and `File <path> not found.`, and the command goes on without it. See xref:reference/cli.adoc#watch[`zimlet watch`] and xref:reference/cli.adoc#build[`zimlet build`].
+
+[[commands]]pass:[<a class="anchor" href="#commands"></a>]Commands that read it::
+`zimlet watch` and `zimlet build`. `zimlet create` and `zimlet package` do not read it, because they do not build the Zimlet.
+
+[[reload]]pass:[<a class="anchor" href="#reload"></a>]Changes while watching::
+The file is read once, when the command starts. After you edit it, stop `zimlet watch` and start it again.
+
+[#zimlet-config-function]
+== The exported function
+
+The function has two parameters, `config` and `env`:
+
+[source,js]
+----
+export default function configure(config, env) {}
+----
+
+[[export]]pass:[<a class="anchor" href="#export"></a>]`export default` or `module.exports`::
+Export the function in one of these two ways. `export default` works in a `.js` file without further setup. `module.exports = function (config, env) {}` works too, and so does a `.cjs` file that you name with `--config`. The build ignores any other export. That includes an object, a named export and a function that is not the default export, and it prints no message.
+
+[[config-param]]pass:[<a class="anchor" href="#config-param"></a>]`config` (object)::
+The https://webpack.js.org/configuration/[webpack configuration^] that the build is about to run. Change it in place. See <<zimlet-config-settings,Settings of config>> for what it holds.
+
+[[env-param]]pass:[<a class="anchor" href="#env-param"></a>]`env` (object)::
+A copy of the options of the command and of the run. Changing it has no effect on the build. It holds the fields listed next.
+
+[[env-watch]]pass:[<a class="anchor" href="#env-watch"></a>]`env.watch` (boolean)::
+`true` for `zimlet watch`. The field is missing for `zimlet build`.
+
+[[env-production]]pass:[<a class="anchor" href="#env-production"></a>]`env.production` (boolean)::
+`true` for `zimlet build`. The field is missing for `zimlet watch`.
+
+[[env-cwd]]pass:[<a class="anchor" href="#env-cwd"></a>]`env.cwd` (string)::
+The absolute path of the folder where the command runs.
+
+[[env-config]]pass:[<a class="anchor" href="#env-config"></a>]`env.config` (string)::
+The value of `--config`, as you typed it, or `./zimlet.config.js`.
+
+[[env-port]]pass:[<a class="anchor" href="#env-port"></a>]`env.port` and `env.https`::
+The `--port` and `--https` options of `zimlet watch`. `https` is `true` unless you pass `--https=false`. `port` is set only when you pass `--port`, and the `PORT` environment variable takes precedence over it.
+
+[[env-dest]]pass:[<a class="anchor" href="#env-dest"></a>]`env.dest` and `env.publicpath`::
+The `--dest` and `--publicpath` options of `zimlet build`. Each field is set only when you pass the option.
+
+[[env-other]]pass:[<a class="anchor" href="#env-other"></a>]`env._` and `env.$0`::
+The command name, in an array, and the path of the `zimlet` command. Do not rely on them.
+
+[[return-value]]pass:[<a class="anchor" href="#return-value"></a>]Return value::
+Ignored. Changing `config` is the only way to change the build. A function that returns a new object changes nothing. The build does not wait for a promise, so finish every change before the function returns.
+
+[[errors]]pass:[<a class="anchor" href="#errors"></a>]Errors::
+An error in the function is printed as `Error executing transformer at <path>:` followed by the error. The build then goes on with the `config` as the function left it, prints `Compiled successfully!` and exits with code 0. Read the output of the build after you edit the file.
+
+[[paths]]pass:[<a class="anchor" href="#paths"></a>]Paths in the file::
+The file is an ES module, so `__dirname` is not defined in it and using it prints a `ReferenceError`. Build a path from `env.cwd`, or from `import.meta.dirname`. Both give the project folder.
+
+[#zimlet-config-template]
+== The file in the default template
+
+The file of the default template exports a function named `configure` with nothing but comments in it, so it changes nothing until you edit it. It has two commented examples. One adds a shared folder to the places that imports resolve from. The other chooses the module behind an import name with an environment variable. The comment above the function says that `env` tells whether the run is a watch or a production build.
+
+[#zimlet-config-settings]
+== Settings of config
+
+`config` is a webpack configuration. The build fills in the settings below before it calls your function, so each one has a value that you can read, replace or extend. A setting that is not listed here is not set. See the https://webpack.js.org/configuration/[webpack configuration documentation^] for every setting that webpack accepts.
+
+[[mode]]pass:[<a class="anchor" href="#mode"></a>]`mode`::
+`production` for `zimlet build` and `development` for `zimlet watch`.
+
+[[context]]pass:[<a class="anchor" href="#context"></a>]`context`::
+The base folder of the build: the `src` folder when it exists, and otherwise the project folder.
+
+[[entry]]pass:[<a class="anchor" href="#entry"></a>]`entry`::
+The start file of the bundle. It belongs to the build, and it loads your entry file from `package.json`. Leave it as it is. See xref:reference/files/package-json.adoc#module[`module`].
+
+[[output]]pass:[<a class="anchor" href="#output"></a>]`output`::
+Where the bundle goes. `output.path` is the `--dest` folder, `build` by default. `output.filename` is `index.js`. `output.publicPath` is the `--publicpath` value, or `/`, for `zimlet build`, and the address of the development server for `zimlet watch`.
+
+[[resolve-alias]]pass:[<a class="anchor" href="#resolve-alias"></a>]`resolve.alias`::
+Maps an import name to a module. The build adds the shared modules of the Modern UI. It also adds `react` and `react-dom`, which point to Preact, and `style`, which points to the `style` folder of your sources. Add an entry to make an import name refer to another module.
++
+WARNING: Do not delete or replace the alias of a shared module. Your Zimlet then bundles its own copy of the module instead of using the one of the Modern UI. Removing the `preact` alias in a scratch build made `index.js` about 25 percent larger. See xref:fundamentals/shared-libraries.adoc[Shared libraries].
+
+[[resolve-modules]]pass:[<a class="anchor" href="#resolve-modules"></a>]`resolve.modules`::
+The folders that bare imports are looked up in. The build sets the `node_modules` folder of the project and then `node_modules`. Add a folder to the front, with `config.resolve.modules.unshift(<folder>)`, to import from a shared folder outside the project.
+
+[[resolve-extensions]]pass:[<a class="anchor" href="#resolve-extensions"></a>]`resolve.extensions` and `resolve.mainFields`::
+`extensions` lists the file endings that an import may leave out: `.mjs`, `.jsx`, `.js`, `.json`, `.css` and `.less`. `mainFields` lists the `package.json` fields of a dependency that name its entry, in order: `browser`, `module`, `jsnext:main` and `main`.
+
+[[resolve-loader]]pass:[<a class="anchor" href="#resolve-loader"></a>]`resolveLoader`::
+The folders that the loaders of `module.rules` are looked up in. Leave it as it is.
+
+[[module-rules]]pass:[<a class="anchor" href="#module-rules"></a>]`module.rules`::
+The rules that turn each file type into part of the bundle. Five rules are set, in this order:
++
+* JavaScript and JSX files (`.js` and `.jsx`).
+* Style files (`.less` and `.css`) in the `components`, `screens` and `pages` folders of your sources. Their class names are scoped to the component.
+* Style files outside those folders. Their class names are global.
+* XML, HTML, text and Markdown files (`.xml`, `.html`, `.txt` and `.md`), which are copied as files and imported as their address.
+* Images and fonts (`.svg`, `.ttf`, `.woff`, `.woff2`, `.eot`, `.otf`, `.jpg`, `.jpeg`, `.png` and `.gif`). They are copied into the `fonts` folder and imported as their address.
++
+Push a rule to the end of the array to handle another file type.
+
+[[plugins]]pass:[<a class="anchor" href="#plugins"></a>]`plugins`::
+The build sets a plugin that replaces `process.env.NODE_ENV` in your code with `production` or `development`, and a plugin that shows a progress bar. When the project has a `config_template.xml` file, it also sets a plugin that copies the file into the build folder. Push a plugin to add one.
+
+[[stats]]pass:[<a class="anchor" href="#stats"></a>]`stats`::
+`errors-only`, so that the report of the bundler lists only errors.
+
+[#zimlet-config-watch]
+== Settings that only `zimlet watch` sets
+
+[[watch-options]]pass:[<a class="anchor" href="#watch-options"></a>]`watchOptions`::
+`ignored` lists the build folder and the `node_modules` folder, so a change there does not start a rebuild.
+
+[[devtool]]pass:[<a class="anchor" href="#devtool"></a>]`devtool`::
+`inline-source-map`, so that the browser shows your source files when you debug. `zimlet build` does not set it.
+
+[[dev-server]]pass:[<a class="anchor" href="#dev-server"></a>]`devServer`::
+The development server. It listens on `localhost` at the port of `--port`, 8081 by default. It serves over HTTPS unless you pass `--https=false`, enables xref:reference/glossary.adoc#hmr[HMR] and allows requests from any origin. Its page client is off, so a Modern UI page that is already open does not update. Reload it to load a rebuilt Zimlet. See xref:run-package-deploy/run-and-debug.adoc[Run and debug].
+
+[#next-step]
+== Next step
+
+See how to change the build with an example in xref:go-deeper/advanced.adoc[Advanced topics], or return to the xref:reference/files.adoc[Files] to look up another file.

@@ -18,7 +18,7 @@ zimlets.on('zimlets-initialized', handler)
 |Name |Type |Description
 
 |`handler`
-|function
+|function `() => void`
 |Called with no arguments.
 
 |===

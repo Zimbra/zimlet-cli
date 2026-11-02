@@ -124,7 +124,7 @@ Whether the box is ticked. The example sets it from `value`.
 `onChange`::
 Called when the user changes the box. The new state is in `event.target.checked`.
 
-Look up the rest in xref:reference/shims/components/form-inputs.adoc[Form inputs].
+Look up the rest in xref:reference/shims/blocks/form-inputs-and-choices.adoc#choice-input[Form inputs and choices].
 
 [#text-input]
 === The TextInput component
@@ -154,7 +154,7 @@ Turns the field off. The example turns it off while the check box is not ticked.
 `type`, `min`, `max` and `id`::
 Go to the `input` element. `id` ties the field to its `<label>`.
 
-Look up the rest in xref:reference/shims/components/form-inputs.adoc[Form inputs].
+Look up the rest in xref:reference/shims/components/form-fields.adoc#text-input[Form fields].
 
 [#register-the-section]
 == Register the section

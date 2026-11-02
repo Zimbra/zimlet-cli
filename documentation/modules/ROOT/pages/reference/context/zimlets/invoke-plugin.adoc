@@ -30,7 +30,7 @@ zimlets.invokePlugin(name, ...args)
 [#returns]
 == Returns
 
-An array with one result for each handler, in the order of registration.
+An `array of any`, with one result for each handler, in the order of registration.
 
 [#usage-notes]
 == Usage notes

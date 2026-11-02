@@ -7,6 +7,11 @@ Short definitions of the everyday terms that the guide uses. A concept that the 
 
 A set of account settings on the Zimbra server that applies to a group of accounts. A COS lists the Zimlets its accounts can use. Each Zimlet is mandatory, enabled by default or disabled by default. Users can switch off a Zimlet that is not mandatory. See xref:run-package-deploy/deploy.adoc[Deploy].
 
+[[element]]
+== Element
+
+A description of one thing to draw, such as `<Icon />` or `<div>`. JSX produces it. An element is one kind of xref:reference/glossary.adoc#node[node]. See https://preactjs.com/guide/v10/getting-started/[Getting started^] in the Preact documentation.
+
 [[hmr]]
 == Hot module replacement (HMR)
 
@@ -16,6 +21,11 @@ A development feature of `zimlet watch` intended to update a running Zimlet with
 == Modern UI
 
 The Zimbra web client that loads and runs Zimlets. Its screens contain xref:fundamentals/extending-the-ui.adoc[slots] where Zimlets add content.
+
+[[node]]
+== Node
+
+A value that a component can render: an xref:reference/glossary.adoc#element[element] such as `<Icon />`, a string, a number or an array of these. `null`, `undefined`, `true` and `false` render nothing. Props of type node, such as `children`, take any of these. See https://preactjs.com/guide/v10/components/[Components^] in the Preact documentation.
 
 [[semver-range]]
 == Semver range

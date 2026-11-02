@@ -1,0 +1,488 @@
+= Menus
+
+The parts of `@zimbra-client/components` that build menus. They are the row of a menu, the drop-down that holds rows and a nested menu. They also include a context menu and a menu that moves items to a folder. Use them to add actions to the xref:reference/glossary.adoc#modern-ui[Modern UI] in the look of its own menus. Most xref:reference/glossary.adoc#zimlet[Zimlets] that add a menu item need `ActionMenuItem`, and `ActionMenu` when the Zimlet draws its own drop-down. The buttons that sit beside menus are in xref:reference/shims/components/buttons-and-actions.adoc[Buttons and actions].
+
+[#members]
+== Members
+
+<<menu-item,`MenuItem`>>::
+One row with an icon and a label, as a link or as a button.
+
+<<action-menu,`ActionMenu`>>::
+A button that opens a drop-down menu.
+
+<<drop-down-wrapper,`DropDownWrapper`>>::
+The box inside an `ActionMenu` that holds the items and closes the menu when the user chooses one.
+
+<<action-menu-item,`ActionMenuItem`>>::
+One item of a drop-down menu.
+
+<<action-menu-group,`ActionMenuGroup`>>::
+A block of items with space around it, to group related items.
+
+<<action-menu-move-folder,`ActionMenuMoveFolder`>>::
+A button that opens a list of folders to move items into.
+
+<<nested-action-menu-item,`NestedActionMenuItem`>>::
+An item of a drop-down menu that opens a second menu beside it.
+
+<<context-menu,`ContextMenu`>>::
+A menu that opens at the pointer when the user right-clicks an area.
+
+[#menu-item]
+== MenuItem
+
+One row with an icon and a label. Use it for the tab of your Zimlet in the navigation of the Modern UI. Use it also for any list of choices that you lay out yourself. For an item inside a drop-down menu, use <<action-menu-item,`ActionMenuItem`>>, which adds the menu look and role.
+
+=== Signature
+
+[source,js]
+----
+import { MenuItem } from '@zimbra-client/components';
+
+<MenuItem icon={VideoIcon} href="/videoapps/meetings">
+	{label}
+</MenuItem>
+----
+
+=== Props
+
+[[menu-item-children]]pass:[<a class="anchor" href="#menu-item-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The label of the item.
+[[menu-item-href]]pass:[<a class="anchor" href="#menu-item-href"></a>]`href` (string)::
+Makes the item a link. An address that stays in the Modern UI, such as `/videoapps/meetings`, changes the screen without a page load. The item is then the active one while the address of the page matches, and its `role` is `tab`. With <<menu-item-is-external,`isExternal`>>, the link opens an address outside the Modern UI. Without `href`, the item is a `button`.
+[[menu-item-is-external]]pass:[<a class="anchor" href="#menu-item-is-external"></a>]`isExternal` (boolean, default `false`)::
+Opens `href` in a new browser tab. The item has the role `menuitem`.
++
+WARNING: An external item takes only the props that this list names. It drops `onClick`, `id`, `aria-label` and every other prop that would go to the element.
+[[menu-item-icon]]pass:[<a class="anchor" href="#menu-item-icon"></a>]`icon` (component)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn before the label. Pass the component, not a name.
+[[menu-item-custom-icon]]pass:[<a class="anchor" href="#menu-item-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for an icon that `lucide-preact` does not have. See xref:reference/shims/blocks/display-and-layout.adoc#icon-custom-icon[`customIcon` of `Icon`]. It shows in place of `icon`.
+[[menu-item-icon-position]]pass:[<a class="anchor" href="#menu-item-icon-position"></a>]`iconPosition` (string, default `left`)::
+The icon stays before the label for every value. `right` adds space after the label. It applies only when `icon` is set.
+[[menu-item-icon-size]]pass:[<a class="anchor" href="#menu-item-icon-size"></a>]`iconSize` (string)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`. See xref:reference/shims/blocks/display-and-layout.adoc#icon-size[`size` of `Icon`].
+[[menu-item-icon-text]]pass:[<a class="anchor" href="#menu-item-icon-text"></a>]`iconText` (string)::
+A short text drawn over the icon, in small bold letters.
+[[menu-item-checked]]pass:[<a class="anchor" href="#menu-item-checked"></a>]`checked` (boolean, default `false`)::
+Draws a check mark at the end of the item, to show that the item is selected.
+[[menu-item-disabled]]pass:[<a class="anchor" href="#menu-item-disabled"></a>]`disabled` (boolean)::
+Draws the item as disabled. On a button item, the browser also stops its clicks. A link item still follows its address, so leave `href` out for an item that must not act.
+[[menu-item-is-item-active]]pass:[<a class="anchor" href="#menu-item-is-item-active"></a>]`isItemActive` (function `(url: string) => boolean`)::
+Decides whether an internal link item is the active one, in addition to the match of its `href`. It is called with the current address. Return `true` for the active item. It applies only to a link to a screen of the Modern UI.
+[[menu-item-title]]pass:[<a class="anchor" href="#menu-item-title"></a>]`title` (string)::
+The text that the browser shows as a tooltip.
+[[menu-item-hide-default-tooltip]]pass:[<a class="anchor" href="#menu-item-hide-default-tooltip"></a>]`hideDefaultTooltip` (boolean)::
+Leaves out the `title`, so that the item shows no tooltip.
+[[menu-item-custom-class]]pass:[<a class="anchor" href="#menu-item-custom-class"></a>]`customClass` (string or boolean)::
+Replaces the default look of the item with your own class name. Set `true` to drop the default look and add no class. An item with it is also left out of the arrow key movement of an <<action-menu,`ActionMenu`>>.
+[[menu-item-active-class]]pass:[<a class="anchor" href="#menu-item-active-class"></a>]`activeClass` (string)::
+A class name added to the item. A link item gets it only while it is the active item. A button item always gets it.
+[[menu-item-icon-class]]pass:[<a class="anchor" href="#menu-item-icon-class"></a>]`iconClass` (string)::
+A class name for the box around the icon. It replaces the default class of that box.
+[[menu-item-inner-class]]pass:[<a class="anchor" href="#menu-item-inner-class"></a>]`innerClass` (string)::
+A class name added to the box around the label.
+[[menu-item-sidebar-enable]]pass:[<a class="anchor" href="#menu-item-sidebar-enable"></a>]`sidebarEnable` (boolean)::
+Draws the item in the style of the sidebar. A coloured bar shows on its left edge when the pointer or the focus is on it, or when it is active.
+[[menu-item-class]][[menu-item-class-name]]pass:[<a class="anchor" href="#menu-item-class"></a>]`class` (string)::
+A class name added to the item.
+[[menu-item-other]]pass:[<a class="anchor" href="#menu-item-other"></a>]Any other prop (any)::
+Set on the link or the button, such as `onClick`, `id` and `aria-label`. An item with `isExternal` drops them, as the warning above says.
+
+=== Returns
+
+A link (`a`) when `href` is set, or a `button` when it is not. It holds the icon, the label and the check mark.
+
+=== Usage notes
+
+* Choose the element by `href`. Set `href` for a screen or an address. Leave it out for an action, and set `onClick`.
+* A button item focuses itself when the pointer moves over it, so that the keyboard continues from the item that the pointer is on.
+* The `responsive` and `isCheckbox` props have no effect.
+* The component is memoized. A new function in `onClick` on every render makes it draw again, so keep the same function between renders.
+
+
+[#action-menu]
+== ActionMenu
+
+A button that opens a drop-down menu. Use it when your Zimlet needs its own menu of actions, such as the list of channels of a contact. Items go inside it as <<action-menu-item,`ActionMenuItem`>> elements. Use <<context-menu,`ContextMenu`>> instead for a menu that opens on a right-click.
+
+=== Signature
+
+[source,js]
+----
+import { ActionMenu, DropDownWrapper, ActionMenuGroup, ActionMenuItem } from '@zimbra-client/components';
+
+<ActionMenu label={label}>
+	<DropDownWrapper>
+		<ActionMenuGroup>
+			<ActionMenuItem onClick={handleClick}>{itemLabel}</ActionMenuItem>
+		</ActionMenuGroup>
+	</DropDownWrapper>
+</ActionMenu>
+----
+
+=== Props
+
+[[action-menu-label]]pass:[<a class="anchor" href="#action-menu-label"></a>]`label` (xref:reference/glossary.adoc#node[node])::
+The text of the button. It does not show with <<action-menu-icon-only,`iconOnly`>>, but a <<action-menu-render-label,`renderLabel`>> replaces the whole button.
+[[action-menu-children]]pass:[<a class="anchor" href="#action-menu-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the menu. Pass one <<drop-down-wrapper,`DropDownWrapper`>> that holds the items. The menu draws its children only while it is open, and gives each child element the props `closeDropdown`, `dropdownRef` and `handleArrowKeyDown`.
+[[action-menu-icon]]pass:[<a class="anchor" href="#action-menu-icon"></a>]`icon` (component)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn in the button.
+[[action-menu-custom-icon]]pass:[<a class="anchor" href="#action-menu-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for an icon that `lucide-preact` does not have. See xref:reference/shims/blocks/display-and-layout.adoc#icon-custom-icon[`customIcon` of `Icon`].
+[[action-menu-icon-only]]pass:[<a class="anchor" href="#action-menu-icon-only"></a>]`iconOnly` (boolean)::
+Shows only the icon and, unless `arrow` is `false`, the arrow. Set <<action-menu-button-aria-label,`buttonAriaLabel`>> or <<action-menu-title,`title`>>, so that a screen reader has a name for the button.
+[[action-menu-arrow]]pass:[<a class="anchor" href="#action-menu-arrow"></a>]`arrow` (boolean)::
+Set `false` to leave out the arrow after the label.
+[[action-menu-arrow-size]]pass:[<a class="anchor" href="#action-menu-arrow-size"></a>]`arrowSize` (string, default `sm`)::
+The size of the arrow: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+[[action-menu-disabled]]pass:[<a class="anchor" href="#action-menu-disabled"></a>]`disabled` (boolean)::
+Disables the button. A menu that is open closes when the prop becomes `true`.
+[[action-menu-render-label]]pass:[<a class="anchor" href="#action-menu-render-label"></a>]`renderLabel` (xref:reference/glossary.adoc#node[node] or function `(state: { toggle: () => boolean }) => node`)::
+Replaces the button with your own trigger. A function is called with `{ toggle }`, where `toggle` opens or closes the menu. With this prop the menu ignores the props of the button: `label`, `icon`, `iconOnly`, `arrow`, `title` and the class names of the button.
+[[action-menu-on-toggle]]pass:[<a class="anchor" href="#action-menu-on-toggle"></a>]`onToggle` (function `(isOpen: boolean) => void`)::
+Called with `true` when the user opens the menu. Called with `false` when the user closes it with the button, with a click outside or with *Escape*. It is not called when the menu closes after the user chooses an item, or when `disabled` closes it. Its return value is ignored.
+[[action-menu-title]]pass:[<a class="anchor" href="#action-menu-title"></a>]`title` (string)::
+The tooltip of the button.
+[[action-menu-button-aria-label]]pass:[<a class="anchor" href="#action-menu-button-aria-label"></a>]`buttonAriaLabel` (string)::
+The accessible name of the button, for a screen reader.
+[[action-menu-action-button-label-id]]pass:[<a class="anchor" href="#action-menu-action-button-label-id"></a>]`actionButtonLabelId` (string)::
+The `id` of the element that holds the label of the button. Use it to point `aria-labelledby` at the label.
+[[action-menu-has-dropdown-menu]]pass:[<a class="anchor" href="#action-menu-has-dropdown-menu"></a>]`hasDropdownMenu` (boolean)::
+Sets `aria-haspopup` on the button, to tell a screen reader that the button opens a menu.
+[[action-menu-data-skip-link-item]]pass:[<a class="anchor" href="#action-menu-data-skip-link-item"></a>]`dataSkipLinkItem` (boolean)::
+Marks the button as a stop of the skip links of the Modern UI, with the attribute `data-skip-link-item`.
+[[action-menu-delay-tooltip]]pass:[<a class="anchor" href="#action-menu-delay-tooltip"></a>]`delay-tooltip` (boolean)::
+Shows the tooltip of `title` after a delay of one second, and not at once. The name has a hyphen, so write it as `delay-tooltip`.
+[[action-menu-pill-items]]pass:[<a class="anchor" href="#action-menu-pill-items"></a>]`pillItems` (array of xref:reference/glossary.adoc#node[node])::
+Strings or nodes that the button draws as small pills in place of the label, such as a list of the selected values. The pills show the first <<action-menu-max-pill-items-to-display,`maxPillItemsToDisplay`>> items and then a pill with the count of the rest, such as `+2`.
+[[action-menu-max-pill-items-to-display]]pass:[<a class="anchor" href="#action-menu-max-pill-items-to-display"></a>]`maxPillItemsToDisplay` (number, default `3`)::
+How many pills the button shows.
+[[action-menu-hide-item-icons]]pass:[<a class="anchor" href="#action-menu-hide-item-icons"></a>]`hideItemIcons` (boolean)::
+Hides the icons of the items of the menu that are buttons, and the space they take. Items that are links keep their icons.
+[[action-menu-monotone]]pass:[<a class="anchor" href="#action-menu-monotone"></a>]`monotone` (boolean)::
+Draws the icon in the colour of the button text. See xref:reference/shims/components/buttons-and-actions.adoc#action-button-monotone[`monotone` of `ActionButton`].
+[[action-menu-colored]]pass:[<a class="anchor" href="#action-menu-colored"></a>]`colored` (boolean)::
+Uses the brand colour for the icon, and for the text while the pointer is over the button. See xref:reference/shims/components/buttons-and-actions.adoc#action-button-colored[`colored` of `ActionButton`].
+[[action-menu-outline]]pass:[<a class="anchor" href="#action-menu-outline"></a>]`outline` (boolean)::
+Draws a border around the button.
+[[action-menu-icon-size]]pass:[<a class="anchor" href="#action-menu-icon-size"></a>]`iconSize` (string)::
+The size of the icon in the button. See xref:reference/shims/components/buttons-and-actions.adoc#action-button-icon-size[`iconSize` of `ActionButton`].
+[[action-menu-spacing-size]]pass:[<a class="anchor" href="#action-menu-spacing-size"></a>]`spacingSize` (string)::
+The padding of an icon-only button. See xref:reference/shims/components/buttons-and-actions.adoc#action-button-spacing-size[`spacingSize` of `ActionButton`].
+[[action-menu-action-button-class]]pass:[<a class="anchor" href="#action-menu-action-button-class"></a>]`actionButtonClass` (string)::
+A class name added to the button.
+[[action-menu-label-class]]pass:[<a class="anchor" href="#action-menu-label-class"></a>]`labelClass` (string)::
+A class name added to the box around the label.
+[[action-menu-title-class]]pass:[<a class="anchor" href="#action-menu-title-class"></a>]`titleClass` (string)::
+A class name added to the box around the label and the arrow.
+[[action-menu-icon-class]]pass:[<a class="anchor" href="#action-menu-icon-class"></a>]`iconClass` (string)::
+A class name added to the icon of the button.
+[[action-menu-toggle-class]]pass:[<a class="anchor" href="#action-menu-toggle-class"></a>]`toggleClass` (string)::
+A class name added to the element that holds the button.
+[[action-menu-popover-class]]pass:[<a class="anchor" href="#action-menu-popover-class"></a>]`popoverClass` (string)::
+A class name added to the box that holds the items.
+[[action-menu-other]]pass:[<a class="anchor" href="#action-menu-other"></a>]Any other prop (any)::
+Passed to xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover[`Popover`], which draws the menu. Use its props to place the menu, such as xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover-anchor[`anchor`] (default `start`), xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover-into[`into`] and xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover-full-width[`fullWidth`], and `class` for a class name on the container.
+
+=== Returns
+
+The container of a xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover[`Popover`]. It holds the button, and the menu while it is open. The menu has the role `menu`.
+
+=== Usage notes
+
+* Wrap the items in a <<drop-down-wrapper,`DropDownWrapper`>>. It gives the arrow keys and the closing on a click. A child element that does not pass these props on works, but the menu does not close when the user chooses an item.
+* The menu moves the focus to its first item 100 ms after it opens. The arrow keys then move the focus between the items that have the default look of <<menu-item,`MenuItem`>>, without `customClass`. Items that appear after that delay are not reached with the arrow keys.
+* The `corners` prop has no effect.
+* The menu keeps its own open state. You cannot open it with a prop. Use <<action-menu-render-label,`renderLabel`>> with `toggle` to open it from your own control.
+
+
+[#drop-down-wrapper]
+== DropDownWrapper
+
+The box inside an <<action-menu,`ActionMenu`>> that holds the items. A click on any of its items closes the menu, and the arrow keys move between them. Put it directly inside `ActionMenu`, around your items.
+
+=== Signature
+
+[source,js]
+----
+import { DropDownWrapper } from '@zimbra-client/components';
+
+<ActionMenu label={label}>
+	<DropDownWrapper>{items}</DropDownWrapper>
+</ActionMenu>
+----
+
+=== Props
+
+[[drop-down-wrapper-children]]pass:[<a class="anchor" href="#drop-down-wrapper-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The items of the menu. The wrapper gives each child element a `closeDropdown` prop. Pass elements, such as <<action-menu-group,`ActionMenuGroup`>>.
+[[drop-down-wrapper-class]]pass:[<a class="anchor" href="#drop-down-wrapper-class"></a>]`class` (string)::
+A class name added to the wrapper.
+[[drop-down-wrapper-injected]]pass:[<a class="anchor" href="#drop-down-wrapper-injected"></a>]`closeDropdown`, `dropdownRef`, `handleArrowKeyDown`, `update`, `setUpdatePopper` (any)::
+Set by <<action-menu,`ActionMenu`>> and by the `Popover` that draws the menu. Do not set them.
+
+=== Returns
+
+A `div` with the items. A click inside it closes the menu.
+
+=== Usage notes
+
+* A click on anything inside the wrapper closes the menu, also on a part that is not an item. Stop the click in the part that must keep the menu open.
+* Use it directly inside an `ActionMenu`. Without a parent that sets `closeDropdown`, a click does not close anything. A <<nested-action-menu-item,`NestedActionMenuItem`>> already wraps its content in one, so do not add another.
+* A disabled <<action-menu-item,`ActionMenuItem`>> stops its click, so that a click on it does not close the menu.
+
+
+[#action-menu-item]
+== ActionMenuItem
+
+One item of a drop-down menu, in the look of the menus of the Modern UI. Use it for every action or link that you add to a menu. The menu can be a slot that takes menu items or your own <<action-menu,`ActionMenu`>>. For a row outside a drop-down menu, use <<menu-item,`MenuItem`>>.
+
+=== Signature
+
+[source,js]
+----
+import { ActionMenuItem } from '@zimbra-client/components';
+
+<ActionMenuItem icon={LinkIcon} onClick={handleClick}>
+	{label}
+</ActionMenuItem>
+----
+
+=== Props
+
+[[action-menu-item-children]]pass:[<a class="anchor" href="#action-menu-item-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The label of the item.
+[[action-menu-item-on-click]]pass:[<a class="anchor" href="#action-menu-item-on-click"></a>]`onClick` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user chooses the item. It is not called while the item is disabled. Its return value is ignored.
+[[action-menu-item-href]]pass:[<a class="anchor" href="#action-menu-item-href"></a>]`href` (string)::
+Makes the item a link, as for <<menu-item-href,`href` of `MenuItem`>>. A disabled item has no link. Set <<menu-item-is-external,`isExternal`>> for an address outside the Modern UI.
+[[action-menu-item-icon]]pass:[<a class="anchor" href="#action-menu-item-icon"></a>]`icon` (component)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn before the label.
+[[action-menu-item-custom-icon]]pass:[<a class="anchor" href="#action-menu-item-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for an icon that `lucide-preact` does not have. See xref:reference/shims/blocks/display-and-layout.adoc#icon-custom-icon[`customIcon` of `Icon`].
+[[action-menu-item-icon-size]]pass:[<a class="anchor" href="#action-menu-item-icon-size"></a>]`iconSize` (string, default `sm`)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+[[action-menu-item-disabled]]pass:[<a class="anchor" href="#action-menu-item-disabled"></a>]`disabled` (boolean)::
+Draws the item as disabled and stops its click, so that the menu stays open.
+[[action-menu-item-non-offline-desktop-feature]]pass:[<a class="anchor" href="#action-menu-item-non-offline-desktop-feature"></a>]`nonOfflineDesktopFeature` (boolean, default `false`)::
+Disables the item while the Modern UI is offline in its desktop app. Use it for an item that needs the network.
+[[action-menu-item-narrow]]pass:[<a class="anchor" href="#action-menu-item-narrow"></a>]`narrow` (boolean)::
+Draws the item with less space at its left and right edges.
+[[action-menu-item-icon-class]]pass:[<a class="anchor" href="#action-menu-item-icon-class"></a>]`iconClass` (string)::
+A class name added to the box around the icon.
+[[action-menu-item-class]][[action-menu-item-class-name]]pass:[<a class="anchor" href="#action-menu-item-class"></a>]`class`, `className` (string)::
+A class name added to the item. Set one of them.
+[[action-menu-item-other]]pass:[<a class="anchor" href="#action-menu-item-other"></a>]Any other prop (any)::
+Passed to <<menu-item,`MenuItem`>>, such as <<menu-item-is-external,`isExternal`>>, <<menu-item-checked,`checked`>> and <<menu-item-title,`title`>>. On a button item, your `role` replaces the default one.
+
+=== Returns
+
+The same element as <<menu-item,`MenuItem`>>: a `button`, or a link when `href` is set. A button item and an external link have the role `menuitem`. A link to a screen of the Modern UI has the role `tab`.
+
+=== Usage notes
+
+* The item reads the offline state of the Modern UI from its store, so it works only inside the Modern UI.
+* A link item with `isExternal` ignores `onClick` and the other props of <<menu-item,`MenuItem`>>, as that entry warns.
+* A click on an enabled item closes a menu that wraps it in a <<drop-down-wrapper,`DropDownWrapper`>>. Choose an item that must keep the menu open by stopping the click in your `onClick`.
+
+
+[#action-menu-group]
+== ActionMenuGroup
+
+A block of menu items with space around it. Use it to group related items inside a <<drop-down-wrapper,`DropDownWrapper`>>, as the menus of the Modern UI do.
+
+=== Signature
+
+[source,js]
+----
+import { ActionMenuGroup } from '@zimbra-client/components';
+
+<ActionMenuGroup>{items}</ActionMenuGroup>
+----
+
+=== Props
+
+[[action-menu-group-children]]pass:[<a class="anchor" href="#action-menu-group-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The items of the group.
+[[action-menu-group-class]]pass:[<a class="anchor" href="#action-menu-group-class"></a>]`class` (string)::
+A class name added to the group.
+[[action-menu-group-other]]pass:[<a class="anchor" href="#action-menu-group-other"></a>]Any other prop (any)::
+Set on the `div` of the group, such as `id` and `role`.
+
+=== Returns
+
+A `div` with the items and padding around them.
+
+=== Usage notes
+
+* The group adds no divider between groups. It gives space around its items only.
+* The group does not pass `closeDropdown` on to its items. Closing on a click comes from the <<drop-down-wrapper,`DropDownWrapper`>> around it.
+
+
+[#action-menu-move-folder]
+== ActionMenuMoveFolder
+
+A button with a *Move* label that opens a list of folders, with a box to filter them. Use it when your Zimlet moves items of its own into the folders of a user, and let the user choose the target. No active Zimlet uses it.
+
+=== Signature
+
+[source,js]
+----
+import { ActionMenuMoveFolder } from '@zimbra-client/components';
+
+<ActionMenuMoveFolder folders={folders} sharedFolders={sharedFolders} onMove={handleMove} />
+----
+
+=== Props
+
+[[action-menu-move-folder-folders]]pass:[<a class="anchor" href="#action-menu-move-folder-folders"></a>]`folders` (array of object)::
+The folders of the user, each with its sub-folders in `folders`. Use the `folders` list of the root folder that xref:reference/shims/hooks/folders.adoc#use-folders-query[`useFoldersQuery`] returns. Folders that cannot take items are left out of the list.
+[[action-menu-move-folder-shared-folders]]pass:[<a class="anchor" href="#action-menu-move-folder-shared-folders"></a>]`sharedFolders` (array of object)::
+The folders that other users shared with the user, from `linkedFolders` of the same result. They show in the list after `folders`.
+[[action-menu-move-folder-local-folders]]pass:[<a class="anchor" href="#action-menu-move-folder-local-folders"></a>]`localFolders` (array of object)::
+A third list of folders, shown in its own group. Leave it out when you have none.
+[[action-menu-move-folder-on-move]]pass:[<a class="anchor" href="#action-menu-move-folder-on-move"></a>]`onMove` (function `(folder: object) => void`)::
+Called with the folder that the user chooses. Move the items yourself in it. The menu closes after the call. Its return value is ignored.
+[[action-menu-move-folder-flags]]pass:[<a class="anchor" href="#action-menu-move-folder-flags"></a>]`flags` (array of string)::
+The flags of the mail items that the user moves, as Zimbra writes them, such as `d` for a draft. With it, the list offers only the folders that fit. Items that are all drafts go to *Drafts* and *Trash* only. A mix of drafts and other items goes to *Trash* only. Other items go to every folder except *Drafts*. Without it, every folder that can take items is offered. Set it for mail.
+[[action-menu-move-folder-disable-local-folder-for-move]]pass:[<a class="anchor" href="#action-menu-move-folder-disable-local-folder-for-move"></a>]`disableLocalFolderForMove` (boolean)::
+Leaves out the folders of `localFolders`.
+[[action-menu-move-folder-disabled]]pass:[<a class="anchor" href="#action-menu-move-folder-disabled"></a>]`disabled` (boolean)::
+Disables the button.
+[[action-menu-move-folder-icon-only]]pass:[<a class="anchor" href="#action-menu-move-folder-icon-only"></a>]`iconOnly` (boolean)::
+Shows only the icon.
+[[action-menu-move-folder-arrow]]pass:[<a class="anchor" href="#action-menu-move-folder-arrow"></a>]`arrow` (boolean)::
+Set `false` to leave out the arrow after the label.
+[[action-menu-move-folder-title]]pass:[<a class="anchor" href="#action-menu-move-folder-title"></a>]`title` (string)::
+The tooltip of the button.
+[[action-menu-move-folder-aria-label]]pass:[<a class="anchor" href="#action-menu-move-folder-aria-label"></a>]`aria-label` (string)::
+The accessible name of the button. Without it, the button uses its label.
+[[action-menu-move-folder-icon-size]]pass:[<a class="anchor" href="#action-menu-move-folder-icon-size"></a>]`iconSize`, `monotone`, `colored`, `outline` (any)::
+Set on the button as for <<action-menu,`ActionMenu`>>. See <<action-menu-icon-size,`iconSize`>>, <<action-menu-monotone,`monotone`>>, <<action-menu-colored,`colored`>> and <<action-menu-outline,`outline`>>.
+[[action-menu-move-folder-action-button-class]]pass:[<a class="anchor" href="#action-menu-move-folder-action-button-class"></a>]`actionButtonClass`, `popoverClass` (string)::
+Class names added to the button and to the box that holds the folder list.
+
+=== Returns
+
+An <<action-menu,`ActionMenu`>> with a *Move* button and a folder list. The folder list has the special folders first and then the other folders.
+
+=== Usage notes
+
+* The component moves nothing. It gives you the folder in `onMove`.
+* The list reads its labels in the language of the user. The label of the button is the text *Move*.
+* The component ignores every prop that the list does not name, except `aria-label`.
+* It needs the data and the store of the Modern UI, so it works only inside the Modern UI.
+
+
+[#nested-action-menu-item]
+== NestedActionMenuItem
+
+An item of a drop-down menu that opens a second menu. Use it to group related actions under one item, such as the ways to attach a file from a service. For a single action, use <<action-menu-item,`ActionMenuItem`>>.
+
+=== Signature
+
+[source,js]
+----
+import { NestedActionMenuItem, ActionMenuGroup, ActionMenuItem } from '@zimbra-client/components';
+
+<NestedActionMenuItem title={title} position="right">
+	<ActionMenuGroup>
+		<ActionMenuItem onClick={handleClick}>{itemLabel}</ActionMenuItem>
+	</ActionMenuGroup>
+</NestedActionMenuItem>
+----
+
+=== Props
+
+[[nested-action-menu-item-title]]pass:[<a class="anchor" href="#nested-action-menu-item-title"></a>]`title` (xref:reference/glossary.adoc#node[node])::
+The label of the item. This prop is the label, not a tooltip.
+[[nested-action-menu-item-children]]pass:[<a class="anchor" href="#nested-action-menu-item-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the second menu. Pass <<action-menu-group,`ActionMenuGroup`>> elements with <<action-menu-item,`ActionMenuItem`>> items.
+[[nested-action-menu-item-icon]]pass:[<a class="anchor" href="#nested-action-menu-item-icon"></a>]`icon` (component)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn before the label.
+[[nested-action-menu-item-icon-size]]pass:[<a class="anchor" href="#nested-action-menu-item-icon-size"></a>]`iconSize` (string)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+[[nested-action-menu-item-position]]pass:[<a class="anchor" href="#nested-action-menu-item-position"></a>]`position` (string, default `bottom`)::
+The side of the item that holds the second menu: `top`, `bottom`, `left` or `right`. It is the `placement` of xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover-placement[`Popover`]. Set `right` to open the menu beside the item.
+[[nested-action-menu-item-full-width]]pass:[<a class="anchor" href="#nested-action-menu-item-full-width"></a>]`fullWidth` (boolean)::
+Stops the item from shrinking to the width of its content.
+[[nested-action-menu-item-disabled]]pass:[<a class="anchor" href="#nested-action-menu-item-disabled"></a>]`disabled` (boolean)::
+Draws the item as disabled. The second menu does not open.
+[[nested-action-menu-item-hide-item-icons]]pass:[<a class="anchor" href="#nested-action-menu-item-hide-item-icons"></a>]`hideItemIcons` (boolean)::
+Hides the icons of the items in the second menu.
+[[nested-action-menu-item-action-button-class]]pass:[<a class="anchor" href="#nested-action-menu-item-action-button-class"></a>]`actionButtonClass` (string)::
+A class name added to the container of the item.
+[[nested-action-menu-item-close-dropdown]]pass:[<a class="anchor" href="#nested-action-menu-item-close-dropdown"></a>]`closeDropdown` (function `() => void`)::
+Set by the menu around the item. When the user chooses an item of the second menu, the item calls it to close the first menu too. Do not set it.
+
+=== Returns
+
+An item with a right arrow, in a xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover[`Popover`]. The second menu is drawn while the popover is open.
+
+=== Usage notes
+
+* Put it inside an <<action-menu,`ActionMenu`>>, so that it gets `closeDropdown`. Without that, choosing an item closes the second menu and leaves the first one open.
+* A click on the item opens the second menu, and the first menu stays open. In a window that is 1025 px wide or wider, the second menu also opens when the pointer rests on the item for 250 ms.
+* The component ignores every prop that the list does not name, such as `anchor`.
+
+
+[#context-menu]
+== ContextMenu
+
+A menu that opens at the pointer when the user right-clicks the area that you wrap. Use it for the actions of an item in a list or of a chat entry, as the Modern UI does for its own lists. Use <<action-menu,`ActionMenu`>> for a menu that opens from a button.
+
+=== Signature
+
+[source,js]
+----
+import { ContextMenu } from '@zimbra-client/components';
+
+<ContextMenu menu={<MyMenuItems />}>
+	<div>{content}</div>
+</ContextMenu>
+----
+
+=== Props
+
+[[context-menu-menu]]pass:[<a class="anchor" href="#context-menu-menu"></a>]`menu` (xref:reference/glossary.adoc#element[element] or function `(state: { onClose: () => void, update: () => promise }) => node`)::
+The content of the menu, such as an <<action-menu-group,`ActionMenuGroup`>> of items. An element is cloned with the props `onClose` and `update`. A function is called with `{ onClose, update }` and returns the content. `onClose` closes the menu. `update` places the menu again after its size changes.
+[[context-menu-children]]pass:[<a class="anchor" href="#context-menu-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The area that opens the menu on a right-click.
+[[context-menu-render]]pass:[<a class="anchor" href="#context-menu-render"></a>]`render` (function `(state: object) => node`)::
+Draws the area in place of `children`. It is called with `{ isOpen, close, open, openContextMenu, menu }` and the other props of the component. `open` and `openContextMenu` take the event that gives the place of the menu.
+[[context-menu-disabled]]pass:[<a class="anchor" href="#context-menu-disabled"></a>]`disabled` (boolean, default `false`)::
+Returns the children with no menu and no wrapper. Use it to turn the menu off.
+[[context-menu-persistent]]pass:[<a class="anchor" href="#context-menu-persistent"></a>]`persistent` (boolean, default `false`)::
+Keeps the menu open when the user clicks inside it. Without it, a click in the menu closes it.
+[[context-menu-popover-class]]pass:[<a class="anchor" href="#context-menu-popover-class"></a>]`popoverClass` (string)::
+A class name added to the box that holds the menu.
+[[context-menu-popover-props]]pass:[<a class="anchor" href="#context-menu-popover-props"></a>]`popoverProps` (object)::
+Props set on the box that holds the menu, such as `style` and `id`. The default sets `onContextMenu` to stop the browser menu. If you set `popoverProps`, it replaces that default, so add `onContextMenu` again.
+[[context-menu-disable-backdrop]]pass:[<a class="anchor" href="#context-menu-disable-backdrop"></a>]`disableBackdrop` (boolean, default `false`)::
+Leaves out the invisible layer that covers the window while the menu is open. A click on that layer closes the menu.
+[[context-menu-is-popover]]pass:[<a class="anchor" href="#context-menu-is-popover"></a>]`isPopover` (boolean)::
+Gives the box the style of a popover, with a small arrow that points to the pointer. The arrow is on the top edge or on the bottom edge, as the menu is below or above the pointer.
+[[context-menu-other]]pass:[<a class="anchor" href="#context-menu-other"></a>]Any other prop (any)::
+Set on the `div` that holds the area, such as `class`, `id` and `style`.
+
+=== Returns
+
+A `div` that holds the area. The menu is drawn in the page body, at the place of the right-click.
+
+=== Usage notes
+
+* The right-click opens the menu and stops the browser menu. A left click on the area does not open it.
+* The menu closes on a click outside it, on a click inside it (unless `persistent` is set), and on the *Alt* or *F10* key. The key closes every open context menu.
+* A right-click while a menu is open moves the menu to the new place.
+* Offer the same actions in a button, such as an <<action-menu,`ActionMenu`>>. A user who cannot right-click has no other way to open the menu.
+* The component is memoized.
+* The component ignores `useRectPositioning` and `propagateClicks`.
+
+
+[#next-step]
+== Next step
+
+Find the buttons that go with these menus in xref:reference/shims/components/buttons-and-actions.adoc[Buttons and actions].

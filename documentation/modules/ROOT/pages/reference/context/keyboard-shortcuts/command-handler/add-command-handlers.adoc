@@ -18,8 +18,8 @@ shortcutCommandHandler.addCommandHandlers(commandHandlers)
 |Name |Type |Description
 
 |`commandHandlers`
-|array of objects
-|Each object has `context` (string), `command` (string) and `handler` (function). The handler is called with `{ e, context, command }`, where `e` is the key event.
+|array of object
+|Each object has `context` (string), `command` (string) and `handler` (function `(info: { e?: KeyboardEvent, context: string, command: string }) => void`). The handler is called with `info`. `e` is the event of the key release. It is missing when the command comes from a sequence of keys that ended after its delay. Its return value is ignored.
 
 |===
 

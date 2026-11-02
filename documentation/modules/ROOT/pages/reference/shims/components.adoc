@@ -1,0 +1,43 @@
+= Components
+
+The `@zimbra-client/components` module holds the larger parts of the xref:reference/glossary.adoc#modern-ui[Modern UI] screens. They include sidebars, folder lists, menus, dialogs, form fields and the contact and calendar widgets. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a part that looks and behaves like the Modern UI's own. Examples are an `ActionMenu` in a slot handler and a `ModalDialog` that opens from a button. Its parts are in ten areas. For small controls such as `Button` and `Icon`, see xref:reference/shims/blocks.adoc[Blocks UI kit].
+
+The Modern UI shares the module with every Zimlet, so the build does not copy it into your Zimlet. Import a name as in `import { MenuItem } from '@zimbra-client/components';`. See xref:fundamentals/shared-libraries.adoc[Shared libraries] for how shared modules work.
+
+[#areas]
+== Areas
+
+[[layout]]pass:[<a class="anchor" href="#layout"></a>]xref:reference/shims/components/layout.adoc[Layout]::
+Use these to show a message bar and to lay out a small screen with its toolbar and sidebar. Two list components handle selection and loading more rows as the user scrolls. Exports: `SmartList`, `InfiniteScroll`, `InfoBar`, `GenericMobileUIToolbar` and `GenericMobileUISidebar`.
+
+[[menus]]pass:[<a class="anchor" href="#menus"></a>]xref:reference/shims/components/menus.adoc[Menus]::
+Use these to offer actions in a menu. They are menu items, drop-down menus, a nested menu, a context menu and a menu that moves items to a folder. Exports: `MenuItem`, `ActionMenu`, `DropDownWrapper`, `ActionMenuItem`, `ActionMenuGroup`, `ActionMenuMoveFolder`, `NestedActionMenuItem` and `ContextMenu`.
+
+[[buttons-and-actions]]pass:[<a class="anchor" href="#buttons-and-actions"></a>]xref:reference/shims/components/buttons-and-actions.adoc[Buttons and actions]::
+Use these to offer an action as a button. `DeleteWrapper` passes the delete handlers for Briefcase items to its children. `SMIMEOperationDropDown` is the drop-down that sets how a message is signed and encrypted with S/MIME (Secure/Multipurpose Internet Mail Extensions). Exports: `ActionButton`, `NakedButton`, `CloseButton`, `HelpButton`, `SMIMEOperationDropDown` and `DeleteWrapper`.
+
+[[dialogs]]pass:[<a class="anchor" href="#dialogs"></a>]xref:reference/shims/components/dialogs.adoc[Dialogs]::
+Use these to show content above the page, and to ask the user to confirm. `@zimbra-client/blocks` also has a `ModalDialog`, which is a different component. Exports: `ModalDialog`, `ConfirmModalDialog`, `ModalDrawer`, `ModalDrawerToolbar`, `ResponsiveModal` and `CertificateModal`.
+
+[[warnings-and-help]]pass:[<a class="anchor" href="#warnings-and-help"></a>]xref:reference/shims/components/warnings-and-help.adoc[Warnings and help]::
+Use these to warn the user before leaving a page, to show help, and to show an error. Exports: `CaptureBeforeUnload`, `HelpTooltip` and `ErrorAlert`.
+
+[[form-fields]]pass:[<a class="anchor" href="#form-fields"></a>]xref:reference/shims/components/form-fields.adoc[Form fields]::
+Use these to let the user enter or pick a value, and to group fields. `@zimbra-client/blocks` also has a `Select`, which is a different component. Exports: `Select`, `TextInput`, `FormGroup` and `AddMore`.
+
+[[dates-recipients-and-rich-text]]pass:[<a class="anchor" href="#dates-recipients-and-rich-text"></a>]xref:reference/shims/components/dates-recipients-and-rich-text.adoc[Dates, recipients and rich text]::
+Use these to let the user enter a date, a time, a recipient, formatted text or an emoji. Exports: `DateInput`, `CustomTimePicker`, `CalendarOptionItem`, `AddressField`, `TinyMceComposer` and `Picker`.
+
+[[contacts]]pass:[<a class="anchor" href="#contacts"></a>]xref:reference/shims/components/contacts.adoc[Contacts]::
+Use these to show or edit contacts: a list, an editor, a hover card and an avatar. Exports: `ContactList`, `ContactEditor`, `ContactHoverCardWrapper` and `Avatar`.
+
+[[appointments-signatures-and-files]]pass:[<a class="anchor" href="#appointments-signatures-and-files"></a>]xref:reference/shims/components/appointments-signatures-and-files.adoc[Appointments, signatures and files]::
+Use these to edit an appointment or a signature and to show a PDF file. `DraggableCard` is a card that the user can drag, and `ClientLogo` shows the application logo. Exports: `AppointmentEdit`, `SignatureBox`, `PdfjsViewer`, `DraggableCard` and `ClientLogo`.
+
+[[navigation]]pass:[<a class="anchor" href="#navigation"></a>]xref:reference/shims/components/navigation.adoc[Navigation]::
+Use these to show the sidebar and the folder tree. Exports: `Sidebar`, `MailSidebar`, `FolderList`, `FolderListLight` and `FolderListGroup`.
+
+[#next-step]
+== Next step
+
+Start with the lists and the small screen parts, in xref:reference/shims/components/layout.adoc[Layout].

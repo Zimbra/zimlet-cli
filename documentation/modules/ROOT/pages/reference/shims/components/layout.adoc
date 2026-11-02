@@ -1,0 +1,296 @@
+= Layout
+
+The parts of `@zimbra-client/components` that lay out content: an information bar, the toolbar and sidebar of a small screen, and two list components. Use them to give a screen of your xref:reference/glossary.adoc#zimlet[Zimlet] the frame of the xref:reference/glossary.adoc#modern-ui[Modern UI]. The toolbar and sidebar are the two that most Zimlets with their own screen need. The lists are for a Zimlet that shows its own rows.
+
+[#members]
+== Members
+
+<<info-bar,`InfoBar`>>::
+A bar with an icon and a message, in an error, warning or success style.
+
+<<generic-mobile-ui-toolbar,`GenericMobileUIToolbar`>>::
+The toolbar of a small screen, with a button for the sidebar and the name of the area.
+
+<<generic-mobile-ui-sidebar,`GenericMobileUISidebar`>>::
+The sidebar of a small screen, with the navigation of the Modern UI.
+
+<<smart-list,`SmartList`>>::
+A list that keeps track of which rows the user selects, with mouse and keyboard.
+
+<<infinite-scroll,`InfiniteScroll`>>::
+A scrolling list of rows of equal height that asks for more data as the user reaches the end.
+
+[#info-bar]
+== InfoBar
+
+A bar with an icon and a message. Use it to tell the user a state next to the controls it concerns, such as that a feature is ready or not available. The bar has an error, a warning and a success style. For a bar that only warns, see xref:reference/shims/blocks/display-and-layout.adoc#warning-banner[`WarningBanner`].
+
+=== Signature
+
+[source,js]
+----
+import { InfoBar } from '@zimbra-client/components';
+
+<InfoBar content={message} isSuccess />
+----
+
+=== Props
+
+[[info-bar-content]]pass:[<a class="anchor" href="#info-bar-content"></a>]`content` (xref:reference/glossary.adoc#node[node])::
+The message. It shows after the icon. The bar does not use `children`.
+
+[[info-bar-is-warning]]pass:[<a class="anchor" href="#info-bar-is-warning"></a>]`isWarning` (boolean)::
+Shows the warning style, with the warning colours and icon.
+
+[[info-bar-is-success]]pass:[<a class="anchor" href="#info-bar-is-success"></a>]`isSuccess` (boolean)::
+Shows the success style, with the success colours and a check mark icon.
+
+[[info-bar-class]]pass:[<a class="anchor" href="#info-bar-class"></a>]`class` (string)::
+A class name added to the bar.
+
+=== Returns
+
+A `div` with the icon and the message.
+
+=== Usage notes
+
+* Without `isWarning` and `isSuccess`, the bar shows the error style. Set one of them for any other message.
+* Set at most one of `isWarning` and `isSuccess`. With both set, the bar mixes the two styles.
+* The icon follows the style. You cannot choose another icon.
+* The bar ignores every prop that the list does not name, such as `role` and `id`.
+* The bar has no role and is not a live region, so a screen reader does not announce it when it appears. Use xref:reference/shims/components/warnings-and-help.adoc#error-alert[`ErrorAlert`] for an error that the user must hear.
+
+[#generic-mobile-ui-toolbar]
+== GenericMobileUIToolbar
+
+The toolbar of a screen in a narrow window. It has a button that opens the sidebar and the name of the area that the screen belongs to. Render it at the top of the screen that your route shows, together with <<generic-mobile-ui-sidebar,`GenericMobileUISidebar`>>. Without it, the screen of a narrow window has no button that opens the sidebar.
+
+=== Signature
+
+[source,js]
+----
+import { GenericMobileUIToolbar } from '@zimbra-client/components';
+
+<GenericMobileUIToolbar />
+----
+
+=== Props
+
+None.
+
+=== Returns
+
+A toolbar that the Modern UI draws in its own toolbar area, not at the place where you render the component. The toolbar has a menu button and the title.
+
+=== Usage notes
+
+* The toolbar area is hidden in a window 1025 px wide or wider, so the toolbar shows only in a narrow window.
+* The button toggles the sidebar. Render <<generic-mobile-ui-sidebar,`GenericMobileUISidebar`>> on the same screen, so that there is a sidebar to open.
+* The title is the text `appNavigation.<area>`, where `<area>` is the first part of the address path, such as `videoapps`. The Modern UI has this text for Mail, Calendar, Contacts, Briefcase, Chat, Cloud Storage, Integrations and Video. For any other first part, the title shows the key as it is.
+* The component takes no props, so you cannot change the title or add buttons.
+
+[#generic-mobile-ui-sidebar]
+== GenericMobileUISidebar
+
+The sidebar of a screen in a narrow window. It opens above the screen when the user selects the button of <<generic-mobile-ui-toolbar,`GenericMobileUIToolbar`>>. Render it with the toolbar at the top of the screen that your route shows. It gives the user the navigation of the Modern UI, including the tabs of the area, so that the user can leave your screen.
+
+=== Signature
+
+[source,js]
+----
+import { GenericMobileUISidebar } from '@zimbra-client/components';
+
+<GenericMobileUISidebar />
+----
+
+=== Props
+
+None.
+
+=== Returns
+
+The Modern UI sidebar, or nothing when the page has no place for it. In a window narrower than 1025 px, it shows the logo, the header actions, the navigation between the areas and the tabs of the area. In a wider window it has no content of its own.
+
+=== Usage notes
+
+* In a narrow window, the sidebar opens above the screen when the user selects the button of the toolbar.
+* The component takes no props, so you cannot add items to the sidebar.
+
+[#smart-list]
+== SmartList
+
+A list that tracks which rows are selected. It handles selection by click and by keyboard, and draws a header, an empty state and an optional loading bar. Use it when your Zimlet shows its own rows that the user can select, such as files or contacts. Your code draws every row, keeps the selection and decides what a selection does. `SmartList` can draw only the rows in view (`virtualized`) and can load more rows on scrolling (`infinite`).
+
+=== Signature
+
+[source,js]
+----
+import { SmartList } from '@zimbra-client/components';
+
+<SmartList
+	items={items}
+	selected={selectedIds}
+	onSelectionChange={setSelectedIds}
+	renderItem={renderItem}
+/>
+----
+
+=== Props
+
+[[smart-list-items]]pass:[<a class="anchor" href="#smart-list-items"></a>]`items` (array of object)::
+The rows. Give each item an `id`. The list requires this prop.
+
+[[smart-list-render-item]]pass:[<a class="anchor" href="#smart-list-render-item"></a>]`renderItem` (function `(itemProps: object, index: number) => node`)::
+Draws one row. `itemProps` has `item`, `selected` (boolean), `onClick` (function `(arg: Event | { event: Event, action?: string }) => void`), `allSelected` (boolean), `isTrashFolder`, `canEditSharedItem` and `firstElementId` (the `id` of the first item). In a <<smart-list-virtualized,virtualized>> list, `index` counts from the first row drawn, not from the first item. The list draws what the function returns.
+
+[[smart-list-list-item]]pass:[<a class="anchor" href="#smart-list-list-item"></a>]`ListItem` (component)::
+Draws one row when you do not pass `renderItem`. It receives the values of `itemProps` as props.
+
+[[smart-list-get-id]]pass:[<a class="anchor" href="#smart-list-get-id"></a>]`getId` (function `(item: object) => string`)::
+Returns the id that the list stores in the selection for an item. By default, it is the `id` of the item as a string. Items for which it returns nothing are left out of the selection.
+
+[[smart-list-selected]]pass:[<a class="anchor" href="#smart-list-selected"></a>]`selected` (array of string, default `[]`)::
+The ids of the selected rows. The list does not keep the selection itself: it shows what you pass here.
+
+[[smart-list-on-selection-change]]pass:[<a class="anchor" href="#smart-list-on-selection-change"></a>]`onSelectionChange` (function `(ids: string[]) => void`)::
+Called with the new array of selected ids when the user clicks a row or uses the keyboard. It can receive further arguments. Use only the first. Its return value is ignored.
+
+[[smart-list-on-item-update]]pass:[<a class="anchor" href="#smart-list-on-item-update"></a>]`onItemUpdate` (function `(before: string[], after: string[]) => void`)::
+Called with the selected ids before and after a change that the user made. Its return value is ignored.
+
+[[smart-list-header]]pass:[<a class="anchor" href="#smart-list-header"></a>]`header` (function `(state: object) => node` or xref:reference/glossary.adoc#element[element])::
+Content above the list, such as a select all box. A function is called with `{ actions, selected, items, allSelected }` and returns the content. An element is cloned with the same values as props. `actions` has `selectItem({ item })`, `toggleItemSelected({ item })` and `toggleSelectAll()`. Each of them calls `onSelectionChange`.
+
+[[smart-list-empty]]pass:[<a class="anchor" href="#smart-list-empty"></a>]`empty` (xref:reference/glossary.adoc#node[node])::
+Shown in place of the default message when `items` is empty.
+
+[[smart-list-no-items-message]]pass:[<a class="anchor" href="#smart-list-no-items-message"></a>]`noItemsMessage` (xref:reference/glossary.adoc#node[node])::
+The text of the default empty state. Without it, the state shows "Nothing to show." in the language of the user. `empty` replaces it.
+
+[[smart-list-no-items-class]]pass:[<a class="anchor" href="#smart-list-no-items-class"></a>]`noItemsClass` (string)::
+A class name added to the box of the default empty state.
+
+[[smart-list-virtualized]]pass:[<a class="anchor" href="#smart-list-virtualized"></a>]`virtualized` (boolean)::
+Draws only the rows that are in view, which keeps a long list fast. Set `rowHeight` with it.
+
+[[smart-list-row-height]]pass:[<a class="anchor" href="#smart-list-row-height"></a>]`rowHeight` (number)::
+The height of every row, in pixels. It applies to a virtualized list only. Every row must have this height, or the rows are placed wrongly.
+
+[[smart-list-infinite]]pass:[<a class="anchor" href="#smart-list-infinite"></a>]`infinite` (boolean)::
+Loads more rows as the user scrolls to the end. It works with <<smart-list-virtualized,`virtualized`>> only and uses <<infinite-scroll,`InfiniteScroll`>>. Set `hasMore` and `loadMore` with it.
+
+[[smart-list-has-more]]pass:[<a class="anchor" href="#smart-list-has-more"></a>]`hasMore` (boolean)::
+`true` while more rows can be loaded. See <<infinite-scroll-has-more,`hasMore` of `InfiniteScroll`>>, which warns about it.
+
+[[smart-list-load-more]]pass:[<a class="anchor" href="#smart-list-load-more"></a>]`loadMore` (function `() => void`)::
+Called to load more rows. See <<infinite-scroll-load-more,`loadMore` of `InfiniteScroll`>>. Its return value is ignored.
+
+[[smart-list-show-loader-bar]]pass:[<a class="anchor" href="#smart-list-show-loader-bar"></a>]`showLoaderBar` (boolean)::
+Shows a loading bar at the top of the list. A virtualized list without `infinite` does not show it. In an infinite list it also tells the list that rows are loading, so that it does not ask for more.
+
+[[smart-list-handle-sub-scroll]]pass:[<a class="anchor" href="#smart-list-handle-sub-scroll"></a>]`handleSubScroll` (function `(event: Event) => void`)::
+Called with the last scroll event, 200 ms after the scrolling stops. It applies to a list that is not virtualized. Its return value is ignored.
+
+[[smart-list-selection]]pass:[<a class="anchor" href="#smart-list-selection"></a>]`selection` (array of string)::
+Ids that the *Enter* key uses. When the user presses *Enter* in the list, the last id in this array becomes the only selected row.
+
+[[smart-list-sticky-header-height]]pass:[<a class="anchor" href="#smart-list-sticky-header-height"></a>]`stickyHeaderHeight` (number, default `0`)::
+The height in pixels of a bar that covers the top of the list. The list scrolls a row that the keyboard focuses so that this bar does not hide it.
+
+[[smart-list-set-ref]]pass:[<a class="anchor" href="#smart-list-set-ref"></a>]`setRef` (function `(list: HTMLElement | object) => void`)::
+Called once, after the list is in the page, with the list element or component. Its return value is ignored.
+
+[[smart-list-is-trash-folder]]pass:[<a class="anchor" href="#smart-list-is-trash-folder"></a>]`isTrashFolder`, `canEditSharedItem` (any)::
+Passed to `renderItem` and `ListItem` as they are. The list does not use them.
+
+[[smart-list-is-search-innner-list]]pass:[<a class="anchor" href="#smart-list-is-search-innner-list"></a>]`isSearchInnnerList` (boolean)::
+Sets the space above the rows, below the header, to 28 px, as in the search lists of the Modern UI. It applies to a list that has a header. The name is spelled with three `n`.
+
+[[smart-list-vanilla]]pass:[<a class="anchor" href="#smart-list-vanilla"></a>]`vanilla` (boolean)::
+Leaves out the default look of the list and of its empty state. Use it when you style the list yourself.
+
+[[smart-list-inner-class]]pass:[<a class="anchor" href="#smart-list-inner-class"></a>]`innerClass` (string)::
+A class name added to the scrolling list.
+
+[[smart-list-class]]pass:[<a class="anchor" href="#smart-list-class"></a>]`class` (string)::
+A class name added to the outer element.
+
+=== Returns
+
+A `div` with the header and the list. The list is a `ul` with the role `listbox`, a virtualized list or an infinite list. When `items` is empty, it shows the empty state.
+
+=== Usage notes
+
+* The selection belongs to you. Keep `selected` in your state and set it from `onSelectionChange`. Without that, a click does not change what `SmartList` shows.
+* A click on a row selects it. The row must call the `onClick` that it receives, with the event (`onClick(event)`) or with an object (`onClick({ event, action })`). Use the action `selectItem` or `toggleItemSelected`. The list adds *Ctrl* or *Command* click (toggle) and *Shift* click (range) for you.
+* A *Shift* click finds the row by the `id` property of its item, also when you set `getId`. Keep an `id` on every item.
+* The list is a tab stop. *Up arrow* and *Down arrow* move the selection, and *Shift* with an arrow extends it. *End*, or *Command* with *Down arrow*, selects the last row. *Command* with *Up arrow* selects the first row. The *Home* key does nothing, because the Modern UI compares it with a wrong key code.
+* For keyboard navigation in a list that is not virtualized, give every row `role="option"` and a unique `id`. `SmartList` reads them to find the next row and to scroll it into view.
+* The list fills the height of its parent, so give the parent a height. A virtualized list needs it to know how many rows to draw.
+* A list with `renderItem` draws the xref:reference/slots/app-shell/ad-slots.adoc[`top-mail-ad-item` slot] above its first row and in its empty state. A Zimlet that fills this slot adds content there.
+* The list ignores `onScroll`, `showSize` and `listRef`, and every other prop that the list does not name.
+
+[#infinite-scroll]
+== InfiniteScroll
+
+A scrolling list that draws only the rows in view and asks for more data when the user nears the end. Use it for your own long list that you load page by page. Use <<smart-list,`SmartList`>> instead when the user also selects rows. `SmartList` with `virtualized` and `infinite` uses this component.
+
+=== Signature
+
+[source,js]
+----
+import { InfiniteScroll } from '@zimbra-client/components';
+
+<InfiniteScroll
+	data={rows}
+	rowHeight={48}
+	renderRow={row => <div>{row.name}</div>}
+	hasMore={hasMore}
+	loadMore={loadMore}
+	isFetchingData={isLoading}
+/>
+----
+
+=== Props
+
+[[infinite-scroll-data]]pass:[<a class="anchor" href="#infinite-scroll-data"></a>]`data` (array of any)::
+The rows.
+
+[[infinite-scroll-row-height]]pass:[<a class="anchor" href="#infinite-scroll-row-height"></a>]`rowHeight` (number)::
+The height of every row, in pixels. Every row must have this height, or the rows are placed wrongly.
+
+[[infinite-scroll-render-row]]pass:[<a class="anchor" href="#infinite-scroll-render-row"></a>]`renderRow` (function `(row: any, index: number) => node`)::
+Draws one row. `index` counts from the first row that is drawn, not from the first item of `data`. The list draws what the function returns.
+
+[[infinite-scroll-has-more]]pass:[<a class="anchor" href="#infinite-scroll-has-more"></a>]`hasMore` (boolean)::
+`true` while more rows can be loaded. Set it to `false` when the last row has arrived, so that the list stops asking.
++
+WARNING: Set `hasMore` to `true` only together with <<infinite-scroll-load-more,`loadMore`>>. When the user scrolls to the end of a list that has `hasMore` and no `loadMore`, the list throws an error. Pass a `loadMore` function, or leave `hasMore` unset.
+
+[[infinite-scroll-load-more]]pass:[<a class="anchor" href="#infinite-scroll-load-more"></a>]`loadMore` (function `() => void`)::
+Called when `hasMore` is `true`, no rows are loading and the user is within 500 px of the end of the list. It is also called when the rows do not fill the list, so that the list gets a scroll bar. Fetch the next page here and add its rows to `data`. Its return value is ignored. It needs <<infinite-scroll-has-more,`hasMore`>>.
+
+[[infinite-scroll-is-fetching-data]]pass:[<a class="anchor" href="#infinite-scroll-is-fetching-data"></a>]`isFetchingData` (boolean)::
+Set `true` while a page loads. `InfiniteScroll` shows a loading bar at its top and does not call `loadMore`. Set it back to `false` when the page has arrived.
+
+[[infinite-scroll-class]]pass:[<a class="anchor" href="#infinite-scroll-class"></a>]`class` (string)::
+A class name added to the outer element.
+
+[[infinite-scroll-other-props]]pass:[<a class="anchor" href="#infinite-scroll-other-props"></a>]Any other prop (any)::
+Passed to the list that draws the rows, such as `overscanCount` (rows drawn above and below the visible rows, default `10`) and `sync`. `onScroll` and `class` are set by `InfiniteScroll`, so yours have no effect there.
+
+=== Returns
+
+A `div` with the role `listbox` that holds the scrolling list, and a loading bar while `isFetchingData` is `true`.
+
+=== Usage notes
+
+* The scrolling list is positioned to fill the nearest ancestor that has a `position` other than `static`. Give its parent `position: relative` and a height.
+* A hidden list, for example on a tab that is not shown, does not load rows to fill itself.
+* The list calls `loadMore` again and again until it has a scroll bar. Each call must end with new rows in `data` or with `hasMore` set to `false`. Otherwise the list keeps asking.
+* The outer element is a `listbox` and a tab stop, but the list has no key handling. The rows that you draw carry their own roles and keys.
+
+[#next-step]
+== Next step
+
+Find the menus and context menus that go with these parts in xref:reference/shims/components/menus.adoc[Menus]. The buttons are in xref:reference/shims/components/buttons-and-actions.adoc[Buttons and actions].

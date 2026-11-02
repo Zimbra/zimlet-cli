@@ -249,7 +249,7 @@ Shows only the icon.
 `onClick`::
 Runs when the user chooses the button.
 
-The component also has a `loading` prop, which replaces the icon with a spinner while a request runs. See xref:reference/shims/components/menus-and-actions.adoc[Menus and actions] for the rest of the props.
+The component also has a `loading` prop, which replaces the icon with a spinner while a request runs. See xref:reference/shims/components/buttons-and-actions.adoc#action-button[Buttons and actions] for the rest of the props.
 
 [#add-a-partner]
 == Add a partner from a field

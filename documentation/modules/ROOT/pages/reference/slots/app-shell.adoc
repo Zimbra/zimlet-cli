@@ -1,0 +1,31 @@
+= App shell
+
+The app shell is the frame around every screen of the xref:reference/glossary.adoc#modern-ui[Modern UI]. It holds the navigation, the menus in the header, the panels at the edge of the window and the search field. The slots in this group are not tied to Mail, Calendar, Contacts or Briefcase. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] adds something for the whole application. Examples are a menu link, a tab, an advertisement or a feature that runs in the background.
+
+Every slot has an entry with the place where it appears, the props its handler receives and what the handler returns. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#screens]
+== Screens
+
+[[navigation-and-tabs]]pass:[<a class="anchor" href="#navigation-and-tabs"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs]::
+Add a tab or a link to an area, to the list of areas at the top or to the account menu. Slots: `<area>-tab-item`, `<area>-default-tab`, `menu`, `vertical-menu-item` and `header-menu-item`.
+
+[[landing-pages]]pass:[<a class="anchor" href="#landing-pages"></a>]xref:reference/slots/app-shell/landing-pages.adoc[Landing pages]::
+Replace the start page of an area, or add text and videos to it. Slots: `<area>-landing-page`, `<area>-landing-page-description` and `<area>-landing-page-videos`.
+
+[[app-frame-and-sign-in]]pass:[<a class="anchor" href="#app-frame-and-sign-in"></a>]xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in]::
+Run a feature for the whole application and add screens with routes. Fill the panels at the right edge of the window. Add text to the password change form and to the notification dialog. Slots: `app`, `routes`, `rightbar-50px`, `rightside-zimlet-slot`, `change-password-description` and `show-details-notification-button`.
+
+[[settings-and-gear-menus]]pass:[<a class="anchor" href="#settings-and-gear-menus"></a>]xref:reference/slots/app-shell/settings-and-gear-menus.adoc[Settings and gear menus]::
+Add items to the menu behind the gear icon, or replace its Language and About items. Slots: `about-link`, `gear-menu`, `language-link`, `settings-dropdown-item` and `settings-dropdown-item-end`.
+
+[[ad-slots]]pass:[<a class="anchor" href="#ad-slots"></a>]xref:reference/slots/app-shell/ad-slots.adoc[Ad slots]::
+Show advertisements beside the screens, along the bottom edge of a narrow window and above lists. Slots: `adSlot-160-600`, `adSlot-300-250-bottom`, `adSlot-300-250-top`, `adSlot-300-600`, `adSlot-adhesion-320-50`, `adSlot-adhesion-728-90`, `adSlot-left-120-90`, `adSlot-left-180-150`, `adSlot-left-300-250`, `adSlot-news`, `top-mail-ad-item` and `top-mail-generic-slot`.
+
+[[search]]pass:[<a class="anchor" href="#search"></a>]xref:reference/slots/app-shell/search.adoc[Search]::
+Change the search field, add a web search, or replace the link to the search tips. Slots: `search-tips-link`, `searchInputPlaceholder`, `web-search` and `web-search-toggle`.
+
+[#next-step]
+== Next step
+
+Continue with the slots of the Mail area in xref:reference/slots/mail.adoc[Mail], or return to the xref:reference/slots.adoc[slot index].

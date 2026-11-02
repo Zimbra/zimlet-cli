@@ -20,7 +20,7 @@ store.subscribe(listener)
 |Name |Type |Description
 
 |`listener`
-|function
+|function `() => void`
 |Called with no arguments after each dispatched action. Read the state inside it with `store.getState()`.
 
 |===
@@ -28,7 +28,7 @@ store.subscribe(listener)
 [#returns]
 == Returns
 
-A function. Call it to stop listening.
+A function `() => void`. Call it to stop listening.
 
 [#usage-notes]
 == Usage notes

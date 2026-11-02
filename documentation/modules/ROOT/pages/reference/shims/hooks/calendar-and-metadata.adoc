@@ -1,0 +1,166 @@
+= Calendar and metadata
+
+Three hooks: one reads the calendars of the user, and two read and write the custom metadata of an item, such as a message. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] offers a calendar to choose from. Use them also to keep a small value, such as a note, on the item that it belongs to. All three come from `@zimbra-client/hooks/graphql`. To keep a value on the mailbox itself, see xref:go-deeper/server-data/metadata.adoc[Mailbox metadata].
+
+[#members]
+== Members
+
+<<use-calendars-data,`useCalendarsData`>>::
+Reads the calendars of the user, with the ones that accept events.
+
+<<use-custom-meta-data,`useCustomMetaData`>>::
+Reads a section of the custom metadata of an item.
+
+<<use-custom-meta-data-mutation,`useCustomMetaDataMutation`>>::
+Returns a function that writes a section of the custom metadata of an item.
+
+[#use-calendars-data]
+== useCalendarsData
+
+Reads the calendars of the signed-in user, including the calendars that others shared. Use it to offer a list of calendars, for example to let the user choose where to save an event.
+
+=== Signature
+
+[source,js]
+----
+import { useCalendarsData } from '@zimbra-client/hooks/graphql';
+
+const { calendars, calendarsToSelect, editableCalendarsIDs, loading, refetch } = useCalendarsData();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An object with these properties:
+
+* `calendars` (array of object): the calendars of the user, followed by the calendars that others shared.
+* `calendarsToSelect` (array of object): the calendars to offer when the user picks where to save an event. It leaves out the shared calendars that the user cannot write to, and it lists the default calendar first.
+* `editableCalendarsIDs` (array of string): the ids of the calendars that the user can write to. The id of a shared calendar is the id of its owner, a colon and the id of the shared item.
+* `folderProps` (object): the folders that the other properties come from. It has `folders` and `linkedFolders`, among others.
+* `loading` (boolean): `true` while the request runs.
+* `refetch` (function `() => promise`): sends the request again.
+
+Each calendar has fields such as `id`, `name`, `color`, `permissions` and `absFolderPath`.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* The lists are empty until the data has loaded. Check `loading` first.
+* The request is `GetFolderRequest`.
+
+[#use-custom-meta-data]
+== useCustomMetaData
+
+Reads one section of the custom metadata of an item, such as a message. Use it to show a value that your Zimlet stored on the item, for example a note. Write the value with <<use-custom-meta-data-mutation,`useCustomMetaDataMutation`>>.
+
+=== Signature
+
+[source,js]
+----
+import { useCustomMetaData } from '@zimbra-client/hooks/graphql';
+
+const { data, loading, error, refetch } = useCustomMetaData({
+	variables: { id, section },
+	fetchPolicy
+});
+----
+
+=== Parameters
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`options`
+|object
+|Required. It has the property `variables` and the options that the other data hooks take, such as `fetchPolicy`. See xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[usePreferences] for their values. The default of `fetchPolicy` is `cache-first`.
+
+|`options.variables.id`
+|string
+|Required. The id of the item.
+
+|`options.variables.section`
+|string
+|Required. The name of the section, 1 to 36 characters long. Name it as xref:go-deeper/server-data/metadata.adoc#section[Name a section] describes.
+
+|===
+
+=== Returns
+
+An object with `data`, `loading`, `error` and `refetch`, as for xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[usePreferences]. `data.getCustomMetadata.meta` is a list. When the section exists, its first entry has the property `_attrs`, a list of objects with `key` and `value`. Both are strings. When the item has no such section, `meta` has no entries, or it is `null`.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Read from `data` with optional chaining, because it is `undefined` at first. See xref:go-deeper/server-data/data-hooks.adoc#loading[Handle loading and missing data].
+* The request is `GetCustomMetadataRequest`.
+
+[#use-custom-meta-data-mutation]
+== useCustomMetaDataMutation
+
+Returns a function that writes one section of the custom metadata of an item. Use it to save a value of your Zimlet on a message or another item. Unlike most mutation hooks, it returns the function itself, not an array.
+
+=== Signature
+
+[source,js]
+----
+import { useCustomMetaDataMutation } from '@zimbra-client/hooks/graphql';
+
+const setCustomMetadata = useCustomMetaDataMutation();
+
+setCustomMetadata(variables, options);
+
+// variables: { id, section, attrs }
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+A function `(variables: object, options?: object) => promise`. Call it with two arguments:
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`variables`
+|object
+|Required. The data to write. Its properties follow.
+
+|`variables.id`
+|string
+|Required. The id of the item.
+
+|`variables.section`
+|string
+|Required. The name of the section. See <<use-custom-meta-data,`useCustomMetaData`>> for the rules.
+
+|`variables.attrs`
+|array of object
+|Required. The values of the section, as a list of objects with `key` and `value`, both strings.
+
+|`options`
+|object
+|Optional. Options for the request, such as `update` or `refetchQueries`.
+
+|===
+
+The function returns a promise. It rejects when the request fails, and it resolves when the server stored the section.
+
+=== Usage notes
+
+* Call the hook while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks]. Call the function that it returns from an event handler.
+* The write returns only a confirmation, so a component that reads the section with `useCustomMetaData` does not update by itself. Call its `refetch` after the write.
+* The write replaces the whole section. Send every key that the section must keep. An empty `attrs` list removes the section from the item.
+* The sections of one item hold at most 10000 characters in total. A write above the limit fails.
+* The request is `SetCustomMetadataRequest`.
+
+[#next-step]
+== Next step
+
+Find the constants that the Modern UI shares in xref:reference/shims/constants.adoc[Constants].

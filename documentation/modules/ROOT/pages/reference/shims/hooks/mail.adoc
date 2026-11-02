@@ -1,0 +1,235 @@
+= Mail
+
+Four hooks for mail. They send a message, read the line that separates a reply from its quoted original, act on an item and search messages. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] sends a message itself. Use them also to flag or move mail, or to list messages that match a search. All four come from `@zimbra-client/hooks`. Three of them load or change server data, although the import path does not say so.
+
+[#members]
+== Members
+
+<<use-send-message-mutation,`useSendMessageMutation`>>::
+Returns a function that sends a message.
+
+<<use-original-msg-header,`useOriginalMsgHeader`>>::
+Returns the line that separates the new text of a reply from the quoted original.
+
+<<use-item-action-mutation,`useItemActionMutation`>>::
+Returns a function that applies an action, such as flag or move, to an item.
+
+<<use-message-search-query,`useMessageSearchQuery`>>::
+Searches messages and loads more on demand.
+
+[#use-send-message-mutation]
+== useSendMessageMutation
+
+Returns a function that sends a message through the same path that the composer uses. Use it when your Zimlet sends the message itself, for example to sign or encrypt it in a listener of the `ONSEND` event. See xref:go-deeper/app-events.adoc#events[App events].
+
+WARNING: The function sends the message when you call it. In an `ONSEND` listener, reject the promise of the listener after you start the send. Otherwise the Modern UI sends the message a second time.
+
+=== Signature
+
+[source,js]
+----
+import { useSendMessageMutation } from '@zimbra-client/hooks';
+
+const send = useSendMessageMutation({ zimbraPrefMessageViewHtmlPreferred, isOffline });
+
+send({ message, requestReadReceipt, accountName, updateCache, sign, encrypt });
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`options`
+a|object
+a|Required.
+
+WARNING: Pass an object even when you keep the defaults, such as `{}`. Without an argument the hook throws a `TypeError`.
+
+|===
+
+Options:
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`zimbraPrefMessageViewHtmlPreferred`
+|boolean
+|The preference of the same name. Read it with xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[usePreferences]. The default is `true`.
+
+|`isOffline`
+|boolean
+|Set it to `true` while the Modern UI is offline. It has an effect only in the desktop app. The default is `false`.
+
+|===
+
+=== Returns
+
+A function `(options: object) => promise`. Call it with an object that has these properties:
+
+* `message` (object, required): the message to send. `to`, `cc`, `bcc`, `from`, `sender` and `replyTo` are lists of objects with `address` and `name`. An object with an invalid address is left out. `subject` is a string. `html` and `text` are the two forms of the body. With both, the message carries both. With one, it carries that one.
+* `requestReadReceipt` (boolean): asks the recipients for a read receipt.
+* `accountName` (string): the name of an account to send for. The request runs in the context of that account.
+* `updateCache` (boolean, default `true`): keeps the data that the Modern UI holds for the message in step with the send. Leave it at `true`.
+* `sign` and `encrypt` (boolean, default `false`): send the message signed, or signed and encrypted.
+
+The function returns a promise. It rejects when the request fails.
+
+=== Usage notes
+
+* Call the hook while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks]. Call the function that it returns from an event handler or a listener.
+* The function adds a `draftId` to the `message` object when it has none. Pass a copy when you must keep the original unchanged.
+* The request is `SendMsgRequest`, or `SendSecureMsgRequest` when `sign` or `encrypt` is `true`.
+
+[#use-original-msg-header]
+== useOriginalMsgHeader
+
+Returns the line that, in the plain text of a reply or a forward, separates the text that the user wrote from the quoted original. The line is in the language of the user, for example `-----Original Message-----`. Use it to read only the new text of a message, for example to scan it for a word.
+
+=== Signature
+
+[source,js]
+----
+import { useOriginalMsgHeader } from '@zimbra-client/hooks';
+
+const header = useOriginalMsgHeader();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+A string. Split the `text` of a message at it, and take the first part. The `html` of a message marks the same boundary with an `hr` element, not with this line. Its `id` is the constant `EMAIL_SEPARATOR_TAG_ID`. See xref:reference/shims/constants.adoc[Constants].
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* The hook sends no request. It reads the translation of the Modern UI, so the result follows the language of the user.
+
+[#use-item-action-mutation]
+== useItemActionMutation
+
+Returns a function that applies one action to an item, such as flagging a message or moving it to a folder. Use it when a menu item or a button of your Zimlet changes an item. See xref:go-deeper/server-data/data-hooks.adoc#change-data[Change data with a hook] for a complete use.
+
+WARNING: The action changes mail of the user when you call the function. Call it only from a user action, such as a click, and never while a component renders.
+
+=== Signature
+
+[source,js]
+----
+import { useItemActionMutation } from '@zimbra-client/hooks';
+
+const [itemAction, result] = useItemActionMutation();
+
+itemAction({ variables: { id, op } });
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An array. Its first element is the function `itemAction` `(options: object) => promise`. Its second element describes the last call, with `loading`, `error` and `data`. `itemAction` takes an object with the property `variables`:
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`id`
+|string
+|Required. The id of the item. To act on several items, join their ids with commas.
+
+|`op`
+|string
+|Required. The action: `read`, `!read`, `flag`, `!flag`, `tag`, `!tag`, `move`, `copy`, `spam`, `!spam`, `trash`, `delete`, `recover`, `rename` or `update`.
+
+|`folderId`
+|string
+|The target folder, for `move`.
+
+|`tagNames`
+|string
+|The tag name, for `tag` and `!tag`.
+
+|`name`
+|string
+|The new name, for `rename`.
+
+|`isBatchOperation`
+|boolean
+|When `true`, the request can go in one batch with other requests. By default it is sent alone.
+
+|===
+
+`itemAction` returns a promise. It rejects when the request fails, and it resolves with the result when the server accepted the action.
+
+=== Usage notes
+
+* Call the hook while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks]. Call `itemAction` from an event handler.
+* The request is `ItemActionRequest`.
+
+[#use-message-search-query]
+== useMessageSearchQuery
+
+Searches messages with a Zimbra search query and loads more results on demand. Use it to list the messages that match a folder or a search, for example to show a picker. It returns up to 100 messages at first.
+
+=== Signature
+
+[source,js]
+----
+import { useMessageSearchQuery } from '@zimbra-client/hooks';
+
+const { messages, hasMore, loadMore, refetchMessages, loading } = useMessageSearchQuery({
+	query,
+	sortBy
+});
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`options`
+a|object
+a|Required. It has two properties: `query` and `sortBy`.
+
+WARNING: Pass an object even when you have nothing to set, such as `{}`. Without an argument the hook throws a `TypeError`.
+
+|`options.query`
+|string
+|The Zimbra search query, such as `in:"Inbox"` or `from:<address>`.
+
+|`options.sortBy`
+|string
+|The order of the results: `dateDesc`, `dateAsc`, `attachDesc`, `attachAsc`, `flagDesc`, `flagAsc`, `nameAsc`, `nameDesc`, `rcptAsc`, `rcptDesc`, `subjAsc`, `subjDesc`, `readDesc`, `readAsc`, `sizeAsc` or `sizeDesc`.
+
+|===
+
+=== Returns
+
+An object with these properties:
+
+* `messages` (array of object): the messages found so far. It is empty until the first results arrive. Each message has fields such as `id`, `subject`, `date`, `excerpt`, `folderId`, `flags` and `size`.
+* `hasMore` (boolean): `true` when the search has more results.
+* `loadMore` (function `() => promise`): loads the next results and adds them to `messages`. It returns a promise.
+* `refetchMessages` (function `() => promise`): runs the search again.
+* `loading` (boolean): `true` while a request runs.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Call `loadMore` only when `hasMore` is `true` and `loading` is `false`. Call it from an event handler, for example when the user scrolls to the end of the list.
+* The hook shows the results that it already holds, and then refreshes them.
+* The request is `SearchRequest`.
+
+[#next-step]
+== Next step
+
+Read and change folders in xref:reference/shims/hooks/folders.adoc[Folders].

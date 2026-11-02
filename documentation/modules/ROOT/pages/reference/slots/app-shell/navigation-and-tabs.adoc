@@ -1,0 +1,183 @@
+= Navigation and tabs
+
+These slots add items to the navigation of the xref:reference/glossary.adoc#modern-ui[Modern UI]. The navigation has the tab bar of an area, the list of areas at the top and the account menu. Use the slots when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a tab or a link in one of them. A Zimlet that adds a screen usually starts with `<area>-tab-item`, as xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen] shows. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#area-names]
+== Area names
+
+The Modern UI groups its screens into areas, and the top navigation lists them. The first part of the address of a screen is the name of its area. Two slots, `<area>-tab-item` and `<area>-default-tab`, put that name in their own name. The defaults are:
+
+* `email` for Mail
+* `calendar` for Calendar
+* `contacts` for Contacts
+* `briefcase` for Briefcase
+* `videoapps` for Video
+* `chatapps` for Chat
+* `cloudapps` for Cloud Storage
+* `integrations` for Integrations
+
+A deployment can use other names, because the Modern UI reads them from its client configuration. Read them at run time, as xref:build-by-goal/recipe-tab-and-route.adoc#read-the-area-name[Read the area name] shows.
+
+[#members]
+== Members
+
+<<area-tab-item,`<area>-tab-item`>>::
+A tab or a link in the tab bar of one area.
+
+<<area-default-tab,`<area>-default-tab`>>::
+The first item of the tab bar of one area, which you can replace.
+
+<<menu,`menu`>>::
+Items in the tab bar of the Integrations area.
+
+<<vertical-menu-item,`vertical-menu-item`>>::
+An item at the end of the list of areas at the top.
+
+<<header-menu-item,`header-menu-item`>>::
+An item in the account menu.
+
+[#area-tab-item]
+== <area>-tab-item
+
+Adds an item to the tab bar of one area, such as a link that opens a screen of your Zimlet. Use it when the screen belongs to an area and the user must reach it from that area. Use <<vertical-menu-item,`vertical-menu-item`>> for a control that belongs beside the areas, and <<header-menu-item,`header-menu-item`>> for an item in the account menu.
+
+The slot appears only while the user is in the area that its name gives. A handler for `slot::videoapps-tab-item` adds nothing to Mail. On a window at least 1025 px wide, the items appear in the navigation bar under the header, after the first item of the area. On a narrower window they appear in the sidebar, below its content. See <<area-names>> for the area names.
+
+[#area-tab-item-signature]
+=== Signature
+
+[source,js]
+----
+plugins.register('slot::<area>-tab-item', handler)
+----
+
+[#area-tab-item-props]
+=== Props
+
+None.
+
+[#area-tab-item-returns]
+=== Returns
+
+An element for the item, such as a `MenuItem` from `@zimbra-client/components`. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
+
+[#area-tab-item-usage-notes]
+=== Usage notes
+
+* A handler for the tab slot of Video, Chat, Cloud Storage or Integrations also adds that area to the top navigation. Only users who have the Zimlet see it. Mail, Calendar, Contacts and Briefcase exist when the account has the feature.
+* The slot adds only the item. Add the screen that the item opens with a route, as xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen] shows.
+
+[#area-default-tab]
+== <area>-default-tab
+
+Replaces the first item of the tab bar of one area. That item shows the icon and the name of the area and links to the area. Use it when your Zimlet owns an area and needs its own first item. Use <<area-tab-item,`<area>-tab-item`>> to add an item beside the first item and keep it.
+
+The slot appears in the navigation bar under the header while the user is in the area. It is available on a window at least 1025 px wide. A narrower window always shows the standard item. See <<area-names>> for the area names.
+
+WARNING: A handler that returns an element hides the standard item, with its link to the area, for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the standard item.
+
+[#area-default-tab-signature]
+=== Signature
+
+[source,js]
+----
+plugins.register('slot::<area>-default-tab', handler)
+----
+
+[#area-default-tab-props]
+=== Props
+
+[[area-default-tab-slugs]]pass:[<a class="anchor" href="#area-default-tab-slugs"></a>]`slugs` (object)::
+The names that the Modern UI uses in addresses, as set in its client configuration. Each key is a name such as `videoapps` and each value is a string. Use it to build the address of a screen.
+
+[#area-default-tab-returns]
+=== Returns
+
+An element that takes the place of the standard item. The slot shows the results of all handlers when at least one is not empty. A result is empty when it is false in JavaScript, such as `null`, `false` or `undefined`.
+
+[#area-default-tab-usage-notes]
+=== Usage notes
+
+* A handler that returns a function, which the slot renders as a component, always replaces the standard item, even when the component renders nothing. Return `null` from the handler to keep the standard item.
+* The slot draws nothing of its own. With `?zimletSlots=show` it writes `non-visible ZimletSlot name=<slot-name>` to the console and shows no label. See xref:run-package-deploy/run-and-debug.adoc#debug-slots[Show every slot in the page].
+* A handler for this slot does not add an area to the top navigation. Add the area with <<area-tab-item,`<area>-tab-item`>>.
+
+[#menu]
+== menu
+
+Adds items to the tab bar of the Integrations area. Use it when you want your item ahead of the items that other Zimlets add with `integrations-tab-item`. The slot appears only while the user is in Integrations, after the first item of the area and before the items of `integrations-tab-item`. On a narrower window than 1025 px it appears in the sidebar, in the same order.
+
+[#menu-signature]
+=== Signature
+
+[source,js]
+----
+plugins.register('slot::menu', handler)
+----
+
+[#menu-props]
+=== Props
+
+None.
+
+[#menu-returns]
+=== Returns
+
+An element for the item. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
+
+[#menu-usage-notes]
+=== Usage notes
+
+* A handler for this slot adds the Integrations area to the top navigation for users who have the Zimlet, as `integrations-tab-item` does.
+* The slot has no area in its name, so it works only for Integrations. Use <<area-tab-item,`<area>-tab-item`>> for every other area.
+
+[#vertical-menu-item]
+== vertical-menu-item
+
+Adds an item at the end of the list of areas in the top navigation, after Mail, Calendar and the other areas. Use it when a control must sit in that list, whichever area is open. The slot does not add an area. To add an area, use the tab slot of Video, Chat, Cloud Storage or Integrations, as <<area-tab-item,`<area>-tab-item`>> describes.
+
+[#vertical-menu-item-signature]
+=== Signature
+
+[source,js]
+----
+plugins.register('slot::vertical-menu-item', handler)
+----
+
+[#vertical-menu-item-props]
+=== Props
+
+None.
+
+[#vertical-menu-item-returns]
+=== Returns
+
+An element for the item. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
+
+[#header-menu-item]
+== header-menu-item
+
+Adds an item to the account menu, the menu that opens from the avatar of the user in the header. Use it for a link that belongs with the account, such as a link to an external page. The items appear above *Logout*. For the menu behind the gear icon, see xref:reference/slots/app-shell/settings-and-gear-menus.adoc[Settings and gear menus].
+
+[#header-menu-item-signature]
+=== Signature
+
+[source,js]
+----
+plugins.register('slot::header-menu-item', handler)
+----
+
+[#header-menu-item-props]
+=== Props
+
+None.
+
+[#header-menu-item-returns]
+=== Returns
+
+An element for the item. Return an `ActionMenuItem` from `@zimbra-client/components`, so that the item looks like the others in the menu. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
+
+[#next-step]
+== Next step
+
+Find the slots for the start page of an area in xref:reference/slots/app-shell/landing-pages.adoc[Landing pages].

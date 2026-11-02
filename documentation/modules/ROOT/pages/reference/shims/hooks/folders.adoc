@@ -1,0 +1,205 @@
+= Folders
+
+Three hooks for the folders of a mailbox: one reads the folder tree, one creates a folder, and one changes a folder. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] lets the user pick a folder, saves something into a new folder, or renames, moves or shares one. All three come from `@zimbra-client/hooks/graphql`.
+
+[#members]
+== Members
+
+<<use-folders-query,`useFoldersQuery`>>::
+Reads the folders, with their sub-folders and shared folders.
+
+<<use-create-folder-mutation,`useCreateFolderMutation`>>::
+Returns a function that creates a folder.
+
+<<use-folder-action-mutation,`useFolderActionMutation`>>::
+Returns a function that applies an action to a folder.
+
+[#use-folders-query]
+== useFoldersQuery
+
+Reads the folder tree of the signed-in user. Use it to offer a folder picker, to find a folder by its path, or to show folder names and counts. Ask for one kind of folder with `view`, such as `message` for mail folders.
+
+=== Signature
+
+[source,js]
+----
+import { useFoldersQuery } from '@zimbra-client/hooks/graphql';
+
+const { data, loading, error, refetch } = useFoldersQuery({ variables: { view }, fetchPolicy });
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`options`
+a|object
+a|Required. It has the property `variables` and the options that the other data hooks take, such as `fetchPolicy`. See xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[usePreferences] for their values.
+
+WARNING: Pass an object even when you keep the defaults, such as `{}`. Without an argument the hook throws a `TypeError`.
+
+|`variables`
+|object
+|Optional. The folder request. Set its property `view`.
+
+|`variables.view`
+|string
+|The kind of folders to ask for: `message` for mail, `contact`, `appointment`, `document` for Briefcase or `task`. Pass `null` to ask for all kinds.
+
+|===
+
+=== Returns
+
+An object with `data`, `loading`, `error` and `refetch`, as for xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[usePreferences]. `data.getFolder.folders[0]` is the root folder. In it:
+
+* `folders` lists the folders of the user, each with its own `folders`.
+* `linkedFolders` lists the folders that other users shared with the user.
+* `search` lists the saved searches.
+
+Each folder has fields such as `id`, `name`, `absFolderPath`, `parentFolderId`, `view`, `unread`, `color` and `permissions`.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Put `fetchPolicy` next to `variables`. An `options` property inside the object has no effect.
+* Read from `data` with optional chaining, because it is `undefined` at first. See xref:go-deeper/server-data/data-hooks.adoc#loading[Handle loading and missing data].
+* The request is `GetFolderRequest`.
+
+[#use-create-folder-mutation]
+== useCreateFolderMutation
+
+Returns a function that creates a folder. Use it when your Zimlet saves items into a folder of its own, for example after the user chooses to create one.
+
+=== Signature
+
+[source,js]
+----
+import { useCreateFolderMutation } from '@zimbra-client/hooks/graphql';
+
+const [createFolder, result] = useCreateFolderMutation();
+
+createFolder({ variables: { name, parentFolderId, view } });
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An array. Its first element is the function `createFolder` `(options: object) => promise`. Its second element describes the last call, with `loading`, `error` and `data`. `createFolder` takes an object with the property `variables`:
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`name`
+|string
+|Required. The name of the new folder.
+
+|`parentFolderId`
+|string
+|The id of the folder that holds the new one.
+
+|`view`
+|string
+|The kind of items that the folder holds, such as `message`, `contact`, `appointment` or `document`.
+
+|`color`
+|number
+|The colour of the folder, as a number.
+
+|`rgb`
+|string
+|The colour of the folder, as an RGB string.
+
+|===
+
+`createFolder` returns a promise. It rejects when the request fails. It resolves with the new folder in `data.createFolder`, which has the fields `id`, `name` and `absFolderPath`, among others.
+
+=== Usage notes
+
+* Call the hook while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks]. Call `createFolder` from an event handler.
+* The request is `CreateFolderRequest`.
+
+[#use-folder-action-mutation]
+== useFolderActionMutation
+
+Returns a function that applies one action to a folder, such as renaming it, moving it or sharing it. Use it when your Zimlet changes a folder of the user. See xref:go-deeper/server-data/data-hooks.adoc#change-data[Change data with a hook] for how a mutation hook works.
+
+WARNING: The action changes a folder of the user when you call the function. Call it only from a user action, such as a click, and never while a component renders.
+
+=== Signature
+
+[source,js]
+----
+import { useFolderActionMutation } from '@zimbra-client/hooks/graphql';
+
+const [folderAction, result] = useFolderActionMutation();
+
+folderAction({ variables: { action: { id, op } } });
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An array. Its first element is the function `folderAction` `(options: object) => promise`. Its second element describes the last call, with `loading`, `error` and `data`. `folderAction` takes an object with the property `variables`, which holds the object `action`:
+
+[cols="3,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`id`
+|string
+|Required. The id of the folder.
+
+|`op`
+|string
+|Required. The action: `rename`, `color`, `move`, `grant`, `!grant` or `retentionPolicy`.
+
+|`name`
+|string
+|The new name, for `rename`.
+
+|`color`
+|number
+|The new colour, for `color`.
+
+|`rgb`
+|string
+|The new colour as an RGB string, for `color`.
+
+|`folderId`
+|string
+|The target folder, for `move`.
+
+|`grant`
+|{ address: string, granteeType: string, permissions: string }
+|The share to add or change, for `grant`. It has `address`, `granteeType` and `permissions`.
+
+|`zimbraId`
+|string
+|The id of the grantee whose share to remove, for `!grant`.
+
+|`retentionPolicy`
+|object
+|The rules, for `retentionPolicy`. It has `keep` and `purge`.
+
+|===
+
+`folderAction` returns a promise. It rejects when the request fails.
+
+=== Usage notes
+
+* Call the hook while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks]. Call `folderAction` from an event handler.
+* The request is `FolderActionRequest`.
+
+[#next-step]
+== Next step
+
+Work with Briefcase folders and documents in xref:reference/shims/hooks/briefcase.adoc[Briefcase].

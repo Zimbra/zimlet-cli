@@ -18,7 +18,7 @@ keyBindings.removeBindings(paths)
 |Name |Type |Description
 
 |`paths`
-|array of strings
+|array of string
 |Each path is the context and the keys joined with dots, such as `all.N.C`.
 
 |===

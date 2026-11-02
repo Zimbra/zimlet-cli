@@ -18,7 +18,7 @@ zimlets.on('plugins::changed', handler)
 |Name |Type |Description
 
 |`handler`
-|function
+|function `(key: string) => void`
 |Called with the key that changed.
 
 |===

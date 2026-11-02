@@ -121,7 +121,7 @@ Choose an `id` that is yours, as the example does. Close the dialog before you r
 [#confirm-modal-dialog]
 === The ConfirmModalDialog component
 
-`ConfirmModalDialog` is a dialog with a title, a text and two buttons, for a question that the user answers with yes or no. Choose it for a confirmation. For a dialog with content of your own and one main action, use `ModalDialog`, as the next dialog does. See xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback] for the full list of props.
+`ConfirmModalDialog` is a dialog with a title, a text and two buttons, for a question that the user answers with yes or no. Choose it for a confirmation. For a dialog with content of your own and one main action, use `ModalDialog`, as the next dialog does. See xref:reference/shims/components/dialogs.adoc#confirm-modal-dialog[Dialogs] for the full list of props.
 
 .components/external-recipients-dialog/index.js
 [source,js]
@@ -169,7 +169,7 @@ The user must log out for the save to run. Closing the browser tab does not emit
 [#modal-dialog]
 === The ModalDialog component
 
-`ModalDialog` is the frame of a dialog: a header, content and a row of buttons. Choose it when the content is your own and `ConfirmModalDialog` does not fit. The dialog of the example is a notice, so it has no buttons and cannot be closed by the user. See xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback] for the full list of props.
+`ModalDialog` is the frame of a dialog: a header, content and a row of buttons. Choose it when the content is your own and `ConfirmModalDialog` does not fit. The dialog of the example is a notice, so it has no buttons and cannot be closed by the user. See xref:reference/shims/components/dialogs.adoc#modal-dialog[Dialogs] for the full list of props.
 
 .components/saving-dialog/index.js
 [source,js]
@@ -202,7 +202,7 @@ Do not hide every way to close a dialog unless your code is sure to close it. He
 [#spinner]
 === The Spinner component
 
-`Spinner` shows an animated indicator that work is in progress. Choose it for a wait of unknown length, next to a text that says what is happening. The example sets no props. Import it from `@zimbra-client/blocks`. See xref:reference/shims/components/dialogs-and-feedback.adoc[Dialogs and feedback] for its entry.
+`Spinner` shows an animated indicator that work is in progress. Choose it for a wait of unknown length, next to a text that says what is happening. The example sets no props. Import it from `@zimbra-client/blocks`. See xref:reference/shims/blocks/buttons-and-progress.adoc#spinner[Buttons and progress] for its entry.
 
 [#register-the-listeners]
 == Add the listeners

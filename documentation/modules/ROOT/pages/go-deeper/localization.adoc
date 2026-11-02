@@ -15,7 +15,7 @@ The `label` and `description` of the Zimlet. See <<label-description,Label and d
 A block named after your Zimlet::
 The texts of your components, as keys. The id of a text is the block name, a dot and the key. For `my-zimlet` and the key `reminder`, the id is `my-zimlet.reminder`.
 
-Name the block after your Zimlet. Where an id is the same as an id of the Modern UI, the Modern UI text appears and yours does not.
+Name the block after your Zimlet. Where an id is the same as an id of the Modern UI, the Modern UI text appears and yours does not. See xref:reference/files/strings.adoc[en_US.json] for nested keys, placeholders and plural forms.
 
 A text can hold a placeholder in double braces, such as `+{{count}}+`, that the component fills in. Every language file uses the same keys and the same placeholders.
 
