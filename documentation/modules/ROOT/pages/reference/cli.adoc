@@ -298,7 +298,7 @@ On success the command prints the path of the zip and exits with code `0`:
 Successfully packaged zimlet to: <your-project-path>/pkg/my-zimlet.zip
 ----
 
-It writes `<name>.xml` and `<name>.properties` to the build folder, and a `<name>_<locale>.properties` file for each other language in `src/intl`. The zip holds the whole build folder. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files] and xref:reference/files/descriptor.adoc[Descriptor XML] for their content.
+It writes `<name>.xml` and `<name>.properties` to the build folder, and a `<name>_<locale>.properties` file for each other language in `src/intl`. The zip holds the whole build folder. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files] and Descriptor XML for their content.
 
 These messages show a problem:
 

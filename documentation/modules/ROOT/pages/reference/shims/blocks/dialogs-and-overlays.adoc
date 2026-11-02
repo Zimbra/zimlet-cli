@@ -4,7 +4,7 @@ The parts of `@zimbra-client/blocks` that show content above the page: three dia
 
 Pick the member by how the content appears. `ModalDialog` covers the page. `Dialog` and `FixedDialog` give a frame only. `Popover` opens from a trigger, `Tooltip` sits beside its parent and `Scrim` dims an area.
 
-`@zimbra-client/components` also has a `ModalDialog`. It is a different component. It adds a header, a content area and buttons around the frame that `@zimbra-client/blocks` provides. See xref:reference/shims/components/dialogs.adoc#modal-dialog[Dialogs].
+`@zimbra-client/components` also has a `ModalDialog`. It is a different component. It adds a header, a content area and buttons around the frame that `@zimbra-client/blocks` provides. See Dialogs.
 
 [#members]
 == Members
@@ -120,7 +120,7 @@ The <<dialog,`Dialog`>> element, rendered into the element that `into` names.
 [#modal-dialog]
 == ModalDialog
 
-A <<dialog,`Dialog`>> that is centred over a layer that covers the window. Use it when the user must answer or dismiss the dialog before going on. It is the frame only. Use the `ModalDialog` of xref:reference/shims/components/dialogs.adoc#modal-dialog[`@zimbra-client/components`] when you want a header, a close button and a row of buttons as well.
+A <<dialog,`Dialog`>> that is centred over a layer that covers the window. Use it when the user must answer or dismiss the dialog before going on. It is the frame only. Use the `ModalDialog` of `@zimbra-client/components` when you want a header, a close button and a row of buttons as well.
 
 === Signature
 

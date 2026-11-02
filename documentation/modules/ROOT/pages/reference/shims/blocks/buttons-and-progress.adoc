@@ -70,7 +70,7 @@ Removes the left margin. A button has a margin of 5 px on every side.
 Makes the button a link. The element is an `a` with `role="button"`.
 
 [[button-use-anchor]]pass:[<a class="anchor" href="#button-use-anchor"></a>]`useAnchor` (boolean, default `false`)::
-Renders a plain `a` element instead of the `Link` of xref:reference/shims/libraries.adoc[`preact-router`]. It matters only with `href`.
+Renders a plain `a` element instead of the `Link` of `preact-router`. It matters only with `href`.
 
 [[button-type]]pass:[<a class="anchor" href="#button-type"></a>]`type` (string, default `button`)::
 The `type` of the `button` element, such as `submit`. It does not apply to a link.

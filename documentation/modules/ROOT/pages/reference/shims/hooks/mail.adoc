@@ -103,7 +103,7 @@ None.
 
 === Returns
 
-A string. Split the `text` of a message at it, and take the first part. The `html` of a message marks the same boundary with an `hr` element, not with this line. Its `id` is the constant `EMAIL_SEPARATOR_TAG_ID`. See xref:reference/shims/constants.adoc[Constants].
+A string. Split the `text` of a message at it, and take the first part. The `html` of a message marks the same boundary with an `hr` element, not with this line. Its `id` is the constant `EMAIL_SEPARATOR_TAG_ID`. See Constants.
 
 === Usage notes
 

@@ -140,7 +140,7 @@ Find the slot you need, then see xref:fundamentals/extending-the-ui.adoc[Slots a
 
 Nothing from your Zimlet appears in the Modern UI.::
 * Cause: The Zimlet did not load, or it loaded but registered nothing for the place you are looking at.
-* Fix: Check the status in the sideloader table and the console messages above. Then show the slots, as <<debug-slots,Show every slot in the page>> describes, and check that the name you registered is in the page. See xref:help-and-migration/troubleshooting.adoc[Troubleshooting] for more symptoms.
+* Fix: Check the status in the sideloader table and the console messages above. Then show the slots, as <<debug-slots,Show every slot in the page>> describes, and check that the name you registered is in the page. See Troubleshooting for more symptoms.
 
 The page still shows the old code after you save.::
 * Cause: The Modern UI does not update a page that is already open.

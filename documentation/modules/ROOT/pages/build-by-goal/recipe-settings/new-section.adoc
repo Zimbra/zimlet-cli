@@ -154,7 +154,7 @@ Turns the field off. The example turns it off while the check box is not ticked.
 `type`, `min`, `max` and `id`::
 Go to the `input` element. `id` ties the field to its `<label>`.
 
-Look up the rest in xref:reference/shims/components/form-fields.adoc#text-input[Form fields].
+Look up the rest in Form fields.
 
 [#register-the-section]
 == Register the section

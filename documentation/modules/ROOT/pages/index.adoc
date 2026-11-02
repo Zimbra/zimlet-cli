@@ -61,7 +61,7 @@ The parts follow the order in which you work.
 
 | Help
 | Fix a problem or find an answer.
-| xref:help-and-migration/troubleshooting.adoc[Troubleshooting]
+| Troubleshooting
 |===
 
 [#reading-paths]
@@ -77,13 +77,13 @@ Build a production Zimlet::
 The Get started and Fundamentals parts, then the recipes you need from Build by goal, then Go deeper, then Run, package, deploy
 
 Deploy a Zimlet that someone else built::
-xref:run-package-deploy/deploy.adoc[Deploy], then xref:help-and-migration/troubleshooting.adoc[Troubleshooting]
+xref:run-package-deploy/deploy.adoc[Deploy], then Troubleshooting
 
 Look something up::
 The Reference part
 
 Fix a problem::
-xref:help-and-migration/troubleshooting.adoc[Troubleshooting], then xref:run-package-deploy/run-and-debug.adoc[Run and debug] and xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help]
+Troubleshooting, then xref:run-package-deploy/run-and-debug.adoc[Run and debug] and FAQ and getting help
 
 == Next step
 
