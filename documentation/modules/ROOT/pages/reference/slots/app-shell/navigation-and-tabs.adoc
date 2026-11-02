@@ -157,7 +157,7 @@ An element for the item. A handler that returns `null` adds nothing. The slot sh
 [#header-menu-item]
 == header-menu-item
 
-Adds an item to the account menu, the menu that opens from the avatar of the user in the header. Use it for a link that belongs with the account, such as a link to an external page. The items appear above *Logout*. For the menu behind the gear icon, see xref:reference/slots/app-shell/settings-and-gear-menus.adoc[Settings and gear menus].
+Adds an item to the account menu, the menu that opens from the avatar of the user in the header. Use it for a link that belongs with the account, such as a link to an external page. The items appear above *Logout*. For the menu behind the gear icon, see Settings and gear menus.
 
 [#header-menu-item-signature]
 === Signature
@@ -180,4 +180,4 @@ An element for the item. Return an `ActionMenuItem` from `@zimbra-client/compone
 [#next-step]
 == Next step
 
-Find the slots for the start page of an area in xref:reference/slots/app-shell/landing-pages.adoc[Landing pages].
+Find the slots for the start page of an area in Landing pages.

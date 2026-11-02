@@ -52,7 +52,7 @@ An object with one property for each path. For a string or an array, the propert
 * Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
 * Check each value for `undefined`. A deployment can leave a value out.
 * Use the object form when two paths end with the same name. The string and array forms would give both values one property name.
-* A class component cannot call a hook. Use the `clientConfiguration` wrapper from xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour], which takes the same argument.
+* A class component cannot call a hook. Use the `clientConfiguration` wrapper from Environment and UI behaviour, which takes the same argument.
 
 [#use-tracking]
 == useTracking
@@ -92,7 +92,7 @@ Reports the signed-in account. The Modern UI calls it. Do not call it from a Zim
 
 * Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
 * The methods do nothing when the administrator has not set up an analytics service.
-* A class component cannot call a hook. Use the `withTracking` wrapper from xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour]. It passes the same `tracker` as a prop.
+* A class component cannot call a hook. Use the `withTracking` wrapper from Environment and UI behaviour. It passes the same `tracker` as a prop.
 
 [#use-media-query]
 == useMediaQuery
@@ -132,8 +132,8 @@ An object with one property, named by `propName`. Its value is `true` while the 
 
 * Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
 * Pass the same query on every render. The hook reads the answer when the component first shows, and then updates it when the browser reports a change. A different query later keeps the old answer until the next change.
-* The `breakpoints` utility builds queries for the sizes of the Modern UI. `maxWidth(px)` and `minWidth(px)` return the query string. See xref:reference/shims/utilities/browser-and-app.adoc[Browser and app].
-* A class component cannot call a hook. Use the `withMediaQuery` wrapper from xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour].
+* The `breakpoints` utility builds queries for the sizes of the Modern UI. `maxWidth(px)` and `minWidth(px)` return the query string. See Browser and app.
+* A class component cannot call a hook. Use the `withMediaQuery` wrapper from Environment and UI behaviour.
 
 [#use-zimbra-context]
 == useZimbraContext

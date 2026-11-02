@@ -58,7 +58,7 @@ A `div` with the icon and the message.
 * Set at most one of `isWarning` and `isSuccess`. With both set, the bar mixes the two styles.
 * The icon follows the style. You cannot choose another icon.
 * The bar ignores every prop that the list does not name, such as `role` and `id`.
-* The bar has no role and is not a live region, so a screen reader does not announce it when it appears. Use xref:reference/shims/components/warnings-and-help.adoc#error-alert[`ErrorAlert`] for an error that the user must hear.
+* The bar has no role and is not a live region, so a screen reader does not announce it when it appears. Use `ErrorAlert` for an error that the user must hear.
 
 [#generic-mobile-ui-toolbar]
 == GenericMobileUIToolbar
@@ -227,7 +227,7 @@ A `div` with the header and the list. The list is a `ul` with the role `listbox`
 * The list is a tab stop. *Up arrow* and *Down arrow* move the selection, and *Shift* with an arrow extends it. *End*, or *Command* with *Down arrow*, selects the last row. *Command* with *Up arrow* selects the first row. The *Home* key does nothing, because the Modern UI compares it with a wrong key code.
 * For keyboard navigation in a list that is not virtualized, give every row `role="option"` and a unique `id`. `SmartList` reads them to find the next row and to scroll it into view.
 * The list fills the height of its parent, so give the parent a height. A virtualized list needs it to know how many rows to draw.
-* A list with `renderItem` draws the xref:reference/slots/app-shell/ad-slots.adoc[`top-mail-ad-item` slot] above its first row and in its empty state. A Zimlet that fills this slot adds content there.
+* A list with `renderItem` draws the `top-mail-ad-item` slot above its first row and in its empty state. A Zimlet that fills this slot adds content there.
 * The list ignores `onScroll`, `showSize` and `listRef`, and every other prop that the list does not name.
 
 [#infinite-scroll]

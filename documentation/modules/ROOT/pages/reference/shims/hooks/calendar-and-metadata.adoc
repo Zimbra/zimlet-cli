@@ -163,4 +163,4 @@ The function returns a promise. It rejects when the request fails, and it resolv
 [#next-step]
 == Next step
 
-Find the constants that the Modern UI shares in xref:reference/shims/constants.adoc[Constants].
+Find the constants that the Modern UI shares in Constants.

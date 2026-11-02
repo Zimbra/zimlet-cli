@@ -2,7 +2,7 @@
 
 The parts of `@zimbra-client/blocks` that let the user pick a value: a dropdown list, tabs, checkboxes, radio buttons, a colour picker and a small label. Use them in a dialog, a settings section or a panel of your xref:reference/glossary.adoc#zimlet[Zimlet]. The controls then look and behave like the rest of the xref:reference/glossary.adoc#modern-ui[Modern UI]. Pick the member by what the user chooses. `Select` picks one value from a list, `Tabs` switch between panels, `ChoiceInput` is a checkbox or a radio button, and `ColorPicker` picks a colour.
 
-`@zimbra-client/components` also has a `Select`. It is a different component with its own props. See xref:reference/shims/components/form-fields.adoc#select[Form fields].
+`@zimbra-client/components` also has a `Select`. It is a different component with its own props. See Form fields.
 
 [#members]
 == Members

@@ -33,7 +33,7 @@ How an administrator default is stored:
 * An administrator replaces the stored text at any time, as <<change,Change an administrator default>> describes.
 * The server sends the stored text to the Modern UI with the account data, as the `zimletConfig` of your Zimlet. <<read,Read both values>> shows how to read it.
 
-See xref:reference/files/config-template.adoc[config_template.xml] for every element of the file.
+See config_template.xml for every element of the file.
 
 [#user-values]
 == Let users save their own value
@@ -53,7 +53,7 @@ The value of the field is an object with three keys. `zimlet` holds the name of 
 
 The Settings dialog finds the saved value by `name` only. Use a setting name that no other Zimlet uses, so that two Zimlets do not read each other's value.
 
-See xref:reference/slots/data-keys.adoc[Data keys] for all keys of the `settings` registration and of a field.
+See Data keys for all keys of the `settings` registration and of a field.
 
 [#read]
 == Read both values

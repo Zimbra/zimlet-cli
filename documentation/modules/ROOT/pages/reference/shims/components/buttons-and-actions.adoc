@@ -219,7 +219,7 @@ A xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover[`Popover`] with 
 [#smime-operation-drop-down]
 == SMIMEOperationDropDown
 
-The drop-down of the composer that sets how a message is signed and encrypted with S/MIME (Secure/Multipurpose Internet Mail Extensions). It lists three choices, each with an icon. Use it when your Zimlet adds S/MIME to the composer, as the secure mail Zimlet does in the `mail-composer-smime-dropdown` slot. The slot is in xref:reference/slots/mail/composer.adoc[Composer slots].
+The drop-down of the composer that sets how a message is signed and encrypted with S/MIME (Secure/Multipurpose Internet Mail Extensions). It lists three choices, each with an icon. Use it when your Zimlet adds S/MIME to the composer, as the secure mail Zimlet does in the `mail-composer-smime-dropdown` slot. The slot is in Composer slots.
 
 === Signature
 
@@ -304,4 +304,4 @@ What the function in `children` returns. The wrapper adds no element.
 [#next-step]
 == Next step
 
-Find the dialogs that these buttons open in xref:reference/shims/components/dialogs.adoc[Dialogs].
+Find the dialogs that these buttons open in Dialogs.

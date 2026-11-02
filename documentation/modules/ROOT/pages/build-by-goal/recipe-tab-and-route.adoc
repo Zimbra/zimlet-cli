@@ -76,7 +76,7 @@ Choose the area by what the screen is for:
 * Put a screen for a meeting service in Video, for a chat service in Chat, and for a cloud drive in Cloud Storage. The area appears in the top navigation for users who have your Zimlet enabled.
 * Put anything else in Integrations. The sideloader that loads your Zimlets in development lives there.
 
-The tab shows only while the user is in its area. A handler for `slot::videoapps-tab-item` adds nothing to the Mail area. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs] for the slots of an area, and xref:reference/slots/app-shell/landing-pages.adoc[Landing pages] for the default page of an area that a Zimlet adds. The xref:reference/slots.adoc[slot index] lists every other slot.
+The tab shows only while the user is in its area. A handler for `slot::videoapps-tab-item` adds nothing to the Mail area. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs] for the slots of an area, and Landing pages for the default page of an area that a Zimlet adds. The xref:reference/slots.adoc[slot index] lists every other slot.
 
 [#the-slot]
 === The slot
@@ -166,7 +166,7 @@ Look up every prop of `MenuItem` in xref:reference/shims/components/menus.adoc#m
 [#add-a-route]
 == Add a route
 
-The route tells the Modern UI when to show your screen. The Modern UI asks every handler for `slot::routes` (see xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in]) for routes. It shows the one whose `path` matches the address. The handler returns your screen with a `path` prop. The `path` is the address from the hook, the same one that the tab links to.
+The route tells the Modern UI when to show your screen. The Modern UI asks every handler for `slot::routes` (see App frame and sign-in) for routes. It shows the one whose `path` matches the address. The handler returns your screen with a `path` prop. The `path` is the address from the hook, the same one that the tab links to.
 
 .components/meetings-route/index.js
 [source,js]

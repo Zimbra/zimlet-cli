@@ -16,25 +16,25 @@ Use these to offer actions in a menu. They are menu items, drop-down menus, a ne
 [[buttons-and-actions]]pass:[<a class="anchor" href="#buttons-and-actions"></a>]xref:reference/shims/components/buttons-and-actions.adoc[Buttons and actions]::
 Use these to offer an action as a button. `DeleteWrapper` passes the delete handlers for Briefcase items to its children. `SMIMEOperationDropDown` is the drop-down that sets how a message is signed and encrypted with S/MIME (Secure/Multipurpose Internet Mail Extensions). Exports: `ActionButton`, `NakedButton`, `CloseButton`, `HelpButton`, `SMIMEOperationDropDown` and `DeleteWrapper`.
 
-[[dialogs]]pass:[<a class="anchor" href="#dialogs"></a>]xref:reference/shims/components/dialogs.adoc[Dialogs]::
+[[dialogs]]pass:[<a class="anchor" href="#dialogs"></a>]Dialogs::
 Use these to show content above the page, and to ask the user to confirm. `@zimbra-client/blocks` also has a `ModalDialog`, which is a different component. Exports: `ModalDialog`, `ConfirmModalDialog`, `ModalDrawer`, `ModalDrawerToolbar`, `ResponsiveModal` and `CertificateModal`.
 
-[[warnings-and-help]]pass:[<a class="anchor" href="#warnings-and-help"></a>]xref:reference/shims/components/warnings-and-help.adoc[Warnings and help]::
+[[warnings-and-help]]pass:[<a class="anchor" href="#warnings-and-help"></a>]Warnings and help::
 Use these to warn the user before leaving a page, to show help, and to show an error. Exports: `CaptureBeforeUnload`, `HelpTooltip` and `ErrorAlert`.
 
-[[form-fields]]pass:[<a class="anchor" href="#form-fields"></a>]xref:reference/shims/components/form-fields.adoc[Form fields]::
+[[form-fields]]pass:[<a class="anchor" href="#form-fields"></a>]Form fields::
 Use these to let the user enter or pick a value, and to group fields. `@zimbra-client/blocks` also has a `Select`, which is a different component. Exports: `Select`, `TextInput`, `FormGroup` and `AddMore`.
 
-[[dates-recipients-and-rich-text]]pass:[<a class="anchor" href="#dates-recipients-and-rich-text"></a>]xref:reference/shims/components/dates-recipients-and-rich-text.adoc[Dates, recipients and rich text]::
+[[dates-recipients-and-rich-text]]pass:[<a class="anchor" href="#dates-recipients-and-rich-text"></a>]Dates, recipients and rich text::
 Use these to let the user enter a date, a time, a recipient, formatted text or an emoji. Exports: `DateInput`, `CustomTimePicker`, `CalendarOptionItem`, `AddressField`, `TinyMceComposer` and `Picker`.
 
-[[contacts]]pass:[<a class="anchor" href="#contacts"></a>]xref:reference/shims/components/contacts.adoc[Contacts]::
+[[contacts]]pass:[<a class="anchor" href="#contacts"></a>]Contacts::
 Use these to show or edit contacts: a list, an editor, a hover card and an avatar. Exports: `ContactList`, `ContactEditor`, `ContactHoverCardWrapper` and `Avatar`.
 
-[[appointments-signatures-and-files]]pass:[<a class="anchor" href="#appointments-signatures-and-files"></a>]xref:reference/shims/components/appointments-signatures-and-files.adoc[Appointments, signatures and files]::
+[[appointments-signatures-and-files]]pass:[<a class="anchor" href="#appointments-signatures-and-files"></a>]Appointments, signatures and files::
 Use these to edit an appointment or a signature and to show a PDF file. `DraggableCard` is a card that the user can drag, and `ClientLogo` shows the application logo. Exports: `AppointmentEdit`, `SignatureBox`, `PdfjsViewer`, `DraggableCard` and `ClientLogo`.
 
-[[navigation]]pass:[<a class="anchor" href="#navigation"></a>]xref:reference/shims/components/navigation.adoc[Navigation]::
+[[navigation]]pass:[<a class="anchor" href="#navigation"></a>]Navigation::
 Use these to show the sidebar and the folder tree. Exports: `Sidebar`, `MailSidebar`, `FolderList`, `FolderListLight` and `FolderListGroup`.
 
 [#next-step]

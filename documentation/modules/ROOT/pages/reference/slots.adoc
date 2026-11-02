@@ -9,27 +9,27 @@ Slots are grouped by the area of the Modern UI that shows them, and each group i
 
 * xref:reference/slots/app-shell.adoc[App shell]: slots of the frame around every screen.
 ** xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs]: the tab bar of an area, the list of areas and the account menu.
-** xref:reference/slots/app-shell/landing-pages.adoc[Landing pages]: the start page of an area.
-** xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in]: app-wide content, routes, the panels at the edge of the window and the sign-in screens.
-** xref:reference/slots/app-shell/settings-and-gear-menus.adoc[Settings and gear menus]: the gear menu and its links.
-** xref:reference/slots/app-shell/ad-slots.adoc[Ad slots]: places for advertisements.
-** xref:reference/slots/app-shell/search.adoc[Search]: the search field and web search.
-* xref:reference/slots/mail.adoc[Mail]: slots of the Mail area.
-** xref:reference/slots/mail/message-viewer.adoc[Message viewer]: an open message.
-** xref:reference/slots/mail/mail-list-and-sidebar.adoc[Mail list and sidebar]: the message list, the folder list and the sidebar.
-** xref:reference/slots/mail/mail-menus-and-actions.adoc[Mail menus and actions]: the menus of messages and folders.
-** xref:reference/slots/mail/attachments.adoc[Attachments]: actions on attachments and the attachment viewer.
-** xref:reference/slots/mail/composer.adoc[Composer]: the window where the user writes a message.
-* xref:reference/slots/calendar.adoc[Calendar]: slots of the Calendar area.
-** xref:reference/slots/calendar/calendar-view.adoc[Calendar view]: the calendar, its folder list and its subscriptions.
-** xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments]: event menus, event details and the appointment editor.
-* xref:reference/slots/contacts.adoc[Contacts]: slots of the Contacts area.
-* xref:reference/slots/briefcase.adoc[Briefcase]: slots of the Briefcase area.
-* xref:reference/slots/settings.adoc[Settings]: slots of the Settings dialog.
-** xref:reference/slots/settings/general-and-writing.adoc[General and writing]: the general, writing, signature and filter pages.
-** xref:reference/slots/settings/calendar-and-reminders.adoc[Calendar and reminders]: the calendar and reminders page.
-* xref:reference/slots/data-keys.adoc[Data keys]: keys that the Modern UI reads as data, such as message processors and the settings registration.
-* xref:reference/slots/all-slots.adoc[All slots A to Z]: every name in one alphabetical list.
+** Landing pages: the start page of an area.
+** App frame and sign-in: app-wide content, routes, the panels at the edge of the window and the sign-in screens.
+** Settings and gear menus: the gear menu and its links.
+** Ad slots: places for advertisements.
+** Search: the search field and web search.
+* Mail: slots of the Mail area.
+** Message viewer: an open message.
+** Mail list and sidebar: the message list, the folder list and the sidebar.
+** Mail menus and actions: the menus of messages and folders.
+** Attachments: actions on attachments and the attachment viewer.
+** Composer: the window where the user writes a message.
+* Calendar: slots of the Calendar area.
+** Calendar view: the calendar, its folder list and its subscriptions.
+** Events and appointments: event menus, event details and the appointment editor.
+* Contacts: slots of the Contacts area.
+* Briefcase: slots of the Briefcase area.
+* Settings: slots of the Settings dialog.
+** General and writing: the general, writing, signature and filter pages.
+** Calendar and reminders: the calendar and reminders page.
+* Data keys: keys that the Modern UI reads as data, such as message processors and the settings registration.
+* All slots A to Z: every name in one alphabetical list.
 
 [#next-step]
 == Next step
