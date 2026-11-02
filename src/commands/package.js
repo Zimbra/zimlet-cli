@@ -44,6 +44,11 @@ export default asyncCommand({
 			default: './build',
 			description: 'Source directory of built artifacts to publish'
 		},
+		resourcedir: {
+			alias: 'r',
+			default: null,
+			description: 'Source directory of resource files to include'
+		},
 		dest: {
 			alias: 'd',
 			defaultDescription: './pkg',
@@ -64,6 +69,8 @@ export default asyncCommand({
 			return error('label and description string are not provided as argument');
 		}
 
+		argv.resourcedir && createResourceFiles(argv.resourcedir);
+
 		// Create the xml descriptor file for the zimlet
 		let xmlFile = `${argv.name}.xml`;
 
@@ -71,13 +78,13 @@ export default asyncCommand({
 
 		let files;
 		try {
-			files = fs.readdirSync(builddir);
+			files = fs.readdirSync(builddir, { recursive: true });
 		} catch (err) {
 			return error(`Failed to read ${builddir}: ${err}`, 1);
 		}
 
 		files
-			.filter(file => !file.match(/\.properties$/))
+			.filter(file => fs.statSync(path.resolve(builddir, file)).isFile() && !file.match(/\.properties$/))
 			.forEach(file => {
 				if (file.match(/\.js$/)) {
 					zimletXML += `\n\t<include>${file}</include>`;
@@ -159,6 +166,25 @@ function createLocalizationFiles(zimletName, label, description) {
 				error(`Error while reading file: ${ex}`, 1);
 			}
 		});
+}
+
+
+// Add resource files to the build directory
+function createResourceFiles(resourcesDir) {
+	const cwd = process.cwd();
+	let resourcedir = path.resolve(cwd, resourcesDir);
+
+	if (!fs.existsSync(resourcedir)) {
+		return error(`Resource directory does not exist: ${resourcedir}`, 1);
+	}
+
+	const resourceFolderName = path.basename(resourcesDir);
+	try {
+		fs.cpSync(resourcesDir, path.resolve(cwd, 'build', resourceFolderName), { recursive: true });
+		console.log(`${resourceFolderName} copied successfully!`);
+	} catch (err) {
+		console.error('Error copying Resources:', err);
+	}
 }
 
 function createPropertyFile(fileName, label, description) {
