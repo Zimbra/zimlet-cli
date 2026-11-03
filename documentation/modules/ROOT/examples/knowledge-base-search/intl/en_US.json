@@ -1,0 +1,11 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Searches the knowledge base from the search bar."
+	},
+	"my-zimlet": {
+		"toggle": "Search the knowledge base",
+		"placeholder": "Search the knowledge base",
+		"submit": "Search"
+	}
+}

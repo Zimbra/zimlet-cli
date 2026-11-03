@@ -1,0 +1,11 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds an Export as .ics file item to the menus of a calendar event."
+	},
+	"my-zimlet": {
+		"exportEvent": {
+			"menuItem": "Export as .ics file"
+		}
+	}
+}

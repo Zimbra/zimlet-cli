@@ -97,7 +97,7 @@ The example counts the messages that the user sends. It listens for the event th
 include::example$factory-and-lifecycle/headless.js[]
 ----
 
-See xref:build-by-goal/recipe-app-events.adoc[React to app events] for a complete recipe, and xref:build-by-goal/recipe-message-processing.adoc[Process messages without UI] for a Zimlet that changes message content.
+See xref:build-by-goal/recipe-app-events.adoc[React to app events] for a complete recipe, and xref:build-by-goal/recipe-message-processing.adoc[Transform messages] for a Zimlet that changes message content.
 
 [#next-step]
 == Next step

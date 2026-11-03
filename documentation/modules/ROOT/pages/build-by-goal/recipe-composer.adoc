@@ -1,0 +1,192 @@
+= Add to the composer
+
+This recipe adds two options to the menu of the message composer in the xref:reference/glossary.adoc#modern-ui[Modern UI]. The example is a confidentiality helper. One option inserts a notice into the body at the caret, and the other puts `[Confidential]` at the start of the subject. Use the same pattern to change the message that the user is writing, for example to insert a standard text. A xref:reference/glossary.adoc#zimlet[Zimlet] adds the options by registering one component for a xref:fundamentals/extending-the-ui.adoc[slot] of the composer. The slot passes functions that read and change the message.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose between the slots of the composer.
+* Group your menu items with `ActionMenuGroup`.
+* Insert HTML at the caret and read and change the subject with the functions of the slot.
+* Hide an option that does not work in a plain text message, and disable one that does not apply.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app], which explains the menu item that this recipe also uses.
+
+[#choose-the-slot]
+== Choose the slot
+
+The two options act on the message as a whole and are a choice that the user makes now and then. They belong in a menu and not in the editor toolbar. The example therefore fills the slot that adds to the options menu of the composer.
+
+[#the-slot]
+=== The slot
+
+`slot::compose-sender-options-menu`::
+The menu at the right end of the header of the composer, opened with the three dots. It comes below the built-in options such as *High priority* and *Plain text*. It shows in the layout for large screens only. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::composer-toolbar-start` and `slot::composer-toolbar-end`::
+The formatting toolbar of the editor, before and after its buttons. Choose one for a button that acts on the text that the user is editing, such as a button for dictation. Both pass `activeEditor`.
+
+`slot::composer`::
+The slot after the editing area of the editor. Choose it for code that works on the editor itself. It passes `getComposer` and `editorType`.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the options in `init()`. It replaces the generated file.
+** `constants/index.js` holds the text that goes at the start of the subject. It replaces the generated file.
+** `components/confidentiality-options/index.js` is the group of two options.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$composer-options/intl/en_US.json[]
+----
+
+[#read-and-change-the-message]
+== Read and change the message
+
+The slot passes the functions that work on the message that the user is writing. The example uses four of them. It does not use the others, which are `getMessage`, `getMode`, `getLocalTextBody`, `setLocalTextBody`, `getLocalHTMLBody`, `setLocalHTMLBody` and `matchesScreenMd`.
+
+`insertAtCaret`::
+A function `(html: string, whitespacePadded?: boolean) => void`. It inserts the HTML at the caret of the editor, and replaces the text that is selected. The editor takes only HTML, so the function does nothing in a plain text message.
+
+`isPlainText`::
+A boolean. It is `true` while the message is in plain text mode.
+
+`getSubject`::
+A function `() => string`. It returns the subject that the user has typed so far. The example falls back to an empty text, in case it returns nothing.
+
+`setSubject`::
+A function `(subject: string) => void`. It replaces the subject. The tab of the message shows the new subject.
+
+[#build-the-group]
+== Build the group
+
+The `ConfidentialityOptions` component draws the two options. The first, *Insert confidentiality notice*, calls `insertAtCaret` with a paragraph. It is left out when `isPlainText` is `true`, because the call would do nothing. The second, *Mark subject as confidential*, puts the text of the constant before the subject. It is disabled once the subject starts with that text, so the text is never added twice. Wrap the component with `withIntl` to load the texts of your Zimlet. The text of the notice comes from `useText`, because it goes into the message and not onto the screen. See xref:go-deeper/localization.adoc[Localization] for the full approach.
+
+.components/confidentiality-options/index.js
+[source,js]
+----
+include::example$composer-options/components/confidentiality-options/index.js[]
+----
+
+.constants/index.js
+[source,js]
+----
+include::example$composer-options/constants/index.js[]
+----
+
+[#action-menu-group]
+=== The ActionMenuGroup component
+
+`ActionMenuGroup` draws a block of menu items with space around it. It comes from `@zimbra-client/components`. Choose it to hold the related items that your Zimlet adds to a menu, so that they read as one group beside the built-in groups.
+
+*Without it:* items placed directly in the slot work, but they have none of the space that the built-in groups of the menu have.
+
+*With it:* put the items inside the group as its children.
+
+[source,js]
+----
+<ActionMenuGroup>
+	<ActionMenuItem icon={ShieldAlertIcon} onClick={handleInsertNotice}>
+		<Text id="my-zimlet.insertNotice" />
+	</ActionMenuItem>
+</ActionMenuGroup>
+----
+
+The example sets no prop on the group. The group draws no divider. It does not close the menu either: the menu does that when the user chooses an item. See xref:reference/shims/components/menus.adoc#action-menu-group[Menus] for the entry.
+
+[#action-menu-item]
+=== The ActionMenuItem component
+
+`ActionMenuItem` draws one entry of an action menu. The recipe xref:build-by-goal/recipe-gear-and-settings-menu.adoc#action-menu-item[Add menu items to the app] explains it. This example uses three props:
+
+`icon`::
+The icon component, from `lucide-preact`. The built-in options of the menu have an icon, so each option has one too.
+
+`disabled`::
+Turns the item off. A disabled item stays in the menu and cannot be chosen. The second option uses it when the subject is marked already.
+
+`onClick`::
+Runs when the user chooses the item. The menu closes after it.
+
+[#register-the-options]
+== Register the options
+
+Register one handler in `init()` with `plugins.register`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The handler passes on the four functions and values that the group uses. Read xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers for a slot work.
+
+.index.js
+[source,js]
+----
+include::example$composer-options/index.js[]
+----
+
+[#limits]
+== Know the limits
+
+* The menu shows only in the layout for large screens. The slot has no place on a small screen.
+* The notice goes into the message in the language of the Modern UI of the user, not in the language of the recipient.
+* The example does not remove the notice or the prefix again. The user deletes them like any other text.
+* The notice replaces the text that is selected in the body, because the editor inserts at the caret and over a selection.
+* A handler of another Zimlet for the slot adds its items to the same menu.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Make the browser window wide, open *Mail* and choose *New message*. Open the menu with the three dots at the right end of the header. A group below the built-in options has *Insert confidentiality notice* and *Mark subject as confidential*.
++
+.The composer menu with the two new options
+image::composer-options-menu.png["The new message tab of the Modern UI. The menu at the right end of the header is open. A red outline surrounds the last group of the menu, which has the items Insert confidentiality notice and Mark subject as confidential. The address after From is covered by a grey bar."]
++
+The outlined group is yours. The built-in options are above it.
+. Type `Quarterly report` as the subject and click in the body. Choose *Insert confidentiality notice* in the menu. The paragraph *This message is confidential. Do not forward it.* appears at the caret, and the menu closes.
+. Open the menu and choose *Mark subject as confidential*. The subject reads `[Confidential] Quarterly report`.
++
+.The message after both options
+image::composer-options-result.png["The new message tab of the Modern UI. A red outline surrounds the subject, which reads [Confidential] Quarterly report, and another surrounds the first line of the body, which reads This message is confidential. Do not forward it. The address after From is covered by a grey bar."]
++
+The outlined subject and body line are what the two options added.
+. Open the menu again. *Mark subject as confidential* is disabled. Delete the prefix from the subject and open the menu. The item is enabled again.
+. Open another new message and choose *Plain text* in the menu. Open the menu again. It shows *Mark subject as confidential* and no longer shows *Insert confidentiality notice*.
+
+[#expected-result]
+== Expected result
+
+* The composer menu has a group with *Insert confidentiality notice* and *Mark subject as confidential*.
+* The first option inserts the notice at the caret in an HTML message and is not shown in a plain text message.
+* The second option puts `[Confidential] ` before the subject, is disabled while the subject starts with it, and works in both modes.
+* The menu closes after each choice.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The options are not in the menu.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error. The window can also be in the layout for small screens.
+* Fix: Check that the sideloader shows *Running*. Check that the key is `slot::compose-sender-options-menu` and that you register in `init()`. Widen the window, reload the page and open the menu again.
+
+The notice is not inserted.::
+* Cause: The message is in plain text mode. The editor inserts only HTML.
+* Fix: Switch the message back to HTML, or let the example hide the option in plain text mode, as it does.
+
+The texts show as keys.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or the component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around the component.
+
+[#next-step]
+== Next step
+
+Add an action to a calendar event in xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an action to a calendar event menu]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

@@ -1,0 +1,172 @@
+= Add an action to a calendar event menu
+
+This recipe adds an *Export as .ics file* item to the menus of a calendar event in the xref:reference/glossary.adoc#modern-ui[Modern UI]. Choosing it downloads the event as an iCalendar file, a file with the extension `.ics` that other calendar apps can open. Use it when an action belongs to one event. The user then finds it next to *Move*, *Copy* and *Show Original*, and does not need a screen of your own. The item is a small component that a xref:reference/glossary.adoc#zimlet[Zimlet] registers for the two slots of the event menus.
+
+[#what-you-will-learn]
+== What you will learn
+
+* Add an item to the context menu of an event and to the menu of an open event.
+* Read the event that the menu belongs to.
+* Download a file from the server with a name that you choose.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* An event in your calendar. To see how the file name is built, give it a title with a colon or a slash, such as `Review: Q3/Q4`.
+
+[#choose-the-slot]
+== Choose the slot
+
+The item must be in the menu that opens when the user right-clicks an event, and in the menu of an event that is open. The example therefore fills the two slots of the event menus with the same item.
+
+[#the-slots]
+=== The slots
+
+`slot::action-menu-event-context-menu`::
+The context menu of an event, which opens when the user right-clicks an event in the calendar. The item comes at the end of the first group, after *Show Original*.
+
+`slot::action-menu-event-more`::
+The *More Options* menu with three dots, in the toolbar above an open event. The item comes at the end of the first group, after *Show Original*. The toolbar has this menu in the desktop layout only.
+
+Look up the slots in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::action-menu-mail-more`::
+The menus of a message. Choose it for an action on a message, as xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item] shows.
+
+`slot::calendar-appointment-edit-video-call`::
+The form in which the user creates or edits an event. Choose it for a control that sets a value of the event, as xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field] shows.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the item in `init()`. It replaces the generated file.
+** `utils/get-file-name.js` builds the name of the file from the title of the event.
+** `utils/get-export-path.js` builds the path on the server that returns the event.
+** `hooks/use-export-event.js` downloads the file.
+** `components/export-event-item/` is the menu item.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$calendar-event-menu/intl/en_US.json[]
+----
+
+[#export-the-event]
+== Export the event
+
+The server returns an event as an iCalendar file when you ask for the format `ics`. The file name comes from two small helpers, so that you change one place when the naming rule changes.
+
+.utils/get-file-name.js
+[source,js]
+----
+include::example$calendar-event-menu/utils/get-file-name.js[]
+----
+
+The title of an event can hold characters that a file name cannot, such as a colon or a slash. `getFileName` replaces them with a hyphen. It falls back to `event` when the event has no title, and adds the extension `.ics`.
+
+.utils/get-export-path.js
+[source,js]
+----
+include::example$calendar-event-menu/utils/get-export-path.js[]
+----
+
+`getExportPath` returns the path of the request. It holds the id of the event, the format `ics` and the file name that the server puts in its answer. The id of an event is a number, which can be negative, or a text with a colon for an event of a shared calendar. A number takes its absolute value, and the text stays as it is.
+
+.hooks/use-export-event.js
+[source,js]
+----
+include::example$calendar-event-menu/hooks/use-export-event.js[]
+----
+
+The hook returns a function that takes an event. It turns the path into the full address with `zimbraBatchClient.resolve`, as xref:reference/context/batch-client/resolve.adoc[resolve] describes, and starts the download with `startAttachmentDownloadProcess`. The function comes from `@zimbra-client/util`, as xref:reference/shims/utilities.adoc[Utilities] lists. It takes the address and the name of the file, and the browser downloads the file as it does for an attachment.
+
+[#build-the-item]
+== Build the menu item
+
+Both slots pass the event that the menu belongs to as `eventToDisplay`. Both pass no other prop. The example reads the `id` and the `name` of the event.
+
+.components/export-event-item/index.js
+[source,js]
+----
+include::example$calendar-event-menu/components/export-event-item/index.js[]
+----
+
+The component reads the texts with `<Text>` and is wrapped with `withIntl`, so that it finds the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization] for the approach.
+
+[#action-menu-item]
+=== The ActionMenuItem component
+
+`ActionMenuItem` draws one entry of an action menu. The recipe xref:build-by-goal/recipe-gear-and-settings-menu.adoc#action-menu-item[Add menu items to the app] explains it. This example uses two props:
+
+`onClick`::
+Runs when the user chooses the item. It starts the download.
+
+`nonOfflineDesktopFeature`::
+Turns the item off while the desktop app of the Modern UI is offline, because the download needs the server. The item stays on in a browser.
+
+The example sets no `icon`, because the built-in items of these menus have none.
+
+[#register-the-item]
+== Register the item
+
+Register one handler for each slot in `init()`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The handler receives the props of the slot and passes them on to the component. The example takes `zimbraBatchClient` from the xref:fundamentals/host-context.adoc[context] in the factory and passes it down, and not the whole context. One handler serves both slots, so the two menus always show the same item.
+
+.index.js
+[source,js]
+----
+include::example$calendar-event-menu/index.js[]
+----
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page first if the Zimlet was loaded before.
+. Open *Calendar* and right-click an event. *Export as .ics file* is at the end of the first group, below *Show Original*.
++
+.The context menu of an event with the Export as .ics file item
+image::calendar-event-menu-context-menu.png["The context menu of an event in the week view of Calendar. The item Export as .ics file, below Show Original and above Reply, is outlined in red."]
++
+The outlined *Export as .ics file* item is the item of your Zimlet.
+. Choose *Export as .ics file*. The browser downloads a file that is named after the event and ends in `.ics`. A colon or a slash in the title is a hyphen in the name.
+. Open the event with *Details* in the context menu. In the toolbar above the event, open the *More Options* menu with three dots. *Export as .ics file* is at the end of the first group, below *Show Original*.
++
+.The More Options menu of an open event with the Export as .ics file item
+image::calendar-event-menu-more-menu.png["The details of an event with the More Options menu open. The three dots button in the toolbar and the item Export as .ics file, below Show Original and above Reply, are outlined in red."]
++
+The outlined three dots button opens the menu, and the outlined *Export as .ics file* item is the item of your Zimlet.
+. Choose it. The browser downloads the same file again.
+. Open the file in a calendar app. It shows the event with its title and its time.
+
+[#expected-result]
+== Expected result
+
+* *Export as .ics file* is in the context menu of an event, and in the *More Options* menu of an open event.
+* Choosing it downloads one `.ics` file with the title of the event as its name.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The item is not in the menu.::
+* Cause: The Zimlet is not loaded, or a handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the keys are `slot::action-menu-event-context-menu` and `slot::action-menu-event-more`, and that you register in `init()`. Reload the page and open the menu again.
+
+The item is in the context menu but not in the *More Options* menu.::
+* Cause: The window is too narrow. The toolbar of an open event has the *More Options* menu in the desktop layout only.
+* Fix: Widen the browser window, and open the event again.
+
+The browser downloads no file, or the file is empty.::
+* Cause: The server did not return the event. The path or the id can be wrong.
+* Fix: Open the network tab of the browser tools and find the request with `fmt=ics`. Check its status and the id in its address.
+
+[#next-step]
+== Next step
+
+Set a value of an event while the user fills in the form in xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

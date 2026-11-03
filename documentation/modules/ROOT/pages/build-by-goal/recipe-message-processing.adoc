@@ -9,7 +9,7 @@ You learn how to:
 
 * Choose the message processor key.
 * Register a processor under `messageProcessors:emailProcessor`.
-* Change the message as a `Document`.
+* Change the message as a https://developer.mozilla.org/en-US/docs/Web/API/Document[`Document`^].
 
 [#before-you-start]
 == Before you start
@@ -114,7 +114,7 @@ Register the handler in `init()`, with the key of the content that you change.
 [#registration-key]
 === The messageProcessors:emailProcessor key
 
-`messageProcessors:emailProcessor` is the key for the body of a message in the message viewer. You register a handler under it with `plugins.register`, as you do for a slot. The handler returns a function that the Modern UI calls with the message, and nothing is drawn.
+`messageProcessors:emailProcessor` is the key for the body of a message in the message viewer. You register a handler under it with `plugins.register`, as you do for a slot. See xref:fundamentals/extending-the-ui.adoc#handlers-that-return-data[Handlers that return data] for how the Modern UI uses a handler of a key that is not a slot. The handler returns a function that the Modern UI calls with the message, and nothing is drawn.
 
 .index.js
 [source,js]

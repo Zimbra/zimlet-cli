@@ -8,6 +8,9 @@ Find the page for each file of a xref:reference/glossary.adoc#zimlet[Zimlet]. Ea
 [[package-json]]pass:[<a class="anchor" href="#package-json"></a>]xref:reference/files/package-json.adoc[`package.json`]::
 The name, version, entry file, scripts and dependencies of the Zimlet, including the packages that other Zimlets use.
 
+[[descriptor]]pass:[<a class="anchor" href="#descriptor"></a>]xref:reference/files/descriptor.adoc[Descriptor XML]::
+The XML file that `zimlet package` writes for the server: the five attributes of the Zimlet and the entries for its files.
+
 [[zimlet-config]]pass:[<a class="anchor" href="#zimlet-config"></a>]xref:reference/files/zimlet-config.adoc[`zimlet.config.js`]::
 The function that changes the build, what it receives, and the settings of the build that it can change.
 

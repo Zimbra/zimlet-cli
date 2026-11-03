@@ -145,6 +145,7 @@ Keep to these rules for a render-prop slot:
 * The slot has no label with `?zimletSlots=show`. It writes `non-visible ZimletSlot name=<slot-name>` to the browser console instead.
 * A handler that throws still puts an error object in the list, in its place.
 
+The slot `web-search` is a render-prop slot that replaces the search field itself. xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar] shows it.
 [#other-registration-keys]
 == Other registration keys
 
