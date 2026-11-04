@@ -181,7 +181,7 @@ Add one `<locale>.json` file for each further language, for example `fr_FR.json`
 [#config-template]
 == config_template.xml
 
-Add a `config_template.xml` file when administrators need to change settings without a new build, such as a service address or a switch. `zimlet build` copies the file into the package, and the descriptor lists it as a resource. Without the file, the Zimlet has no administrator settings. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] to declare the settings and read them in your code.
+Add a `config_template.xml` file when administrators need to change settings without a new build, such as a service address or a switch. `zimlet build` copies the file into the package, and the descriptor lists it as a resource. Without the file, the Zimlet has no administrator settings. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] to declare the settings and read them in your code, and xref:reference/files/config-template.adoc[config_template.xml] for every element of the file.
 
 [#zimlet-config]
 == zimlet.config.js

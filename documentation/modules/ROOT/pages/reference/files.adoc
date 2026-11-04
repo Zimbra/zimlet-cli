@@ -11,6 +11,9 @@ The name, version, entry file, scripts and dependencies of the Zimlet, including
 [[descriptor]]pass:[<a class="anchor" href="#descriptor"></a>]xref:reference/files/descriptor.adoc[Descriptor XML]::
 The XML file that `zimlet package` writes for the server: the five attributes of the Zimlet and the entries for its files.
 
+[[config-template]]pass:[<a class="anchor" href="#config-template"></a>]xref:reference/files/config-template.adoc[`config_template.xml`]::
+The settings file that an administrator changes on the server: the root element, `name`, `version`, the `global` and `host` elements, the properties and the limits of the server.
+
 [[zimlet-config]]pass:[<a class="anchor" href="#zimlet-config"></a>]xref:reference/files/zimlet-config.adoc[`zimlet.config.js`]::
 The function that changes the build, what it receives, and the settings of the build that it can change.
 

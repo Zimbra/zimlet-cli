@@ -1,6 +1,6 @@
 = Components
 
-The `@zimbra-client/components` module holds the larger parts of the xref:reference/glossary.adoc#modern-ui[Modern UI] screens. They include sidebars, folder lists, menus, dialogs, form fields and the contact and calendar widgets. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a part that looks and behaves like the Modern UI's own. Examples are an `ActionMenu` in a slot handler and a `ModalDialog` that opens from a button. Its parts are in ten areas. For small controls such as `Button` and `Icon`, see xref:reference/shims/blocks.adoc[Blocks UI kit].
+The `@zimbra-client/components` module holds the larger parts of the xref:reference/glossary.adoc#modern-ui[Modern UI] screens. They include sidebars, folder lists, menus, dialogs, form fields and the contact and calendar widgets. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a part that looks and behaves like the Modern UI's own. Examples are an `ActionMenu` in a slot handler and a `ModalDialog` that opens from a button. Its parts are in eleven areas. For small controls such as `Button` and `Icon`, see xref:reference/shims/blocks.adoc[Blocks UI kit].
 
 The Modern UI shares the module with every Zimlet, so the build does not copy it into your Zimlet. Import a name as in `import { MenuItem } from '@zimbra-client/components';`. See xref:fundamentals/shared-libraries.adoc[Shared libraries] for how shared modules work.
 
@@ -25,8 +25,11 @@ Use these to warn the user before leaving a page, to show help, and to show an e
 [[form-fields]]pass:[<a class="anchor" href="#form-fields"></a>]xref:reference/shims/components/form-fields.adoc[Form fields]::
 Use these to let the user enter or pick a value, and to group fields. `@zimbra-client/blocks` also has a `Select`, which is a different component. Exports: `Select`, `TextInput`, `FormGroup` and `AddMore`.
 
-[[dates-recipients-and-rich-text]]pass:[<a class="anchor" href="#dates-recipients-and-rich-text"></a>]xref:reference/shims/components/dates-recipients-and-rich-text.adoc[Dates, recipients and rich text]::
-Use these to let the user enter a date, a time, a recipient, formatted text or an emoji. Exports: `DateInput`, `CustomTimePicker`, `CalendarOptionItem`, `AddressField`, `TinyMceComposer` and `Picker`.
+[[dates-and-calendars]]pass:[<a class="anchor" href="#dates-and-calendars"></a>]xref:reference/shims/components/dates-and-calendars.adoc[Dates and calendars]::
+Use these to let the user enter a date or a time, and to show a calendar by its name and colour. Exports: `DateInput`, `CustomTimePicker` and `CalendarOptionItem`.
+
+[[recipients-and-rich-text]]pass:[<a class="anchor" href="#recipients-and-rich-text"></a>]xref:reference/shims/components/recipients-and-rich-text.adoc[Recipients and rich text]::
+Use these to let the user enter recipients, write formatted text or choose an emoji. Exports: `AddressField`, `TinyMceComposer` and `Picker`.
 
 [[contacts]]pass:[<a class="anchor" href="#contacts"></a>]xref:reference/shims/components/contacts.adoc[Contacts]::
 Use these to show or edit contacts: a list, an editor, a hover card and an avatar. Exports: `ContactList`, `ContactEditor`, `ContactHoverCardWrapper` and `Avatar`.

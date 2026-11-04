@@ -1,0 +1,336 @@
+= Contacts
+
+The components of `@zimbra-client/components` that show a contact or let the user change one. A contact list draws the contacts of a folder, with selection and sorting. An editor changes a contact and saves it. A hover card shows the details of a person when the user points at an address. An avatar draws a round photo, the initials or an icon. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] shows people as the xref:reference/glossary.adoc#modern-ui[Modern UI] does. The org chart Zimlet does so with the hover card and the avatar. For addresses that the user types, see xref:reference/shims/components/recipients-and-rich-text.adoc[Recipients and rich text].
+
+[#members]
+== Members
+
+<<contact-list,`ContactList`>>::
+A sortable list of contacts with a header, a context menu and row selection.
+
+<<contact-editor,`ContactEditor`>>::
+A form that edits one contact and saves it.
+
+<<contact-hover-card-wrapper,`ContactHoverCardWrapper`>>::
+A wrapper that opens a card with the details of a person when the user points at its content.
+
+<<avatar,`Avatar`>>::
+A round picture of a contact, with the initials or an icon when there is no picture.
+
+[#contact-list]
+== ContactList
+
+The list of contacts of the Contacts screen. It sorts the contacts and draws a header with a select all box and a sort menu. It draws one row for each contact and opens a context menu on a right click. Use it when your Zimlet shows contacts that the user selects and acts on. It draws and sorts only: your code holds the contacts and the selection, and runs every action. It is built on xref:reference/shims/components/layout.adoc#smart-list[SmartList].
+
+=== Signature
+
+[source,js]
+----
+import { createRef } from 'preact';
+import { ContactList } from '@zimbra-client/components';
+
+const listRef = createRef();
+
+<ContactList
+	contacts={contacts}
+	selected={selectedIds}
+	onSelectionChange={setSelectedIds}
+	setRef={listRef}
+/>
+----
+
+=== Props
+
+[[contact-list-contacts]]pass:[<a class="anchor" href="#contact-list-contacts"></a>]`contacts` (array of object)::
+The contacts to show. Always set it, with an empty array for no contacts: the list throws an error when it is missing. Give each contact an `id` and an `attributes` object with its fields, such as `firstName`, `lastName`, `company`, `email` and `mobilePhone`. A `fileAsStr` field, when set, is the name that the row shows. A `folderId` and a `tagNames` field are also read (see <<contact-list-is-trash-folder,`isTrashFolder`>> and <<contact-list-tags,`tags`>>). The list sorts a copy and does not change your array.
+[[contact-list-selected]]pass:[<a class="anchor" href="#contact-list-selected"></a>]`selected` (array of string)::
+The ids of the selected contacts. Always set it, with an empty array for no selection: the list reads its length. The list does not keep the selection itself. It shows what you pass.
+[[contact-list-on-selection-change]]pass:[<a class="anchor" href="#contact-list-on-selection-change"></a>]`onSelectionChange` (function `(ids: string[]) => void`)::
+Called with the new array of selected ids when the user clicks a row, uses the keyboard or uses the select all box. Its return value is ignored. Store the ids and pass them back as <<contact-list-selected,`selected`>>. See xref:reference/shims/components/layout.adoc#smart-list-on-selection-change[`onSelectionChange` of `SmartList`].
+[[contact-list-set-ref]]pass:[<a class="anchor" href="#contact-list-set-ref"></a>]`setRef` (object)::
+A ref object, created with `createRef()` from `preact`. Always set it: the list throws an error when it is missing. At every render the list stores the contacts in the order that it shows them in `setRef.current`. Use it to find the next or the previous contact, for example after a delete.
+[[contact-list-class]]pass:[<a class="anchor" href="#contact-list-class"></a>]`class` (string)::
+A class name added to the list. Give the list a height, because it draws only the rows in view.
+[[contact-list-header]]pass:[<a class="anchor" href="#contact-list-header"></a>]`header` (boolean)::
+Set `false` to hide the header. Any other value shows it.
+[[contact-list-contact-list-header]]pass:[<a class="anchor" href="#contact-list-contact-list-header"></a>]`ContactListHeader` (component or boolean)::
+Replaces the header. Set `false` to hide the header. The component receives these props:
++
+* `actions`: an object with `toggleSelectAll()`, `selectItem({ item })` and `toggleItemSelected({ item })`.
+* `selected` (array of string), `items` (array of object) and `allSelected` (boolean).
+* `sort` (string) and `sortDirection` (string): the sort field and direction.
+* `setSortField` (function `(field: string) => void`) and `reverseSortDirection` (function `() => void`): call them to change the sort.
+* `selectedCount` (number) and `isEmptyList` (boolean).
+* The values of <<contact-list-show-dialog,`showDialog`>>, <<contact-list-show-delete-list-button,`showDeleteListButton`>>, <<contact-list-on-copy-contacts,`onCopyContacts`>>, <<contact-list-on-print-contacts,`onPrintContacts`>>, <<contact-list-is-gal-folder,`isGalFolder`>>, <<contact-list-disable-print,`disablePrint`>> and <<contact-list-is-distribution-list,`isDistributionList`>>.
+[[contact-list-contact-list-item]]pass:[<a class="anchor" href="#contact-list-contact-list-item"></a>]`ContactListItem` (component)::
+Replaces the row. The context menu stays around it. The component receives these props:
++
+* `contact` (object), `selected` (boolean) and `allSelected` (boolean).
+* `onClick` (function `(arg: { contact: object, event?: Event, action?: string }) => void`): call it to select the row.
+* `onDragStart` (function `(event: DragEvent, contact: object) => void`): call it from your own `dragstart` handler to start a drag.
+* `onCheckboxClick`, `matchesScreenMd`, `tags`, `isTrashFolder`, `canEditSharedItem` and `isDistributionList`: the values that you pass to the list.
+* `isFirstElement` (boolean): `true` for the first contact.
+* `renderBadge`, when you set it.
+[[contact-list-render-badge]]pass:[<a class="anchor" href="#contact-list-render-badge"></a>]`renderBadge` (function `(contact: object) => node`)::
+Draws extra content at the end of every row. Its return value is the content.
+[[contact-list-tags]]pass:[<a class="anchor" href="#contact-list-tags"></a>]`tags` (array of object)::
+The tags of the user. Each tag has a `name`. The list matches them with the `tagNames` field of each contact. It draws the tag icons on the row, and finds the tags of the selected contacts for <<contact-list-on-tag,`onTag`>>.
+[[contact-list-fetch-more-contacts]]pass:[<a class="anchor" href="#contact-list-fetch-more-contacts"></a>]`fetchMoreContacts` (function `() => void`)::
+Called when the user scrolls to the end of the list and <<contact-list-has-more-contacts,`hasMoreContacts`>> is `true`. Its return value is ignored. Add the next contacts to <<contact-list-contacts,`contacts`>> in it.
+[[contact-list-has-more-contacts]]pass:[<a class="anchor" href="#contact-list-has-more-contacts"></a>]`hasMoreContacts` (boolean)::
+`true` while more contacts can be loaded. Set <<contact-list-fetch-more-contacts,`fetchMoreContacts`>> with it. See xref:reference/shims/components/layout.adoc#infinite-scroll-has-more[`hasMore` of `InfiniteScroll`], which warns about it.
+[[contact-list-show-loader-bar]]pass:[<a class="anchor" href="#contact-list-show-loader-bar"></a>]`showLoaderBar` (boolean)::
+Shows a loading bar at the top of the list while you load contacts.
+[[contact-list-is-trash-folder]]pass:[<a class="anchor" href="#contact-list-is-trash-folder"></a>]`isTrashFolder` (boolean)::
+Set it when the contacts are those of the trash folder. A contact whose `folderId` is the trash folder shows *Deleted* after its name in other lists. It shows no such label when this prop is set.
+[[contact-list-can-edit-shared-item]]pass:[<a class="anchor" href="#contact-list-can-edit-shared-item"></a>]`canEditSharedItem` (boolean)::
+Passed to every row. The default row does not use it. A custom <<contact-list-contact-list-item,`ContactListItem`>> can.
+[[contact-list-is-gal-folder]]pass:[<a class="anchor" href="#contact-list-is-gal-folder"></a>]`isGalFolder` (boolean)::
+Set it when the contacts come from the global address list of the organization. The sort menu then has no Zimlet items, and it shows *Print* on a screen that is at least 1025 pixels wide.
+[[contact-list-is-distribution-list]]pass:[<a class="anchor" href="#contact-list-is-distribution-list"></a>]`isDistributionList` (boolean)::
+Set it when the rows are the members of a distribution list. The rows cannot be dragged and the sort menu has no Zimlet items. The context menu offers <<contact-list-on-copy-email,`onCopyEmail`>>, <<contact-list-on-compose,`onCompose`>> and <<contact-list-on-show-find-emails-dialog,`onShowFindEmailsDialog`>> instead of the usual entries.
+[[contact-list-zimbra-pref-locale]]pass:[<a class="anchor" href="#contact-list-zimbra-pref-locale"></a>]`zimbraPrefLocale` (string)::
+The language of the user. With `ja`, the list sorts by the phonetic name of a contact when it has one.
+[[contact-list-matches-screen-md]]pass:[<a class="anchor" href="#contact-list-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+Set it to `true` on a screen that is at least 1025 pixels wide. When it is `true`, a click on the check box of a row toggles the selection of the row. Otherwise, the check box calls <<contact-list-on-checkbox-click,`onCheckboxClick`>>.
+[[contact-list-on-checkbox-click]]pass:[<a class="anchor" href="#contact-list-on-checkbox-click"></a>]`onCheckboxClick` (function `(id: string, checked: boolean) => void`)::
+Called with the id of the contact and the new state of the check box. It is called when the user clicks the check box of a row while <<contact-list-matches-screen-md,`matchesScreenMd`>> is not `true`. Its return value is ignored. Add or remove the id in your selection.
+[[contact-list-show-dialog]]pass:[<a class="anchor" href="#contact-list-show-dialog"></a>]`showDialog` (function `(dialog: number) => void`)::
+Called when the user chooses *Delete List* in the sort menu. Its return value is ignored. `dialog` is always `6`, the id that the Contacts screen uses for its dialog that deletes a contact list. Show a dialog of your own in the function. Set it with <<contact-list-show-delete-list-button,`showDeleteListButton`>>.
+[[contact-list-show-delete-list-button]]pass:[<a class="anchor" href="#contact-list-show-delete-list-button"></a>]`showDeleteListButton` (boolean)::
+Adds *Delete List* to the sort menu. It calls <<contact-list-show-dialog,`showDialog`>>.
+[[contact-list-on-copy-contacts]]pass:[<a class="anchor" href="#contact-list-on-copy-contacts"></a>]`onCopyContacts` (function `(event: MouseEvent) => void`)::
+Adds *Add to Contacts* to the context menu, and to the sort menu while contacts are selected. Called with the click event when the user chooses it. Its return value is ignored.
+[[contact-list-on-print-contacts]]pass:[<a class="anchor" href="#contact-list-on-print-contacts"></a>]`onPrintContacts` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user chooses *Print* in the sort menu or the context menu. Its return value is ignored. The menus show *Print* on a screen that is at least 1025 pixels wide, with or without this function. The context menu of a distribution list has no *Print*.
+[[contact-list-disable-print]]pass:[<a class="anchor" href="#contact-list-disable-print"></a>]`disablePrint` (boolean)::
+Disables *Print* in the context menu, and removes it from the sort menu. The sort menu of the global address list keeps it.
+[[contact-list-is-editable]]pass:[<a class="anchor" href="#contact-list-is-editable"></a>]`isEditable` (boolean)::
+Adds *Edit Details* to the context menu. It calls <<contact-list-on-edit-details,`onEditDetails`>>.
+[[contact-list-on-edit-details]]pass:[<a class="anchor" href="#contact-list-on-edit-details"></a>]`onEditDetails` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user chooses *Edit Details*. Its return value is ignored. It is used with <<contact-list-is-editable,`isEditable`>>.
+[[contact-list-is-deletable]]pass:[<a class="anchor" href="#contact-list-is-deletable"></a>]`isDeletable` (boolean)::
+Adds a delete entry to the context menu. It calls <<contact-list-on-delete-contact,`onDeleteContact`>>. The entry reads *Delete Permanently* when <<contact-list-show-permanently-delete,`showPermanentlyDelete`>> is set, and *Delete* otherwise.
+[[contact-list-show-permanently-delete]]pass:[<a class="anchor" href="#contact-list-show-permanently-delete"></a>]`showPermanentlyDelete` (boolean)::
+Changes the label of the delete entry to *Delete Permanently*. It changes the label only.
+[[contact-list-on-delete-contact]]pass:[<a class="anchor" href="#contact-list-on-delete-contact"></a>]`onDeleteContact` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user chooses the delete entry. Its return value is ignored. It is used with <<contact-list-is-deletable,`isDeletable`>>.
+[[contact-list-is-assignable]]pass:[<a class="anchor" href="#contact-list-is-assignable"></a>]`isAssignable` (boolean)::
+Adds *Assign to Lists* and *Share Contact* to the context menu, and *Remove from List* when <<contact-list-on-remove-from-list,`onRemoveFromList`>> is set. They call <<contact-list-on-assign-to-lists,`onAssignToLists`>>, <<contact-list-on-share-contact,`onShareContact`>> and `onRemoveFromList`.
+[[contact-list-on-assign-to-lists]]pass:[<a class="anchor" href="#contact-list-on-assign-to-lists"></a>]`onAssignToLists` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user chooses *Assign to Lists*. Its return value is ignored. It is used with <<contact-list-is-assignable,`isAssignable`>>.
+[[contact-list-on-remove-from-list]]pass:[<a class="anchor" href="#contact-list-on-remove-from-list"></a>]`onRemoveFromList` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user chooses *Remove from List*. Its return value is ignored. The entry shows only with <<contact-list-is-assignable,`isAssignable`>>.
+[[contact-list-on-share-contact]]pass:[<a class="anchor" href="#contact-list-on-share-contact"></a>]`onShareContact` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user chooses *Share Contact*. Its return value is ignored. It is used with <<contact-list-is-assignable,`isAssignable`>>.
+[[contact-list-on-tag]]pass:[<a class="anchor" href="#contact-list-on-tag"></a>]`onTag` (function `(info: { existingTags: object[] }) => void`)::
+Adds *Tag* to the context menu. Called when the user chooses it. Its return value is ignored. `existingTags` holds the tags of the selected contacts. The context menu of a distribution list has no *Tag*.
+[[contact-list-on-copy-email]]pass:[<a class="anchor" href="#contact-list-on-copy-email"></a>]`onCopyEmail` (function `(email: string) => void`)::
+Adds *Copy* to the context menu of a <<contact-list-is-distribution-list,distribution list>>. Called with the email address of the contact. Its return value is ignored.
+[[contact-list-on-compose]]pass:[<a class="anchor" href="#contact-list-on-compose"></a>]`onCompose` (function `(event: MouseEvent) => void`)::
+Adds *New Email* to the context menu of a <<contact-list-is-distribution-list,distribution list>>. Called with the click event. Its return value is ignored.
+[[contact-list-on-show-find-emails-dialog]]pass:[<a class="anchor" href="#contact-list-on-show-find-emails-dialog"></a>]`onShowFindEmailsDialog` (function `(event: MouseEvent) => void`)::
+Adds *Find Emails* to the context menu of a <<contact-list-is-distribution-list,distribution list>>. Called with the click event. Its return value is ignored.
+[[contact-list-on-context-menu-mount]]pass:[<a class="anchor" href="#contact-list-on-context-menu-mount"></a>]`onContextMenuMount` (function `(info: { selected: string[], selectedId: string, contact: object }) => void`)::
+Called when the user opens the context menu of a row. Its return value is ignored. `selected` is your selection, `selectedId` is the id of the row and `contact` is its contact. Use it to select the row when it is not selected, so that the menu acts on it.
+
+=== Returns
+
+A list of rows 72 pixels high that draws only the rows in view, with the header above. A row has a check box, the name of the contact, its first email address and its first phone number. An empty `contacts` array draws the empty state of `SmartList`.
+
+=== Usage notes
+
+* The user chooses the sort field and the direction in the header. The list sorts by display name at first. In ascending order, a contact with no value for the chosen field comes first. The list keeps the choice in its own state and does not tell you.
+* The context menu opens on a right click. Select the row in <<contact-list-on-context-menu-mount,`onContextMenuMount`>> when the entries must act on it.
+* A row can be dragged. The drag carries the selected contacts when the dragged row is selected, and only that row when it is not. A row of a distribution list, and a contact that has a `memberOf` field, cannot be dragged.
+* The sort menu draws the slots `action-menu-contact-list` and `action-menu-restore-contacts`, except for the global address list and a distribution list. See xref:reference/slots/contacts.adoc[Contacts slots].
+* A prop that is not listed here has no effect.
+
+[#contact-editor]
+== ContactEditor
+
+A form that edits one contact, with a card, a photo, and the fields of a contact in three sections: contact, work and personal. It validates the form, then creates the contact or saves the changes on the server. Use it when your Zimlet lets the user add or edit a contact, for example in a dialog. It works only inside the Modern UI, because it reads the state of the application and sends the save request through it.
+
+=== Signature
+
+[source,js]
+----
+import { ContactEditor } from '@zimbra-client/components';
+
+<ContactEditor
+	contact={contact}
+	isNew={false}
+	onSave={handleSave}
+	onCancel={handleCancel}
+	hideDialogOnError={handleInvalid}
+/>
+----
+
+=== Props
+
+[[contact-editor-contact]]pass:[<a class="anchor" href="#contact-editor-contact"></a>]`contact` (object)::
+The contact to edit. It has an `id` and an `attributes` object with its fields, such as `firstName`, `lastName`, `company`, `email` and `mobilePhone`. For a new, empty contact, leave it out and set <<contact-editor-is-new,`isNew`>>. The editor works on a copy and shows the form from it. When you pass a different object later and `isNew` is not set, the form resets to that object and the user loses the edits. Keep one object between renders.
+[[contact-editor-is-new]]pass:[<a class="anchor" href="#contact-editor-is-new"></a>]`isNew` (boolean)::
+`true` creates a new contact when the user saves. Otherwise, the editor saves the changed fields of <<contact-editor-contact,`contact`>>. A contact without an `id` is also created.
+[[contact-editor-on-save]]pass:[<a class="anchor" href="#contact-editor-on-save"></a>]`onSave` (function `(result: object) => void`)::
+Called after the server saved the contact. Its return value is ignored. `result` is the answer of the server to the save request. Do not rely on its shape. It is not called when <<contact-editor-custom-save,`customSave`>> is set or when the save fails.
+[[contact-editor-on-cancel]]pass:[<a class="anchor" href="#contact-editor-on-cancel"></a>]`onCancel` (function `(event: MouseEvent) => void`)::
+Called with the click event when the user clicks *Cancel*. Its return value is ignored. Close the form in it. The editor draws the button only with <<contact-editor-show-footer,`showFooter`>>.
+[[contact-editor-hide-dialog-on-error]]pass:[<a class="anchor" href="#contact-editor-hide-dialog-on-error"></a>]`hideDialogOnError` (function `() => void`)::
+Called when the user clicks *Save* and the form is not valid. Its return value is ignored. Set it, even to an empty function. The editor calls it without a check, so a save with invalid data throws an error when it is missing.
+[[contact-editor-on-validation-error]]pass:[<a class="anchor" href="#contact-editor-on-validation-error"></a>]`onValidationError` (function `(hasError: boolean) => void`)::
+Called each time the editor checks the form on *Save*. `hasError` is `true` when the form is not valid and `false` when it is. Its return value is ignored. It is not called when the user is offline.
+[[contact-editor-on-change]]pass:[<a class="anchor" href="#contact-editor-on-change"></a>]`onChange` (function `(change: { contact: object }) => void`)::
+Called when the user changes the value or the label of a field, adds or removes a field in a group, or changes the photo. Its return value is ignored. `contact` is the whole contact as the form holds it. A field that the user adds with *Add More* does not call it.
+[[contact-editor-on-before-save]]pass:[<a class="anchor" href="#contact-editor-on-before-save"></a>]`onBeforeSave` (function `(save: { isNew: boolean, contact: object }) => void`)::
+Called when the form is valid, before the editor sends the contact. Its return value is ignored. `contact` holds the values that the editor saves. Use it to show that the save started.
+[[contact-editor-custom-save]]pass:[<a class="anchor" href="#contact-editor-custom-save"></a>]`customSave` (function `(save: { isNew: boolean, contact: object }) => any`)::
+Replaces the save. Called when the form is valid, after <<contact-editor-on-before-save,`onBeforeSave`>>, with the same argument. The editor then sends nothing and does not call <<contact-editor-on-save,`onSave`>>. Save the contact yourself.
+[[contact-editor-on-form-change]]pass:[<a class="anchor" href="#contact-editor-on-form-change"></a>]`onFormChange` (function `(hasChanges: boolean) => void`)::
+Has no effect. The editor means to call it with `true` when the form differs from <<contact-editor-contact,`contact`>>. Its check never passes in the current Modern UI, so it is never called. To track changes, use <<contact-editor-on-change,`onChange`>>.
+[[contact-editor-trigger-save-contact]]pass:[<a class="anchor" href="#contact-editor-trigger-save-contact"></a>]`triggerSaveContact` (boolean)::
+Saves the form as if the user clicked *Save* when the value changes to `true`. Use it to save from a button of your own, outside the editor.
+[[contact-editor-save-on-confirm-dialog]]pass:[<a class="anchor" href="#contact-editor-save-on-confirm-dialog"></a>]`saveOnConfirmDialog` (boolean)::
+Works like <<contact-editor-trigger-save-contact,`triggerSaveContact`>>. Use one of them.
+[[contact-editor-show-card]]pass:[<a class="anchor" href="#contact-editor-show-card"></a>]`showCard` (boolean, default `true`)::
+Shows a read-only summary of the contact above the form. Set `false` to hide it.
+[[contact-editor-show-header]]pass:[<a class="anchor" href="#contact-editor-show-header"></a>]`showHeader` (boolean, default `false`)::
+Shows a heading that reads *Add Contact* or *Edit Contact*, by <<contact-editor-is-new,`isNew`>>.
+[[contact-editor-show-footer]]pass:[<a class="anchor" href="#contact-editor-show-footer"></a>]`showFooter` (boolean, default `true`)::
+Shows the *Save* and *Cancel* buttons. Set `false` to draw your own buttons and use <<contact-editor-trigger-save-contact,`triggerSaveContact`>>.
+[[contact-editor-show-title]]pass:[<a class="anchor" href="#contact-editor-show-title"></a>]`showTitle` (boolean, default `true`)::
+Shows the title of the first section of fields. Set `false` to hide it.
+[[contact-editor-skip-missing]]pass:[<a class="anchor" href="#contact-editor-skip-missing"></a>]`skipMissing` (boolean)::
+Leaves out the fields that <<contact-editor-contact,`contact`>> has no value for. The editor reads it when it takes a contact.
+[[contact-editor-readonly]]pass:[<a class="anchor" href="#contact-editor-readonly"></a>]`readonly` (boolean)::
+Shows the values as text, with no label menus and no add or remove buttons beside the fields.
+[[contact-editor-disabled]]pass:[<a class="anchor" href="#contact-editor-disabled"></a>]`disabled` (boolean)::
+Disables the *Save* and *Cancel* buttons. Use it while a save runs.
+[[contact-editor-class]]pass:[<a class="anchor" href="#contact-editor-class"></a>]`class` (string)::
+A class name added to the editor.
+[[contact-editor-footer-class]]pass:[<a class="anchor" href="#contact-editor-footer-class"></a>]`footerClass` (string)::
+A class name added to the footer with the buttons.
+[[contact-editor-folders]]pass:[<a class="anchor" href="#contact-editor-folders"></a>]`folders` (array of object)::
+The contact folders, each with `id`, `name`, `absFolderPath` and, for a nested folder, `folders`. With this prop, a contact that has no `folderId` gets the folder named by <<contact-editor-folder,`folder`>>, or the main *Contacts* folder when none matches.
+[[contact-editor-folder]]pass:[<a class="anchor" href="#contact-editor-folder"></a>]`folder` (string)::
+The folder for a new contact: its name, its path without the leading slash, or its id. It is used with <<contact-editor-folders,`folders`>>.
+[[contact-editor-is-distribution-list]]pass:[<a class="anchor" href="#contact-editor-is-distribution-list"></a>]`isDistributionList` (boolean)::
+With this prop, the editor looks up a contact that is not new and has an email address among the saved contacts. It edits the one it finds. When none is found, it treats the contact as new. A new contact is saved in the main *Contacts* folder.
+[[contact-editor-allow-move]]pass:[<a class="anchor" href="#contact-editor-allow-move"></a>]`allowMove` (boolean)::
+Has no effect.
+
+=== Returns
+
+A `div` with the contact card when <<contact-editor-show-card,`showCard`>> allows it, a photo upload, the sections of fields, and the *Save* and *Cancel* buttons. Error messages show above the form.
+
+=== Usage notes
+
+* On *Save*, the editor checks the form first. A contact needs a first name, a last name, a company, an email address or a phone number. Each email address must be valid, and must match the email address of the certificate when the contact has one. A name of a custom field must not hold digits. The messages show above the form, and nothing is saved.
+* A save while the user is offline shows a message and sends nothing.
+* A new contact is created with all its fields. An existing contact is saved with only the fields that changed.
+* The editor shows no message when the server rejects the save. <<contact-editor-on-save,`onSave`>> is then not called.
+* The photo of the contact is uploaded when the user picks it. It is saved with the contact.
+* With S/MIME available, the form has a section for the public certificate of the contact. The editor also draws the slot `contact-add-server-smime-cert` when the server supports S/MIME. See xref:reference/slots/contacts.adoc[Contacts slots].
+
+[#contact-hover-card-wrapper]
+== ContactHoverCardWrapper
+
+A wrapper that turns its content into the trigger of a card with the details of a person. The card shows the name, the job title, the email address, the phone number and a photo. Use it around a name or an address that your Zimlet shows, as the org chart Zimlet does around the box of each person. The user clicks the content, or points at it, to open the card. The card finds the person in the contacts of the user by email address, so you pass an address and not the details.
+
+=== Signature
+
+[source,js]
+----
+import { ContactHoverCardWrapper } from '@zimbra-client/components';
+
+<ContactHoverCardWrapper
+	address="ada@example.com"
+	name="Ada Lovelace"
+	target={<span>Ada Lovelace</span>}
+/>
+----
+
+=== Props
+
+[[contact-hover-card-wrapper-target]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-target"></a>]`target` (xref:reference/glossary.adoc#node[node])::
+The content that opens the card. The card opens when the user clicks it. On a screen that is at least 769 pixels wide, it also opens when the user points at it for one second.
+[[contact-hover-card-wrapper-address]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-address"></a>]`address` (string)::
+The email address of the person. The card looks the person up with it. Set it, or set <<contact-hover-card-wrapper-contact,`contact`>> with an `address` or an `email` field: the card throws an error when it has no address.
+[[contact-hover-card-wrapper-contact]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-contact"></a>]`contact` (object)::
+An address object, as a message holds it, with an `address` or an `email` field. The wrapper takes the address from it before it reads <<contact-hover-card-wrapper-address,`address`>>. A `true` value of `isGroup` adds `isGroup=true` to the mail link of the card. The details on the card are those of the contact that the search finds, and not the values of this object.
+[[contact-hover-card-wrapper-name]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-name"></a>]`name` (string)::
+The name for the heading of the card. It wins over the name of the contact that the search finds. The card takes the name of the contact, or the part of the address before the `@`, when you leave it out.
+[[contact-hover-card-wrapper-type]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-type"></a>]`type` (string)::
+Set `from` for the sender of a message. The warning for an address that looks forged then reads as a sender warning. Any other value gives the general text.
+[[contact-hover-card-wrapper-account-emails]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-account-emails"></a>]`accountEmails` (array of string)::
+The email addresses of the account of the user. The card does not warn about these addresses.
+[[contact-hover-card-wrapper-invalid-cert]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-invalid-cert"></a>]`invalidCert` (boolean)::
+Draws the S/MIME status of the card as invalid. The card shows the status only when the contact has a public certificate.
+[[contact-hover-card-wrapper-verified-status-text]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-verified-status-text"></a>]`verifiedStatusText` (string)::
+`verifiedText`, `expiredText` or `emailMismatchText`. It chooses the text of the S/MIME status of the card. It is used with <<contact-hover-card-wrapper-invalid-cert,`invalidCert`>>.
+[[contact-hover-card-wrapper-toggle-action-menu]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-toggle-action-menu"></a>]`toggleActionMenu` (function `(active: boolean) => void`)::
+Called with `true` when the user opens the copy menu of the card, and with `false` when it closes. Its return value is ignored.
+[[contact-hover-card-wrapper-other-props]]pass:[<a class="anchor" href="#contact-hover-card-wrapper-other-props"></a>]Any other prop (any)::
+Has no effect.
+
+=== Returns
+
+The <<contact-hover-card-wrapper-target,`target`>> inside a container that opens the card above it, with an arrow. While the user edits the contact from the card, it also returns the dialog of the contact editor.
+
+=== Usage notes
+
+* The card shows the name, the job title and company, the email address as a mail link and the phone number as a call link. It shows a photo on a screen that is at least 769 pixels wide.
+* The footer has *Edit contact* or *Add to contacts*. It also has a button that searches the emails with the person and a button that writes an email. A menu copies the address or the details.
+* The card searches the contacts of the user for the address, and the global address list for a photo. It needs the Modern UI to run these searches.
+* The footer shows *Edit contact* when the card found a contact, and *Add to contacts* when it found none. Both show only when the user has the contacts feature. *Add to contacts* creates a contact in the main *Contacts* folder when the user clicks it. Both are disabled while the user is offline.
+* *Edit contact* opens the contact editor in a dialog.
+* A warning icon shows next to the name when the address looks forged, for example when it has two `@` signs.
+* The card draws the slot `contact-hover-card-details` below the phone number, with `email` and `contact`. See xref:reference/slots/contacts.adoc[Contacts slots].
+
+[#avatar]
+== Avatar
+
+A round picture of a person, a distribution list or a calendar resource. It shows the photo of the contact when there is one, and otherwise the initials or an icon. Use it beside a name or an address in a list or a card, as the org chart Zimlet does. You pass a contact, an address or a picture, and the component finds the rest.
+
+=== Signature
+
+[source,js]
+----
+import { Avatar } from '@zimbra-client/components';
+
+<Avatar class={avatarClass} contact={contact} />
+----
+
+=== Props
+
+[[avatar-contact]]pass:[<a class="anchor" href="#avatar-contact"></a>]`contact` (object)::
+The contact to draw. Its `attributes` (or `_attrs`) object has the fields that the avatar reads: the name fields (`fullName`, `firstName`, `middleName`, `lastName`, `company`), `email`, `thumbnailPhoto` and `image`. Two other fields choose the icon: `zimbraCalResType` (`Location` or `Equipment`) and `isGroup` (a distribution list). The avatar takes a photo from `attributes.image` only when the contact has an `attributes` object, and not an `_attrs` object.
+[[avatar-email]]pass:[<a class="anchor" href="#avatar-email"></a>]`email` (string)::
+An email address, such as `ada@example.com` or `Ada <ada@example.com>`. The avatar uses it only to look up a picture on Gravatar, and wins over the `email` of <<avatar-contact,`contact`>>. The lookup is off in the default configuration, so the prop then has no visible effect.
++
+WARNING: The client configuration of the Modern UI can set `enableGravatarAccess` to `true`. The avatar then asks the public Gravatar service for a picture when it finds no other. The request holds a hash of the email address. The setting is `false` by default. Do not pass an address that must not leave the organization.
+[[avatar-profile-image-url]]pass:[<a class="anchor" href="#avatar-profile-image-url"></a>]`profileImageURL` (string)::
+The address of a picture. It wins over the photo of <<avatar-contact,`contact`>>.
+[[avatar-thumbnail-base64]]pass:[<a class="anchor" href="#avatar-thumbnail-base64"></a>]`thumbnailBase64` (string)::
+A picture as base64 text, without the `data:` prefix. The `thumbnailPhoto` of <<avatar-contact,`contact`>> wins over it. The avatar uses it after <<avatar-profile-image-url,`profileImageURL`>> and the photo of the contact.
+[[avatar-show-initials]]pass:[<a class="anchor" href="#avatar-show-initials"></a>]`showInitials` (boolean, default `false`)::
+Shows the initials of the contact in place of the icon when there is no picture. The initials are the capital letters from A to Z that start the words of the name. A name with no such letter, such as `ada lovelace`, shows the icon.
+[[avatar-mode]]pass:[<a class="anchor" href="#avatar-mode"></a>]`mode` (string)::
+`contain` fits the whole picture into the circle. Any other value, or none, fills the circle and crops the picture.
+[[avatar-class]]pass:[<a class="anchor" href="#avatar-class"></a>]`class` (string)::
+A class name added to the avatar. Use it to set the size. The avatar has no width or height of its own, so it is not visible until you set both.
+
+=== Returns
+
+A `div` with a round background. It holds the initials or an icon, and over it the picture when one is found. The icon is a pin for a location, a projector for equipment, a group of people for a distribution list and one person otherwise.
+
+=== Usage notes
+
+* The avatar picks the picture in this order. First comes <<avatar-profile-image-url,`profileImageURL`>>, then the photo of the contact (`attributes.image`). Next come the `thumbnailPhoto` of the contact or <<avatar-thumbnail-base64,`thumbnailBase64`>>, and the Gravatar picture. If none exists, the initials or the icon show.
+* The avatar works out its values when <<avatar-contact,`contact`>>, <<avatar-email,`email`>>, <<avatar-profile-image-url,`profileImageURL`>> or <<avatar-show-initials,`showInitials`>> change. A change of <<avatar-thumbnail-base64,`thumbnailBase64`>> alone does not update the picture.
+* The photo in `attributes.image` is asked for from the server at a size of up to 240 by 240 pixels.
+
+[#next-step]
+== Next step
+
+Continue with the components for appointments, signatures and files, in xref:reference/shims/components/appointments-signatures-and-files.adoc[Appointments, signatures and files].
