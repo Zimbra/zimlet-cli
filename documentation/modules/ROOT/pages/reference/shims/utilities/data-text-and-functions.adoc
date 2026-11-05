@@ -1,0 +1,392 @@
+= Data, text and functions
+
+Nine helper functions from `@zimbra-client/util` that need no component and no context. They wrap a value in an array, test for or remove empty values and convert text between HTML and plain text. They also carry data in a drag and drop. Two more control when a function runs. Use them for small jobs that many xref:reference/glossary.adoc#zimlet[Zimlets] repeat. Examples are turning a message body into plain text and waiting until the user stops typing before a search. The xref:reference/glossary.adoc#modern-ui[Modern UI] shares them with every Zimlet, so the build does not copy them into yours. See xref:reference/shims/utilities.adoc[Utilities] for the other areas.
+
+[#members]
+== Members
+
+<<array,`array`>>::
+Wraps a value in an array, or returns an empty array when the value is empty.
+
+<<is-empty,`isEmpty`>>::
+Tells whether a value is empty.
+
+<<prune-empty,`pruneEmpty`>>::
+Returns a copy of an object without its `null` values and its empty objects and arrays.
+
+<<html-encode,`htmlEncode`>>::
+Turns text into HTML that shows the same text.
+
+<<html-to-text,`htmlToText`>>::
+Turns HTML into plain text.
+
+<<get-data-transfer-json,`getDataTransferJSON`>>::
+Reads the data of a drag and drop.
+
+<<set-data-transfer-json,`setDataTransferJSON`>>::
+Stores data on a drag and drop.
+
+<<call-with,`callWith`>>::
+Returns a callback that stays the same between renders.
+
+<<debounce,`debounce`>>::
+Returns a function that runs only after its calls have stopped for a while.
+
+[#array]
+== array
+
+Returns an array for a value that may be one item, a list or nothing. Use it when a field can hold one value or many and the code that follows loops over the result. No active Zimlet uses it.
+
+=== Signature
+
+[source,js]
+----
+import { array } from '@zimbra-client/util';
+
+const list = array(value);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`value`
+|any
+|An item, an array or an empty value.
+
+|===
+
+=== Returns
+
+An array. An array `value` gives a new array with the same items. Any other value that is not empty gives an array with that one item. An empty value gives `[]`.
+
+=== Usage notes
+
+* An empty value is `null`, `undefined`, `0`, `''` or `false`. `array(0)` returns `[]`, not `[0]`. Test the value yourself when `0` or `false` is meaningful.
+* The items are not copied. Each item is the same object as in `value`.
+
+[#is-empty]
+== isEmpty
+
+Tells whether a value is empty: an object or an array with no entries, or a value with no content. Use it to skip work for a missing or empty result, for example to dispatch an update only when a list has items. Active Zimlets use it to test lists and objects before they act on them.
+
+=== Signature
+
+[source,js]
+----
+import { isEmpty } from '@zimbra-client/util';
+
+const empty = isEmpty(value);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`value`
+|any
+|The value to test.
+
+|===
+
+=== Returns
+
+A boolean. It is `true` for:
+
+* an object or an array that has no own entries, such as `{}` and `[]`
+* `null` and `undefined`
+* `0`, `''` and `false`
+
+It is `false` for every other value.
+
+=== Usage notes
+
+* Do not use it to test a number or a boolean. `isEmpty(0)` and `isEmpty(false)` are `true`.
+* A `Map`, a `Set`, a `Date`, a function and an instance of your own class are always `false`. This holds even for a `Map` or a `Set` with no items, so test its `size`.
+
+[#prune-empty]
+== pruneEmpty
+
+Returns a copy of an object or an array without its `null` values and without every object or array that ends up empty. Use it to clean up an object before you send it to a server or compare it. The original is not changed. No active Zimlet uses it.
+
+=== Signature
+
+[source,js]
+----
+import { pruneEmpty } from '@zimbra-client/util';
+
+const clean = pruneEmpty(value);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`value`
+|object or array
+|The data to clean. A value of another type is returned as it is.
+
+|===
+
+=== Returns
+
+A deep copy of `value` without the removed entries. The top level is never removed: an object with nothing left comes back as `{}`.
+
+=== Usage notes
+
+* A property is removed when it is `null`, or when it holds an object or an array that is empty once it is cleaned. The check goes through all levels.
+* It keeps `undefined`, `0`, `''` and `false`.
+* A `null` item in an array leaves an empty slot, and the array keeps its length. Filter the array yourself to close the gaps.
+* An object that holds a function, such as a callback, cannot be copied, and `pruneEmpty` throws a `DataCloneError`. Remove the function first.
+
+[#html-encode]
+== htmlEncode
+
+Turns text into HTML that a browser shows as the same text. It replaces `&`, `<` and `>` with entities and a line break with `<br>`. Use it when you build a string that is later read as HTML. An active Zimlet uses it for a version number that it passes to the title of a dialog. Text that you pass as a child in JSX needs no encoding, because Preact escapes it.
+
+=== Signature
+
+[source,js]
+----
+import { htmlEncode } from '@zimbra-client/util';
+
+const html = htmlEncode(text);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`text`
+|string
+|The text to encode.
+
+|===
+
+=== Returns
+
+A string of HTML.
+
+=== Usage notes
+
+* It does not escape quotes. Do not put the result into an attribute value.
+* A non-breaking space becomes `&nbsp;`.
+* A number is turned into text first, and `null` gives an empty string.
+
+[#html-to-text]
+== htmlToText
+
+Turns HTML, such as the body of a message, into plain text. Paragraphs are separated by a blank line, a `<br>` becomes a new line and list items start with `-` or with a number. Use it when you need the readable text of a message, for example to count its characters or to post it to another service. Active Zimlets use it for both.
+
+=== Signature
+
+[source,js]
+----
+import { htmlToText } from '@zimbra-client/util';
+
+const text = htmlToText(html, origMsgHeader);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`html`
+|string
+|The HTML to convert. A string without tags is returned with a line break added.
+
+|`origMsgHeader`
+|string, default `''`
+|A line that is inserted at the start of the element with the id `MESSAGE_DATA_MARKER`. That element holds the quoted original message of a reply or a forward. Zimlets leave it out.
+
+|===
+
+=== Returns
+
+A string of plain text that always ends with a line break.
+
+=== Usage notes
+
+* It throws a `TypeError` when `html` is not a string, for example `undefined`. Pass `html || ''`.
+* Images are dropped, and the cells of a table follow one another with no separator.
+* The text of a `<script>` element stays in the result, and only the first `<style>` element is removed.
+* A line break in the source counts as a space. Only `<br>`, paragraphs and similar elements start a new line.
+* The function remembers up to 50 results by the value of `html` alone. A second call with the same `html` and another `origMsgHeader` returns the first result.
+
+[#get-data-transfer-json]
+== getDataTransferJSON
+
+Reads the data that `setDataTransferJSON` stored on a drag and drop, and returns it as an object. Use it in the `drop` handler of an element that accepts what the user drags. The Modern UI uses the same pair for its own drags of messages, folders and contacts. No active Zimlet uses it.
+
+=== Signature
+
+[source,js]
+----
+import { getDataTransferJSON } from '@zimbra-client/util';
+
+const data = getDataTransferJSON(event, type);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`event`
+|event
+|The `drop` event. Its `dataTransfer` holds the data.
+
+|`type`
+|string
+|Optional. When you pass it, the function returns the data only if the `type` property of the data is the same string.
+
+|===
+
+=== Returns
+
+The data that was stored, or `undefined`.
+
+=== Usage notes
+
+* Add a `type` property to the `data` that you store, and pass the same `type` here. Then your drop target ignores drags that have another `type`, or none.
+* When the stored text is not valid JSON, it logs `error parsing dataTransfer data:` to the console and returns `undefined`.
+
+[#set-data-transfer-json]
+== setDataTransferJSON
+
+Stores data on a drag and drop, so that a drop target can read it with `getDataTransferJSON`. Use it in the `dragstart` handler of an element that the user can drag. No active Zimlet uses it.
+
+=== Signature
+
+[source,js]
+----
+import { setDataTransferJSON } from '@zimbra-client/util';
+
+setDataTransferJSON(event, { data });
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`event`
+|event
+|The `dragstart` event.
+
+|`options`
+|object
+|An object with one property that is used: `data` (any), the value to store. It must work with `JSON.stringify`. Other properties are ignored.
+
+|===
+
+=== Returns
+
+Nothing (`undefined`).
+
+=== Usage notes
+
+* The data is stored as JSON text in the `text` format of the drag.
+* It replaces the drag image with an image of one pixel. It also allows only a move.
+* Put a `type` property in `data`, so that a drop target can tell your drag from the others with `getDataTransferJSON`.
+
+[#call-with]
+== callWith
+
+Returns a function that calls `fn` with a fixed argument, and returns the same function for the same `fn` and argument. Use it in a list, where each item needs its own callback and a new arrow function on every render makes the child render again. Many active Zimlets use it for menu items and dialog buttons.
+
+=== Signature
+
+[source,js]
+----
+import { callWith } from '@zimbra-client/util';
+
+const callback = callWith(fn, arg, passCallingArgs);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`fn`
+|function `(...args: any[]) => any`
+|The function to call.
+
+|`arg`
+|any
+|The first argument of `fn`. A cached callback is found by comparing `arg` with `===`.
+
+|`passCallingArgs`
+|boolean, default `false`
+|When `true`, the arguments that the callback receives follow `arg`, as in `fn(arg, ...received)`. Otherwise `fn` gets only `arg`.
+
+|===
+
+=== Returns
+
+A function `(...args: any[]) => any`, or `undefined` when `fn` is not set. The callback returns what `fn` returns.
+
+=== Usage notes
+
+* Pass a string, a number or an object that stays the same between renders. A new object literal in the call, such as `callWith(fn, { id })`, is never equal to an earlier one. It adds an entry to the cache and returns a new function on every render.
+* The cache belongs to `fn`. An arrow function that you create inside the render starts with an empty cache each time. Define `fn` outside the render, as a method or a module function.
+* The first call for an `fn` and `arg` decides the value of `passCallingArgs`. A later call with the other value returns the same function.
+* In a function component, `useCallback` from `preact/hooks` does the same job for one callback. See xref:reference/shims/libraries.adoc[Third-party libraries].
+
+[#debounce]
+== debounce
+
+Returns a function that calls `fn` once, `delay` milliseconds after its last call. Use it to wait until the user stops typing or scrolling before you run a search or a request. Active Zimlets use it for search boxes and scroll handlers.
+
+=== Signature
+
+[source,js]
+----
+import { debounce } from '@zimbra-client/util';
+
+const debounced = debounce(fn, delay);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`fn`
+|function `(...args: any[]) => void`
+|The function to run.
+
+|`delay`
+|number
+|The wait in milliseconds. Each call to the returned function restarts it.
+
+|===
+
+=== Returns
+
+A function `(...args: any[]) => void`. The call that ends the wait runs `fn` with its arguments and its `this`. Earlier calls in the same wait are dropped.
+
+=== Usage notes
+
+* Create the debounced function once, outside the component or with `useMemo` from `preact/hooks`. A new one on every render has its own timer, so it never waits for another call and `fn` runs on every call.
+* The returned function gives no result, and you cannot cancel the wait or run `fn` at once.
+
+[#next-step]
+== Next step
+
+Read the state of the browser and the session in xref:reference/shims/utilities/browser-and-app.adoc[Browser and app].

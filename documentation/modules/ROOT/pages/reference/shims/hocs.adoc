@@ -1,0 +1,22 @@
+= Higher-order components (HOCs)
+
+The higher-order components (HOCs) that the xref:reference/glossary.adoc#modern-ui[Modern UI] shares with every xref:reference/glossary.adoc#zimlet[Zimlet]. A HOC is a function that takes a component and returns a new component with added props or behaviour. Use one to give a component the screen size, the client configuration or the translated texts without writing that code yourself. Use one when the component is a class, which cannot call a hook, or when you combine several wrappers into one. In a function component, use the hook of the same name where the page of the HOC names one. Find a HOC by the area that it works on. Each area page lists the HOCs with their parameters and results.
+
+HOCs come from two modules. The first two areas are in `@zimbra-client/enhancers` and the third is in `@zimbra-client/util`. The Modern UI shares both modules with every Zimlet, so the build does not copy them into your Zimlet. Every HOC documents its own import path. See xref:fundamentals/shared-libraries.adoc[Shared libraries] for how shared modules work.
+
+[#areas]
+== Areas
+
+[[environment-and-ui-behaviour]]pass:[<a class="anchor" href="#environment-and-ui-behaviour"></a>]xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour]::
+Use these to pass a media query result, the client configuration and the tracking functions to a component. One of them also registers a tab for the component. `withMediaQuery`, `clientConfiguration` and `withTracking` have a hook with the same job, described in xref:reference/shims/hooks/environment.adoc[Environment]. Module: `@zimbra-client/enhancers`. Exports: `withMediaQuery`, `withTabManager`, `withTracking` and `clientConfiguration`.
+
+[[localization]]pass:[<a class="anchor" href="#localization"></a>]xref:reference/shims/hocs/localization.adoc[Localization]::
+Use these to load the texts of your Zimlet in the language of the user. `withIntlWrapper` is the usual way to load them. `withIntlConsumer` passes the `intl` prop, which holds the loaded texts, to a component. See xref:go-deeper/localization.adoc[Localization] for the steps, and xref:reference/shims/localization.adoc[Localization (`@zimbra/preact-i18n`)] for the components and functions that show the texts. Module: `@zimbra-client/enhancers`. Exports: `withIntlWrapper` (also exported as `withZimletIntlWrapper`) and `withIntlConsumer`.
+
+[[composition]]pass:[<a class="anchor" href="#composition"></a>]xref:reference/shims/hocs/composition.adoc[Composition]::
+Use these to derive props for a component from its other props, and to choose which component to render. Module: `@zimbra-client/util`. Exports: `withProps` and `branch`.
+
+[#next-step]
+== Next step
+
+Start with the HOCs that read the environment in xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour].

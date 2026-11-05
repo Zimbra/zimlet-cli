@@ -1,0 +1,237 @@
+= Environment and UI behaviour
+
+Four higher-order components (HOCs) that connect a component to the environment of the xref:reference/glossary.adoc#modern-ui[Modern UI]. Three pass a value as a prop: the answer to a media query, the tracker or a value of the client configuration. One gives the component a function that opens a tab. Use them when a xref:reference/glossary.adoc#zimlet[Zimlet] component is a class, which cannot call a hook, or when you combine several wrappers with `flowRight`. In a function component, use the hook of the same name where the entry names one. All four come from `@zimbra-client/enhancers`.
+
+[#members]
+== Members
+
+<<with-media-query,`withMediaQuery`>>::
+Passes a prop that tells whether the window matches a media query.
+
+<<with-tab-manager,`withTabManager`>>::
+Passes `handleNewTab`, which opens a tab, and `getTabItem`, which reads its data.
+
+<<with-tracking,`withTracking`>>::
+Passes the `tracker` prop that reports page views and user actions.
+
+<<client-configuration,`clientConfiguration`>>::
+Passes values of the client configuration as props.
+
+[#with-media-query]
+== withMediaQuery
+
+Passes a prop that is `true` while the window matches a media query, and updates it when the answer changes. Use it when a class component must render different content on a narrow window, for example a drawer instead of a dialog. In a function component, use the xref:reference/shims/hooks/environment.adoc#use-media-query[`useMediaQuery`] hook. Use a CSS media query instead when only the style changes. See xref:go-deeper/styling.adoc[Styling].
+
+=== Signature
+
+[source,js]
+----
+import { withMediaQuery } from '@zimbra-client/enhancers';
+
+const Enhanced = withMediaQuery(query, propName)(Component);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`query`
+|string
+|The media query, such as `(max-width: 768px)`.
+
+|`propName`
+|string
+|The name of the prop that holds the answer. The default is `matchesMediaQuery`.
+
+|===
+
+=== Returns
+
+A function `(Component: component) => component`. The new component renders `Component` with all its own props and one more, named by `propName` (boolean). The prop is `true` while the window matches `query`, and `false` otherwise.
+
+When the browser has no `window.matchMedia`, the function logs `window.matchMedia is unsupported.` to the console and returns `Component` unchanged. It then gets no prop.
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default withMediaQuery(query)(Component)`. A call inside a render makes a new component on every render, and the child loses its state each time.
+* The query is fixed when you call `withMediaQuery`. To react to a second query, wrap the component again with another `propName`.
+* The prop replaces a prop of the same name that the parent passes.
+* The `breakpoints` utility builds queries for the sizes of the Modern UI. `minWidth(px)` and `maxWidth(px)` return the query string, and `screenMd` is 1025. See xref:reference/shims/utilities/browser-and-app.adoc[Browser and app].
+
+[#with-tab-manager]
+== withTabManager
+
+Gives a component `handleNewTab`, which opens a page in a new tab, and `getTabItem`, which returns the data that a tab holds. Use it when your Zimlet opens something in its own tab, such as a new message or an event. A tab shows in the tab bar of an area of the Modern UI, with a title and a button that closes it. No hook does this job.
+
+=== Signature
+
+[source,js]
+----
+import { withTabManager } from '@zimbra-client/enhancers';
+
+const Enhanced = withTabManager(mapPropsToTab)(Component);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`mapPropsToTab`
+|function `(props: object) => object`
+a|Optional. Makes the wrapped component register its own tab. Return a tab object with the <<with-tab-manager-tab,fields of a tab>>, or nothing to register no tab. No active Zimlet passes it.
+
+The function runs when the component mounts and again each time it gets new props. It runs only when the mailbox setting for multitasking is `tabs` or has no value. The tab is added when no open tab of the current area has the address of the current page. `url` is then optional and defaults to that address.
+
+`props` holds `slugs` (the area names of `routes.slugs` in the client configuration), `handleNewTab`, and `tabs` (array of object, the open tabs of the current area). It also holds these props of the wrapped component: `queryFolder`, `query`, `view`, `searchUrl`, `searchText`, `searchLabel`, `isSearchView`, `tabId` and `updateLastCreatedTabThunk`. Other props are not passed.
+
+|===
+
+=== Returns
+
+A function `(Component: component) => component`. The new component renders `Component` with all its own props and two more:
+
+`handleNewTab` (function `(tab: object) => void`)::
+Opens the page of `tab` in a new tab, or only goes to it on a narrow window. Does nothing when `tab` is empty. The return value is ignored. See the <<with-tab-manager-tab,fields of a tab>>.
+
+`getTabItem` (function `(tabId: string, view: string) => object | undefined`)::
+Returns the `tabItem` of the open tab with the given `tabId`. `view` is the area to search and defaults to the current area. It returns `undefined` when `tabId` is empty or no tab matches.
+
+The wrapper passes more props for its own use. Do not rely on them. They replace a prop of the same name that the parent passes, which includes `handleNewTab` and `getTabItem`.
+
+[#with-tab-manager-tab]
+==== Fields of a tab
+
+`handleNewTab` and `mapPropsToTab` use the same object. Fields that are not in the table stay with the tab.
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`url`
+|string
+|The page of the tab, such as `/calendar/event/details/<id>`. Required for `handleNewTab`. It adds the base path of the Modern UI and a `tabid` parameter with the value of `tabId`, unless the address already holds `tabid`.
+
+|`id`
+|string
+|Names the item that the tab shows. Without `openInNewTab`, `handleNewTab` goes to the open tab that has the same `id` and an address that contains `url`, and opens no new tab.
+
+|`openInNewTab`
+|boolean
+|Set it to `true` to open a new tab even when a tab with the same `id` is open.
+
+|`type`
+|string
+|The kind of tab. `event` opens a tab in a window of any width and adds `full=true` to the address. `document` and any other value open a tab only in a window that is at least 1025 pixels wide. Active Zimlets use `message` and `event`.
+
+|`tabId`
+|string
+|Identifies the tab. The default is the time of the call in milliseconds, as a string.
+
+|`title`
+|string
+|The text on the tab. The default is *New mail*, *New event* for `event` or *New Document* for `document`, in the language of the user.
+
+|`view`
+|string
+|The area whose tab bar shows the tab. The default is the first part of `url` when `routes.slugs` of the client configuration has it as a name, and Integrations otherwise.
+
+|`icon`
+|component
+|The icon of the tab: an icon component of https://lucide.dev/guide/packages/lucide-preact[lucide-preact^]. The default is the mail icon.
+
+|`tabItem`
+|object
+|Data that you keep with the tab. `getTabItem` returns it. A window narrower than 1025 pixels opens no tab for a `type` other than `event`. There, `tabItem` goes to the composer as its message.
+
+|`onClose`
+|function `(tab: object) => void`
+a|Called when the user closes the tab. The argument is the tab as the Modern UI stores it. Without `onClose`, the Modern UI removes the tab itself.
+
+WARNING: With `onClose`, the Modern UI does not remove the tab. Your function must remove it, or the tab stays open.
+
+|===
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default withTabManager()(Component)`. A call inside a render makes a new component on every render, and the child loses its state each time.
+* Wrap a component that the Modern UI draws, such as one that a slot shows. Pass `handleNewTab` down as a prop to a component that you draw elsewhere, such as a dialog.
+* Call `handleNewTab` from an event handler, not while the component renders.
+* In a window that is narrower than 1025 pixels, `handleNewTab` opens no tab, unless `type` is `event`. It goes to `url`, and sends `tabItem` to the composer when you set it.
+* Calling `handleNewTab` again with the same `id` and `tabId` replaces that tab. Without a `tabId`, each call makes a new one.
+* `handleNewTab` ignores the multitasking setting of the user. Only `mapPropsToTab` follows it.
+* To add a tab of your own to an area, see xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen].
+
+[#with-tracking]
+== withTracking
+
+Passes the tracker that sends page views and user actions to the analytics service of the deployment. Use it when a class component reports an action that the administrator wants to count. Report only what the administrator expects, and never personal data. In a function component, use the xref:reference/shims/hooks/environment.adoc#use-tracking[`useTracking`] hook. No active Zimlet uses `withTracking`, so this entry documents what the code reads.
+
+=== Signature
+
+[source,js]
+----
+import { withTracking } from '@zimbra-client/enhancers';
+
+const Enhanced = withTracking()(Component);
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+A function `(Component: component) => component`. The new component renders `Component` with all its own props and one more, `tracker` (object). It is the object that `useTracking` returns. See xref:reference/shims/hooks/environment.adoc#use-tracking[`useTracking`] for its methods.
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default withTracking()(Component)`. A call inside a render makes a new component on every render, and the child loses its state each time.
+* The `tracker` prop replaces a prop of the same name that the parent passes.
+* The methods of the tracker do nothing when the administrator has not set up an analytics service.
+* Report from an event handler, not while the component renders. A report in a render repeats on every render.
+
+[#client-configuration]
+== clientConfiguration
+
+Passes values of the client configuration of the Modern UI as props, such as the names that it uses in addresses. Use it when a class component needs a value that a deployment can change, so that you do not type it. In a function component, use the xref:reference/shims/hooks/environment.adoc#use-client-config[`useClientConfig`] hook. For the settings of your own Zimlet, use xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. No active Zimlet uses `clientConfiguration`, so this entry documents what the code reads.
+
+=== Signature
+
+[source,js]
+----
+import { clientConfiguration } from '@zimbra-client/enhancers';
+
+const Enhanced = clientConfiguration(paths)(Component);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`paths`
+|string, array or object
+|The values to read. A string holds dotted paths separated by commas, such as `'routes.slugs, clientName'`. An array holds dotted paths. An object maps a prop name of your choice to a dotted path, such as `{ slugs: 'routes.slugs' }`.
+
+|===
+
+=== Returns
+
+A function `(Component: component) => component`. The new component renders `Component` with all its own props and one more for each path. For a string or an array, the prop is named after the last part of the path: `slugs` for `routes.slugs`. For an object, it is named after your key. A path that does not exist gives `undefined`. Without `paths`, no prop is added.
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default clientConfiguration('routes.slugs')(Component)`. A call inside a render makes a new component on every render, and the child loses its state each time.
+* The derived props replace props of the same name that the parent passes, even when the value is `undefined`.
+* Check each value for `undefined`. A deployment can leave a value out.
+* Use the object form when two paths end with the same name. The string and array forms would give both values one prop name.
+
+[#next-step]
+== Next step
+
+Load the texts of your Zimlet in the language of the user with xref:reference/shims/hocs/localization.adoc[Localization].

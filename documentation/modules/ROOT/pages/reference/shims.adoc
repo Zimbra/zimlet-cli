@@ -18,7 +18,8 @@ The xref:fundamentals/shared-libraries.adoc[Shared libraries] page explains how 
 ** xref:reference/shims/components/dates-and-calendars.adoc[Dates and calendars]
 ** xref:reference/shims/components/recipients-and-rich-text.adoc[Recipients and rich text]
 ** xref:reference/shims/components/contacts.adoc[Contacts]
-** xref:reference/shims/components/appointments-signatures-and-files.adoc[Appointments, signatures and files]
+** xref:reference/shims/components/signatures-and-files.adoc[Signatures and files]
+** xref:reference/shims/components/appointment-edit.adoc[AppointmentEdit]
 ** xref:reference/shims/components/navigation.adoc[Navigation]
 * xref:reference/shims/hocs.adoc[Higher-order components (HOCs)]: `@zimbra-client/enhancers` and the HOCs of `@zimbra-client/util`. A HOC is a function that wraps a component and returns a new component with added props or behaviour.
 ** xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour]

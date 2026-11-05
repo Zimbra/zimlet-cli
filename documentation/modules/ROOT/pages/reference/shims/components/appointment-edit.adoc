@@ -1,0 +1,169 @@
+= AppointmentEdit
+
+The form of the xref:reference/glossary.adoc#modern-ui[Modern UI] calendar in which the user creates, edits, copies or forwards an event, or proposes a new time for it. It draws the fields, the availability of the attendees and the buttons, and it asks the user before it sends invitations or discards changes. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] must show the same form as the calendar. To add a control to the form, register one of its xref:fundamentals/extending-the-ui.adoc[slots] instead.
+
+WARNING: The shared modules export the form alone. The calendar screen of the Modern UI builds most of its props. It keeps the values of the form in the Redux store of the application, in an entry for the event tab. No shared module exports the actions that fill that entry. Without the entry, the form throws an error when it draws. See xref:go-deeper/redux.adoc[Shared state with Redux].
+
+[#signature]
+== Signature
+
+[source,js]
+----
+import { AppointmentEdit } from '@zimbra-client/components';
+
+<AppointmentEdit
+	eventData={eventData}
+	queryParams={{ tabid: tabId }}
+	accountInfoData={accountInfo}
+	calendars={calendars}
+	insertableCalendar={insertableCalendars}
+	hasValidAttendee={hasValidAttendee}
+	shouldShowInviteModalOrNotification={shouldShowInvite}
+	onAction={handleAction}
+	onClose={handleClose}
+/>
+----
+
+[#props]
+== Props
+
+The form takes many props. A Zimlet can pass every prop in the first four groups. The calendar screen builds most of them from the state of the event tab. The last group lists the props that the form sets itself.
+
+=== Form state
+
+[[event-data]]pass:[<a class="anchor" href="#event-data"></a>]`eventData` (object)::
+The values of the form, from the entry of the event tab in the store. Always set it. The form throws an error when it is missing, or when it has no `event`, `attendees` or `forwardAttendees`. The form reads these fields, and its fields and dialogs write the same entry:
++
+* `event` (object): the event. The form reads `name`, `start` and `end` (dates), `allDay`, `new` (`true` for an event that does not exist yet), `isOrganizer`, `calendarId`, `folderId`, `inviteId` and `recurrence`.
+* `attendees`, `forwardAttendees`, `locations`, `equipments`, `attachments`, `addedAttendees` and `removedAttendees` (array of object).
+* `notes` (string), `selectedCalendar` (object), `ownerEmail` (string), `showAsValue` (string), `remindValue` (string), `isAlarmAsEmailEnabled` (boolean), `isPrivate` (boolean), `eventStartTimeZone` and `eventEndTimeZone` (string).
+* `repeatValue` (string) and the other repeat fields (`endsOnDate`, `endsAfterRecur`, `customIntervalRule`, `customByDayRule`, `customByMonthDayRule`, `customByMonthRule`, `customBySetPosRule`, `isCustomRecurringEvent`).
+* The flags `isFormDirty`, `isDraft`, `neverSent`, `isStartDateValid`, `isEndDateValid`, `attendeeChanged`, `allInviteesRemoved`, `showInEventNotification`, `showSendInviteModal`, `showAttendeeUpdatedModal` and `showDiscardChangeModal` (boolean).
+[[query-params]]pass:[<a class="anchor" href="#query-params"></a>]`queryParams` (object)::
+The address parameters of the event tab. Always set it with a `tabid` (string). The form uses it as the key of the entry in the store, and it throws an error without it. `from` (string) is passed back to <<on-close,`onClose`>>. The form also reads `start`, `end` and `counter` when it works out whether the user changed the event.
+[[appointment-data]]pass:[<a class="anchor" href="#appointment-data"></a>]`appointmentData` (object)::
+The saved appointment that the form edits, when there is one. The form reads `message.invitations[0].components[0]`: the organizer, the calendar folder (`ciFolder`), the alarms and the other saved fields. A new event needs no value. A forward needs it: the save throws an error without it. A proposed new time answers its `message`.
+[[event]]pass:[<a class="anchor" href="#event"></a>]`event` (object)::
+The event as the calendar holds it. The form reads its private flag (`class`, `PRI` for a private event), its free or busy value (`freeBusyActual`) and its calendar (`calendarId`). It does so when it checks whether the user changed only the attendees of an existing event.
+[[is-original-event-all-day]]pass:[<a class="anchor" href="#is-original-event-all-day"></a>]`isOriginalEventAllDay` (boolean)::
+Whether the event is an all day event, as the calendar loaded it. The form passes it to its all day switch.
+[[all-locations]]pass:[<a class="anchor" href="#all-locations"></a>]`allLocations` and `allEquipments` (object)::
+The locations and the equipment that the user can book, each as an object with the email address of the item as the key. Pass an empty object when there are none. When the form checks an existing event for changes, it looks up each resource among the saved attendees in these objects. It throws an error when an object is missing and the appointment has a resource.
+
+=== Account and calendars
+
+[[account-info-data]]pass:[<a class="anchor" href="#account-info-data"></a>]`accountInfoData` (object)::
+The account of the user. Always set it with an `attrs` object: the form throws an error without it. It reads `zimbraMailAttachmentMaxSize` and `zimbraMtaMaxMessageSize` (the size limits for attachments), `zimbraFeatureViewInHtmlEnabled` and `zimbraFeatureDocumentEditingEnabled` (which attachments get a preview).
+[[preferences-data]]pass:[<a class="anchor" href="#preferences-data"></a>]`preferencesData` (object)::
+The preferences of the user. The form reads two of them:
++
+* `zimbraPrefCalendarReminderEmail` (string): the address for the email reminder. The reminder field offers it when a reminder is set.
+* `zimbraPrefUseTimeZoneListInCalendar` (any): when truthy, the start and the end time show a time zone list.
+[[calendars]]pass:[<a class="anchor" href="#calendars"></a>]`calendars` (array of object)::
+The calendars of the user, in a flat list. Always set it. The form finds the calendar of the event by `id`, so a calendar inside another one needs an item of its own. The Modern UI flattens the `folders` and `linkedFolders` of each calendar first. Each item is a calendar, as xref:reference/shims/hooks/calendar-and-metadata.adoc#use-calendars-data[`useCalendarsData`] returns it. The form reads `id`, `owner`, `ownerZimbraId`, `sharedItemId` and `permissions`.
+[[insertable-calendar]]pass:[<a class="anchor" href="#insertable-calendar"></a>]`insertableCalendar` (array of object)::
+The calendars that can hold a new event. They are the choices of the calendar field. Always set it. `filterNonInsertableCalendars` of `@zimbra-client/util` builds the list. See xref:reference/shims/utilities.adoc[Utilities].
+[[identities-info]]pass:[<a class="anchor" href="#identities-info"></a>]`identitiesInfo` (object)::
+The identities of the account, as an object with an `identity` array. Each item has a `_attrs.zimbraPrefFromAddress` field. The form uses it to find the calendar owner when it asks for the free or busy times of the attendees.
+[[primary-address]]pass:[<a class="anchor" href="#primary-address"></a>]`primaryAddress` (string)::
+The main email address of the user. On save, it is the owner of an event that is not in a shared calendar.
+[[user-display-name]]pass:[<a class="anchor" href="#user-display-name"></a>]`userDisplayName` (string)::
+The name of the user. On save, it is the display name of the organizer of an event that is not in a shared calendar.
+[[invite-template]]pass:[<a class="anchor" href="#invite-template"></a>]`inviteTemplate` (object)::
+The texts of the invitation email, which are the `calendar.invite` entry of the localization dictionary. The form uses them to write the email when the user forwards an event.
+
+=== Behaviour
+
+[[on-action]]pass:[<a class="anchor" href="#on-action"></a>]`onAction` (function `(result: object) => void`)::
+Called when the user saves, once the new attachments have uploaded. Always set it. The form sends nothing to the server itself, so your code saves the event. Its return value is ignored. If an upload fails, the form shows a message and does not call it. `result` has these fields:
++
+* `appointment` (object): the event with the edited values. It has these added fields:
+** `locations`, `equipments`, `attendees`, `addedOrRemovedAttendees` and `shouldFilterByAddedOrRemovedAttendees`.
+** `isPrivate`, `isDraft`, `neverSent`, `significent`, `shouldSaveAsLocalCopy`, `freeBusy`, `alarms` and `notes`.
+** `newAttachments` (the results of the uploads) and `attachments`.
+** `folderId`, `ownerEmail`, `displayName`, `editInstance`, `eventStartTimeZone`, `eventEndTimeZone` and `eventInstance`.
+** `recurrence`, unless <<edit-instance,`editInstance`>> is set.
+* `folderIdShared` (string), `accountName` (string) and `destinationCalId`: the shared calendar of the event, its owner, and the id of the calendar to move the event to. `destinationCalId` is `false` or `undefined` when there is no move.
+* `isFormDirty`, `allInviteesRemoved` (boolean) and `tabid` (string).
+[[on-close]]pass:[<a class="anchor" href="#on-close"></a>]`onClose` (function `(tabId: string, from?: string) => void`)::
+Called when the form is done and your code must close the tab. It runs when the user cancels with no unsaved changes, when the user confirms the discard dialog, and after a forward. `from` is `queryParams.from`. Always set it: the form throws an error when it must call it and it is missing. Its return value is ignored.
+[[has-valid-attendee]]pass:[<a class="anchor" href="#has-valid-attendee"></a>]`hasValidAttendee` (function `(attendees: object[]) => boolean`)::
+Returns whether a list of attendees holds a valid one. The Modern UI returns `true` when an item is an object with an `address` that is not a resource. The form calls it to decide whether the save button is enabled and how to save. Always set it: the form throws an error when it must call it and it is missing.
+[[should-show-invite-modal-or-notification]]pass:[<a class="anchor" href="#should-show-invite-modal-or-notification"></a>]`shouldShowInviteModalOrNotification` (function `(isDraft: boolean, neverSent: boolean, attendees: object[], flag: boolean, isEventFromMail: any) => boolean`)::
+Returns `true` when the *Send invitations now?* dialog must show after the user saves. The form calls it on save with `false` as the flag and <<is-event-from-mail,`isEventFromMail`>> as the last argument. Always set it: the form throws an error when it must call it and it is missing.
+[[is-event-from-mail]]pass:[<a class="anchor" href="#is-event-from-mail"></a>]`isEventFromMail` (any)::
+A value that the form passes as the last argument of <<should-show-invite-modal-or-notification,`shouldShowInviteModalOrNotification`>>. The form does not use it otherwise.
+[[modify-attendee-data-for-copy]]pass:[<a class="anchor" href="#modify-attendee-data-for-copy"></a>]`modifyAttendeeDataForCopy` (function `(attendees: object[], organizer: object, owner: string) => { modifiedAttendees: object[], modifiedOrganizer: object }`)::
+Builds the attendees and the organizer of a copy of an event. The form passes it to the check that compares the edited event with the saved one. Set it when <<is-copy-invite,`isCopyInvite`>> is set.
+[[is-edit]]pass:[<a class="anchor" href="#is-edit"></a>]`isEdit` (boolean)::
+Set it when the form edits an existing event. It changes the label of the save button to *Save*, or to *Send* when the invitations were never sent. It also turns on the check for a change of the attendees.
+[[is-copy-invite]]pass:[<a class="anchor" href="#is-copy-invite"></a>]`isCopyInvite` (boolean)::
+Set it when the form opens a copy of an event. The form passes it to the reminder field and to the check for changes.
+[[is-forward-invite]]pass:[<a class="anchor" href="#is-forward-invite"></a>]`isForwardInvite` (boolean)::
+Set it to forward the event. The form shows the heading of <<forward-title,`forwardTitle`>> and a field for the people to forward to, and it disables most of the other fields. The button is *Send*. When the user presses it, the form calls the forward request, shows a message and calls <<on-close,`onClose`>>. It does not call <<on-action,`onAction`>>.
+[[is-propose-time]]pass:[<a class="anchor" href="#is-propose-time"></a>]`isProposeTime` (boolean)::
+Set it to let an attendee propose a new time. The form shows the heading of <<propose-time-title,`proposeTimeTitle`>> and a field with the organizer, and it disables most of the other fields. The button is *Send*. It sends the proposal, shows a message, closes the tab and opens the calendar or the previous page. It does not call <<on-action,`onAction`>>.
+[[edit-instance]]pass:[<a class="anchor" href="#edit-instance"></a>]`editInstance` (boolean)::
+Set it when the form edits one occurrence of a repeating event. The form then sends no repeat rule, and it removes `recurrence` from the event.
+[[create-event]]pass:[<a class="anchor" href="#create-event"></a>]`createEvent` (boolean)::
+Set it when the form creates an event. The form passes it to the text that describes a custom repeat.
+[[title-keys]]pass:[<a class="anchor" href="#title-keys"></a>]`title` and `editTitle` (string)::
+Have no effect.
+
+=== Layout and appearance
+
+[[match-screen-md]]pass:[<a class="anchor" href="#match-screen-md"></a>]`matchesScreenMd` (boolean)::
+Set it to `true` on a screen that is at least 1025 pixels wide. On a smaller screen, three things change:
++
+* The heading has no close button.
+* The buttons draw in the toolbar of the Modern UI.
+* The attendees field has no *Browse* button.
+[[class]]pass:[<a class="anchor" href="#class"></a>]`class` and `className` (string)::
+Class names added to the outer element.
+[[form-class]]pass:[<a class="anchor" href="#form-class"></a>]`formClass` (string)::
+A class name added to the element around the fields.
+[[footer-class]]pass:[<a class="anchor" href="#footer-class"></a>]`footerClass` (string)::
+A class name added to the element around the buttons.
+[[disable-mobile-toolbar]]pass:[<a class="anchor" href="#disable-mobile-toolbar"></a>]`disableMobileToolbar` (boolean, default `false`)::
+Set it to `true` to keep the buttons at the bottom of the form on a small screen. They do not move to the toolbar of the Modern UI.
+[[hide-attachment-preview]]pass:[<a class="anchor" href="#hide-attachment-preview"></a>]`hideAttachmentPreview` (boolean, default `false`)::
+Set it to `true` to stop a click on an attachment from opening its preview. An attached email message still opens.
+[[forward-title]]pass:[<a class="anchor" href="#forward-title"></a>]`forwardTitle` (string, default `calendar.editModal.forwardTitle`)::
+The key of the heading text in the localization dictionary in scope, for a forwarded event. The text can use `+{{organizerName}}+`, which the form fills with the name of the organizer. The heading shows only when <<is-forward-invite,`isForwardInvite`>> is set.
+[[propose-time-title]]pass:[<a class="anchor" href="#propose-time-title"></a>]`proposeTimeTitle` (string, default `calendar.editModal.counterInvite.proposeTimeTitle`)::
+The key of the heading text for a proposed new time, used as <<forward-title,`forwardTitle`>> is. The heading shows only when <<is-propose-time,`isProposeTime`>> is set and <<is-forward-invite,`isForwardInvite`>> is not.
+[[inline]]pass:[<a class="anchor" href="#inline"></a>]`inline` (boolean)::
+Has no effect.
+
+=== Props that the form sets itself
+
+The form fills these props with its own wrappers. A value that you pass is replaced.
+
+* From the account and the application: `attach` (uploads an attachment), `calendarUrlSlug` (the address of the calendar), `isOffline`, `prevLocation`, `source`, `eventInstance`, `activeAccountAddress`, `activeAccountDisplayName`, `isEventTabClosing` and `tabs`. Most come from the state of the Modern UI.
+* From the preferences: `zimbraFeatureViewInHtmlEnabled`, `zimbraPrefCalendarReminderEmail`, `zimbraPrefUseTimeZoneListInCalendar` and `zimbraPrefCalendarApptReminderWarningTime`. They come from <<preferences-data,`preferencesData`>>.
+* Functions: `notify`, `removeTab`, `setEventState` and `setEventTabClosingState` (Redux actions), and `forwardAppointment`, `forwardAppointmentInvite` and `counterAppointment` (the requests of a forward and of a proposed time).
+* Texts: `errorMsg` and `proposedTimeSubject`.
+* `ownerDisplayName` (string): the form sets it only for an event with no organizer in a shared calendar, when the global address list is available. It then looks the owner of the calendar up. In every other case, your value is used.
+
+[#returns]
+== Returns
+
+A `div` with the form. It has an optional heading and a notice for a local copy or unsent invitations. The fields follow: title, start and end time, all day, repeat, attendees, locations, equipment, notes with attachments, show as, reminder and calendar. A panel shows the availability of the attendees. The buttons come last. A dialog draws when the form needs one.
+
+[#usage-notes]
+== Usage notes
+
+* The save button is disabled until the event has a name, the start is not after the end, and the dates are valid. With attendees, at least one must pass <<has-valid-attendee,`hasValidAttendee`>>. A forward needs a valid person to forward to. A proposed time needs no attendee. *Cancel* is always enabled.
+* The save button reads *Create Event*. It reads *Save* when <<is-edit,`isEdit`>> is set. It reads *Send* for a forward, a proposed time, or an edit of an event whose invitations were never sent.
+* A save on an event that was never sent, with no valid attendee, shows no dialog and calls <<on-action,`onAction`>>.
+* An existing event whose only change is its attendees opens a dialog. It asks whether to send the update to all attendees or only to the added and removed ones.
+* In every other case, <<should-show-invite-modal-or-notification,`shouldShowInviteModalOrNotification`>> decides whether the *Send invitations now?* dialog asks first.
+* *Cancel* and the close button of the heading ask *Discard changes?* when `eventData.isFormDirty` is `true`. Otherwise, they call <<on-close,`onClose`>> at once.
+* An event that the user does not organize, and that is not forwarded or proposed, saves as a local copy. A notice says that changes apply only to that copy, and `appointment.shouldSaveAsLocalCopy` is `true` in the result of <<on-action,`onAction`>>.
+* The form draws three slots. `calendar-appointment-edit-location` follows the location field. `calendar-appointment-edit-video-call` has a *Meeting Platform* row, which shows when a Zimlet fills it. `attendees-chooser-attendees` is at the end of the availability panel. See xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments slots] and xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field].
+* The form reads the store, the data client and the localization of the Modern UI. Draw it only inside a component that the Modern UI renders.
+
+[#next-step]
+== Next step
+
+Continue with the sidebar and the folder tree, in xref:reference/shims/components/navigation.adoc[Navigation].

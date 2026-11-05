@@ -1,0 +1,346 @@
+= Browser and app
+
+Nine exports of `@zimbra-client/util` that connect a xref:reference/glossary.adoc#zimlet[Zimlet] to the browser and to the running xref:reference/glossary.adoc#modern-ui[Modern UI]. They tell whether the tab is in the background, copy text, download a file, read the session token and close a notification. Others give the screen size breakpoints, pass shared values to a component and let your Zimlet listen to app events. Use them when a feature depends on the page and the session. Examples are covering the screen after the user has been away and saving a file from a menu item. The Modern UI shares them with every Zimlet, so the build does not copy them into yours. See xref:reference/shims/utilities.adoc[Utilities] for the other areas.
+
+[#members]
+== Members
+
+<<page-visibility,`PageVisibility`>>::
+Tells whether the browser tab is in the background and for how many minutes.
+
+<<clipboard,`clipboard`>>::
+The browser clipboard, to copy text.
+
+<<get-electron,`getElectron`>>::
+Returns the object that the desktop app adds to the window.
+
+<<csrf-storage,`csrfStorage`>>::
+Gives the CSRF token of the session.
+
+<<close-notification,`closeNotification`>>::
+Closes a notification that is on the screen.
+
+<<get-context,`getContext`>>::
+Wraps a component so that it receives values of the shared context as props.
+
+<<start-attachment-download-process,`startAttachmentDownloadProcess`>>::
+Asks the browser to save a file from an address.
+
+<<breakpoints,`breakpoints`>>::
+The screen widths that the Modern UI uses, and functions that turn a width into a media query.
+
+<<zimlet-event-emitter,`zimletEventEmitter`>>::
+Adds and removes listeners for app events.
+
+[#page-visibility]
+== PageVisibility
+
+Tells whether the browser tab is in the background and for how many minutes it has been there. Use it when your Zimlet must react after the user has been away, for example to cover the screen. An active Zimlet checks it on a timer to show a privacy screen.
+
+=== Signature
+
+[source,js]
+----
+import { PageVisibility } from '@zimbra-client/util';
+
+const { isHidden, idleSince } = PageVisibility;
+----
+
+=== Type
+
+An object with two properties:
+
+`isHidden` (boolean)::
+`true` while the browser reports the page as hidden, for example when the user shows another tab.
+
+`idleSince` (number)::
+The whole minutes that the tab has been hidden. It is `0` while the tab is visible. It starts at `0` again each time the tab becomes visible.
+
+The object has more properties for its own use. Do not rely on them.
+
+=== Usage notes
+
+* The values are plain properties. A component does not render again when they change. Read them in a timer or in an event handler.
+* `idleSince` counts only while the tab is hidden. A visible tab with no input from the user is not counted, so its value stays `0`.
+* The Modern UI counts from the moment it loaded. Do not assign to the properties.
+
+[#clipboard]
+== clipboard
+
+The browser clipboard of the Modern UI window. Use it to copy text, such as a link or a code, when the user selects a button. Use it instead of `navigator.clipboard`. The code of a Zimlet runs in a frame of its own, and the Modern UI hands you the clipboard of its own window.
+
+=== Signature
+
+[source,js]
+----
+import { clipboard } from '@zimbra-client/util';
+
+const copied = clipboard.writeText(text);
+----
+
+=== Type
+
+object. It is the `navigator.clipboard` of the Modern UI window, read when the Modern UI loads. Its methods are those of the browser. `writeText(text)` copies a string. `readText()` reads one. Both return a promise. See the https://developer.mozilla.org/en-US/docs/Web/API/Clipboard[Clipboard documentation^] for the other methods.
+
+=== Usage notes
+
+* Act on the result in `then`, for example to show that the text was copied.
+* The value is `undefined` in a browser that has no `navigator.clipboard`. A call then throws a `TypeError`.
+
+[#get-electron]
+== getElectron
+
+Returns the object that the desktop app adds to the Modern UI window, or `undefined` in a browser. Use it when your Zimlet must ask the desktop app to do something, such as to restrict screen capture or to install an update. Check the platform first.
+
+=== Signature
+
+[source,js]
+----
+import { getElectron } from '@zimbra-client/util';
+
+const electron = getElectron();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An object, or `undefined` when the Modern UI does not run in the desktop app. The desktop app defines the fields of the object, and they are not documented here. Active Zimlets use `rendererIpc`, with its methods `callIpcRenderer`, `listenToIpcEvent` and `removeIpcListener`, and `getConstants()`.
+
+=== Usage notes
+
+* Call it only when `getPlatformType()` returns `PLATFORM_TYPES.ELECTRON`. In a browser, reading a field of the result throws a `TypeError`. See xref:go-deeper/platform-checks.adoc[Platform checks].
+
+[#csrf-storage]
+== csrfStorage
+
+Gives the CSRF token of the signed-in session. Use it when your Zimlet sends its own `fetch` request to the Zimbra server and must put the token in the `X-Zimbra-Csrf-Token` header. Call `get()` for each request. CSRF stands for cross-site request forgery.
+
+WARNING: `set` and `clear` change the token that the Modern UI sends with its own requests. Use only `get` in a Zimlet.
+
+=== Signature
+
+[source,js]
+----
+import { csrfStorage } from '@zimbra-client/util';
+
+const token = csrfStorage.get();
+----
+
+=== Type
+
+An object with three methods:
+
+`get()`::
+Returns the stored token as a string, or `null` when no token is stored.
+
+`set(csrfToken, context)`::
+Stores `csrfToken`. It also passes the token to the clients in `context`, an object with `zimbraBatchClient`, `zimbra` and `zimlets`. It throws a `TypeError` when one is missing. Without `context`, it only stores the token. The Modern UI calls it after the user signs in. It returns nothing.
+
+`clear(context)`::
+Removes the stored token and sets the token of the clients in `context` to `null`. Without `context`, it only removes the token. The Modern UI calls it when the user signs out. It returns nothing.
+
+=== Usage notes
+
+* Call `get()` each time you send a request, so that you send the current token. The token changes when the user signs in again.
+* `get()` returns `null` when the Modern UI does not use a token. Add the header only when the value is set. See xref:go-deeper/server-data/fetch.adoc[Fetch].
+* The `csrfToken` field of the context keeps the value from when the Zimlet loaded. Use `get()` instead. See xref:reference/context/deprecated.adoc#csrf-token[Deprecated].
+
+[#close-notification]
+== closeNotification
+
+Closes a notification that is on the screen. Use it when a notification that your Zimlet showed no longer applies, for example a message about a lost connection once the connection returns. A notification closes by itself after its `duration`, so you need this mainly for one that stays long. Give the notification an `id` when you show it with xref:reference/context/store/zimlet-redux/actions.adoc#notify[`notify`].
+
+=== Signature
+
+[source,js]
+----
+import { closeNotification } from '@zimbra-client/util';
+
+closeNotification(id);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`id`
+|string
+a|The `id` that you gave the notification in the payload of `notify`.
+
+WARNING: Without `id`, the call closes every notification on the screen, including those of the Modern UI and of other Zimlets. Always pass the `id` of your own notification.
+
+|===
+
+=== Returns
+
+Nothing (`undefined`).
+
+=== Usage notes
+
+* An `id` that matches no notification does nothing.
+* The notification closes without running the `fn` of its `action`.
+
+[#get-context]
+== getContext
+
+Wraps a component so that it receives values of the shared context of the Modern UI as props. Use it for a class component that needs a field such as `zimbraBatchClient` and cannot call a hook. Cloud service Zimlets use it for this. In a function component, call xref:reference/shims/hooks/environment.adoc#use-zimbra-context[`useZimbraContext`] instead.
+
+=== Signature
+
+[source,js]
+----
+import { getContext } from '@zimbra-client/util';
+
+const Wrapped = getContext(mapContextToProps)(Child);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`mapContextToProps`
+|function `(context: object, props: object) => object`
+|Called each time the wrapper renders. `context` is the shared context and `props` are the props of the wrapper. Return an object. Each property of it becomes a prop of `Child`.
+
+|`Child`
+|component
+|The component to wrap. You pass it to the function that `getContext` returns.
+
+|===
+
+=== Returns
+
+A function `(Child: component) => component`. Call it with a component to get the wrapped component. The wrapped component renders `Child` with its own props and the props that `mapContextToProps` returned.
+
+=== Usage notes
+
+* The `context` is not the `context` that the factory receives. It holds `zimbraBatchClient`, `zimlets`, `keyBindings` and `shortcutCommandHandler`, the same objects as those fields of the factory context. It has more fields for the Modern UI itself. Do not rely on them. See xref:fundamentals/host-context.adoc[The context object].
+* A prop that `mapContextToProps` returns replaces a prop of the same name that the parent passed.
+* When no shared context is above the component, `mapContextToProps` is not called and `Child` receives only its own props. This happens, for example, when you render the component yourself outside the tree of the Modern UI.
+
+[#start-attachment-download-process]
+== startAttachmentDownloadProcess
+
+Asks the browser to save a file from an address, without leaving the Modern UI. Use it when a menu item or a button of your Zimlet downloads a file, such as a message or an export. Get the address of a Zimbra resource with xref:reference/context/batch-client/resolve.adoc[`resolve`] of `zimbraBatchClient`.
+
+=== Signature
+
+[source,js]
+----
+import { startAttachmentDownloadProcess } from '@zimbra-client/util';
+
+startAttachmentDownloadProcess(resourceURL, resourceName);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`resourceURL`
+|string
+|The address of the file.
+
+|`resourceName`
+|string
+|Optional. The file name to offer to the user. Without it, the browser chooses the name.
+
+|===
+
+=== Returns
+
+Nothing (`undefined`). It does not report whether the download worked.
+
+=== Usage notes
+
+* In a browser, it creates a link with the `download` attribute and clicks it. The Modern UI page stays open. A browser that does not support the `download` attribute opens the address in a new tab.
+* In the mobile app, it creates no link. It sends a `cordovaDownload` event on `document`, with the address as `url` and the file name as `name`, and the app saves the file.
+
+[#breakpoints]
+== breakpoints
+
+The screen widths at which the Modern UI changes its layout, and two functions that turn a width into a media query. Use it to switch what your Zimlet renders at the widths of the Modern UI, for example to show a shorter label on a phone. Pass the query to xref:reference/shims/hooks/environment.adoc#use-media-query[`useMediaQuery`] in a function component, or to xref:reference/shims/hocs/environment-and-ui-behaviour.adoc#with-media-query[`withMediaQuery`] in a class component.
+
+=== Signature
+
+[source,js]
+----
+import { breakpoints } from '@zimbra-client/util';
+
+const { screenMd, minWidth, maxWidth } = breakpoints;
+const query = minWidth(screenMd);
+----
+
+=== Type
+
+An object with these properties:
+
+`screenXs`, `screenSm`, `screenMd` and `screenLg` (number)::
+`480`, `769`, `1025` and `1300` pixels. They stand for a phone, a tablet in portrait, a tablet in landscape and a wide desktop.
+
+`screenXsMax`, `screenSmMax` and `screenMdMax` (number)::
+`768`, `1024` and `1299` pixels. Each is the largest width of a range, one pixel less than the next width. Use it as a maximum so that the ranges do not overlap.
+
+`minWidth(px)` (function `(px: number) => string`)::
+Returns the media query for a window at least `px` pixels wide. `minWidth(1025)` returns `(min-width: 1025px)`.
+
+`maxWidth(px)` (function `(px: number) => string`)::
+Returns the media query for a window at most `px` pixels wide. `maxWidth(768)` returns `(max-width: 768px)`.
+
+=== Usage notes
+
+* The functions only build the query. They do not tell whether the window matches it.
+* Use a CSS media query when only the style changes. The widths are the same as the Less variables in xref:go-deeper/styling/shared-styles.adoc#screen-sizes[Screen size helpers].
+
+[#zimlet-event-emitter]
+== zimletEventEmitter
+
+The emitter of app events, such as sending a message or logging out. Use it when your Zimlet must run code at one of these moments, or delay or stop the action. See xref:go-deeper/app-events.adoc[App events] for the events, the data of each and a working listener.
+
+WARNING: The Modern UI waits for an asynchronous listener before it sends the message, logs out or answers the invitation. A promise that never settles holds the user at that step.
+
+=== Signature
+
+[source,js]
+----
+import { zimletEventEmitter } from '@zimbra-client/util';
+
+zimletEventEmitter.on(name, listener, isAsync);
+zimletEventEmitter.off(name, listener);
+----
+
+=== Type
+
+An object with three methods:
+
+`on(name, listener, isAsync)`::
+Adds a listener. `name` is a string. Use a value of `ZIMBRA_ZIMLET_EVENTS` from `@zimbra-client/constants`. `listener` is a function `(data: any) => any`. `isAsync` is a boolean, default `false`. A synchronous listener ignores its return value. An asynchronous listener must return a promise. It returns nothing.
+
+`off(name, listener)`::
+Removes every entry of `listener` under `name`. It returns nothing. It throws an `Error` when no listener is registered under `name`.
+
+`emit(name, data, callback)`::
+Sends an event. `data` is passed to each listener. `callback` is a function `() => void`, default a function that does nothing. The Modern UI calls it for app events, so your Zimlet does not need it. It returns nothing.
+
+When an event is sent, the asynchronous listeners run one after another. Each waits for the promise of the one before. Then the synchronous listeners run in the order they were added. Then `callback` runs, and it carries on the action of the Modern UI.
+
+=== Usage notes
+
+* An asynchronous listener that rejects, and a synchronous listener that throws, end the run. The listeners after it and `callback` do not run, and the error goes to the console. Reject on purpose to stop the action.
+* An asynchronous listener that returns no promise has the same effect, with a `TypeError`.
+* The synchronous listeners run after `emit` returns, not during the call.
+* Adding the same function twice adds two entries. `off` removes both, so a second `off` with the same `name` throws once no listener is left.
+* The emitter belongs to the Modern UI and is shared by all Zimlets. Add listeners in `init()` and remove them when you no longer need them. It is not the `zimlets` field of the context, which carries events that Zimlets send to each other. See xref:reference/context/zimlets.adoc[Zimlet manager].
+
+[#next-step]
+== Next step
+
+Check whether S/MIME is available and list calendars in xref:reference/shims/utilities/smime-and-calendar.adoc[S/MIME and calendar].

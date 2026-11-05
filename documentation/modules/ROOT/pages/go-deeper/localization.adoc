@@ -36,7 +36,7 @@ include::example$localization/intl/de.json[]
 
 Two parts make a text appear in a component:
 
-* A wrapper that loads `en_US.json` and the file for the language of the user. The template has it in `src/enhancers/index.js` as `withIntl`.
+* A wrapper that loads `en_US.json` and the file for the language of the user. The template has it in `src/enhancers/index.js` as `withIntl`. See xref:reference/shims/hocs/localization.adoc[Localization HOCs] for its parameters.
 * The `Text` component from `@zimbra/preact-i18n`, which looks up an id and shows the text.
 
 A Zimlet adds a reminder to the footer of the mail sidebar. The `Reminder` component wraps itself with `withIntl()`, shows its text with `Text` and fills the placeholder through `fields`. The files go in the folders shown in their titles. The slot is explained in xref:fundamentals/extending-the-ui.adoc[Slots and handlers].

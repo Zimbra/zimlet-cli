@@ -1,0 +1,675 @@
+= Navigation
+
+The left column of a xref:reference/glossary.adoc#modern-ui[Modern UI] screen and the folder tree inside it. Use these parts when your xref:reference/glossary.adoc#zimlet[Zimlet] shows a screen with the same column as Mail, Calendar, Contacts or Briefcase. Use them also for a list from which the user picks a folder. `Sidebar` is the column, `FolderList` is the full folder tree of the screens, and `FolderListLight` is a small tree for choosing a folder. To add a control to the Mail sidebar, register a xref:fundamentals/extending-the-ui.adoc[slot handler] instead.
+
+[#members]
+== Members
+
+<<sidebar,`Sidebar`>>::
+The column at the left of a screen, with a header, your content and a handle to resize and collapse it.
+
+<<mail-sidebar,`MailSidebar`>>::
+The sidebar of the Mail screen, with the new message button, the accounts and the mail folder tree.
+
+<<folder-list,`FolderList`>>::
+The folder tree of the Mail, Contacts, Briefcase and Calendar screens, with menus, drag and drop and groups.
+
+<<folder-list-light,`FolderListLight`>>::
+A smaller folder tree for choosing one folder or several.
+
+<<folder-list-group,`FolderListGroup`>>::
+A group heading that collapses a set of folders.
+
+[#sidebar]
+== Sidebar
+
+The column at the left of a screen. It frames the content that you pass as `children`. In a window at least 1025 px wide it is a column that the user can resize and collapse. In a narrower window it opens over the screen when the user selects the button of xref:reference/shims/components/layout.adoc#generic-mobile-ui-toolbar[`GenericMobileUIToolbar`]. Use it for the left column of a screen of your own, as the Calendar, Contacts and Briefcase screens do. When the screen has no sidebar content of its own, use xref:reference/shims/components/layout.adoc#generic-mobile-ui-sidebar[`GenericMobileUISidebar`].
+
+WARNING: The sidebar saves the width that the user drags and whether the user collapses it in the mailbox settings (`zimbraPrefFolderTreeSash` and `zimbraPrefSidebarCollapsed`). The Mail, Calendar, Contacts and Briefcase screens read the same two values. A sidebar in your Zimlet changes the width and the collapsed state of all of them.
+
+[#sidebar-signature]
+=== Signature
+
+[source,js]
+----
+import { Sidebar } from '@zimbra-client/components';
+
+<Sidebar into="#sidebar_portal" header={false}>
+	{content}
+</Sidebar>
+----
+
+[#sidebar-props]
+=== Props
+
+[[sidebar-children]]pass:[<a class="anchor" href="#sidebar-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the sidebar, below the header. In a window at least 1025 px wide, the handle that collapses the sidebar shows only when `children` is set.
+
+[[sidebar-header]]pass:[<a class="anchor" href="#sidebar-header"></a>]`header` (boolean)::
+Set it to `true` to draw a bar above the content with the logo, the header actions and the list of areas. Without it, no bar is drawn. The Modern UI screens set it only in a window narrower than 1025 px.
+
+[[sidebar-footer]]pass:[<a class="anchor" href="#sidebar-footer"></a>]`footer` (xref:reference/glossary.adoc#node[node])::
+Drawn between the header and the content, with no frame of its own. Nothing is drawn when it is `undefined` or `null`.
+
+[[sidebar-modal]]pass:[<a class="anchor" href="#sidebar-modal"></a>]`modal` (boolean)::
+`true` always draws the sidebar as a panel over the screen, and `false` always draws it as a column. When it is not set, the sidebar is a panel when the area that holds it is 1024 px wide or less. Before the first resize of the window, it uses the width of the window.
+
+[[sidebar-into]]pass:[<a class="anchor" href="#sidebar-into"></a>]`into` (string, default `body`)::
+A CSS selector of the https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^] that receives the sidebar while it is a panel. The sidebar is not drawn where you render it in that case. The Modern UI has the element `#sidebar_portal` for it. Use a selector that matches an element of the page.
+
+[[sidebar-class]]pass:[<a class="anchor" href="#sidebar-class"></a>]`class` (string)::
+A class name added to the sidebar.
+
+[[sidebar-modal-class]]pass:[<a class="anchor" href="#sidebar-modal-class"></a>]`modalClass` (string)::
+A class name added to the sidebar only while it is a panel.
+
+[[sidebar-inline-class]]pass:[<a class="anchor" href="#sidebar-inline-class"></a>]`inlineClass` (string)::
+A class name added to the sidebar only while it is a column.
+
+[[sidebar-tab-content-loaded]]pass:[<a class="anchor" href="#sidebar-tab-content-loaded"></a>]`tabContentLoaded` (boolean, default `true`)::
+In a window at least 1025 px wide, the sidebar is hidden on a full screen tab once this is `true`. A full screen tab has a `full` parameter in its address. Pass `false` to keep the sidebar while the content of the tab loads.
+
+=== Props that the Modern UI sets
+
+The sidebar fills these props itself, and a value that you pass is replaced. They are `show`, `hide` and `toggle` (the Redux actions of the sidebar), `sidebar` (whether the panel is open), `view`, `url`, `desktopView`, `slugs` and `hideSidebar`. It also reads the user, the account and the mailbox settings. It ignores every other prop.
+
+[#sidebar-returns]
+=== Returns
+
+A `div` with the column. While the sidebar is a panel, the column is drawn in the element that `into` selects and a backdrop covers the screen.
+
+[#sidebar-usage-notes]
+=== Usage notes
+
+* The width of the column is at least 192 px. The user can drag it up to 500 px. The minimum is 312 px while a handler is registered for the slot `adSlot-left-300-250`. See xref:reference/slots/app-shell/ad-slots.adoc[Ad slots].
+* A panel closes when the address changes and when the sidebar is removed from the page.
+* In a window narrower than 1025 px, the sidebar also draws the tabs of the current area. After the content, it draws the handlers of the slot `<area>-tab-item` for that area. In the Integrations area it also draws the slot `menu`. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs].
+* In a window at least 1025 px wide, the sidebar is also hidden on the Mail search and clean up screens.
+* The collapse handle shows only in a window at least 1025 px wide. The resize handle shows only while the sidebar is a column.
+
+[#mail-sidebar]
+== MailSidebar
+
+The sidebar of the Mail screen. It holds a button for a new message and the mail folder tree. It also holds a list of the accounts when the user has synced IMAP accounts. Below the tree are the slot `mail-sidebar-footer`, an optional mini calendar and an ad slot. Use it only when your Zimlet must show the same column as Mail and can supply the same data. To add a control to this sidebar, register a handler for `mail-sidebar-footer` instead. See xref:reference/slots/mail/mail-list-and-sidebar.adoc[Mail list and sidebar slots].
+
+WARNING: The Mail screen builds every prop of this component, from its own folder data, selection and handlers. The component renders nothing without `accountId` and `folders`, and a move throws an error without the handlers of the screen.
+
+[#mail-sidebar-signature]
+=== Signature
+
+[source,js]
+----
+import { MailSidebar } from '@zimbra-client/components';
+
+<MailSidebar
+	accountId={accountId}
+	folders={folders}
+	refetchFolders={refetchFolders}
+	refresh={refresh}
+	handleNewTab={handleNewTab}
+/>
+----
+
+[#mail-sidebar-props]
+=== Props
+
+The Mail screen passes the props of the first three groups. The last group lists the props that the component sets itself.
+
+==== Folders and account
+
+[[mail-sidebar-account-id]]pass:[<a class="anchor" href="#mail-sidebar-account-id"></a>]`accountId` (string)::
+The id of the account of the folders. Required: the component renders nothing without it. When the user has no active account yet, the sidebar makes this account the active one.
+
+[[mail-sidebar-folders]]pass:[<a class="anchor" href="#mail-sidebar-folders"></a>]`folders` (array of object)::
+The folder tree of the account, as for xref:reference/shims/components/navigation.adoc#folder-list-folders[`FolderList`]. Required: the component renders nothing without it. An empty array draws an empty sidebar.
+
+[[mail-sidebar-folder]]pass:[<a class="anchor" href="#mail-sidebar-folder"></a>]`folder` (object)::
+The folder that the screen shows. The sidebar reads its `externalAccount` to refresh an external account when <<mail-sidebar-on-icon-click,`onIconClick`>> is not set.
+
+[[mail-sidebar-local-folders]]pass:[<a class="anchor" href="#mail-sidebar-local-folders"></a>]`localFolders`, `smartFolders` and `sharedFolders` (array of object)::
+The local folders, the saved searches and the folders that other users shared. Passed to the folder tree as xref:reference/shims/components/navigation.adoc#folder-list-local-folders[`localFolders`], xref:reference/shims/components/navigation.adoc#folder-list-smart-folders[`smartFolders`] and xref:reference/shims/components/navigation.adoc#folder-list-shared-folders[`sharedFolders`]. Editing a saved search also reads `sharedFolders`.
+
+[[mail-sidebar-tags]]pass:[<a class="anchor" href="#mail-sidebar-tags"></a>]`tags` (array of object)::
+The tags of the user, for the xref:reference/shims/components/navigation.adoc#folder-list-tags[tag group] of the folder tree.
+
+[[mail-sidebar-inbox-folder]]pass:[<a class="anchor" href="#mail-sidebar-inbox-folder"></a>]`inboxFolder` (object) and `dataSourcesInfo` (object)::
+The Inbox folder and the external accounts of the user. `dataSourcesInfo.imap` (array of object) lists the IMAP accounts. With <<mail-sidebar-imap-enabled,`zimbraFeatureImapDataSourceEnabled`>>, the sidebar lists the accounts above the folder tree when at least one IMAP account has a folder other than the Inbox. Selecting an account makes it the active account, clears the selected mail and reloads the folders.
+
+[[mail-sidebar-imap-enabled]]pass:[<a class="anchor" href="#mail-sidebar-imap-enabled"></a>]`zimbraFeatureImapDataSourceEnabled` (boolean)::
+Set it to `true` to show the list of accounts, as <<mail-sidebar-inbox-folder,`inboxFolder`>> describes.
+
+[[mail-sidebar-view-type]]pass:[<a class="anchor" href="#mail-sidebar-view-type"></a>]`viewType` (string)::
+The mail view of the list: messages or conversations. A drop uses it to sort the dropped ids into message ids and conversation ids.
+
+[[mail-sidebar-folder-for-search]]pass:[<a class="anchor" href="#mail-sidebar-folder-for-search"></a>]`folderForSearch` (string)::
+Set on a search screen: the name of the folder that the search ran in. A drop on the Trash folder uses it to tell which folder the dropped items are in.
+
+==== Settings and flags
+
+[[mail-sidebar-feature-sharing]]pass:[<a class="anchor" href="#mail-sidebar-feature-sharing"></a>]`zimbraFeatureSharingEnabled` (boolean)::
+Passed to the folder tree as xref:reference/shims/components/navigation.adoc#folder-list-feature-sharing[`zimbraFeatureSharingEnabled`].
+
+[[mail-sidebar-feature-tagging]]pass:[<a class="anchor" href="#mail-sidebar-feature-tagging"></a>]`zimbraFeatureTaggingEnabled` (boolean)::
+Set it to `true` to show the tag group. Passed as xref:reference/shims/components/navigation.adoc#folder-list-is-tags-supported[`isTagsSupported`].
+
+[[mail-sidebar-dumpster]]pass:[<a class="anchor" href="#mail-sidebar-dumpster"></a>]`zimbraDumpsterEnabled` (boolean)::
+Has no effect. The folder tree reads the setting from the account of the user itself.
+
+[[mail-sidebar-mini-cal]]pass:[<a class="anchor" href="#mail-sidebar-mini-cal"></a>]`zimbraPrefCalendarAlwaysShowMiniCal` (boolean)::
+Set it to `true` to draw the mini calendar below the folder tree.
+
+[[mail-sidebar-no-draft-flag]]pass:[<a class="anchor" href="#mail-sidebar-no-draft-flag"></a>]`isNoDraftFlag` and `isOnlyDraftFlag` (boolean)::
+Say what the selected mail contains: no drafts, or only drafts. They decide which folders accept the selection, as described for xref:reference/shims/components/navigation.adoc#folder-list-is-no-draft-flag[`FolderList`].
+
+[[mail-sidebar-is-in-local-folder]]pass:[<a class="anchor" href="#mail-sidebar-is-in-local-folder"></a>]`isInLocalFolder` (boolean)::
+Set it to `true` while the screen shows a local folder of the desktop application. A drop from there on a folder of the server uploads the mail.
+
+[[mail-sidebar-disable-local]]pass:[<a class="anchor" href="#mail-sidebar-disable-local"></a>]`disableLocalFolderForMove` and `downloadInProgress`::
+Used by the desktop application. Passed to the folder tree as xref:reference/shims/components/navigation.adoc#folder-list-disable-local-folder-for-move[`disableLocalFolderForMove`] and xref:reference/shims/components/navigation.adoc#folder-list-download-in-progress[`downloadInProgress`].
+
+[[mail-sidebar-tab-content-loaded]]pass:[<a class="anchor" href="#mail-sidebar-tab-content-loaded"></a>]`tabContentLoaded` (boolean)::
+Passed to <<sidebar-tab-content-loaded,`Sidebar`>>.
+
+==== Functions
+
+[[mail-sidebar-refresh]]pass:[<a class="anchor" href="#mail-sidebar-refresh"></a>]`refresh` (function `() => void`)::
+Reloads the mail list. The folder tree calls it when the user selects the folder that is already open. The sidebar calls it after an undone move or an external account import. Its return value is ignored.
+
+[[mail-sidebar-on-icon-click]]pass:[<a class="anchor" href="#mail-sidebar-on-icon-click"></a>]`onIconClick` (function `(item: object) => void`)::
+Called when the user selects the refresh icon of an external account folder. `item.externalAccount` holds the account. When it is not set and <<mail-sidebar-folder,`folder`>> has an external account, the sidebar starts an import of that account. See xref:reference/shims/components/navigation.adoc#folder-list-on-icon-click[`FolderList`].
+
+[[mail-sidebar-refetch-folders]]pass:[<a class="anchor" href="#mail-sidebar-refetch-folders"></a>]`refetchFolders` and `refetchLocalFolders` (function `() => void`)::
+Reload the folders of the server and the local folders. The sidebar calls `refetchFolders` when the user selects an account. After a move, the desktop application calls both. The return values are ignored.
+
+[[mail-sidebar-handle-new-tab]]pass:[<a class="anchor" href="#mail-sidebar-handle-new-tab"></a>]`handleNewTab` (function `(tab: object, event: event) => void`)::
+Opens a tab. The new message button calls it with a `tab` that has `url`, `type` (`message`), `icon` and `id`. The folder tree also passes it to the menu of a distribution list. Its return value is ignored.
+
+[[mail-sidebar-change-active-message]]pass:[<a class="anchor" href="#mail-sidebar-change-active-message"></a>]`changeActiveMessage` (function `(ids: array of string) => void`)::
+Called with the ids of the moved items when the user drops the selected mail on a folder, before the move starts.
+
+[[mail-sidebar-check-and-load-more]]pass:[<a class="anchor" href="#mail-sidebar-check-and-load-more"></a>]`checkAndLoadMoreResults` (function `() => void`)::
+Called before a move starts, so that the list can load more items while it still has its search cursor. Required for a move: the move throws an error without it.
+
+[[mail-sidebar-download-emails]]pass:[<a class="anchor" href="#mail-sidebar-download-emails"></a>]`downloadEmails`, `uploadEmails` and `deleteFolder`::
+Used by the desktop application to copy mail between the server and the local folders. `uploadEmails` takes `{ srcMsgIds, destFolderId, destFolderName, isDraggingSelected }`. `downloadEmails` and `deleteFolder` are passed to the folder tree as xref:reference/shims/components/navigation.adoc#folder-list-download-emails[`downloadEmails`] and xref:reference/shims/components/navigation.adoc#folder-list-delete-folder[`deleteFolder`].
+
+[[mail-sidebar-show-retention-modal]]pass:[<a class="anchor" href="#mail-sidebar-show-retention-modal"></a>]`showRetentionModal` (function `(options: object) => void`)::
+Called instead of a move when the user drops mail on the Trash folder and some of it is within its retention period. `options` holds the move and `numWithinRetention`.
+
+==== Props that the sidebar sets itself
+
+The sidebar replaces a value that you pass for the props below. It reads the user, the identities and the active account. It also reads the Redux state and actions (`activeAccountId`, `isOffline`, `notify`, `showNotificationModal`, `setSeachTabQuery`) and the polling actions for external accounts. The props it sets are `slugs`, `client`, `action`, `matchesMediaQuery`, `identitiesInfo` and the import functions of external accounts. It also sets `selectedAccount`, `enableAccountSelector`, `accounts` and `foldersForAccount` from <<mail-sidebar-folders,`folders`>> and the accounts.
+
+[#mail-sidebar-returns]
+=== Returns
+
+A <<sidebar,`Sidebar`>> that holds the new message button, the list of accounts, the <<folder-list,`FolderList`>>, the slot `mail-sidebar-footer`, the mini calendar and an ad slot. The new message button shows in a window at least 1025 px wide. In a narrower window the sidebar has a header instead.
+
+[#mail-sidebar-usage-notes]
+=== Usage notes
+
+* The component draws its `Sidebar` with `into="#sidebar_portal"`. Render it at the left of your screen, as the Mail screen does.
+* Editing a saved search from its menu opens a search tab.
+* Dropping a message on a folder moves the message in the mailbox of the user. The folder tree saves the folders that the user expands in the mailbox settings that the Mail screen also reads.
+
+[#folder-list]
+== FolderList
+
+The folder tree of the Mail, Contacts, Briefcase and Calendar screens. It draws the folders with their unread counts, sub folders, saved searches, tags and shared folders. It gives each folder a context menu. The user can drag items onto a folder and drag folders into other folders. Use it when your Zimlet shows a screen of one of these kinds and needs the same tree. For a list from which the user only picks a folder, use <<folder-list-light,`FolderListLight`>>.
+
+WARNING: The tree changes the folders of the user. Its menus create, rename, move, empty and delete folders, and a drag moves a folder or mail. It also saves which folders the user expands and which groups are open. The Modern UI screens read the same settings, so a second tree in your Zimlet changes the tree of those screens.
+
+[#folder-list-signature]
+=== Signature
+
+[source,js]
+----
+import { FolderList } from '@zimbra-client/components';
+
+<FolderList
+	folders={folders}
+	view="message"
+	urlSlug="email"
+	refetchFolders={refetchFolders}
+	onDrop={handleDrop}
+/>
+----
+
+[#folder-list-props]
+=== Props
+
+The component has many props. The Modern UI screens pass most of them. The groups below follow what the props do. The last group lists the props that the component sets itself, and the props that have no effect.
+
+==== Folders
+
+[[folder-list-folders]]pass:[<a class="anchor" href="#folder-list-folders"></a>]`folders` (array of object)::
+The folder tree: the top level folders, each with its sub folders in `folders` and its linked folders in `linkedFolders`. Required: the component renders nothing without it or with an empty array. The tree reads `id`, `name`, `absFolderPath`, `unread`, `nonFolderItemCount`, `permissions`, `query` (set on a saved search), `broken` and `view`. A folder whose `view` is a function is drawn by calling that function as a component with `folder` and `depth`. Take the folders from xref:reference/shims/hooks/folders.adoc#use-folders-query[`useFoldersQuery`].
+
+[[folder-list-shared-folders]]pass:[<a class="anchor" href="#folder-list-shared-folders"></a>]`sharedFolders` (array of object, default `[]`)::
+The folders that other users shared. They are drawn in their own group, after the folders. The group does not show when the array is empty.
+
+[[folder-list-smart-folders]]pass:[<a class="anchor" href="#folder-list-smart-folders"></a>]`smartFolders` (array of object, default `[]`)::
+The saved searches. They are drawn in a group of their own when <<folder-list-collapsible-smart-group,`collapsibleSmartGroup`>> is set. Otherwise they are drawn one after the other, with no group.
+
+[[folder-list-collapsible-smart-group]]pass:[<a class="anchor" href="#folder-list-collapsible-smart-group"></a>]`collapsibleSmartGroup` (boolean)::
+Set it to `true` to draw the saved searches in a group with a heading, a search button and a collapse arrow.
+
+[[folder-list-local-folders]]pass:[<a class="anchor" href="#folder-list-local-folders"></a>]`localFolders` (array of object)::
+The local folders of the desktop application. The group of local folders is drawn only in that application, in the Mail view.
+
+[[folder-list-tags]]pass:[<a class="anchor" href="#folder-list-tags"></a>]`tags` (array of object)::
+The tags of the user. They are drawn in a tag group when <<folder-list-is-tags-supported,`isTagsSupported`>> is `true`. A tag is an item without `absFolderPath` and without `folderId`.
+
+[[folder-list-is-tags-supported]]pass:[<a class="anchor" href="#folder-list-is-tags-supported"></a>]`isTagsSupported` (boolean)::
+Set it to `true` to draw the tag group, with a button that creates a tag while the application is online.
+
+[[folder-list-selected-account]]pass:[<a class="anchor" href="#folder-list-selected-account"></a>]`selectedAccount` (object)::
+The account that the tree shows, when the user has external accounts. The tree reads `folderId`, the parent of the folders that it creates, and `isPrimary`.
+
+[[folder-list-special-folder-list]]pass:[<a class="anchor" href="#folder-list-special-folder-list"></a>]`specialFolderList` (array of string or function)::
+Decides which folders come first and in which order. A string is a folder name in lowercase. A function `(folder: object) => boolean` returns `true` for a folder that belongs to the list. The default list is Inbox, Drafts, Sent, Archive, Junk, Briefcase, Contacts, Trash, Outbox and Files shared with me. The other folders follow in their own order.
+
+[[folder-list-hidden-folder-list]]pass:[<a class="anchor" href="#folder-list-hidden-folder-list"></a>]`hiddenFolderList` (array of string or function, default `[]`)::
+The folders to leave out. The entries are written as in <<folder-list-special-folder-list,`specialFolderList`>>.
+
+[[folder-list-hide-special-folders]]pass:[<a class="anchor" href="#folder-list-hide-special-folders"></a>]`hideSpecialFolders` (boolean)::
+Set it to `true` to leave out the folders that <<folder-list-special-folder-list,`specialFolderList`>> names.
+
+[[folder-list-index-folder-name]]pass:[<a class="anchor" href="#folder-list-index-folder-name"></a>]`indexFolderName` (string or regular expression)::
+The name of the folder that counts as open when the address has no folder, such as `/email`. A regular expression is tested against the folder names. A string is compared with them. The Mail screen passes a pattern for Inbox. When the value is `Contacts`, every folder takes drops and the shared folders take drops only with the create permission.
+
+[[folder-list-view]]pass:[<a class="anchor" href="#folder-list-view"></a>]`view` (string, default `message`)::
+The kind of folders that the tree shows: `message` for mail, `contact`, `document` for Briefcase or `appointment`. It decides the context menu of each folder and which folders show in the Trash folder. It also decides where the button that adds a folder sits. In the `message` view it is in the group heading, and otherwise below the tree. The kind of the folders that the tree creates follows it too.
+
+[[folder-list-url-slug]]pass:[<a class="anchor" href="#folder-list-url-slug"></a>]`urlSlug` (string)::
+The first part of the address of every folder, such as `email`. A folder opens at `/<urlSlug>/<folder path>`. The tree also uses it to tell whether a folder is open.
+
+[[folder-list-url-suffix-prop]]pass:[<a class="anchor" href="#folder-list-url-suffix-prop"></a>]`urlSuffixProp` (string)::
+The name of a field of the folder whose value is the last part of its address, in place of its path.
+
+[[folder-list-folder-name-prop]]pass:[<a class="anchor" href="#folder-list-folder-name-prop"></a>]`folderNameProp` (string or function `(folder: object) => string`, default `name`)::
+Where the tree reads the name of a folder. A string names a field of the folder. A function returns the name. The name of a system folder is translated.
+
+[[folder-list-badge-prop]]pass:[<a class="anchor" href="#folder-list-badge-prop"></a>]`badgeProp` (string, function `(folder: object) => node` or `false`)::
+Sets the counter at the right of a folder. A string names a field of the folder to show. A function returns what to show. `false` shows no counter. Without it, the counter shows `unread`, or `nonFolderItemCount` for Drafts and Outbox. A counter of `0` is not shown.
+
+==== Open folders and refresh
+
+[[folder-list-refetch-folders]]pass:[<a class="anchor" href="#folder-list-refetch-folders"></a>]`refetchFolders` (function `() => void`)::
+Reloads the folders. The tree calls it after it creates, moves, renames or changes a folder, so it is required. Its return value is ignored.
+
+[[folder-list-refetch-local-folders]]pass:[<a class="anchor" href="#folder-list-refetch-local-folders"></a>]`refetchLocalFolders` (function `() => void`)::
+Reloads the local folders of the desktop application. The tree calls it after a change to a local folder. Its return value is ignored.
+
+[[folder-list-refresh]]pass:[<a class="anchor" href="#folder-list-refresh"></a>]`refresh` (function `() => void`)::
+Called when the user selects the folder that is already open, and the application is online. Its return value is ignored.
+
+[[folder-list-on-icon-click]]pass:[<a class="anchor" href="#folder-list-on-icon-click"></a>]`onIconClick` (function `(item: object) => void`)::
+Called when the user selects the refresh icon of a folder of an external account. `item.externalAccount` holds the account. The Inbox also has a refresh icon, and it calls <<folder-list-refresh,`refresh`>>. Other folders show the icon only while they download. Its return value is ignored.
+
+[[folder-list-download-in-progress]]pass:[<a class="anchor" href="#folder-list-download-in-progress"></a>]`downloadInProgress` (array of string)::
+The ids of the folders that the desktop application is downloading. Those folders show the refresh icon in its refreshing state.
+
+==== Drag and drop
+
+[[folder-list-on-drop]]pass:[<a class="anchor" href="#folder-list-on-drop"></a>]`onDrop` (function `(event: event, folder: object) => void`)::
+Called when the user drops dragged items on a folder that accepts them. The drop is not a file from outside the browser. Before the call, the tree sets `event.targetFolder`, `event.targetList` and `event.destination` to `folder`. Its return value is ignored. A saved search never accepts a drop.
++
+WARNING: Without `onDrop`, no folder accepts a drop, and the user cannot drag a folder into another folder. Set it on every tree that offers drag and drop.
+
+[[folder-list-drop-effect]]pass:[<a class="anchor" href="#folder-list-drop-effect"></a>]`dropEffect` (string, default `move`)::
+The drop effect that the browser shows over a folder: `move`, `copy`, `link` or `none`.
+
+[[folder-list-is-no-draft-flag]]pass:[<a class="anchor" href="#folder-list-is-no-draft-flag"></a>]`isNoDraftFlag` and `isOnlyDraftFlag` (boolean)::
+Say what the dragged mail contains. With neither flag set, every folder accepts the mail. With `isNoDraftFlag` set to `true`, every folder except Drafts accepts it. With `isOnlyDraftFlag` set to `true`, only Drafts and Trash accept it. In every other case, which is mail that mixes drafts and other mail, only Trash accepts it. Set both from the selected mail.
+
+[[folder-list-upload-files]]pass:[<a class="anchor" href="#folder-list-upload-files"></a>]`uploadFiles` (function `(files: array, folder: object) => void`)::
+Called when the user drops files from outside the browser on a folder. It is not called while another upload runs. Its return value is ignored. Without it, such a drop does nothing.
+
+[[folder-list-disable-local-folder-for-move]]pass:[<a class="anchor" href="#folder-list-disable-local-folder-for-move"></a>]`disableLocalFolderForMove` (boolean)::
+Used by the desktop application. When it is `true`, the first local folder does not accept a drop.
+
+[[folder-list-download-emails]]pass:[<a class="anchor" href="#folder-list-download-emails"></a>]`downloadEmails` (function `(ids: array of string, folderName: string, folder: object) => void`)::
+Used by the desktop application. Called when the user moves a server folder that holds mail to the local folders. The folder tree ignores the return value.
+
+[[folder-list-delete-folder]]pass:[<a class="anchor" href="#folder-list-delete-folder"></a>]`deleteFolder` (function `(folder: object, isLocal: boolean) => void`)::
+Used by the desktop application. Called with the folder and `true` when the user moves a folder that holds no mail and no sub folders to the local folders.
+
+==== Context menus
+
+[[folder-list-default-context-menu]]pass:[<a class="anchor" href="#folder-list-default-context-menu"></a>]`defaultContextMenu` (component)::
+The menu of a folder for which <<folder-list-custom-context-menus,`customContextMenus`>> and the menus of the Modern UI have none. The Modern UI has a menu for each of the views `message`, `contact` and `document`, so the component is used mostly for other views.
+
+[[folder-list-custom-context-menus]]pass:[<a class="anchor" href="#folder-list-custom-context-menus"></a>]`customContextMenus` (object)::
+Context menus for single folders. Each key is the view and the name of the folder, in lowercase and separated by a dot, such as `message.inbox`. Each value is an object `{ contextMenu: component, showEllipsis: boolean }`. It replaces the menu of the Modern UI for that folder, except for the root folder, tags and distribution lists. The menu component gets `folder`, `folders`, `depth` and the handlers `onMarkFolderRead`, `onRenameFolder`, `onMoveFolder`, `onDeleteFolder`, `onCreateSubFolder` and `onEmptyFolder`.
+
+[[folder-list-default-show-ellipsis]]pass:[<a class="anchor" href="#folder-list-default-show-ellipsis"></a>]`defaultShowEllipsis` (boolean)::
+Set it to `true` to show the three dots that open the menu on folders for which the menus above do not say.
+
+[[folder-list-context-menu]]pass:[<a class="anchor" href="#folder-list-context-menu"></a>]`contextMenu` (function `(folder: object, rename: function, remove: function) => element`)::
+Used only with <<folder-list-is-check-enabled,`isCheckEnabled`>>. Returns the menu of a folder. `rename` and `remove` start the rename and the delete of that folder. Without it, a folder in that mode has no menu.
+
+[[folder-list-is-rename-allowed]]pass:[<a class="anchor" href="#folder-list-is-rename-allowed"></a>]`isRenameAllowed` (function `(name: string, folder: object) => boolean`)::
+Decides whether a double click on a folder renames it. Return `true` to allow it. Without it, a folder can be renamed unless its name is one of the special folder names.
+
+[[folder-list-is-gal-folder]]pass:[<a class="anchor" href="#folder-list-is-gal-folder"></a>]`isGalFolder` (boolean)::
+Set it to `true` while the tree shows the address book of the organization. A double click on an ordinary folder then does not start a rename.
+
+[[folder-list-handle-edit-search]]pass:[<a class="anchor" href="#folder-list-handle-edit-search"></a>]`handleEditSearch` (function `(folder: object) => void`)::
+Called when the user chooses to edit a saved search in the Mail view, in a window at least 1025 px wide. In another view, the tree opens the advanced search instead. Its return value is ignored.
+
+[[folder-list-feature-sharing]]pass:[<a class="anchor" href="#folder-list-feature-sharing"></a>]`zimbraFeatureSharingEnabled` (boolean)::
+Set it to `true` to add the share option to the menus and, in the Briefcase view, to draw the folder *Files shared with me*.
+
+[[folder-list-on-import-export-action]]pass:[<a class="anchor" href="#folder-list-on-import-export-action"></a>]`onImportExportAction` (function `(dialog: number, path: string) => void`)::
+Called by the import and export options of the Contacts menu. `dialog` says which dialog to open, and `path` is the `absFolderPath` of the folder. Its return value is ignored.
+
+[[folder-list-set-auto-cleanup]]pass:[<a class="anchor" href="#folder-list-set-auto-cleanup"></a>]`setAutoCleanup` (boolean)::
+Set it to `true` to add the auto clean up option to the menu of the mail folders. The option shows only when the account has the retention policy feature.
+
+[[folder-list-handle-new-tab]]pass:[<a class="anchor" href="#folder-list-handle-new-tab"></a>]`handleNewTab` (function `(tab: object) => void`)::
+Called by the menu of a distribution list when the user chooses to write a message to it. `tab` has `url`, `type`, `icon`, `tabItem`, `mode` and `view`. Its return value is ignored.
+
+==== Check boxes and sections
+
+The Calendar screen uses these props. With <<folder-list-is-check-enabled,`isCheckEnabled`>>, every folder has a check box and the tree draws its folders in sections that you define.
+
+[[folder-list-is-check-enabled]]pass:[<a class="anchor" href="#folder-list-is-check-enabled"></a>]`isCheckEnabled` (boolean)::
+Set it to `true` to draw a check box before each folder. A click on a folder then calls <<folder-list-handle-check,`handleCheck`>> and does not open the folder. The group *Folders* then holds only the special folders, so draw the other folders in sections with <<folder-list-group-headers,`groupHeaders`>>.
+
+[[folder-list-handle-check]]pass:[<a class="anchor" href="#folder-list-handle-check"></a>]`handleCheck` (function `(folder: object, event: event) => void`)::
+Called when the user selects a folder, or the heading of a section that has a check box. Its return value is ignored.
+
+[[folder-list-inline-check-box-style]]pass:[<a class="anchor" href="#folder-list-inline-check-box-style"></a>]`inlineCheckBoxStyle` (function `(folder: object) => string`)::
+Returns the colour of the check box of a folder.
+
+[[folder-list-folder-details]]pass:[<a class="anchor" href="#folder-list-folder-details"></a>]`folderDetails` (array of string)::
+The ids of the checked folders. Without it, a folder is checked when it has the `checked` flag.
+
+[[folder-list-group-headers]]pass:[<a class="anchor" href="#folder-list-group-headers"></a>]`groupHeaders` (array of string)::
+The keys of the sections, in order. Required with <<folder-list-is-check-enabled,`isCheckEnabled`>>: the tree throws an error without it. Each key names its heading with the localization key `calendar.sidebar.<key>`, and `trash` uses `folders.Trash`. In a window narrower than 1024 px, the sections are drawn without headings.
+
+[[folder-list-section-folders]]pass:[<a class="anchor" href="#folder-list-section-folders"></a>]`sectionFolders` (function `(key: string) => array of object`)::
+Returns the folders of the section with that key. Required with <<folder-list-is-check-enabled,`isCheckEnabled`>>.
+
+[[folder-list-section-main-folder]]pass:[<a class="anchor" href="#folder-list-section-main-folder"></a>]`sectionMainFolder` (function `(key: string) => object`)::
+Returns the folder that stands for the whole section. It is the folder of the check box and the menu of the heading.
+
+[[folder-list-is-section-check-enabled]]pass:[<a class="anchor" href="#folder-list-is-section-check-enabled"></a>]`isSectionCheckEnabled` (function `(key: string) => boolean`)::
+Return `true` to give the heading of that section a check box.
+
+[[folder-list-get-section-additional-props]]pass:[<a class="anchor" href="#folder-list-get-section-additional-props"></a>]`getSectionAdditionalProps` (function `(key: string) => object`)::
+Returns more props for the heading of that section, as listed for <<folder-list-group,`FolderListGroup`>>.
+
+[[folder-list-folder-group-action]]pass:[<a class="anchor" href="#folder-list-folder-group-action"></a>]`folderGroupAction` (function `(key: string) => node`)::
+Returns what to draw at the right of the heading of that section, such as a button. Needed in a window at least 1024 px wide.
+
+[[folder-list-zimlet-slot]]pass:[<a class="anchor" href="#folder-list-zimlet-slot"></a>]`zimletSlot` (function `(key: string) => node`)::
+Returns what to draw after the folders of that section. Required with <<folder-list-is-check-enabled,`isCheckEnabled`>>.
+
+[[folder-list-expanded]]pass:[<a class="anchor" href="#folder-list-expanded"></a>]`expanded` (array of string)::
+The keys of the sections that are open. Needed in a window at least 1024 px wide.
+
+[[folder-list-handle-toggle-folders]]pass:[<a class="anchor" href="#folder-list-handle-toggle-folders"></a>]`handleToggleFolders` (function `(key: string) => void`)::
+Called when the user opens or closes the section with that key. Without it, the headings do not open or close.
+
+[[folder-list-custom-add-option]]pass:[<a class="anchor" href="#folder-list-custom-add-option"></a>]`customAddOption` (xref:reference/glossary.adoc#node[node])::
+Drawn above the button that adds a folder. It shows in every view except `message`.
+
+==== Appearance
+
+[[folder-list-class]]pass:[<a class="anchor" href="#folder-list-class"></a>]`class` (string)::
+A class name added to the outer element.
+
+[[folder-list-folder-list-item-class]]pass:[<a class="anchor" href="#folder-list-folder-list-item-class"></a>]`folderListItemClass` (string)::
+A class name added to the row of every folder.
+
+[[folder-list-sub-folder-class]]pass:[<a class="anchor" href="#folder-list-sub-folder-class"></a>]`subFolderClass` (string)::
+A class name added to the element that holds the sub folders of a folder.
+
+[[folder-list-toggle-class]]pass:[<a class="anchor" href="#folder-list-toggle-class"></a>]`toggleClass` (string)::
+A class name added to the heading of a section or of the tag group.
+
+[[folder-list-tag-group-class]]pass:[<a class="anchor" href="#folder-list-tag-group-class"></a>]`tagGroupClass` (string)::
+A class name added to the element that holds the folders of the tag group.
+
+==== Props that the tree sets itself, and props with no effect
+
+The tree replaces a value that you pass for these props with its own. They are `foldersExpanded`, `folderTreeOpen`, `sharedFolderTreeOpen` and `smartFolderTreeOpen` (from the mailbox settings), `zimbraPrefFolderTreeOpen`, `zimbraPrefTagTreeOpen`, `zimbraDumpsterEnabled`, `isOffline`, `slugs`, `matchesMediaQuery`, `indexFolder` and `action`. It also fills the Redux state and actions, the folder and tag requests and the request client.
+
+These props have no effect: `collapsibleCustomGroup`, `showSmartFolders`, `divided`, `label`, `screen` and `onActiveFolderClick`.
+
+Any other prop is set as an attribute of the outer element.
+
+[#folder-list-returns]
+=== Returns
+
+A `div` with these parts, in order:
+
+. The group *Folders*, with the special folders and then the other folders. In the `message` view, it has a button that adds a folder.
+. The slot `folder-list-middle`.
+. The sections, when <<folder-list-is-check-enabled,`isCheckEnabled`>> is set.
+. In every other view than `message`, the button that adds a folder, unless `isCheckEnabled` is set.
+. The slot `folder-group` and the group of shared folders.
+. In the Briefcase view, the folder *Files shared with me*.
+. In the desktop application, the group of local folders.
+. The saved searches and the tag group.
+. The slot `folder-list-end`.
+
+Nothing is drawn without <<folder-list-folders,`folders`>>.
+
+[#folder-list-usage-notes]
+=== Usage notes
+
+* The folder rows and menus read the router, the Redux state and the data client. Draw the tree only inside a component that the Modern UI renders.
+* A folder opens through its address, `/<urlSlug>/<folder path>`. No prop is called when the user opens a folder, except <<folder-list-refresh,`refresh`>> for the folder that is already open. Read the address to follow the choice. For a choice without a route, use <<folder-list-light,`FolderListLight`>>.
+* A group with more than 200 rows draws only the rows in view.
+* The slots `folder-list-middle`, `folder-group` and `folder-list-end` take no props. See xref:reference/slots/mail/mail-list-and-sidebar.adoc[Mail list and sidebar slots].
+
+[#folder-list-light]
+== FolderListLight
+
+A smaller folder tree for choosing one folder, or several. It has no menus, no counters and no drag and drop, and it opens no route. Use it in a dialog or a panel of your Zimlet where the user picks a destination. An example is the folder to save a message in. It keeps the choice itself and reports it through <<folder-list-light-on-folder-click,`onFolderClick`>>. For the tree of a Modern UI screen, use <<folder-list,`FolderList`>>.
+
+[#folder-list-light-signature]
+=== Signature
+
+[source,js]
+----
+import { FolderListLight } from '@zimbra-client/components';
+
+<FolderListLight
+	folders={folders}
+	sharedFolders={sharedFolders}
+	onFolderClick={handleFolderClick}
+/>
+----
+
+[#folder-list-light-props]
+=== Props
+
+==== Folders
+
+[[folder-list-light-folders]]pass:[<a class="anchor" href="#folder-list-light-folders"></a>]`folders` (array of object)::
+The folders to show, each with its sub folders in `folders`. Required: the component renders nothing without it. An empty array also draws nothing, unless <<folder-list-light-before-folders,`beforeFolders`>> is set. The component reads `id`, `name`, `absFolderPath`, `disabled`, `isFolderDisabled`, `broken` and `view`. A folder whose `view` is a function is drawn by calling that function as a component with `folder` and `depth`. Take the folders from xref:reference/shims/hooks/folders.adoc#use-folders-query[`useFoldersQuery`].
+
+[[folder-list-light-shared-folders]]pass:[<a class="anchor" href="#folder-list-light-shared-folders"></a>]`sharedFolders` (array of object, default `[]`)::
+The folders that other users shared. They are drawn in their own group, after the folders. The group does not show when the array is empty.
+
+[[folder-list-light-local-folders]]pass:[<a class="anchor" href="#folder-list-light-local-folders"></a>]`localFolders` (array of object, default `[]`)::
+The local folders of the desktop application. They are drawn in their own group, after the shared folders.
+
+[[folder-list-light-special-folder-list]]pass:[<a class="anchor" href="#folder-list-light-special-folder-list"></a>]`specialFolderList` (array of string or function)::
+Decides which folders come first and in which order, as for xref:reference/shims/components/navigation.adoc#folder-list-special-folder-list[`FolderList`].
+
+[[folder-list-light-hidden-folder-list]]pass:[<a class="anchor" href="#folder-list-light-hidden-folder-list"></a>]`hiddenFolderList` (array of string or function, default `[]`)::
+The folders to leave out, as for xref:reference/shims/components/navigation.adoc#folder-list-hidden-folder-list[`FolderList`].
+
+[[folder-list-light-special-folders]]pass:[<a class="anchor" href="#folder-list-light-special-folders"></a>]`specialFolders` (array of object)::
+The folders to draw first. When it is set, the component does not work them out from <<folder-list-light-special-folder-list,`specialFolderList`>>.
+
+[[folder-list-light-custom-folders]]pass:[<a class="anchor" href="#folder-list-light-custom-folders"></a>]`customFolders` (array of object)::
+The folders to draw after the special folders. When it is set, the component does not work them out from <<folder-list-light-folders,`folders`>>.
+
+[[folder-list-light-folder-name-prop]]pass:[<a class="anchor" href="#folder-list-light-folder-name-prop"></a>]`folderNameProp` (string or function `(folder: object) => string`, default `name`)::
+Where the list reads the name of a folder, as for xref:reference/shims/components/navigation.adoc#folder-list-folder-name-prop[`FolderList`].
+
+[[folder-list-light-before-folders]]pass:[<a class="anchor" href="#folder-list-light-before-folders"></a>]`beforeFolders` (xref:reference/glossary.adoc#node[node])::
+Drawn above the folders.
+
+[[folder-list-light-extra-children]]pass:[<a class="anchor" href="#folder-list-light-extra-children"></a>]`extraChildren` (xref:reference/glossary.adoc#node[node])::
+Drawn below the last group.
+
+==== Choice
+
+[[folder-list-light-on-folder-click]]pass:[<a class="anchor" href="#folder-list-light-on-folder-click"></a>]`onFolderClick` (function `(folder: object, selectedIds: array of string) => void`)::
+Called when the user selects a folder that is not disabled. `selectedIds` holds the ids of all selected folders: with <<folder-list-light-is-multi-select,`isMultiSelect`>> the selection after the change, and otherwise only the id of `folder`. Its return value is ignored.
+
+[[folder-list-light-selected-ids]]pass:[<a class="anchor" href="#folder-list-light-selected-ids"></a>]`selectedIds` (array of string)::
+The ids of the selected folders. The list keeps its own selection and starts with this value. Each time the list gets new props with `selectedIds`, the selection is replaced by it. Update the value from <<folder-list-light-on-folder-click,`onFolderClick`>> to keep the choice.
+
+[[folder-list-light-is-multi-select]]pass:[<a class="anchor" href="#folder-list-light-is-multi-select"></a>]`isMultiSelect` (boolean)::
+Set it to `true` to draw a check box on each folder and let the user select several. A click on a folder adds it to the selection or removes it. Without it, the selected folder is highlighted and a click replaces the selection.
+
+[[folder-list-light-index-folder-name]]pass:[<a class="anchor" href="#folder-list-light-index-folder-name"></a>]`indexFolderName` (string or regular expression)::
+The name of the folder that is highlighted while the selection is empty, in the single choice mode. A regular expression is tested against the folder names. A string is compared with them.
+
+[[folder-list-light-is-folder-disabled]]pass:[<a class="anchor" href="#folder-list-light-is-folder-disabled"></a>]`isFolderDisabled` (boolean or function `(folder: object) => boolean`)::
+Disables the selection of folders. `true` disables every folder. A function is called for each folder, and the folder can be selected when it returns `true`. A folder with `disabled` or `isFolderDisabled` set to `true` is always disabled.
++
+WARNING: The function says whether the folder can be selected, not whether it is disabled. Its result is the reverse of what the name says. Return `true` for a folder that the user may select.
+
+==== Open folders
+
+[[folder-list-light-expanded-folder-ids]]pass:[<a class="anchor" href="#folder-list-light-expanded-folder-ids"></a>]`expandedFolderIds` (array of string)::
+The ids of the folders that start open. The list uses it when it has no open folders yet. If one of the shared folders is in it at that time, the group of shared folders opens too.
+
+[[folder-list-light-disable-collapse]]pass:[<a class="anchor" href="#folder-list-light-disable-collapse"></a>]`disableCollapse` (boolean)::
+Set it to `true` to show every sub folder and no collapse arrows.
+
+[[folder-list-light-expand-all-sections]]pass:[<a class="anchor" href="#folder-list-light-expand-all-sections"></a>]`expandAllSections` (boolean)::
+Set it to `true` to leave out the heading of the group *Folders*, so its folders are always shown. The groups of shared and local folders then start open.
+
+[[folder-list-light-collapsible-folder-group-toggle]]pass:[<a class="anchor" href="#folder-list-light-collapsible-folder-group-toggle"></a>]`collapsibleFolderGroupToggle` (boolean)::
+Set it to `true` to start with the group *Folders* closed. The list reads it only once.
+
+==== Appearance
+
+[[folder-list-light-is-drop-down-list]]pass:[<a class="anchor" href="#folder-list-light-is-drop-down-list"></a>]`isDropDownList` (boolean)::
+Set it to `true` to add the spacing and the row shape of a list inside a drop-down.
+
+[[folder-list-light-class]]pass:[<a class="anchor" href="#folder-list-light-class"></a>]`class` (string)::
+A class name added to the outer element.
+
+[[folder-list-light-no-effect]]pass:[<a class="anchor" href="#folder-list-light-no-effect"></a>]Props with no effect::
+`smartFolders`, `isCheckboxPresent`, `collapsibleCustomGroup`, `collapsibleSmartGroup`, `divided`, `label`, `folderTreeOpen`, `foldersExpanded`, `defaultContextMenu` and `matchesMediaQuery`. The list never draws saved searches.
++
+Any other prop is set as an attribute of the outer element.
+
+[#folder-list-light-returns]
+=== Returns
+
+A `div` with the group *Folders* (the special folders and then the other folders), the group of shared folders and the group of local folders. <<folder-list-light-before-folders,`beforeFolders`>> comes first and <<folder-list-light-extra-children,`extraChildren`>> last.
+
+[#folder-list-light-usage-notes]
+=== Usage notes
+
+* The list draws no counters and no menus, and it does not change a folder.
+* A disabled folder is styled as disabled and ignores clicks. It has no collapse arrow, so the user cannot open it.
+* It keeps the open folders and the selection in its own state.
+
+[#folder-list-group]
+== FolderListGroup
+
+A heading that opens and closes a set of folders, with an arrow, a name and an optional button at the right. <<folder-list,`FolderList`>> uses it for its groups. Use it when your Zimlet draws a group of its own folders that must look like the groups of the folder tree.
+
+[#folder-list-group-signature]
+=== Signature
+
+[source,js]
+----
+import { FolderListGroup } from '@zimbra-client/components';
+
+<FolderListGroup name="my-zimlet.groupName" collapsed={collapsed} onToggle={handleToggle}>
+	{folders}
+</FolderListGroup>
+----
+
+[#folder-list-group-props]
+=== Props
+
+[[folder-list-group-name]]pass:[<a class="anchor" href="#folder-list-group-name"></a>]`name` (string, default `Folders`)::
+The localization key of the heading, from the dictionary in scope. The heading is empty when the dictionary has no such key. See xref:go-deeper/localization.adoc[Localization].
+
+[[folder-list-group-on-toggle]]pass:[<a class="anchor" href="#folder-list-group-on-toggle"></a>]`onToggle` (function `() => void`)::
+Required. Called when the user selects the heading or the arrow, or presses *Enter* on the heading. With <<folder-list-group-is-check-enabled,`isCheckEnabled`>>, only the arrow and the *Enter* key call it. Its return value is ignored. The group does not open or close by itself: change <<folder-list-group-collapsed,`collapsed`>> here.
+
+[[folder-list-group-collapsed]]pass:[<a class="anchor" href="#folder-list-group-collapsed"></a>]`collapsed` (boolean, default `false`)::
+Set it to `true` to hide the children and show the arrow in its closed state.
+
+[[folder-list-group-children]]pass:[<a class="anchor" href="#folder-list-group-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The folders of the group. They are drawn below the heading while the group is open.
+
+[[folder-list-group-action]]pass:[<a class="anchor" href="#folder-list-group-action"></a>]`action` (xref:reference/glossary.adoc#node[node])::
+Drawn at the right of the name, such as a button that adds a folder. Use xref:reference/shims/components/buttons-and-actions.adoc#action-button[`ActionButton`] for it.
+
+[[folder-list-group-aria-label]]pass:[<a class="anchor" href="#folder-list-group-aria-label"></a>]`ariaLabel` (xref:reference/glossary.adoc#node[node])::
+The accessible name of the heading. Without it, the heading is named by its text.
+
+[[folder-list-group-menu]]pass:[<a class="anchor" href="#folder-list-group-menu"></a>]`menu` (boolean)::
+Set it to `true` to give the heading a context menu with the options to create a folder and to find a folder. Set <<folder-list-group-on-create-folder,`onCreateFolder`>>, <<folder-list-group-on-find-folder,`onFindFolder`>> and <<folder-list-group-folder,`folder`>> with it: the menu reads `folder.id`.
+
+[[folder-list-group-on-create-folder]]pass:[<a class="anchor" href="#folder-list-group-on-create-folder"></a>]`onCreateFolder` (function `() => void`)::
+Called when the user chooses the option to create a folder. Its return value is ignored.
+
+[[folder-list-group-on-find-folder]]pass:[<a class="anchor" href="#folder-list-group-on-find-folder"></a>]`onFindFolder` (function `() => void`)::
+Called when the user chooses the option to find a folder. Its return value is ignored.
+
+[[folder-list-group-folder]]pass:[<a class="anchor" href="#folder-list-group-folder"></a>]`folder` (object)::
+The folder that stands for the group. The menu, the check box and the tooltip read it.
+
+[[folder-list-group-enable-tooltip]]pass:[<a class="anchor" href="#folder-list-group-enable-tooltip"></a>]`enableTooltip` (boolean)::
+Set it to `true` to show a tooltip about <<folder-list-group-folder,`folder`>> after the pointer rests on the heading for one second. It shows the name, the number of items, and for mail folders the unread count and size. Set `folder` and <<folder-list-group-view,`view`>> with it.
+
+[[folder-list-group-view]]pass:[<a class="anchor" href="#folder-list-group-view"></a>]`view` (string)::
+The kind of folders, such as `message`. The tooltip uses it for the label of the counter.
+
+[[folder-list-group-is-check-enabled]]pass:[<a class="anchor" href="#folder-list-group-is-check-enabled"></a>]`isCheckEnabled` (boolean)::
+Set it to `true` to draw a check box before the name, for <<folder-list-group-folder,`folder`>>. A click on the heading then calls <<folder-list-group-handle-check,`handleCheck`>> and does not call `onToggle`. Set `folder` and <<folder-list-group-inline-check-box-style,`inlineCheckBoxStyle`>> with it: the heading needs both.
+
+[[folder-list-group-handle-check]]pass:[<a class="anchor" href="#folder-list-group-handle-check"></a>]`handleCheck` (function `(folder: object, event: event) => void`)::
+Called when the user selects the heading in the check box mode. Its return value is ignored.
+
+[[folder-list-group-folder-details]]pass:[<a class="anchor" href="#folder-list-group-folder-details"></a>]`folderDetails` (array of string)::
+The ids of the checked folders, for the check box. Without it, the box is checked when `folder` has the `checked` flag.
+
+[[folder-list-group-inline-check-box-style]]pass:[<a class="anchor" href="#folder-list-group-inline-check-box-style"></a>]`inlineCheckBoxStyle` (function `(folder: object) => string`)::
+Returns the colour of the check box. The Trash folder always gets white.
+
+[[folder-list-group-class-name]]pass:[<a class="anchor" href="#folder-list-group-class-name"></a>]`className` (string)::
+A class name added to the element that wraps the heading and the children.
+
+[[folder-list-group-toggle-class]]pass:[<a class="anchor" href="#folder-list-group-toggle-class"></a>]`toggleClass` (string)::
+A class name added to the heading.
+
+[[folder-list-group-tag-group-class]]pass:[<a class="anchor" href="#folder-list-group-tag-group-class"></a>]`tagGroupClass` (string)::
+A class name added to the element that holds the children.
+
+[[folder-list-group-drag-props]]pass:[<a class="anchor" href="#folder-list-group-drag-props"></a>]`sourceFolder`, `customFolders`, `onDragOverExpandFolder`, `folderDrop`, `onFolderDrop` and `onRouteOnFolderActive`::
+Used by the heading of the custom folders of the Mail screen, to let the user drop a folder on the heading and move it to the top level. They have no use outside `FolderList`. Set the other five with `sourceFolder`, because the heading calls `onDragOverExpandFolder` when the user drags over it.
+
+[#folder-list-group-returns]
+=== Returns
+
+A wrapper with the heading and, while the group is open, a `div` with the children. The heading is a `div` with the role `button`, and it can be focused.
+
+[#folder-list-group-usage-notes]
+=== Usage notes
+
+* The name shows through the localization dictionary. Add the key to the `en_US.json` of your Zimlet, and wrap your component with `withIntl`. See xref:go-deeper/localization.adoc[Localization].
+* The component keeps no state of the open group. Keep `collapsed` in your own state.
+
+[#next-step]
+== Next step
+
+Continue with the higher order components in xref:reference/shims/hocs.adoc[Higher-order components (HOCs)].

@@ -1,0 +1,117 @@
+= Localization
+
+Two higher-order components (HOCs) that connect a component to the texts of your xref:reference/glossary.adoc#zimlet[Zimlet]. `withIntlWrapper` loads the texts for the language of the user, so that `Text` and the other text components can find your ids. `withIntlConsumer` hands the loaded texts to a class component as a prop. Use them when a component shows or reads texts from your language files. Both come from `@zimbra-client/enhancers`. See xref:go-deeper/localization.adoc[Localization] for the language files and the steps, and xref:reference/shims/localization.adoc[Localization (`@zimbra/preact-i18n`)] for the components and functions that show a text.
+
+[#members]
+== Members
+
+<<with-intl-wrapper,`withIntlWrapper`>>::
+Loads the language files of your Zimlet and gives their texts to a component and everything below it. Also exported as `withZimletIntlWrapper`.
+
+<<with-intl-consumer,`withIntlConsumer`>>::
+Passes the current texts as the `intl` prop, or as props that you choose.
+
+[#with-intl-wrapper]
+== withIntlWrapper
+
+Loads the English file and the file for the language of the user from your Zimlet. It makes their texts available to a component and everything below it. Use it on each component of your Zimlet that shows its texts and that the xref:reference/glossary.adoc#modern-ui[Modern UI] draws, such as a slot component. The name `withZimletIntlWrapper` is the same function. Both names work, and the default template uses `withIntlWrapper`. To give texts to a separate tree that you render yourself, wrap it in `IntlProvider` instead. See xref:reference/shims/localization.adoc[Localization (`@zimbra/preact-i18n`)].
+
+=== Signature
+
+[source,js]
+----
+import { withIntlWrapper } from '@zimbra-client/enhancers';
+
+const Enhanced = withIntlWrapper(zimletLocale)(Component);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`zimletLocale`
+|object
+|Required. Holds `importFn` and `showLoader`.
+
+|`zimletLocale.importFn`
+|function `(locale: string) => Promise<object>`
+|Required. Loads the language file for one locale code, and returns the promise of the file. The code looks like `en_US`, `fr_FR`, `pt_BR` or `de`. The wrapper calls it for `en_US`, and for the language of the user when that is not `en_US`. Return the result of a dynamic `import()` of a JSON file. The texts are its `default` export, a nested object. Without `importFn`, the wrapped component throws a `TypeError` when it mounts.
+
+|`zimletLocale.showLoader`
+|boolean
+|Optional, and ignored: the wrapper never shows a loader. The default template passes `false`.
+
+|===
+
+=== Returns
+
+A function `(Component: component) => component`. The new component renders nothing until the English file has loaded. It then renders `Component` with all its own props, below the texts of your Zimlet.
+
+Every text id that your language file defines is available to the components below. An id that the language file lacks shows the English text.
+
+The wrapper adds four props to `Component`:
+
+`locale` (string)::
+The code of the language of the user.
+
+`defaultLocale` (string)::
+Always `en_US`.
+
+`selectedLocale` (string or `null`)::
+The language that the Modern UI stored.
+
+`dispatch` (function)::
+The function that sends an action to the Redux store of the Modern UI. See xref:go-deeper/redux.adoc[Shared state with Redux].
+
+Do not rely on these props, and do not use their names for props of your own. They replace props of the same name that the parent passes.
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default withIntlWrapper(zimletLocale)(Component)`. A call inside a render makes a new component on every render, and the child loses its state and loads the files again each time.
+* Wrap the component that the Modern UI draws. Components below it read the texts and need no wrapper of their own. A component that the wrapped one does not render itself needs its own wrapper.
+* Each wrapped component loads the files itself and renders nothing on its first render.
+* A language file that cannot be loaded logs `Error loading translations for <code> from zimlet.` to the browser console, and the English texts show. When the English file fails, the wrapped component renders nothing.
+* When the user changes the language, the wrapper calls `importFn` for the new code and shows the new texts without a reload.
+* An id that the Modern UI already defines shows the Modern UI text, not yours. Start each id with the name of your Zimlet. See xref:go-deeper/localization.adoc[Localization].
+
+[#with-intl-consumer]
+== withIntlConsumer
+
+Passes the texts of the nearest text provider to a component as props. Use it when a class component needs the dictionary itself, for example to look up a text with `translate`, and `withText` does not fit. In a function component, read the same value with `useContext(IntlContext)`, or use `useText` for a single text. See xref:reference/shims/localization.adoc[Localization (`@zimbra/preact-i18n`)] for both. No active Zimlet uses `withIntlConsumer`, so this entry documents what the code reads.
+
+=== Signature
+
+[source,js]
+----
+import { withIntlConsumer } from '@zimbra-client/enhancers';
+
+const Enhanced = withIntlConsumer(mapProps)(Component);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`mapProps`
+|function `(value: { intl: object }) => object`
+|Optional. Receives the value of the text provider, and returns the props to add. `value.intl.dictionary` holds the texts as a nested object. The function runs on every render. Without it, the component gets the `intl` prop.
+
+|===
+
+=== Returns
+
+A function `(Component: component) => component`. The new component renders `Component` with all its own props and the added props. Without `mapProps`, the added prop is `intl` (object), as in `{ intl: value.intl }`. With `mapProps`, it is each field of the object that `mapProps` returns. The added props replace props of the same name that the parent passes. The component renders again when the texts change.
+
+=== Usage notes
+
+* Apply it once, outside any component, as in `export default withIntlConsumer()(Component)`. A call inside a render makes a new component on every render, and the child loses its state each time.
+* The texts that it passes are those of the nearest provider above it. To get the texts of your Zimlet, put it below a component that `withIntlWrapper` wraps. Above that, it passes only the texts of the Modern UI.
+
+[#next-step]
+== Next step
+
+Derive props and choose a component to render with xref:reference/shims/hocs/composition.adoc[Composition].

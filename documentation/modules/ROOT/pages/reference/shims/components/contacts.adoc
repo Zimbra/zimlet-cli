@@ -333,4 +333,4 @@ A `div` with a round background. It holds the initials or an icon, and over it t
 [#next-step]
 == Next step
 
-Continue with the components for appointments, signatures and files, in xref:reference/shims/components/appointments-signatures-and-files.adoc[Appointments, signatures and files].
+Continue with the components for signatures, PDF files and the logo, in xref:reference/shims/components/signatures-and-files.adoc[Signatures and files].

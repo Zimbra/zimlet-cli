@@ -1,6 +1,6 @@
 = Components
 
-The `@zimbra-client/components` module holds the larger parts of the xref:reference/glossary.adoc#modern-ui[Modern UI] screens. They include sidebars, folder lists, menus, dialogs, form fields and the contact and calendar widgets. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a part that looks and behaves like the Modern UI's own. Examples are an `ActionMenu` in a slot handler and a `ModalDialog` that opens from a button. Its parts are in eleven areas. For small controls such as `Button` and `Icon`, see xref:reference/shims/blocks.adoc[Blocks UI kit].
+The `@zimbra-client/components` module holds the larger parts of the xref:reference/glossary.adoc#modern-ui[Modern UI] screens. They include sidebars, folder lists, menus, dialogs, form fields and the contact and calendar widgets. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a part that looks and behaves like the Modern UI's own. Examples are an `ActionMenu` in a slot handler and a `ModalDialog` that opens from a button. Its parts are in twelve areas. For small controls such as `Button` and `Icon`, see xref:reference/shims/blocks.adoc[Blocks UI kit].
 
 The Modern UI shares the module with every Zimlet, so the build does not copy it into your Zimlet. Import a name as in `import { MenuItem } from '@zimbra-client/components';`. See xref:fundamentals/shared-libraries.adoc[Shared libraries] for how shared modules work.
 
@@ -34,8 +34,11 @@ Use these to let the user enter recipients, write formatted text or choose an em
 [[contacts]]pass:[<a class="anchor" href="#contacts"></a>]xref:reference/shims/components/contacts.adoc[Contacts]::
 Use these to show or edit contacts: a list, an editor, a hover card and an avatar. Exports: `ContactList`, `ContactEditor`, `ContactHoverCardWrapper` and `Avatar`.
 
-[[appointments-signatures-and-files]]pass:[<a class="anchor" href="#appointments-signatures-and-files"></a>]xref:reference/shims/components/appointments-signatures-and-files.adoc[Appointments, signatures and files]::
-Use these to edit an appointment or a signature and to show a PDF file. `DraggableCard` is a card that the user can drag, and `ClientLogo` shows the application logo. Exports: `AppointmentEdit`, `SignatureBox`, `PdfjsViewer`, `DraggableCard` and `ClientLogo`.
+[[signatures-and-files]]pass:[<a class="anchor" href="#signatures-and-files"></a>]xref:reference/shims/components/signatures-and-files.adoc[Signatures and files]::
+Use these to edit a signature and to show a PDF file. `DraggableCard` is a card that the user can drag, and `ClientLogo` shows the application logo. Exports: `SignatureBox`, `PdfjsViewer`, `DraggableCard` and `ClientLogo`.
+
+[[appointment-edit]]pass:[<a class="anchor" href="#appointment-edit"></a>]xref:reference/shims/components/appointment-edit.adoc[AppointmentEdit]::
+Use this to show the form that creates or edits an appointment. Export: `AppointmentEdit`.
 
 [[navigation]]pass:[<a class="anchor" href="#navigation"></a>]xref:reference/shims/components/navigation.adoc[Navigation]::
 Use these to show the sidebar and the folder tree. Exports: `Sidebar`, `MailSidebar`, `FolderList`, `FolderListLight` and `FolderListGroup`.
