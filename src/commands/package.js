@@ -69,7 +69,7 @@ export default asyncCommand({
 			return error('label and description string are not provided as argument');
 		}
 
-		argv.resourcedir && createResourceFiles(argv.resourcedir);
+		argv.resourcedir && createResourceFiles(builddir, argv.resourcedir);
 
 		// Create the xml descriptor file for the zimlet
 		let xmlFile = `${argv.name}.xml`;
@@ -170,7 +170,7 @@ function createLocalizationFiles(zimletName, label, description) {
 
 
 // Add resource files to the build directory
-function createResourceFiles(resourcesDir) {
+function createResourceFiles(builddir, resourcesDir) {
 	const cwd = process.cwd();
 	let resourcedir = path.resolve(cwd, resourcesDir);
 
@@ -180,10 +180,10 @@ function createResourceFiles(resourcesDir) {
 
 	const resourceFolderName = path.basename(resourcesDir);
 	try {
-		fs.cpSync(resourcesDir, path.resolve(cwd, 'build', resourceFolderName), { recursive: true });
+		fs.cpSync(resourcedir, path.resolve(cwd, builddir, resourceFolderName), { recursive: true });
 		console.log(`${resourceFolderName} copied successfully!`);
 	} catch (err) {
-		console.error('Error copying Resources:', err);
+		return error(`Error copying resources: ${err}`, 1);
 	}
 }
 
