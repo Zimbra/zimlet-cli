@@ -1,0 +1,192 @@
+= Save attachment dialog
+
+This recipe adds a place to save attachments in the xref:reference/glossary.adoc#modern-ui[Modern UI]. The example adds the button *Save to Team drive* to the *Save file to* dialog. One choice saves the attachment, or every attachment of the message, to the Briefcase folder *Team drive*. Use the same pattern to offer another destination for attachments, such as a shared folder or a document service of your organization. A xref:reference/glossary.adoc#zimlet[Zimlet] adds the button by filling two xref:fundamentals/extending-the-ui.adoc[slots] of the dialog, one for a single attachment and one for several.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose the slots for a button in the dialog that saves attachments.
+* Use one component for the dialog of one attachment and the dialog of several.
+* Save a part of a message to Briefcase with a request to the server, so that the file never passes through the browser.
+* Close the dialog and report the result in a notification.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of the xref:go-deeper/server-data/batch-client.adoc[batch client], because the button sends its requests with it.
+
+[#choose-the-slots]
+== Choose the slots
+
+The button must be in the dialog where the user chooses where to save, and it must know which attachments to save. The dialog has one slot for a single attachment and one for several, and each slot passes its own prop. The example fills both, so that the destination is offered every time.
+
+[#the-slots]
+=== The slots
+
+`slot::attachment-single-action`::
+The *Save file to* dialog for one attachment. It opens from the download button of a tile, or from the button above a list that has one attachment. The slot passes `attachment`. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+`slot::attachment-multi-action`::
+The same dialog for several attachments, which opens from the button above a list that has more than one. The slot passes `attachments`, an array. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+Both slots also pass `buttonClass`, `divClass`, `iconClass` and `closeModal`. A handler for either slot changes how saving works for every user. See xref:reference/slots/mail/attachments.adoc#saving-an-attachment[Saving an attachment].
+
+[#other-slots]
+=== Other slots
+
+`slot::email-attachment-action`::
+The tile of an attachment, in the viewer, the composer and Calendar. Choose it for an action on one attachment that must be one click away, and not in a dialog.
+
+`slot::attachment-viewer`::
+The preview of an attachment. Choose it to show a file in your own way, and not to save it.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the two handlers in `init()`. It replaces the generated file.
+** `constants/index.js` holds the name of the folder. It replaces the generated file.
+** `api/team-drive.js` sends the requests.
+** `components/save-to-team-drive/` is the button.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$attachment-destination/intl/en_US.json[]
+----
+
+[#choose-the-team-drive]
+== Choose the team drive
+
+The team drive of the example is a folder of Briefcase, which holds documents in folders. The Zimlet needs two requests:
+
+`CreateFolder`::
+Creates the folder *Team drive*. The view `document` makes it a Briefcase folder. The option `fie` returns the existing folder when the name is taken, so the request is safe to send before every save.
+
+`SaveDocument`::
+Saves a part of a message as a document. The request holds only the ids of the message and of the part. The server reads the file, so it never passes through the browser. The slot passes both ids in the attachment as `messageId` and `part`.
+
+.constants/index.js
+[source,js]
+----
+include::example$attachment-destination/constants/index.js[]
+----
+
+.api/team-drive.js
+[source,js]
+----
+include::example$attachment-destination/api/team-drive.js[]
+----
+
+The name of the file is `name` or `filename`, depending on where the attachment comes from, so the request takes whichever is set. The requests of every attachment run at the same time. See xref:reference/context/batch-client/json-request.adoc[jsonRequest] for the options of the call.
+
+[#add-the-button]
+== Add the button
+
+The button saves the attachments that it gets as a list. The handler of the single slot passes a list of one, and the handler of the multiple slot passes the list that the slot gives. One component therefore serves both dialogs, and only the label differs.
+
+.components/save-to-team-drive/index.js
+[source,js]
+----
+include::example$attachment-destination/components/save-to-team-drive/index.js[]
+----
+
+[#slot-props]
+=== The props of the dialog
+
+The slots pass props that help the button fit into the dialog:
+
+`divClass`::
+The class of the block that holds a button of the dialog. The example puts it on the `div` around its button, so that the button sits like the others.
+
+`buttonClass`::
+The class that the dialog gives its buttons. The example puts it on its `Button`.
+
+`closeModal`::
+A function that closes the dialog. The dialog does not close when the user chooses a button. The example calls it first, so the user sees the page again while the request runs.
+
+`iconClass`::
+The class of the icon of a button. The example does not use it, because `Button` takes the icon as a prop.
+
+[#button]
+=== The Button component
+
+`Button` is explained in xref:build-by-goal/recipe-server-data.adoc#button[Manage server data]. The example sets `class`, which takes `buttonClass`, and `icon`, which takes a component of `lucide-preact` and sizes it. See xref:build-by-goal/recipe-message-banner.adoc#button-as-link[Show a message banner] for `icon`.
+
+[#report-the-result]
+== Report the result
+
+The dialog is gone when the request ends, so a notification tells the user what happened. Get `notify` in the handler and pass it to the component, as xref:build-by-goal/recipe-mail-action-menu.adoc#notify[Add a mail menu item] describes. The example reads the texts of the notification with `useText`, which returns them as strings that `notify` takes as its message.
+
+[#register-the-handlers]
+== Register the handlers
+
+Register one handler for each slot in `init()` with `plugins.register`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. Each handler reads `notify` when the slot renders, and passes the component the list of attachments and the label.
+
+.index.js
+[source,js]
+----
+include::example$attachment-destination/index.js[]
+----
+
+[#limits]
+== Know the limits
+
+* A handler for either slot changes how saving works for every user who has the Zimlet. The download button of a tile and the button above the list open the dialog and no longer download the file at once.
+* A file with the same name as a file in the folder is not saved, and the notification reports a failure. The example does not save a new version.
+* A save of several attachments reports a failure when one of them fails. The other attachments can already be in the folder.
+* The dialog opens only for the lists that the user cannot edit, which are the message viewer and the event details of Calendar. See xref:reference/slots/mail/attachments.adoc#saving-an-attachment[Saving an attachment].
+* The slots show the content of every handler. A Zimlet for a cloud drive that fills the same slots adds its button beside yours.
+* The folder name in `constants/index.js` is an example. Use the name of your own folder.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Open a message that has one attachment in *Mail*. Choose the button *Save* above the list, or the download button of the tile. The dialog *Save file to* opens with the button *Save to Team drive* below *Download*.
++
+.The Save file to dialog with the button of the Zimlet
+image::attachment-destination-save-file-to-dialog.png["The Mail view of the Modern UI with a message that has one attachment and the Save file to dialog open. The dialog has the button Download and, outlined in red, the button Save to Team drive."]
++
+The outlined button is the one that the Zimlet adds.
+. Choose *Save to Team drive*. The dialog closes and a notification says that the attachment was saved.
+. Open *Briefcase*, and reload the page if the folder is missing. The folder *Team drive* holds the file with its original name.
+. Open a message that has two or more attachments. Choose the button above the list. The dialog has the button *Save all to Team drive*. Choose it. The folder holds every attachment of the message.
+. Save the same attachment again. The notification says that the attachments could not be saved, and the folder still holds one file.
+
+[#expected-result]
+== Expected result
+
+* The dialog *Save file to* has a button *Save to Team drive* for one attachment, and *Save all to Team drive* for several.
+* The button closes the dialog, saves the files to the folder *Team drive* of Briefcase and reports the result in a notification.
+* A file whose name is already in the folder is not saved, and the notification reports a failure.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The download button saves the file, and the dialog does not open.::
+* Cause: The Zimlet is not loaded, or the handlers are registered under other keys. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows *Running*, that the keys are `slot::attachment-single-action` and `slot::attachment-multi-action`, and that you register in `init()`. Reload the page. An account that blocks attachments has no download button.
+
+The dialog does not close.::
+* Cause: The component does not call `closeModal`.
+* Fix: Call `closeModal` in the click handler, as the example does.
+
+The notification always reports a failure.::
+* Cause: The name of the file is already in the folder, or the attachment has no `part` or `messageId`.
+* Fix: Save a file that is not in the folder yet, and check the attachment that the slot passes.
+
+The notification shows no text.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or the component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around the component.
+
+[#next-step]
+== Next step
+
+Add an action to a tile in the viewer with `slot::email-attachment-action`, which the xref:reference/slots/mail/attachments.adoc[Attachments] slots describe. Add an action to a file in Briefcase in xref:build-by-goal/recipe-briefcase-file-actions.adoc[Add a Briefcase action]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

@@ -1,0 +1,170 @@
+= Hide items with a notice
+
+This recipe turns off two built-in actions of the xref:reference/glossary.adoc#modern-ui[Modern UI] and tells users why. The example hides the *Print* item and the *Empty folder* item. It shows a notice about the policy in a box at the right of the screen. Use the same pattern when an organization must remove a part of the interface and explain the change. A xref:reference/glossary.adoc#zimlet[Zimlet] does both by registering handlers for xref:fundamentals/extending-the-ui.adoc[slots]. Two of the slots only hide, and one draws the notice.
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose the slots that hide a built-in item.
+* Hide an item with a handler that returns `true`.
+* Show a notice in an ad box, and keep it inside the size of the box.
+* Limit the effect of the Zimlet to the users that the policy covers.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+
+[#choose-the-slots]
+== Choose the slots
+
+A policy has two parts. Some built-in items must go, and users must read why. The Modern UI has a slot for each item that a Zimlet may hide, and boxes at the edge of the screen for a notice. The example fills two hide slots and one box.
+
+[#the-slots]
+=== The slots
+
+`slot::print-link`::
+The *Print* item in the menus of a message and in the *More Options* menu of the Calendar toolbar. A handler that returns a value hides the item. Look up the slot in xref:reference/slots/hide-built-in-ui.adoc#print-link[Hide built-in UI].
+
+`slot::empty-folder-option`::
+The *Empty folder* item in the menu of a mail folder. A handler that returns a value hides the item. Look up the slot in xref:reference/slots/hide-built-in-ui.adoc#empty-folder-option[Hide built-in UI].
+
+`slot::adSlot-300-250-top`::
+The box at the top of the right column of Mail, Calendar and Contacts. The box is 300 px wide and shows up to 250 px of content, in a window at least 1300 px wide. Look up the slot in xref:reference/slots/app-shell/ad-slots.adoc#adslot-300-250-top[Ad slots].
+
+[#other-slots]
+=== Other slots
+
+The other slots of xref:reference/slots/hide-built-in-ui.adoc[Hide built-in UI] hide the *About* item, the *Language* item, the *Deleted Items* items and some settings. Register them the same way.
+
+`slot::adSlot-news`::
+A box in the right column with no height limit. Choose it for a notice that is longer than 250 px.
+
+`slot::adSlot-adhesion-320-50`::
+A strip along the bottom edge of a narrow window. Choose it when the notice must show on a small screen too. See xref:reference/slots/app-shell/ad-slots.adoc[Ad slots] for the strips.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the three handlers in `init()`. It replaces the generated file.
+** `constants/index.js` holds the address of the policy. It replaces the generated file.
+** `components/policy-notice/` is the notice.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$policy-rollout/intl/en_US.json[]
+----
+
+[#hide-the-items]
+== Hide the items
+
+A hide slot draws nothing. The Modern UI asks the handlers of the slot for a value and keeps the built-in item only when no handler returns one. The value is never drawn, so `true` is enough.
+
+[source,js]
+----
+plugins.register('slot::print-link', () => true);
+----
+
+A handler that returns `null`, `false` or nothing keeps the item. A handler can return `true` under a condition and `null` otherwise. The policy of the example covers every user who has the Zimlet, so its handlers always return `true`.
+
+WARNING: A handler that returns `true` hides the item for every user who has the Zimlet. Enable the Zimlet only in the classes of service that the policy covers, as xref:run-package-deploy/deploy.adoc#make-available[Make the Zimlet available to users] describes.
+
+The *Print* slot hides the item everywhere it shows, and a handler cannot hide it in one menu only. The *Empty folder* slot applies to the menus of Inbox, Drafts, Sent and the other mail folders. It does not apply to *Empty trash* and *Empty spam*, which always show.
+
+[#show-the-notice]
+== Show the notice
+
+Users who lose an item need a reason. The notice states the policy and links to the full text. The slot of the box passes no props, so the handler returns the component and nothing else.
+
+.components/policy-notice/index.js
+[source,js]
+----
+include::example$policy-rollout/components/policy-notice/index.js[]
+----
+
+.components/policy-notice/style.less
+[source,less]
+----
+include::example$policy-rollout/components/policy-notice/style.less[]
+----
+
+The box is 300 px wide and cuts off content that is taller than 250 px. The notice therefore has a heading, two lines of text and one link. Wrap the component with `withIntl` to load the texts of your Zimlet. The spaces, colours and sizes use the CSS variables of the Modern UI, as xref:go-deeper/styling.adoc[Styling] describes.
+
+[#icon]
+=== The Icon and Button components
+
+`Icon` draws the shield beside the heading. xref:build-by-goal/recipe-message-banner.adoc#icon[Show a message banner] explains it. The link is a `Button` with the `text` style that opens the policy in a new tab. xref:build-by-goal/recipe-message-banner.adoc#button-as-link[Show a message banner] explains its props.
+
+[#register-the-handlers]
+== Register the handlers
+
+Register one handler for each slot in `init()` with `plugins.register`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The two hide handlers return `true`. The box handler returns the notice.
+
+.index.js
+[source,js]
+----
+include::example$policy-rollout/index.js[]
+----
+
+.constants/index.js
+[source,js]
+----
+include::example$policy-rollout/constants/index.js[]
+----
+
+[#limits]
+== Know the limits
+
+* The Zimlet hides menu items and does not enforce the policy. A user can still print from the browser.
+* The box shows in Mail, in Calendar and its search results, and in Contacts, in a window at least 1300 px wide. It does not show in Briefcase or in a narrow window. See xref:reference/slots/app-shell/ad-slots.adoc#ad-boxes[Ad boxes].
+* Every Zimlet that fills the box adds its content there, one below the other. The notice of another Zimlet shows beside yours.
+* The address of the policy in `constants/index.js` is a placeholder. Replace it with the page of your organization.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before. Disable any other Zimlet that hides *Print*.
+. Open a message in *Mail* and open its *More* menu. *Print* is missing. In *Calendar*, open the *More Options* menu of the toolbar. *Print* is missing there too.
+. Open the menu of a mail folder such as *Drafts*. *Empty folder* is missing. The menu of *Trash* still has *Empty trash*.
+. Open *Mail* in a window at least 1300 px wide. The box at the right of the screen shows the notice.
++
+.Mail with the policy notice in the right column
+image::policy-rollout-notice.png["The Mail view of the Modern UI in a wide window. A red outline surrounds a box at the right edge of the screen. The box has a shield icon, the heading Company policy, the text Printing and emptying folders are turned off for your account, and the link Read the policy."]
++
+The outlined box is the one that the Zimlet adds.
+. Choose *Read the policy*. The policy opens in a new browser tab, and the Modern UI stays open.
+
+[#expected-result]
+== Expected result
+
+* *Print* is missing from the menus of a message and from the Calendar toolbar menu.
+* *Empty folder* is missing from the menus of mail folders, and *Empty trash* stays.
+* A box at the right of Mail, Calendar and Contacts shows the notice in a wide window.
+* *Read the policy* opens the policy in a new tab.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+*Print* or *Empty folder* still shows.::
+* Cause: The Zimlet is not loaded, the handler is registered under another key, or the handler returns nothing. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error. A handler such as `() => {}` returns nothing, so it keeps the item.
+* Fix: Check that the sideloader shows *Running*, that the keys are `slot::print-link` and `slot::empty-folder-option`, and that each handler returns `true`.
+
+The notice does not show.::
+* Cause: The window is narrower than 1300 px, the screen is not Mail, Calendar or Contacts, or the handler is registered under another key.
+* Fix: Widen the window and open Mail. Check that the key is `slot::adSlot-300-250-top`. Add `?zimletSlots=show` to the address to see the slot labels, as xref:run-package-deploy/run-and-debug.adoc#debug-slots[Run and debug] describes.
+
+The texts show as keys.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or the component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around the component.
+
+[#next-step]
+== Next step
+
+Add a panel that stays in view on every screen in xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget]. Add items to the menus of the header in xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

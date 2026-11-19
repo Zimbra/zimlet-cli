@@ -1,6 +1,6 @@
 = Platform checks
 
-The xref:reference/glossary.adoc#modern-ui[Modern UI] also runs in the desktop app and in the mobile apps, where some browser features differ or are missing. Check the platform before your Zimlet uses a feature that needs a particular one, and take the code path that works. `getPlatformType()` tells you where your code runs. See xref:reference/shims/errors-platform-and-pwa.adoc[Errors, platform and PWA] for its signature and for `openExternalBrowser`.
+The xref:reference/glossary.adoc#modern-ui[Modern UI] also runs in the desktop app and in the mobile apps, where some browser features differ or are missing. Check the platform before your Zimlet uses a feature that needs a particular one, and take the code path that works. `getPlatformType()` tells you where your code runs. See xref:reference/shims/errors-and-platform.adoc[Errors and platform] for its signature and for `openExternalBrowser`.
 
 [#find-the-platform]
 == Find the platform

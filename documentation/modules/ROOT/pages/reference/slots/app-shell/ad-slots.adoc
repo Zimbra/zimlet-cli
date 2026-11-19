@@ -1,0 +1,441 @@
+= Ad slots
+
+The ad slots are places in the xref:reference/glossary.adoc#modern-ui[Modern UI] that reserve room for advertisements. Ten of them are boxes of a fixed size at the right and left of the screen and along the bottom edge of the window. Two more are at the top of lists. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] shows an advertisement, or another block of a fixed size, without moving the content of the screen. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#ad-boxes]
+=== Ad boxes
+
+The ten slots with the prefix `adSlot-` draw in three places. The names carry the size of the standard banner that fits the box.
+
+* The right column is at the right of the screens of Mail, Calendar and its search results, and Contacts. The sidebars of the same screens have the left column below their folders. Both show only in a window at least 1300 px wide.
+* The bottom strip is fixed to the bottom edge of the window, in every screen. It shows only in a window up to 1024 px wide. A window up to 768 px wide has the strip of `adSlot-adhesion-320-50`. A window from 769 to 1024 px wide has the strip of `adSlot-adhesion-728-90`.
+
+.The Mail screen in a wide window with boxes in the right and the left column
+image::slots-ad-slots-columns.png["The Mail screen in a wide window. Outlined in red at the right edge: the right column with Box 1, Box 2, Box 3 and the top of Box 4. Outlined in red below the folders: the left column with Box 6, Box 7 and Box 8. A Zimlet fills every box."]
+
+A Zimlet fills the outlined boxes and labels each one with its row number in the table. The right column scrolls when its boxes are taller than the window. The left column is under the folders of the sidebar.
+
+[cols="2,1,1,1",options="header"]
+|===
+|Slot |Place |Width |Maximum height
+
+|`adSlot-300-250-top`
+|Right column
+|300 px
+|250 px
+
+|`adSlot-300-250-bottom`
+|Right column
+|300 px
+|250 px
+
+|`adSlot-news`
+|Right column
+|300 px
+|None
+
+|`adSlot-160-600`
+|Right column
+|160 px
+|600 px
+
+|`adSlot-300-600`
+|Right column
+|300 px
+|600 px
+
+|`adSlot-left-300-250`
+|Left column
+|300 px
+|250 px
+
+|`adSlot-left-180-150`
+|Left column
+|180 px
+|150 px
+
+|`adSlot-left-120-90`
+|Left column
+|120 px
+|90 px
+
+|`adSlot-adhesion-320-50`
+|Bottom strip
+|Window width
+|82 px
+
+|`adSlot-adhesion-728-90`
+|Bottom strip
+|Width of the content
+|122 px
+|===
+
+The boxes of the right and left columns cut off content that is taller than the maximum height. The boxes are listed in the order in which they appear, from top to bottom.
+
+[#handlers-of-the-ad-slots]
+=== Handlers of the ad slots
+
+The Modern UI calls the handler of every ad slot with the value `true`, so the slots have no props. Return an element, or `null` to draw nothing. A slot without a handler takes no room in the columns.
+
+[#members]
+== Members
+
+<<adslot-300-250-top,`adSlot-300-250-top`>>::
+A 300 by 250 box at the top of the right column.
+
+<<adslot-300-250-bottom,`adSlot-300-250-bottom`>>::
+A second 300 by 250 box in the right column.
+
+<<adslot-news,`adSlot-news`>>::
+A 300 px wide box with no height limit in the right column.
+
+<<adslot-160-600,`adSlot-160-600`>>::
+A 160 by 600 box in the right column.
+
+<<adslot-300-600,`adSlot-300-600`>>::
+A 300 by 600 box in the right column.
+
+<<adslot-left-300-250,`adSlot-left-300-250`>>::
+A 300 by 250 box at the bottom of the sidebar.
+
+<<adslot-left-180-150,`adSlot-left-180-150`>>::
+A 180 by 150 box at the bottom of the sidebar.
+
+<<adslot-left-120-90,`adSlot-left-120-90`>>::
+A 120 by 90 box at the bottom of the sidebar.
+
+<<adslot-adhesion-320-50,`adSlot-adhesion-320-50`>>::
+A strip at the bottom of a narrow window.
+
+<<adslot-adhesion-728-90,`adSlot-adhesion-728-90`>>::
+A strip at the bottom of a window of medium width.
+
+<<top-mail-ad-item,`top-mail-ad-item`>>::
+A block above the first row of a list and above the calendar.
+
+<<top-mail-generic-slot,`top-mail-generic-slot`>>::
+A block at the top of the message list of Mail.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-policy-rollout.adoc[Hide items with a notice]::
+A recipe that shows a notice about a company policy in the box at the top of the right column, with <<adslot-300-250-top,`adSlot-300-250-top`>>. It also hides two built-in items. You learn to keep a notice inside the 300 by 250 box. Every other `adSlot-` box is registered the same way, and only its size and its place differ.
+
+[#adslot-300-250-top]
+== adSlot-300-250-top
+
+Adds a box at the top of the right column, 300 px wide and up to 250 px high. Use it for a banner of the standard 300 by 250 size. Use <<adslot-300-250-bottom,`adSlot-300-250-bottom`>> for a second box of that size under it.
+
+[#adslot-300-250-top-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-300-250-top', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-300-250-top-props]
+=== Props
+
+None.
+
+[#adslot-300-250-top-usage-notes]
+=== Usage notes
+
+* The right column shows in Mail, in Calendar and its search results, and in Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+* For a complete example, see xref:build-by-goal/recipe-policy-rollout.adoc[Hide items with a notice].
+
+[#adslot-300-250-bottom]
+== adSlot-300-250-bottom
+
+Adds a box in the right column, below <<adslot-300-250-top,`adSlot-300-250-top`>>. It is 300 px wide and up to 250 px high. Use it for a second banner of the standard 300 by 250 size.
+
+[#adslot-300-250-bottom-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-300-250-bottom', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-300-250-bottom-props]
+=== Props
+
+None.
+
+[#adslot-300-250-bottom-usage-notes]
+=== Usage notes
+
+* The right column shows in Mail, in Calendar and its search results, and in Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+
+[#adslot-news]
+== adSlot-news
+
+Adds a box in the right column, below the two 300 by 250 boxes. It is 300 px wide and has no height limit. Use it for a block that is taller than a banner.
+
+[#adslot-news-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-news', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-news-props]
+=== Props
+
+None.
+
+[#adslot-news-usage-notes]
+=== Usage notes
+
+* The right column shows in Mail, in Calendar and its search results, and in Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+* The box grows with its content, so the column scrolls when the blocks are taller than the window.
+
+[#adslot-160-600]
+== adSlot-160-600
+
+Adds a tall narrow box in the right column, below <<adslot-news,`adSlot-news`>>. It is 160 px wide and up to 600 px high. Use it for a banner of the standard 160 by 600 size. Use <<adslot-300-600,`adSlot-300-600`>> for a wider one.
+
+[#adslot-160-600-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-160-600', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-160-600-props]
+=== Props
+
+None.
+
+[#adslot-160-600-usage-notes]
+=== Usage notes
+
+* The right column shows in Mail, in Calendar and its search results, and in Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+
+[#adslot-300-600]
+== adSlot-300-600
+
+Adds a tall box at the end of the right column. It is 300 px wide and up to 600 px high. Use it for a banner of the standard 300 by 600 size. Use <<adslot-160-600,`adSlot-160-600`>> for a narrower one.
+
+[#adslot-300-600-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-300-600', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-300-600-props]
+=== Props
+
+None.
+
+[#adslot-300-600-usage-notes]
+=== Usage notes
+
+* The right column shows in Mail, in Calendar and its search results, and in Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+
+[#adslot-left-300-250]
+== adSlot-left-300-250
+
+Adds a box at the bottom of the sidebar, below the folders. It is 300 px wide and up to 250 px high. Use it for a banner of the standard 300 by 250 size.
+
+[#adslot-left-300-250-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-left-300-250', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-left-300-250-props]
+=== Props
+
+None.
+
+[#adslot-left-300-250-usage-notes]
+=== Usage notes
+
+* The left column shows in the sidebars of Mail, Calendar and its search results, and Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+* While a handler is registered for this slot, the sidebar is at least 312 px wide instead of 192 px, so that the box fits.
+
+[#adslot-left-180-150]
+== adSlot-left-180-150
+
+Adds a box at the bottom of the sidebar, below <<adslot-left-300-250,`adSlot-left-300-250`>>. It is 180 px wide and up to 150 px high. Use it for a banner of the standard 180 by 150 size.
+
+[#adslot-left-180-150-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-left-180-150', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-left-180-150-props]
+=== Props
+
+None.
+
+[#adslot-left-180-150-usage-notes]
+=== Usage notes
+
+* The left column shows in the sidebars of Mail, Calendar and its search results, and Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+
+[#adslot-left-120-90]
+== adSlot-left-120-90
+
+Adds a box at the bottom of the sidebar, below <<adslot-left-180-150,`adSlot-left-180-150`>>. It is 120 px wide and up to 90 px high. Use it for a banner of the standard 120 by 90 size.
+
+[#adslot-left-120-90-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-left-120-90', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-left-120-90-props]
+=== Props
+
+None.
+
+[#adslot-left-120-90-usage-notes]
+=== Usage notes
+
+* The left column shows in the sidebars of Mail, Calendar and its search results, and Contacts, in a window at least 1300 px wide. See <<ad-boxes,Ad boxes>>.
+
+[#adslot-adhesion-320-50]
+== adSlot-adhesion-320-50
+
+Adds a strip along the bottom edge of the window in a narrow window. It is as wide as the window and up to 82 px high. Use it for a 320 by 50 banner. Use <<adslot-adhesion-728-90,`adSlot-adhesion-728-90`>> for a window from 769 to 1024 px wide.
+
+[#adslot-adhesion-320-50-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-adhesion-320-50', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-adhesion-320-50-props]
+=== Props
+
+None.
+
+[#adslot-adhesion-320-50-usage-notes]
+=== Usage notes
+
+* The strip shows in a window up to 768 px wide, in every screen. See <<ad-boxes,Ad boxes>>.
+
+[#adslot-adhesion-728-90]
+== adSlot-adhesion-728-90
+
+Adds a strip along the bottom edge of the window in a window of medium width. It is up to 122 px high and as wide as its content. Use it for a 728 by 90 banner. Use <<adslot-adhesion-320-50,`adSlot-adhesion-320-50`>> for a narrower window.
+
+[#adslot-adhesion-728-90-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::adSlot-adhesion-728-90', handler)
+
+// handler: () => element | null
+----
+
+[#adslot-adhesion-728-90-props]
+=== Props
+
+None.
+
+[#adslot-adhesion-728-90-usage-notes]
+=== Usage notes
+
+* The strip shows in a window from 769 to 1024 px wide, in every screen. See <<ad-boxes,Ad boxes>>.
+
+[#top-mail-ad-item]
+== top-mail-ad-item
+
+Adds a block above the first row of a list, and above the message of an empty list. Use it for a banner that belongs at the top of a list of items. Despite its name, the slot is not only in Mail. Use <<top-mail-generic-slot,`top-mail-generic-slot`>> for a block inside the message list of Mail.
+
+[#top-mail-ad-item-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::top-mail-ad-item', handler)
+
+// handler: () => element | null
+----
+
+[#top-mail-ad-item-props]
+=== Props
+
+None.
+
+[#top-mail-ad-item-usage-notes]
+=== Usage notes
+
+* The block shows above the first row of the message list of Mail, the list of Contacts and the file list of Briefcase. It also shows above the empty message of these lists, and above the empty message of the message list in Mail.
+* The block shows above the calendar and the list of tasks in Calendar, and above the results on the search screen of Calendar.
+* The block also shows above the first row of the lists in three dialogs. They are the contact picker, the dialog that attaches a message in the composer, and the dialog that recovers deleted items.
+* The handler cannot tell which list it is in. Every handler shows its content in every place.
+* The block is cut off at the height of a narrow row, 72 px.
+
+[#top-mail-generic-slot]
+== top-mail-generic-slot
+
+Adds a block as the first row of the message list of Mail, below <<top-mail-ad-item,`top-mail-ad-item`>>. Use it for a block that belongs inside the list. It also shows above the message of an empty list.
+
+[#top-mail-generic-slot-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::top-mail-generic-slot', handler)
+
+// handler: ({ wide }) => element | null
+----
+
+[#top-mail-generic-slot-props]
+=== Props
+
+[[top-mail-generic-slot-wide]]pass:[<a class="anchor" href="#top-mail-generic-slot-wide"></a>]`wide` (boolean)::
+`true` when the message list uses the wide layout. That is when the window is at least 769 px wide and the reading pane is not at the right of the list. The slot passes no props above the empty message of a list.
+
+[#top-mail-generic-slot-usage-notes]
+=== Usage notes
+
+* The slot is in the message list of Mail only, including search results. The block has no height limit.
+
+[#next-step]
+== Next step
+
+Continue with the search bar in xref:reference/slots/app-shell/search.adoc[Search], or return to the xref:reference/slots.adoc[slot index].

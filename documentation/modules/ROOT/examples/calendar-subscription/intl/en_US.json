@@ -1,0 +1,18 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Lets users subscribe to a calendar from its address and lists the subscribed calendars."
+	},
+	"my-zimlet": {
+		"subscribe": "Subscribe to a calendar",
+		"dialogTitle": "Subscribe to a calendar",
+		"description": "Enter the address of an iCalendar feed and a name. The calendar shows in the group Others.",
+		"addressPlaceholder": "Address of the calendar",
+		"addressLabel": "Address of the calendar",
+		"namePlaceholder": "Name of the calendar",
+		"nameLabel": "Name of the calendar",
+		"subscribeButton": "Subscribe",
+		"invalidAddress": "Enter an address that starts with http:// or https://.",
+		"subscribeFailed": "The calendar could not be added. Check the address and the name, and try again."
+	}
+}

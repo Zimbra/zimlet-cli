@@ -1,0 +1,132 @@
+= Hide built-in UI
+
+These slots hide one built-in control, menu item, label or link of the xref:reference/glossary.adoc#modern-ui[Modern UI] and add nothing. Use them when a deployment must remove a part of the interface, such as the *Print* item or the *Delegates* settings. Every slot takes the same handler and follows the same rule, whichever screen it belongs to. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#registration-and-result]
+=== Registration and result
+
+Register a handler the same way for every slot below. Replace `<name>` with the slot name.
+
+[source,js]
+----
+plugins.register('slot::<name>', handler)
+
+// handler: () => true | null
+----
+
+The slots pass no props. Return `true` to hide the part, or `null` to keep it. The Modern UI checks only whether a handler returned a value, and it does not draw the value. When several Zimlets register for one slot, a single value is enough to hide the part. A slot cannot replace the part with one of your own.
+
+WARNING: A handler that returns a value hides the part for every user who has the Zimlet. Return `true` only under the condition that must hide it, and return `null` otherwise. The Modern UI then keeps the part.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-policy-rollout.adoc[Hide items with a notice]::
+A recipe that turns off printing and emptying folders for the users of a Zimlet, with <<print-link,`print-link`>> and <<empty-folder-option,`empty-folder-option`>>. It also shows a notice about the policy in a box at the right of the screen. You learn to hide an item with a handler that returns `true`. You also learn to limit the effect of the Zimlet to the users that a policy covers. Every other slot below is registered the same way.
+
+[#menus]
+== Menus
+
+Each slot hides one item of a menu. The four slots whose name starts with `recover-discarded` hide *Deleted Items*, the item that opens the dialog that recovers deleted items. The item appears only for accounts that can recover deleted items, so a handler has an effect only for them.
+
+[[about-link]]pass:[<a class="anchor" href="#about-link"></a>]`about-link`::
+Hides the *About* item of the *Settings and more* menu. Use it when the item must not appear.
++
+* *About* is in the same group as the items that other Zimlets add with xref:reference/slots/app-shell/header-menus.adoc#gear-menu[`gear-menu`]. A handler hides that whole group.
+* To add an item of your own, use xref:reference/slots/app-shell/header-menus.adoc#settings-dropdown-item[`settings-dropdown-item`] or xref:reference/slots/app-shell/header-menus.adoc#settings-dropdown-item-end[`settings-dropdown-item-end`].
+
+[[empty-folder-option]]pass:[<a class="anchor" href="#empty-folder-option"></a>]`empty-folder-option`::
+Hides the *Empty folder* item in the menu of a mail folder. Use it when users must not empty folders from the folder list.
++
+* The slot applies to the menus of Inbox, Drafts, Sent, Archive, Outbox and other mail folders. It does not apply to *Empty trash* and *Empty spam*, which always show.
+* For a complete example, see xref:build-by-goal/recipe-policy-rollout.adoc[Hide items with a notice].
+
+[[language-link]]pass:[<a class="anchor" href="#language-link"></a>]`language-link`::
+Hides the *Language* item of the *Settings and more* menu. Use it when users must not change the language from this menu.
++
+* The item appears only for accounts that have the options feature turned on, so the slot has an effect only for them.
+
+[[print-link]]pass:[<a class="anchor" href="#print-link"></a>]`print-link`::
+Hides the *Print* item in the menus of a message and in the actions menu of the Calendar toolbar. Use it when users must not print from the Modern UI.
++
+* The slot hides the item in the *More* menu of an open message, in the *More Options* menu and in the Calendar toolbar. A handler cannot hide it in one of them only.
+* The *More Options* menu shows *Print* only when one message is selected and the window is at least 1025 px wide. The slot also hides the divider above it.
+* For a complete example, see xref:build-by-goal/recipe-policy-rollout.adoc[Hide items with a notice].
+
+[[recover-discarded-appointments-option]]pass:[<a class="anchor" href="#recover-discarded-appointments-option"></a>]`recover-discarded-appointments-option`::
+Hides *Deleted Items* in the menu of the group *Trash* in Calendar. Use it when users must not recover deleted events from the Modern UI.
++
+* The item shows in a window at least 1024 px wide. *Empty trash* stays.
+
+[[recover-discarded-briefcase-option]]pass:[<a class="anchor" href="#recover-discarded-briefcase-option"></a>]`recover-discarded-briefcase-option`::
+Hides *Deleted Items* in the menu of the Trash folder of Briefcase. The item recovers deleted files. The folder list is in the sidebar of the Briefcase screen.
+
+[[recover-discarded-contacts-option]]pass:[<a class="anchor" href="#recover-discarded-contacts-option"></a>]`recover-discarded-contacts-option`::
+Hides *Deleted Items* in the menu of the Trash folder of Contacts. The item recovers deleted contacts. The folder list is in the sidebar of the Contacts screen.
+
+[[recover-discarded-mails-option]]pass:[<a class="anchor" href="#recover-discarded-mails-option"></a>]`recover-discarded-mails-option`::
+Hides *Deleted Items* in the menu of Trash in Mail. The item recovers deleted messages. Use it when users must not recover deleted messages from the folder list.
++
+* The menu of a local folder has no such item.
+
+[#settings-dialog]
+== Settings dialog
+
+Each slot hides one control on a page of the Settings dialog. To add a control or a section of your own, see xref:reference/slots/settings.adoc[Settings].
+
+[[browser-calendar-notification-setting]]pass:[<a class="anchor" href="#browser-calendar-notification-setting"></a>]`browser-calendar-notification-setting`::
+Hides *Show Browser Notifications* in the *Event Reminders* block of the Calendar and Reminders page.
+
+[[compose-direction-setting]]pass:[<a class="anchor" href="#compose-direction-setting"></a>]`compose-direction-setting`::
+Hides *Compose Direction* on the Writing Email page.
+
+[[declined-event-setting]]pass:[<a class="anchor" href="#declined-event-setting"></a>]`declined-event-setting`::
+Hides *Declined Events* on the Calendar and Reminders page. The option shows declined events in the calendar.
+
+[[default-calendar-setting]]pass:[<a class="anchor" href="#default-calendar-setting"></a>]`default-calendar-setting`::
+Hides *Default Calendar* on the Calendar and Reminders page. The list sets the calendar for new events and invitations.
++
+* The control appears only when the account has more than one calendar that can hold new events. The slot has an effect only then.
+
+[[delegates-setting]]pass:[<a class="anchor" href="#delegates-setting"></a>]`delegates-setting`::
+Hides the *Delegates* and *Delegate send settings* sections of the Writing Email page.
+
+[[free-busy-permission-setting]]pass:[<a class="anchor" href="#free-busy-permission-setting"></a>]`free-busy-permission-setting`::
+Hides the *Free Busy Permission* section of the Calendar and Reminders page. The section sets who can see when the user is free or busy.
+
+[[show-event-timezone-setting]]pass:[<a class="anchor" href="#show-event-timezone-setting"></a>]`show-event-timezone-setting`::
+Hides *Show time zones for start and end times*, under *When creating or editing events* on the Calendar and Reminders page.
+
+[[workday-time-zone-setting]]pass:[<a class="anchor" href="#workday-time-zone-setting"></a>]`workday-time-zone-setting`::
+Hides *Workday Time Zone* on the Calendar and Reminders page. The control sets the time zone of the start and the end of the workday.
+
+[#links-labels-and-buttons]
+== Links, labels and buttons
+
+[[private-event-label]]pass:[<a class="anchor" href="#private-event-label"></a>]`private-event-label`::
+Hides the *Private* label in the details of a private event. Use it when the label must not show.
++
+* The label shows only for private events, in the details popover that opens when the user points at or selects an event. The popover opens in a window at least 1025 px wide.
+* The slot hides only the word. The lock icon next to it stays.
+
+[[search-tips-link]]pass:[<a class="anchor" href="#search-tips-link"></a>]`search-tips-link`::
+Hides the *Search Tips* link, which opens a page of search tips in a new browser tab. Use it when your deployment must not send users to that page.
++
+* The link is in two places: the advanced search panel, and the header of the filter sidebar on the Mail search results screen. One handler hides both.
+* The advanced search panel is in Mail only. The filter sidebar shows in a window at least 1025 px wide, and not in a tab that fills the window. In the sidebar, the link is an icon with no text.
+
+[[show-details-notification-button]]pass:[<a class="anchor" href="#show-details-notification-button"></a>]`show-details-notification-button`::
+Hides the *Show details* button of the dialog that reports an error. Use it when users must not see the technical text of an error.
++
+* The error details and the *Copy to clipboard* button open from the button, so they are hidden with it.
+* The dialog opens when the Modern UI reports an error, such as a failed action in Calendar. Its title is *Something went wrong* unless the error sets its own.
+
+[#next-step]
+== Next step
+
+Continue with xref:reference/slots/content-processors.adoc[Content processors], the other slots that draw nothing, or return to the xref:reference/slots.adoc[slot index].

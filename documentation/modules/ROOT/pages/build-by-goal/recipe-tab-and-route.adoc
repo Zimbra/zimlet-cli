@@ -1,6 +1,6 @@
 = Add a tab and a screen
 
-This recipe gives your xref:reference/glossary.adoc#zimlet[Zimlet] a tab in the xref:reference/glossary.adoc#modern-ui[Modern UI] and a screen of your own that the tab opens. The example adds a *Meeting rooms* tab to the Video xref:reference/glossary.adoc#vertical[vertical]. The screen lists the rooms of a company meeting service, and each room opens in a new browser tab. Use it when your feature needs a whole screen, such as a list or a form. A small addition to an existing screen needs a slot instead.
+This recipe gives your xref:reference/glossary.adoc#zimlet[Zimlet] a tab in the xref:reference/glossary.adoc#modern-ui[Modern UI] and a screen of your own that the tab opens. The example adds a *Meeting rooms* tab to the Video xref:reference/glossary.adoc#vertical[vertical]. The screen lists the rooms of a company meeting service, and each room opens in a new browser tab. The start page of the Video vertical gets a line that points to the tab. Use it when your feature needs a whole screen, such as a list or a form. A small addition to an existing screen needs a slot instead.
 
 [#what-you-will-learn]
 == What you will learn
@@ -8,6 +8,7 @@ This recipe gives your xref:reference/glossary.adoc#zimlet[Zimlet] a tab in the 
 * Choose the vertical and the tab slot (`slot::<vertical>-tab-item`).
 * Add a tab with `MenuItem`.
 * Add a screen and open it with a route (`slot::routes`).
+* Add a line to the standard start page of a vertical (`slot::<vertical>-landing-page-description`).
 * Share one address with `useClientConfig`.
 * Make the screen work on a narrow window.
 
@@ -76,13 +77,25 @@ Choose the vertical by what the screen is for:
 * Put a screen for a meeting service in Video, for a chat service in Chat, and for a cloud drive in Cloud Storage. The vertical appears in the top navigation for users who have your Zimlet enabled.
 * Put anything else in Integrations. The sideloader that loads your Zimlets in development lives there.
 
-The tab shows only while the user is in its vertical. A handler for `slot::videoapps-tab-item` adds nothing to the Mail vertical. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs] for the slots of a vertical, and xref:reference/slots/app-shell/landing-pages.adoc[Landing pages] for the default page of a vertical that a Zimlet adds. The xref:reference/slots.adoc[slot index] lists every other slot.
+The tab shows only while the user is in its vertical. A handler for `slot::videoapps-tab-item` adds nothing to the Mail vertical. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs] for the slots of a vertical and for the default page of a vertical that a Zimlet adds. The xref:reference/slots.adoc[slot index] lists every other slot.
 
-[#the-slot]
-=== The slot
+[#the-slots]
+=== The slots
 
 `slot::videoapps-tab-item`::
 The tab slot of the Video vertical, which the example uses for its meeting rooms screen. To use another vertical, change the slot name and the vertical name in `useMeetingsPath`.
+
+`slot::videoapps-landing-page-description`::
+The list on the standard start page of the Video vertical, under its introduction. The slot sits in a bulleted list, so the handler returns a list item. The slot does not add the vertical, which the tab slot does. See xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[Navigation and tabs] for the slot.
+
+[#other-slots]
+=== Other slots
+
+`slot::videoapps-landing-page`::
+The whole start page of the vertical. Choose it when your Zimlet owns the vertical and needs a page of its own, and not a line in the standard one.
+
+`slot::videoapps-landing-page-videos`::
+The second column of the standard start page, beside the list. Choose it for demo videos or other media.
 
 [#set-up-the-project]
 == Set up the project
@@ -94,6 +107,7 @@ Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with thes
 ** `constants/index.js` holds the end of the address and the list of rooms. It replaces the generated file.
 ** `hooks/use-meetings-path.js` builds the address of the screen.
 ** `components/meetings-tab-item/index.js` is the tab.
+** `components/meetings-landing-item/index.js` is the line on the start page.
 ** `components/meetings-route/index.js` is the route handler.
 ** `components/meetings-screen/index.js` and `style.less` are the screen.
 . Merge the texts into `src/intl/en_US.json`. The room names come from `ROOMS` and are not translated, because they are data of your service.
@@ -166,7 +180,7 @@ Look up every prop of `MenuItem` in xref:reference/shims/components/menus.adoc#m
 [#add-a-route]
 == Add a route
 
-The route tells the Modern UI when to show your screen. The Modern UI asks every handler for `slot::routes` (see xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in]) for routes. It shows the one whose `path` matches the address. The handler returns your screen with a `path` prop. The `path` is the address from the hook, the same one that the tab links to.
+The route tells the Modern UI when to show your screen. The Modern UI asks every handler for `slot::routes` (see xref:reference/slots/app-shell/app-frame.adoc[App frame]) for routes. It shows the one whose `path` matches the address. The handler returns your screen with a `path` prop. The `path` is the address from the hook, the same one that the tab links to.
 
 .components/meetings-route/index.js
 [source,js]
@@ -212,10 +226,23 @@ The styles use the CSS variables of the Modern UI, such as `--spacing-lg` and `-
 
 In a narrow window they show a toolbar with the name of the vertical. A button on it opens a sidebar that lists the tabs of the vertical, including yours. In a wide window they add nothing that you can see. See xref:reference/shims/components/layout.adoc[Layout] for both.
 
+[#add-a-start-page-line]
+== Add a line to the start page
+
+The standard start page of a vertical says what the vertical offers. The Video page has a bulleted list under its introduction, and a handler for `slot::videoapps-landing-page-description` adds an item to it. The handler returns a list item, because the slot is inside the list. The line tells the user where the rooms are.
+
+.components/meetings-landing-item/index.js
+[source,js]
+----
+include::example$tab-and-route/components/meetings-landing-item/index.js[]
+----
+
+The component reads its text from `en_US.json` with `<Text>`, so wrap it with `withIntl`. It holds no hooks, so the example registers it as it is.
+
 [#register-the-handlers]
 == Register the handlers
 
-Register both handlers in `init()`. The tab handler turns on the Video vertical, and the route handler adds the screen.
+Register the three handlers in `init()`. The tab handler turns on the Video vertical, the line handler adds the item to its start page, and the route handler adds the screen.
 
 .index.js
 [source,js]
@@ -230,12 +257,12 @@ Registering the tab handler is what makes the Video vertical appear. After the Z
 
 . Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
 . Check the top navigation. A *Video* vertical is there.
-. Choose *Video*. The vertical shows its default page, and a *Meeting rooms* tab with a video icon sits beside the default *Video* tab.
+. Choose *Video*. The vertical shows its default page. The list under the introduction has a line that points to the tab. The *Meeting rooms* tab, with a video icon, sits beside the default *Video* tab.
 +
-.The Video vertical with the Meeting rooms tab
-image::tab-and-route-video-vertical-tab.png["The Video vertical with its default page, which reads Video and Video calls are simple! You can. The Meeting rooms tab, outlined in red, sits beside the Video tab in the bar below the top navigation."]
+.The Video vertical with the Meeting rooms tab and the line on its start page
+image::tab-and-route-video-vertical-tab.png["The Video vertical with its default page, which reads Video and Video calls are simple! You can. The Meeting rooms tab sits beside the Video tab in the bar below the top navigation. Below the introduction, one list item reads Join a company meeting room from the Meeting rooms tab. Red outlines surround the tab and the list item."]
 +
-The outlined *Meeting rooms* tab is the tab that your handler adds.
+The outlined *Meeting rooms* tab and the outlined list item are the ones that your handlers add.
 . Choose the *Meeting rooms* tab. The address ends with `/videoapps/meeting-rooms`, the tab shows as selected, and the screen opens.
 +
 .The Meeting rooms screen
@@ -249,6 +276,7 @@ The heading, the sentence and one row for each room fill the screen. The outline
 == Expected result
 
 * The Video vertical is in the top navigation, with a *Meeting rooms* tab beside its default tab.
+* The start page of the vertical has the line that points to the tab.
 * The tab opens a screen at `/videoapps/meeting-rooms` and shows as selected there.
 * The screen lists the rooms, and each *Join* link opens in a new browser tab.
 * A narrow window shows the toolbar and the sidebar.
@@ -259,6 +287,10 @@ The heading, the sentence and one row for each room fill the screen. The outline
 The *Video* vertical is not in the top navigation.::
 * Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
 * Fix: Check that the sideloader shows the Zimlet as *Running*. Check that the key is `slot::videoapps-tab-item` and that you register it in `init()`. Reload the page, because the verticals are set up once the Zimlets have loaded. Add `?zimletSlots=show` to the address to see the slot labels, as xref:run-package-deploy/run-and-debug.adoc#debug-slots[Run and debug] describes.
+
+The start page has no line.::
+* Cause: The handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the key is `slot::videoapps-landing-page-description`, that you register in `init()` and that the handler returns a list item. See xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[Navigation and tabs] for when the slot draws nothing.
 
 The vertical is there, but the tab is not.::
 * Cause: A tab shows only while the user is in its vertical. A handler for the tab slot of another vertical adds nothing here.

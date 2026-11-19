@@ -1,12 +1,13 @@
 {
 	"zimlet": {
 		"label": "My Zimlet",
-		"description": "Adds a Meeting rooms tab to the Video vertical."
+		"description": "Adds a Meeting rooms tab and a line on the start page to the Video vertical."
 	},
 	"my-zimlet": {
 		"tabTitle": "Meeting rooms",
 		"title": "Meeting rooms",
 		"intro": "Choose a room to join the meeting in a new browser tab.",
-		"join": "Join"
+		"join": "Join",
+		"landingItem": "Join a company meeting room from the Meeting rooms tab."
 	}
 }

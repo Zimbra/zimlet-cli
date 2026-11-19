@@ -41,7 +41,7 @@ NOTE: A handler for `web-search` replaces the Modern UI field for as long as it 
 The hint of the Modern UI field. Choose it when you only want to change the word that completes `Search your …`, as xref:fundamentals/extending-the-ui.adoc#render-prop-slots[Render-prop slots] shows.
 
 `slot::search-tips-link`::
-The link to the search tips. Choose it to point users to your own help page. See xref:reference/slots/app-shell/search.adoc[Search] for the slots of the search bar.
+The link to the search tips. A handler hides the link and cannot replace it with a page of your own. See xref:reference/slots/hide-built-in-ui.adoc#search-tips-link[`search-tips-link`] for the slot, and xref:reference/slots/app-shell/search.adoc[Search] for the other slots of the search bar.
 
 [#set-up-the-project]
 == Set up the project
@@ -232,4 +232,4 @@ The hint or the tooltip shows as a key, or not at all.::
 [#next-step]
 == Next step
 
-Show a note above the text of an open message in xref:build-by-goal/recipe-message-banner.adoc[Show a banner above the message text]. Let an administrator set the address instead of fixing it in the code, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].
+Show a note above the text of an open message in xref:build-by-goal/recipe-message-banner.adoc[Show a message banner]. Let an administrator set the address instead of fixing it in the code, as xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] describes. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

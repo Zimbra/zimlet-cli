@@ -1,0 +1,17 @@
+= Composer and editor
+
+The composer is the window where a user writes an email. Its slots add buttons and menu items, replace the sender selector and add content to the header. The rich text editor and the address fields of the composer are shared components, so their slots also reach other screens. Use these slots when your xref:reference/glossary.adoc#zimlet[Zimlet] changes how users write a message, format text or see an address. The slots of the folder list are in xref:reference/slots/app-shell/folder-list.adoc[Folder list]. Every slot has an entry with the place where it appears, the props its handler receives and what the handler returns. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#screens]
+== Screens
+
+[[mail-composer]]pass:[<a class="anchor" href="#mail-composer"></a>]xref:reference/slots/composer/mail-composer.adoc[Mail composer]::
+Replace the sender selector or add a menu to the header. Add an item to the options menu or the attachment menu, content below the subject, or a control next to the send button. Slots: `from-options`, `mail-composer-smime-dropdown`, `compose-sender-options-menu`, `mail-header-wrapper`, `compose-attachment-action-menu` and `mail-composer-toolbar-send`.
+
+[[editor-and-addresses]]pass:[<a class="anchor" href="#editor-and-addresses"></a>]xref:reference/slots/composer/editor-and-addresses.adoc[Editor and address fields]::
+Add content to every rich text editor or a control to the bar around its toolbar. Add fonts to the font list, or add a mark to an address. Slots: `composer`, `composer-toolbar-start`, `composer-toolbar-end`, `custom-fonts`, `address-pill`, `sender-list-item` and `contact-input-token:button-inner-content`.
+
+[#next-step]
+== Next step
+
+Start with xref:reference/slots/composer/mail-composer.adoc[Mail composer], or return to the xref:reference/slots.adoc[slot index].

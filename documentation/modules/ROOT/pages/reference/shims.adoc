@@ -44,7 +44,7 @@ The xref:fundamentals/shared-libraries.adoc[Shared libraries] page explains how 
 ** xref:reference/shims/hooks/briefcase.adoc[Briefcase]
 ** xref:reference/shims/hooks/calendar-and-metadata.adoc[Calendar and metadata]
 * xref:reference/shims/constants.adoc[Constants]: `@zimbra-client/constants`.
-* xref:reference/shims/errors-platform-and-pwa.adoc[Errors, platform and PWA]: `@zimbra-client/errors`, `@zimbra-client/platform`, `@zimbra-client/browser`, `@zimbra-client/util/contacts` and `@zimbra-client/pwa-utils`.
+* xref:reference/shims/errors-and-platform.adoc[Errors and platform]: `@zimbra-client/errors`, `@zimbra-client/platform`, `@zimbra-client/browser` and `@zimbra-client/util/contacts`.
 
 [#next-step]
 == Next step

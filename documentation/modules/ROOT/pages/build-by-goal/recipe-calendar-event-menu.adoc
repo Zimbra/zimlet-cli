@@ -1,4 +1,4 @@
-= Add an action to a calendar event menu
+= Add an event action
 
 This recipe adds an *Export as .ics file* item to the menus of a calendar event in the xref:reference/glossary.adoc#modern-ui[Modern UI]. Choosing it downloads the event as an iCalendar file, a file with the extension `.ics` that other calendar apps can open. Use it when an action belongs to one event. The user then finds it next to *Move*, *Copy* and *Show Original*, and does not need a screen of your own. The item is a small component that a xref:reference/glossary.adoc#zimlet[Zimlet] registers for the two slots of the event menus.
 

@@ -1,0 +1,10 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Marks mail from partner organizations and adds partner shortcuts to the folder list."
+	},
+	"my-zimlet": {
+		"partners": "Partners",
+		"partner": "Partner"
+	}
+}
