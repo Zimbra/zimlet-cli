@@ -1,0 +1,226 @@
+= Header menus
+
+The header has two drop-down menus that a xref:reference/glossary.adoc#zimlet[Zimlet] can extend. The *Settings and more* menu opens from the gear icon, and the account menu opens from the avatar. Add a link or an action next to the entries that users already look for there, or hide the *About* and *Language* items. A narrow window also shows both menus in the header of the sidebar. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#settings-and-more-menu]
+=== Settings and more menu
+
+From top to bottom, the menu has these groups:
+
+. The slot `settings-dropdown-item`, then *Settings* and *Language* (only with the options feature), *Help* and the slot `settings-dropdown-item-end`.
+. The theme options.
+. *About* and the slot `gear-menu`.
+
+[#account-menu]
+=== Account menu
+
+From top to bottom, the menu has these groups:
+
+. The name and the address of the user.
+. *Change Password* (only when the account may change its password) and *Change Profile Image*.
+. The slot `header-menu-item`, then *Logout*.
+
+[#members]
+== Members
+
+<<settings-dropdown-item,`settings-dropdown-item`>>::
+An item at the top of the first group of the *Settings and more* menu.
+
+<<settings-dropdown-item-end,`settings-dropdown-item-end`>>::
+An item at the end of the first group of the *Settings and more* menu, after *Help*.
+
+<<gear-menu,`gear-menu`>>::
+An item in the last group of the *Settings and more* menu, below *About*.
+
+<<about-link,`about-link`>>::
+Hides the *About* item and the items of `gear-menu`.
+
+<<language-link,`language-link`>>::
+Hides the *Language* item.
+
+<<header-menu-item,`header-menu-item`>>::
+An item in the account menu, above *Logout*.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app]::
+A recipe that adds a *Help desk* link and a *Report a problem* action to the *Settings and more* menu with <<settings-dropdown-item-end,`settings-dropdown-item-end`>> and <<gear-menu,`gear-menu`>>. Adds a *Manage account* link to the account menu with <<header-menu-item,`header-menu-item`>>. You learn to choose the menu slot for each item and to build it with `ActionMenuItem`. Every other slot in this category that adds an item is registered the same way.
+
+[#settings-dropdown-item]
+== settings-dropdown-item
+
+Adds an item at the top of the *Settings and more* menu, above *Settings*. Use it when your item must come before the built-in entries. Use <<settings-dropdown-item-end,`settings-dropdown-item-end`>> for an item that belongs after *Help*.
+
+[#settings-dropdown-item-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::settings-dropdown-item', handler)
+
+// handler: () => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#settings-dropdown-item-props]
+=== Props
+
+None.
+
+[#settings-dropdown-item-usage-notes]
+=== Usage notes
+
+* Every user sees the items. The slot does not depend on the options feature that controls *Settings* and *Language*.
+
+[#settings-dropdown-item-end]
+== settings-dropdown-item-end
+
+Adds an item at the end of the first group of the *Settings and more* menu, after *Help*. Use it for a link or an action that users need about as often as *Help*, such as a link to a help desk. Use <<settings-dropdown-item,`settings-dropdown-item`>> for an item that must come first.
+
+[#settings-dropdown-item-end-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::settings-dropdown-item-end', handler)
+
+// handler: () => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#settings-dropdown-item-end-props]
+=== Props
+
+None.
+
+[#settings-dropdown-item-end-usage-notes]
+=== Usage notes
+
+* For a complete example, see xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
+
+[#gear-menu]
+== gear-menu
+
+Adds an item in the last group of the *Settings and more* menu, below *About*. Use it for an item that belongs with *About*, such as a feedback form.
+
+[#gear-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::gear-menu', handler)
+
+// handler: () => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#gear-menu-props]
+=== Props
+
+None.
+
+[#gear-menu-usage-notes]
+=== Usage notes
+
+* The slot is in the same group as *About*. A handler for <<about-link,`about-link`>> hides *About* and also every item of this slot.
+* For a complete example, see xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
+
+[#about-link]
+== about-link
+
+Hides the *About* item of the *Settings and more* menu, together with the items of <<gear-menu,`gear-menu`>>. Use it when the *About* item must not appear.
+
+WARNING: A handler that returns a value hides *About* and every item that other Zimlets add with `gear-menu`, for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the group.
+
+[#about-link-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::about-link', handler)
+
+// handler: () => true | null
+----
+
+Return `true` to hide the group, or `null` to keep it.
+
+[#about-link-props]
+=== Props
+
+None.
+
+[#about-link-usage-notes]
+=== Usage notes
+
+* The Modern UI checks only whether a handler returns a value. It does not draw what the handler returns. Add your own entry with <<settings-dropdown-item,`settings-dropdown-item`>> or <<settings-dropdown-item-end,`settings-dropdown-item-end`>>.
+
+[#language-link]
+== language-link
+
+Hides the *Language* item of the *Settings and more* menu. Use it when users must not change the language from this menu.
+
+WARNING: A handler that returns a value hides *Language* for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the item.
+
+[#language-link-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::language-link', handler)
+
+// handler: () => true | null
+----
+
+Return `true` to hide the item, or `null` to keep it.
+
+[#language-link-props]
+=== Props
+
+None.
+
+[#language-link-usage-notes]
+=== Usage notes
+
+* The item appears only for accounts that have the options feature turned on, so the slot has an effect only for them.
+* The Modern UI checks only whether a handler returns a value. It does not draw what the handler returns.
+
+[#header-menu-item]
+== header-menu-item
+
+Adds an item to the account menu, the menu that opens from the avatar of the user in the header. The items appear above *Logout*. Use it for a link that belongs with the account, such as a link to an external page. For the menu behind the gear icon, use <<settings-dropdown-item-end,`settings-dropdown-item-end`>> or <<gear-menu,`gear-menu`>>.
+
+[#header-menu-item-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::header-menu-item', handler)
+
+// handler: () => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#header-menu-item-props]
+=== Props
+
+None.
+
+[#header-menu-item-usage-notes]
+=== Usage notes
+
+* For a complete example, see xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
+
+[#next-step]
+== Next step
+
+Continue with xref:reference/slots/app-shell/ad-slots.adoc[Ad slots], or build a complete example in xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].

@@ -1,0 +1,129 @@
+= Folder list
+
+The folder list is the tree of folders, saved searches and tags in the sidebar of Mail, Calendar, Contacts and Briefcase. Three slots add content inside it. Use them for something that belongs with the folders of the user, such as a tip, a link or a group of your own. All four xref:reference/glossary.adoc#vertical[verticals] draw the same folder list, so your content shows in each of them. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#folder-list-layout]
+=== Folder list layout
+
+From top to bottom, the folder list has these parts:
+
+. The *Folders* group, with the special and the custom folders of the user. Calendar does not have it.
+. The slot `folder-list-middle`.
+. The calendar groups. Only Calendar has them.
+. The *Add a folder* button. Mail and Calendar do not have it.
+. The slot `folder-group`.
+. The groups that the account has, in this order: the folders that others shared, the saved searches and the tags.
+. The slot `folder-list-end`.
+
+[#shared-behavior]
+=== Shared behavior
+
+* The folder list draws nothing, and so no slot, while it has no folders to show.
+* The slots pass nothing to a handler. A handler cannot tell which vertical it is in. To show content in one vertical only, read the address of the page and compare it with the names of the verticals. Mail also opens at `/`. See xref:build-by-goal/recipe-tab-and-route.adoc#read-the-vertical-name[Read the vertical name].
+* A folder list that your own Zimlet draws with xref:reference/shims/components/navigation.adoc#folder-list[`FolderList`] has the same three slots.
+
+[#members]
+== Members
+
+<<folder-list-middle,`folder-list-middle`>>::
+Content below the *Folders* group.
+
+<<folder-group,`folder-group`>>::
+Content above the shared folders, the saved searches and the tags.
+
+<<folder-list-end,`folder-list-end`>>::
+Content at the bottom of the folder list.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:fundamentals/factory-and-lifecycle.adoc#register-conditionally[Register and unregister conditionally in Factory and lifecycle]::
+A basic example that registers a tip for <<folder-list-end,`folder-list-end`>> only in the web client and removes it when the user dismisses it. You learn to register a handler only when a condition holds and to remove it with `plugins.unregister`. <<folder-list-middle,`folder-list-middle`>> and <<folder-group,`folder-group`>> take the same handler and no props, so you register them the same way.
+
+[#folder-list-middle]
+== folder-list-middle
+
+Adds content below the *Folders* group of the folder list, before the other groups. Use it for something that belongs with the own folders of the user. Use <<folder-group,`folder-group`>> to place it below the calendar groups and the button that adds a folder.
+
+[#folder-list-middle-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::folder-list-middle', handler)
+
+// handler: () => element | null
+----
+
+[#folder-list-middle-props]
+=== Props
+
+None.
+
+[#folder-list-middle-usage-notes]
+=== Usage notes
+
+* Calendar has no *Folders* group, so the slot is the first part of its folder list, above the calendar groups.
+* See <<shared-behavior>> for when the slot shows and how to tell the vertical.
+
+[#folder-group]
+== folder-group
+
+Adds content below the calendar groups and the *Add a folder* button, and above the shared folders, the saved searches and the tags. Use it for a group of items of your Zimlet that sits after the folders of the user.
+
+[#folder-group-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::folder-group', handler)
+
+// handler: () => element | null
+----
+
+[#folder-group-props]
+=== Props
+
+None.
+
+[#folder-group-usage-notes]
+=== Usage notes
+
+* Mail has no calendar groups and no button, so its slot follows `folder-list-middle` directly.
+* See <<shared-behavior>> for when the slot shows and how to tell the vertical.
+
+[#folder-list-end]
+== folder-list-end
+
+Adds content at the bottom of the folder list, below the tags. Use it for a tip, a link or a note that belongs below all folders.
+
+[#folder-list-end-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::folder-list-end', handler)
+
+// handler: () => element | null
+----
+
+[#folder-list-end-props]
+=== Props
+
+None.
+
+[#folder-list-end-usage-notes]
+=== Usage notes
+
+* The slot shows in Mail, Calendar, Contacts and Briefcase. Calendar also has a slot of its own below the folder list, as xref:reference/slots/calendar/calendar-view.adoc[Calendar view] describes. See <<shared-behavior>> for when the slot shows and how to tell the vertical.
+* For a basic example, see xref:fundamentals/factory-and-lifecycle.adoc#register-conditionally[Register and unregister conditionally in Factory and lifecycle].
+
+[#next-step]
+== Next step
+
+Continue with the slots of the Mail vertical in xref:reference/slots/mail.adoc[Mail].

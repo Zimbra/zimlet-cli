@@ -1,0 +1,135 @@
+= Landing pages
+
+The landing page is the start page that opens when a user chooses Video, Chat or Cloud Storage in the top navigation. Replace it with a screen of your own. Or keep the standard page and add a line of text or demo videos to it. Use these slots when your xref:reference/glossary.adoc#zimlet[Zimlet] adds one of these xref:reference/glossary.adoc#vertical[verticals] and needs to tell users what it offers there. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#verticals-with-a-landing-page]
+=== Verticals with a landing page
+
+Only three verticals have a landing page. The slot names put the name of the vertical in front. The defaults are:
+
+* `videoapps` for Video
+* `chatapps` for Chat
+* `cloudapps` for Cloud Storage, which has no description slot
+
+Mail, Calendar, Contacts, Briefcase and Integrations have no landing page. A handler for a landing page slot with one of their names adds nothing. A deployment can use other names for the verticals. See xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-names[Vertical names] for where the names come from.
+
+[#standard-landing-page]
+=== Standard landing page
+
+From top to bottom and left to right, the standard page has these parts:
+
+. The name of the vertical as a heading.
+. A short introduction.
+. A list under the introduction. It holds the items of the slot `<vertical>-landing-page-description`. The list of Cloud Storage has one fixed item and no slot.
+. A second column to the right of the list, with the content of the slot `<vertical>-landing-page-videos`.
+. A faded icon of the vertical behind the content.
+
+.The standard landing page of Video with one list item and one line of videos content
+image::slots-landing-page-default.png["The Video landing page. Outlined in red: the heading Video, the introduction, one item in the list, one line of text in the second column and the faded video icon behind the content. A Zimlet adds the list item and the line of text."]
+
+A Zimlet adds the outlined list item and the outlined text in the second column. The Modern UI draws the heading, the introduction and the icon.
+
+[#members]
+== Members
+
+<<vertical-landing-page,`<vertical>-landing-page`>>::
+Replaces the whole standard landing page of one vertical.
+
+<<vertical-landing-page-description,`<vertical>-landing-page-description`>>::
+An item in the list of the standard landing page of Video or Chat.
+
+<<vertical-landing-page-videos,`<vertical>-landing-page-videos`>>::
+Content in the second column of the standard landing page.
+
+[#vertical-landing-page]
+== <vertical>-landing-page
+
+Replaces the standard landing page of Video, Chat or Cloud Storage with content of your own. Use it when your Zimlet owns the vertical and has a screen that must open first. Use <<vertical-landing-page-description,`<vertical>-landing-page-description`>> or <<vertical-landing-page-videos,`<vertical>-landing-page-videos`>> to add to the standard page and keep it.
+
+WARNING: A registered handler hides the standard page for every user who has the Zimlet. It does so even when the handler returns nothing, such as `null` or `false`. Return content in every state of your Zimlet.
+
+[#vertical-landing-page-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::<vertical>-landing-page', handler)
+
+// handler: () => element | null
+----
+
+[#vertical-landing-page-props]
+=== Props
+
+None.
+
+[#vertical-landing-page-usage-notes]
+=== Usage notes
+
+* The slot appears when the user opens the vertical, at its address (`/videoapps`, `/chatapps` or `/cloudapps` by default). See <<verticals-with-a-landing-page>> for the verticals that have a landing page.
+* The handler replaces the heading, the introduction, the list, the second column and the icon. The slots `<vertical>-landing-page-description` and `<vertical>-landing-page-videos` draw nothing while this slot has a handler.
+* A handler for this slot adds the vertical to the top navigation, as xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`<vertical>-tab-item`] does.
+
+[#vertical-landing-page-description]
+== <vertical>-landing-page-description
+
+Adds an item to the list under the introduction of the standard landing page of Video or Chat. Use it to say what your Zimlet lets the user do there. Use <<vertical-landing-page,`<vertical>-landing-page`>> to replace the page instead.
+
+[#vertical-landing-page-description-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::<vertical>-landing-page-description', handler)
+
+// handler: () => element | null
+----
+
+Return a list item (`<li>`), because the slot sits inside a bulleted list.
+
+[#vertical-landing-page-description-props]
+=== Props
+
+None.
+
+[#vertical-landing-page-description-usage-notes]
+=== Usage notes
+
+* The slot exists for Video and Chat. The standard landing page of Cloud Storage has a fixed list item and no slot. See <<verticals-with-a-landing-page>> for the vertical names.
+* The slot draws nothing when a Zimlet fills <<vertical-landing-page,`<vertical>-landing-page`>>.
+* The slot does not add the vertical to the top navigation. Also fill xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`<vertical>-tab-item`] or <<vertical-landing-page,`<vertical>-landing-page`>>, so that users can reach the page.
+
+[#vertical-landing-page-videos]
+== <vertical>-landing-page-videos
+
+Adds content to the second column of the standard landing page, beside the list. Use it for demo videos or other media that show what your Zimlet does. Use <<vertical-landing-page-description,`<vertical>-landing-page-description`>> for a line of text in the list.
+
+[#vertical-landing-page-videos-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::<vertical>-landing-page-videos', handler)
+
+// handler: () => element | null
+----
+
+[#vertical-landing-page-videos-props]
+=== Props
+
+None.
+
+[#vertical-landing-page-videos-usage-notes]
+=== Usage notes
+
+* The slot exists for Video, Chat and Cloud Storage. See <<verticals-with-a-landing-page>> for the vertical names.
+* The slot draws nothing when a Zimlet fills <<vertical-landing-page,`<vertical>-landing-page`>>.
+* The slot does not add the vertical to the top navigation. Also fill xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`<vertical>-tab-item`] or <<vertical-landing-page,`<vertical>-landing-page`>>, so that users can reach the page.
+
+[#next-step]
+== Next step
+
+Find the slots for the frame around every screen in xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in].

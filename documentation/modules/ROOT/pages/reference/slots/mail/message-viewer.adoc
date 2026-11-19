@@ -1,0 +1,173 @@
+= Message viewer
+
+These slots add content to the message viewer, the part of the xref:reference/glossary.adoc#modern-ui[Modern UI] that shows an open message. The viewer also shows each message of an open conversation, a message that is attached to another message and a draft that opens read only. Add a banner above the text of the message, a button or a status line in its header, or an action after the reply buttons. Use the slots when your xref:reference/glossary.adoc#zimlet[Zimlet] must show or offer something about the message that the user is reading. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#message-viewer]
+=== Message viewer
+
+From top to bottom, the viewer has these parts:
+
+. The header: the slot `message-header-additional-buttons`, the sender and the address lines, then the slot `message-smime-status`.
+. The attachments, when the message has any.
+. The text: the banners of the Modern UI, the slot `message-body-top`, then the text of the message.
+. The footer: *Reply*, *Reply to All* and *Forward*, then *Edit* and *Delete*, as the folder allows. Then the slot `desktop-viewer-footer` and the *More* menu.
+
+[#message-prop-names]
+=== Name of the message prop
+
+Every slot passes the message that the viewer shows, under two names. `message-body-top` and `message-header-additional-buttons` pass it as `emailData`. `message-smime-status` and `desktop-viewer-footer` pass it as `message`.
+
+[#members]
+== Members
+
+<<message-body-top,`message-body-top`>>::
+Content above the text of the message.
+
+<<message-header-additional-buttons,`message-header-additional-buttons`>>::
+Content at the start of the header.
+
+<<message-smime-status,`message-smime-status`>>::
+A status line for S/MIME, below the address lines of the header.
+
+<<desktop-viewer-footer,`desktop-viewer-footer`>>::
+An action in the footer, before the *More* menu.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-message-banner.adoc[Show a banner above the message text]::
+A recipe that shows a warning banner above the text of a message from outside the organization of the user, with <<message-body-top,`message-body-top`>>. You learn to read the sender and the text of the message from the props and to draw the banner with `WarningBanner`. You also learn to hide the banner when it does not apply or when the user dismisses it. Every other slot in this category that adds content is registered the same way. Only the props differ.
+
+[#message-body-top]
+== message-body-top
+
+Adds content directly above the text of a message. Use it for a banner or a note that the user must see before reading the message. Use <<message-header-additional-buttons,`message-header-additional-buttons`>> for a button that acts on the message.
+
+[#message-body-top-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::message-body-top', handler)
+
+// handler: ({ emailData, viewerRef, htmlUpdated, setMessageText, sanitizeRef }) => element | null
+----
+
+[#message-body-top-props]
+=== Props
+
+[[message-body-top-email-data]]pass:[<a class="anchor" href="#message-body-top-email-data"></a>]`emailData` (object)::
+The message that the viewer shows. It has fields such as `id`, `folderId` and `conversationId`.
+
+[[message-body-top-viewer-ref]]pass:[<a class="anchor" href="#message-body-top-viewer-ref"></a>]`viewerRef` (object)::
+A ref object. Its `current` is the element that holds the text of the message. Use it to read the text that the user sees, for example to find links.
+
+[[message-body-top-html-updated]]pass:[<a class="anchor" href="#message-body-top-html-updated"></a>]`htmlUpdated` (number)::
+The length of the text of the message. It changes when the text arrives or changes. Read `viewerRef` again when it changes.
+
+[[message-body-top-set-message-text]]pass:[<a class="anchor" href="#message-body-top-set-message-text"></a>]`setMessageText` (function `(text: string | null) => void`)::
+Replaces the text that the viewer shows with `text`. The viewer treats it as the HTML of the message and cleans it as it cleans the original. Pass `null` or an empty string to show the original text again.
+
+[[message-body-top-sanitize-ref]]pass:[<a class="anchor" href="#message-body-top-sanitize-ref"></a>]`sanitizeRef` (object)::
+A ref object. Its `current` is the HTML of the text as the viewer shows it, after the Modern UI has cleaned it and every processor has run. It is `null` until the viewer has rendered the text.
+
+[#message-body-top-usage-notes]
+=== Usage notes
+
+* Every user who opens a message sees the content, in every viewer and on every window width.
+* The slot renders while the message is still loading, before its text is there.
+* For a complete example, see xref:build-by-goal/recipe-message-banner.adoc[Show a banner above the message text].
+
+[#message-header-additional-buttons]
+== message-header-additional-buttons
+
+Adds content at the start of the header of a message, before the avatar and the sender. Use it for a button that acts on the message. Use <<message-body-top,`message-body-top`>> for a note that needs a line of its own.
+
+[#message-header-additional-buttons-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::message-header-additional-buttons', handler)
+
+// handler: ({ emailData, isConversation }) => element | null
+----
+
+[#message-header-additional-buttons-props]
+=== Props
+
+[[message-header-additional-buttons-email-data]]pass:[<a class="anchor" href="#message-header-additional-buttons-email-data"></a>]`emailData` (object)::
+The message that the viewer shows. It has fields such as `id`, `folderId` and `conversationId`.
+
+[[message-header-additional-buttons-is-conversation]]pass:[<a class="anchor" href="#message-header-additional-buttons-is-conversation"></a>]`isConversation` (boolean)::
+`true` when the viewer shows a message of an open conversation. Otherwise it is `false` or not set.
+
+[#message-header-additional-buttons-usage-notes]
+=== Usage notes
+
+* Every user who opens a message sees the content, in every viewer and on every window width.
+* The slot applies no layout to the content. The header is a positioned block, so an element that you place with `position: absolute` is placed against the header.
+
+[#message-smime-status]
+== message-smime-status
+
+Adds a status line about the S/MIME signature or encryption of a message, below the address lines of the header. S/MIME is a standard that signs and encrypts email. Use it to show your own status for a message that is signed or encrypted.
+
+[#message-smime-status-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::message-smime-status', handler)
+
+// handler: ({ message }) => element | null
+----
+
+[#message-smime-status-props]
+=== Props
+
+[[message-smime-status-message]]pass:[<a class="anchor" href="#message-smime-status-message"></a>]`message` (object)::
+The message that the viewer shows. It has fields such as `id`, `folderId` and `conversationId`.
+
+[#message-smime-status-usage-notes]
+=== Usage notes
+
+* The slot renders in every viewer and on every window width, but only when the Modern UI shows no S/MIME status of its own. The Modern UI shows its own status for a message that is signed or encrypted, when the viewer has the S/MIME data of the message.
+* In every other case the slot renders, also for an ordinary message. Return `null` for a message that your status does not apply to.
+
+[#desktop-viewer-footer]
+== desktop-viewer-footer
+
+Adds an action to the footer of a message, after the reply and delete buttons and before the *More* menu. Use it for an action that the user takes after reading the message.
+
+[#desktop-viewer-footer-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::desktop-viewer-footer', handler)
+
+// handler: ({ message }) => element | null
+----
+
+[#desktop-viewer-footer-props]
+=== Props
+
+[[desktop-viewer-footer-message]]pass:[<a class="anchor" href="#desktop-viewer-footer-message"></a>]`message` (object)::
+The message that the viewer shows. It has fields such as `id`, `folderId` and `conversationId`.
+
+[#desktop-viewer-footer-usage-notes]
+=== Usage notes
+
+* The footer shows the slot only on a window at least 769 px wide. A narrower window shows the footer without the slot and without the *More* menu.
+* The slot does not appear for a draft that opens read only. It does not appear for a message that is attached to another message, or in the *Storage Cleanup* tab.
+
+[#next-step]
+== Next step
+
+Continue with the other slots of Mail in xref:reference/slots/mail.adoc[Mail], or build a complete example in xref:build-by-goal/recipe-message-banner.adoc[Show a banner above the message text].

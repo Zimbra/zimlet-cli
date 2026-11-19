@@ -1,0 +1,19 @@
+= Calendar
+
+The Calendar xref:reference/glossary.adoc#vertical[vertical] is where users plan their time. Its slots add content to the calendar screen, its sidebar and its menus. They also reach the menus and details of an event, and the form in which the user creates or edits one. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] adds calendars or actions to the Calendar, or reacts to events. Slots that serve every vertical, such as the folder list, are in xref:reference/slots/app-shell.adoc[App shell]. `print-link` also hides *Print* in the Calendar toolbar. It has its entry in xref:reference/slots/mail/mail-menus-and-actions.adoc#print-link[Mail menus and actions].
+
+Every slot has an entry with the place where it appears, the props its handler receives and what the handler returns. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#screens]
+== Screens
+
+[[calendar-view]]pass:[<a class="anchor" href="#calendar-view"></a>]xref:reference/slots/calendar/calendar-view.adoc[Calendar view]::
+Add content to the calendar screen, add an item to the toolbar menu, or list calendars of your own in the sidebar. Add the menu item and the dialog of a subscription flow, or hide the item that recovers deleted events. Slots: `calendar-body-end`, `calendar-context-add-holiday`, `calendar-folder-list-end`, `calendar-subscription-list`, `calendar-subscription-menu`, `calendar-subscription-modal-flow` and `recover-discarded-appointments-option`.
+
+[[events-and-appointments]]pass:[<a class="anchor" href="#events-and-appointments"></a>]xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments]::
+Add an item to the menus of an event, or hide the *Private* label in its details. Add a control to the form in which the user creates or edits an event. Slots: `action-menu-event-context-menu`, `action-menu-event-more`, `attendees-chooser-attendees`, `calendar-appointment-edit-location`, `calendar-appointment-edit-video-call` and `private-event-label`.
+
+[#next-step]
+== Next step
+
+Start with xref:reference/slots/calendar/calendar-view.adoc[Calendar view], or return to the xref:reference/slots.adoc[slot index].

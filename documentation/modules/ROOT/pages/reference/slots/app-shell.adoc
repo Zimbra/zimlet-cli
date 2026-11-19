@@ -8,7 +8,7 @@ Every slot has an entry with the place where it appears, the props its handler r
 == Screens
 
 [[navigation-and-tabs]]pass:[<a class="anchor" href="#navigation-and-tabs"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs]::
-Add a tab or a link to a xref:reference/glossary.adoc#vertical[vertical], to the list of verticals at the top or to the account menu. Slots: `<vertical>-tab-item`, `<vertical>-default-tab`, `menu`, `vertical-menu-item` and `header-menu-item`.
+Add a tab or a link to a xref:reference/glossary.adoc#vertical[vertical], or to the list of verticals at the top. Slots: `<vertical>-tab-item`, `<vertical>-default-tab`, `menu` and `vertical-menu-item`.
 
 [[landing-pages]]pass:[<a class="anchor" href="#landing-pages"></a>]xref:reference/slots/app-shell/landing-pages.adoc[Landing pages]::
 Replace the start page of a vertical, or add text and videos to it. Slots: `<vertical>-landing-page`, `<vertical>-landing-page-description` and `<vertical>-landing-page-videos`.
@@ -16,14 +16,17 @@ Replace the start page of a vertical, or add text and videos to it. Slots: `<ver
 [[app-frame-and-sign-in]]pass:[<a class="anchor" href="#app-frame-and-sign-in"></a>]xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in]::
 Run a feature for the whole application and add screens with routes. Fill the panels at the right edge of the window. Add text to the password change form and to the notification dialog. Slots: `app`, `routes`, `rightbar-50px`, `rightside-zimlet-slot`, `change-password-description` and `show-details-notification-button`.
 
-[[settings-and-gear-menus]]pass:[<a class="anchor" href="#settings-and-gear-menus"></a>]xref:reference/slots/app-shell/settings-and-gear-menus.adoc[Settings and gear menus]::
-Add items to the menu behind the gear icon, or replace its Language and About items. Slots: `about-link`, `gear-menu`, `language-link`, `settings-dropdown-item` and `settings-dropdown-item-end`.
+[[header-menus]]pass:[<a class="anchor" href="#header-menus"></a>]xref:reference/slots/app-shell/header-menus.adoc[Header menus]::
+Add items to the *Settings and more* menu behind the gear icon or to the account menu, or hide the *About* and *Language* items. Slots: `settings-dropdown-item`, `settings-dropdown-item-end`, `gear-menu`, `about-link`, `language-link` and `header-menu-item`.
 
 [[ad-slots]]pass:[<a class="anchor" href="#ad-slots"></a>]xref:reference/slots/app-shell/ad-slots.adoc[Ad slots]::
 Show advertisements beside the screens, along the bottom edge of a narrow window and above lists. Slots: `adSlot-160-600`, `adSlot-300-250-bottom`, `adSlot-300-250-top`, `adSlot-300-600`, `adSlot-adhesion-320-50`, `adSlot-adhesion-728-90`, `adSlot-left-120-90`, `adSlot-left-180-150`, `adSlot-left-300-250`, `adSlot-news`, `top-mail-ad-item` and `top-mail-generic-slot`.
 
 [[search]]pass:[<a class="anchor" href="#search"></a>]xref:reference/slots/app-shell/search.adoc[Search]::
-Change the search field, add a web search, or replace the link to the search tips. Slots: `search-tips-link`, `searchInputPlaceholder`, `web-search` and `web-search-toggle`.
+Change the search field, add a web search, or hide the link to the search tips. Slots: `search-tips-link`, `searchInputPlaceholder`, `web-search` and `web-search-toggle`.
+
+[[folder-list]]pass:[<a class="anchor" href="#folder-list"></a>]xref:reference/slots/app-shell/folder-list.adoc[Folder list]::
+Add content to the folder list that Mail, Calendar, Contacts and Briefcase share. Slots: `folder-group`, `folder-list-middle` and `folder-list-end`.
 
 [#next-step]
 == Next step

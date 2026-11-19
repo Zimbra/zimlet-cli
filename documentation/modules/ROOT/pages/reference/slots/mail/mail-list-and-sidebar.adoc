@@ -1,0 +1,194 @@
+= Mail list and sidebar
+
+These slots reach the parts of the Mail screen that surround a message. Those parts are the Mail pane as a whole, the reading pane, the sender names in the message list, the sidebar and the toolbar. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] must watch, cover or replace one of these parts, or add a control to it. To add content to the message itself, use the slots of xref:reference/slots/mail/message-viewer.adoc[Message viewer]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#mail-screen]
+=== Mail screen
+
+The Mail screen has these parts:
+
+. The sidebar. From top to bottom it has the *New Message* button, the folder list, the slot `mail-sidebar-footer`, the mini calendar and the ad slot. A list of accounts sits above the folder list for a user who has synced IMAP accounts. The mini calendar shows only when the account always shows it. The slots of the folder list are in xref:reference/slots/app-shell/folder-list.adoc[Folder list].
+. The toolbar, with the slot `header-action-menu-item` after *Delete* and before the *More* menu. It sits above the message list or above the message, depending on the position of the reading pane.
+. The message list. The slot `mail-sender` replaces the sender names in every row.
+. The reading pane. The slot `mail-preview-pane` replaces everything in it, including the toolbar when the toolbar is there.
+
+The slot `mail-pane` has no part of its own. It renders at the top of the Mail pane, which holds the message list and the reading pane.
+
+[#members]
+== Members
+
+<<mail-pane,`mail-pane`>>::
+Content or code for the whole Mail pane.
+
+<<mail-preview-pane,`mail-preview-pane`>>::
+Replaces the reading pane.
+
+<<mail-sender,`mail-sender`>>::
+Replaces the sender names in a row of the message list.
+
+<<mail-sidebar-footer,`mail-sidebar-footer`>>::
+Content below the folder list in the sidebar.
+
+<<header-action-menu-item,`header-action-menu-item`>>::
+An item in the toolbar, before the *More* menu.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:fundamentals/extending-the-ui.adoc#register-a-handler[Register a handler in Slots and handlers]::
+A basic example that adds a help desk link at the bottom of the mail sidebar, with <<mail-sidebar-footer,`mail-sidebar-footer`>>. You learn to register a handler in `init()` and to return an element that the slot shows. Every other slot in this category is registered the same way. Only the props differ.
+
+[#mail-pane]
+== mail-pane
+
+Adds content, or code that runs, for the whole Mail pane. Use it when your Zimlet must watch events in the reading pane or draw a layer of its own over the list and the message. Use xref:reference/slots/mail/message-viewer.adoc#message-body-top[`message-body-top`] for content that belongs to one message.
+
+[#mail-pane-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-pane', handler)
+
+// handler: ({ viewerRef }) => element | null
+----
+
+[#mail-pane-props]
+=== Props
+
+[[mail-pane-viewer-ref]]pass:[<a class="anchor" href="#mail-pane-viewer-ref"></a>]`viewerRef` (object)::
+A ref object. Its `current` is the element of the reading pane, which holds the message. It is `null` before the Mail pane has rendered and while the reading pane is not on the screen.
+
+[#mail-pane-usage-notes]
+=== Usage notes
+
+* Every user who opens the Mail screen sees the content, in every view of it.
+* The slot applies no layout to the content. The Mail pane is a positioned block, so an element that you place with `position: absolute` is placed against the pane.
+
+[#mail-preview-pane]
+== mail-preview-pane
+
+Replaces the reading pane, that is the toolbar, the message and the placeholder that shows when no message is open or several are selected. Use it when your Zimlet shows a screen of its own in place of the standard pane, under a condition that your handler checks. Use xref:reference/slots/mail/message-viewer.adoc#message-body-top[`message-body-top`] to add content to a message and keep the pane.
+
+WARNING: A handler that returns a value replaces the whole reading pane for every user who has the Zimlet, whatever message is open. Return `null` when your Zimlet does not apply, and the Modern UI keeps the standard pane.
+
+[#mail-preview-pane-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-preview-pane', handler)
+
+// handler: () => element | null
+----
+
+[#mail-preview-pane-props]
+=== Props
+
+None.
+
+[#mail-preview-pane-usage-notes]
+=== Usage notes
+
+* The slot renders only where the Modern UI shows a reading pane. That is when a message is open or the user writes a new message. It is also when the reading pane is on and the window is at least 768 px wide.
+* The Modern UI replaces the standard pane with the content of every handler that returns a value, one after the other.
+* A handler that returns a function, which the slot renders as a component, always replaces the standard pane, even when the component renders nothing. Return `null` from the handler to keep the pane.
+* The slot does not replace the message list or the sidebar.
+
+[#mail-sender]
+== mail-sender
+
+Replaces the sender names in a row of the message list. Use it when your Zimlet must show the sender in its own way. The names are the senders, or the recipients in the *Sent* folder and in a draft that the user wrote.
+
+[#mail-sender-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-sender', handler)
+
+// handler: ({ emailAddresses, viewType, mailItem }) => element | null
+----
+
+[#mail-sender-props]
+=== Props
+
+[[mail-sender-email-addresses]]pass:[<a class="anchor" href="#mail-sender-email-addresses"></a>]`emailAddresses` (array of string)::
+The names that the row shows by default.
+
+[[mail-sender-view-type]]pass:[<a class="anchor" href="#mail-sender-view-type"></a>]`viewType` (string)::
+`conversation` or `message`, as the list groups mail.
+
+[[mail-sender-mail-item]]pass:[<a class="anchor" href="#mail-sender-mail-item"></a>]`mailItem` (object)::
+The message or the conversation of the row.
+
+[#mail-sender-usage-notes]
+=== Usage notes
+
+* Every user who opens a list of mail sees the content in every row, on every window width and in search results.
+* The Modern UI shows the content of every handler that returns a value in place of the names. When no handler returns a value, it shows the names. The *Draft* label of a draft stays after the content.
+* The slot also renders in the *Attach Mail* dialog of the composer and in the *Recover Deleted Items* dialog. There the slot passes only `emailAddresses`, and `viewType` and `mailItem` are not set.
+
+[#mail-sidebar-footer]
+== mail-sidebar-footer
+
+Adds content below the folder list in the sidebar of Mail. Use it for a note, a link or a small widget that belongs with the folders and that only Mail needs. Use `rightside-zimlet-slot`, in xref:reference/slots/app-shell/app-frame-and-sign-in.adoc[App frame and sign-in], for a block that Mail, Calendar, Contacts and Briefcase all show.
+
+[#mail-sidebar-footer-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-sidebar-footer', handler)
+
+// handler: () => element | null
+----
+
+[#mail-sidebar-footer-props]
+=== Props
+
+None.
+
+[#mail-sidebar-footer-usage-notes]
+=== Usage notes
+
+* Every user who opens Mail sees the content, but only after the folders have loaded.
+* The content comes before the mini calendar and the ad slot.
+* For a basic example that adds a link to this slot, see xref:fundamentals/extending-the-ui.adoc#register-a-handler[Register a handler in Slots and handlers].
+
+[#header-action-menu-item]
+== header-action-menu-item
+
+Adds an item to the toolbar of Mail, after the *Delete* button and before the *More* menu. Use it for an action on the messages that the user has selected. For an item inside the *More* menu, see xref:reference/slots/mail/mail-menus-and-actions.adoc[Mail menus and actions].
+
+[#header-action-menu-item-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::header-action-menu-item', handler)
+
+// handler: ({ emailData }) => element | null
+----
+
+[#header-action-menu-item-props]
+=== Props
+
+[[header-action-menu-item-email-data]]pass:[<a class="anchor" href="#header-action-menu-item-email-data"></a>]`emailData` (array of object)::
+The messages or the conversations that the user has selected in the list, depending on how the list groups mail. Unlike `emailData` in the message viewer slots, it is an array.
+
+[#header-action-menu-item-usage-notes]
+=== Usage notes
+
+* The slot renders wherever the toolbar shows. The toolbar sits above the message list or above the message in the reading pane, depending on the position of the reading pane. The slot does not render in the *Storage Cleanup* tab.
+* The array can be empty, for example when a message is open and its row is not selected.
+
+[#next-step]
+== Next step
+
+Continue with the menus of messages and folders in xref:reference/slots/mail/mail-menus-and-actions.adoc[Mail menus and actions], or return to xref:reference/slots/mail.adoc[Mail].

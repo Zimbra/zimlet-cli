@@ -1,0 +1,282 @@
+= Events and appointments
+
+These slots add an item to the menus of an event and hide the *Private* label in its details. They also add content to the form in which the user creates or edits an event. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] acts on one event. Use them also to set a value of an event while the user fills in the form, or to show information about its attendees. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#event-menus]
+=== Event menus
+
+An event has two menus. The right-click menu opens when the user right-clicks an event in the calendar. The *More Options* menu is the three dot button in the toolbar above an open event. It shows in a window at least 1025 px wide, and it is disabled while the user is offline.
+
+The right-click menu has these entries, from top to bottom:
+
+. *Details*, *Edit*, *Delete* and *Print*.
+. *Move*.
+. *Tag*. It shows only when tagging is on for the account.
+. *Copy*.
+. *Show Original*.
+. The slot `action-menu-event-context-menu`.
+. A second group with *Reply*, *Reply All*, *Forward* and, for an event that the user does not organize, *Propose new time*.
+
+The *More Options* menu has the same entries from *Move* on. It has the slot `action-menu-event-more` in place of `action-menu-event-context-menu`.
+
+[#appointment-editor]
+=== Appointment editor
+
+The form has two columns. The left column has these parts, from top to bottom:
+
+. The *Location* field, the *Show Equipment* button when the account has group calendars, and the slot `calendar-appointment-edit-location`.
+. The *Equipment* field. It shows only after the user chooses *Show Equipment*.
+. The *Meeting Platform* row with the slot `calendar-appointment-edit-video-call`. It shows only while a Zimlet has registered a handler for the slot.
+
+The right column has the availability of the attendees, then the slot `attendees-chooser-attendees`.
+
+[#quick-add-form]
+=== Quick add form
+
+The quick add form opens in a popover when the user selects a time in the calendar, in a window at least 1025 px wide. It has a *Location* field, then the *Meeting Platform* row with the slot `calendar-appointment-edit-video-call`. It has no slot for the location. The slot draws the row only while a Zimlet has registered a handler for it.
+
+[#members]
+== Members
+
+<<action-menu-event-context-menu,`action-menu-event-context-menu`>>::
+An item in the right-click menu of an event.
+
+<<action-menu-event-more,`action-menu-event-more`>>::
+An item in the *More Options* menu of an open event.
+
+<<attendees-chooser-attendees,`attendees-chooser-attendees`>>::
+Content below the availability of the attendees in the editor.
+
+<<calendar-appointment-edit-location,`calendar-appointment-edit-location`>>::
+A control below the *Location* field in the editor.
+
+<<calendar-appointment-edit-video-call,`calendar-appointment-edit-video-call`>>::
+The *Meeting Platform* row in the editor and in the quick add form.
+
+<<private-event-label,`private-event-label`>>::
+Hides the *Private* label in the details of an event.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an action to a calendar event menu]::
+A recipe that adds an *Export as .ics file* item to both menus of an event, with <<action-menu-event-context-menu,`action-menu-event-context-menu`>> and <<action-menu-event-more,`action-menu-event-more`>>. You learn to add an item to the right-click menu and to the menu of an open event. You also learn to read the event of the menu and to download a file from the server. Both slots pass the same prop, so one handler fills both.
+
+xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field]::
+A recipe that adds an *Add meeting link* control to the form of an event, with <<calendar-appointment-edit-video-call,`calendar-appointment-edit-video-call`>>. You learn to place a control in the form, to change the location of the event and to keep the text that the user typed. <<calendar-appointment-edit-location,`calendar-appointment-edit-location`>> passes the same `locations` and `handleLocationChange`, so you register the same control for it.
+
+[#action-menu-event-context-menu]
+== action-menu-event-context-menu
+
+Adds an item at the end of the first group of the right-click menu of an event, after *Show Original*. Use it for an action on one event that must be in the context menu. Use <<action-menu-event-more,`action-menu-event-more`>> for the menu of an open event.
+
+[#action-menu-event-context-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::action-menu-event-context-menu', handler)
+
+// handler: ({ eventToDisplay }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#action-menu-event-context-menu-props]
+=== Props
+
+[[action-menu-event-context-menu-event-to-display]]pass:[<a class="anchor" href="#action-menu-event-context-menu-event-to-display"></a>]`eventToDisplay` (object)::
+The event that the user right-clicked. It has fields such as `id`, `inviteId`, `name`, `folderId`, `allDay`, `isRecurring` and `isOrganizer`.
+
+[#action-menu-event-context-menu-usage-notes]
+=== Usage notes
+
+* Every user who right-clicks an event sees the item. See <<event-menus>> for its position.
+* For a complete example, see xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an action to a calendar event menu].
+
+[#action-menu-event-more]
+== action-menu-event-more
+
+Adds an item at the end of the first group of the *More Options* menu above an open event, after *Show Original*. Use it for an action on one event that belongs with the other actions of the open event. Use <<action-menu-event-context-menu,`action-menu-event-context-menu`>> for the right-click menu.
+
+[#action-menu-event-more-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::action-menu-event-more', handler)
+
+// handler: ({ eventToDisplay }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#action-menu-event-more-props]
+=== Props
+
+[[action-menu-event-more-event-to-display]]pass:[<a class="anchor" href="#action-menu-event-more-event-to-display"></a>]`eventToDisplay` (object)::
+The open event. It has the same fields as in <<action-menu-event-context-menu-event-to-display,`action-menu-event-context-menu`>>.
+
+[#action-menu-event-more-usage-notes]
+=== Usage notes
+
+* The toolbar has the menu in a window at least 1025 px wide only. The button is disabled while the user is offline.
+* For a complete example, see xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an action to a calendar event menu].
+
+[#attendees-chooser-attendees]
+== attendees-chooser-attendees
+
+Adds content below the availability of the attendees in the form in which the user creates or edits an event. Use it for information about the attendees, or for code that reacts when the user changes the event.
+
+[#attendees-chooser-attendees-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::attendees-chooser-attendees', handler)
+
+// handler: ({ tabId }) => element | null
+----
+
+[#attendees-chooser-attendees-props]
+=== Props
+
+[[attendees-chooser-attendees-tab-id]]pass:[<a class="anchor" href="#attendees-chooser-attendees-tab-id"></a>]`tabId` (string)::
+The id of the tab of the editor. The editor keeps the values of the form under this id in the state of the Modern UI. See xref:reference/shims/components/appointment-edit.adoc[AppointmentEdit] for the state.
+
+[#attendees-chooser-attendees-usage-notes]
+=== Usage notes
+
+* The slot shows in the editor only, and not in the quick add form. It shows when the user creates, edits or copies an event, forwards it or proposes a new time. See <<appointment-editor>>.
+* The slot draws again whenever the panel draws again, for example when the user changes the attendees or the time. A handler that sends a request must check whether its input changed.
+
+[#calendar-appointment-edit-location]
+== calendar-appointment-edit-location
+
+Adds a control below the *Location* field in the form of an event. Use it for a control that belongs to the location itself, such as a button that inserts an address. Use <<calendar-appointment-edit-video-call,`calendar-appointment-edit-video-call`>> for a meeting platform.
+
+[#calendar-appointment-edit-location-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-appointment-edit-location', handler)
+
+// handler: ({ locations, event, handleLocationChange, tabId, notes }) => element | null
+----
+
+[#calendar-appointment-edit-location-props]
+=== Props
+
+[[calendar-appointment-edit-location-locations]]pass:[<a class="anchor" href="#calendar-appointment-edit-location-locations"></a>]`locations` (array)::
+The locations of the event. Each room that the user picked is an object. The text that the user typed is a string.
+
+[[calendar-appointment-edit-location-event]]pass:[<a class="anchor" href="#calendar-appointment-edit-location-event"></a>]`event` (object)::
+The event that the form shows.
+
+[[calendar-appointment-edit-location-handle-location-change]]pass:[<a class="anchor" href="#calendar-appointment-edit-location-handle-location-change"></a>]`handleLocationChange` (function `(change: { value: any[] }) => void`)::
+Changes the location of the event. Call it with one object, `{ value }`, where `value` is the complete new array of locations.
++
+WARNING: `value` replaces the whole list. A location that you leave out is removed.
+
+[[calendar-appointment-edit-location-tab-id]]pass:[<a class="anchor" href="#calendar-appointment-edit-location-tab-id"></a>]`tabId` (string)::
+The id of the tab of the editor.
+
+[[calendar-appointment-edit-location-notes]]pass:[<a class="anchor" href="#calendar-appointment-edit-location-notes"></a>]`notes` (string)::
+The text of the notes of the event. The slot gives no function to change it.
+
+[#calendar-appointment-edit-location-usage-notes]
+=== Usage notes
+
+* The slot shows in the editor only, and not in the quick add form. See <<appointment-editor>>.
+* The slot passes the same `locations` and `handleLocationChange` as <<calendar-appointment-edit-video-call,`calendar-appointment-edit-video-call`>> does. The control of xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field] therefore also works here.
+
+[#calendar-appointment-edit-video-call]
+== calendar-appointment-edit-video-call
+
+Adds a row labelled *Meeting Platform* to the form of an event. Use it for a control that sets the meeting platform of the event, such as a video call link. Use <<calendar-appointment-edit-location,`calendar-appointment-edit-location`>> for a control that belongs to the location.
+
+[#calendar-appointment-edit-video-call-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-appointment-edit-video-call', handler)
+
+// handler: ({ locations, event, handleLocationChange, notes, isCustomRecurringEvent, repeatValue, tabId }) => element | null
+----
+
+[#calendar-appointment-edit-video-call-props]
+=== Props
+
+The first three props are in the editor and in the quick add form. The other props are in the editor only.
+
+[[calendar-appointment-edit-video-call-locations]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call-locations"></a>]`locations` (array)::
+The locations of the event. Each room that the user picked is an object. The text that the user typed is a string.
+
+[[calendar-appointment-edit-video-call-event]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call-event"></a>]`event` (object)::
+The event that the form shows.
+
+[[calendar-appointment-edit-video-call-handle-location-change]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call-handle-location-change"></a>]`handleLocationChange` (function `(change: { value: any[] }) => void`)::
+Changes the location of the event. Call it with one object, `{ value }`, where `value` is the complete new array of locations.
++
+WARNING: `value` replaces the whole list. A location that you leave out is removed.
+
+[[calendar-appointment-edit-video-call-notes]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call-notes"></a>]`notes` (string)::
+The text of the notes of the event. The slot gives no function to change it.
+
+[[calendar-appointment-edit-video-call-is-custom-recurring-event]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call-is-custom-recurring-event"></a>]`isCustomRecurringEvent` (boolean)::
+Whether the user set a custom rule for how the event repeats.
+
+[[calendar-appointment-edit-video-call-repeat-value]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call-repeat-value"></a>]`repeatValue` (string)::
+A code for how the event repeats, such as `NONE` for an event that does not repeat or `WEE` for every week.
+
+[[calendar-appointment-edit-video-call-tab-id]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call-tab-id"></a>]`tabId` (string)::
+The id of the tab of the editor.
+
+[#calendar-appointment-edit-video-call-usage-notes]
+=== Usage notes
+
+* The Modern UI draws the row, with its label, only while a Zimlet has registered a handler for the slot. The row disappears when the last handler is removed with `unregister`.
+* The slot shows in the editor and in the quick add form. See <<appointment-editor>> and <<quick-add-form>>.
+* For a complete example, see xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field].
+
+[#private-event-label]
+== private-event-label
+
+Hides the *Private* label in the details of a private event. The lock icon next to it stays. Use it when the label must not show.
+
+WARNING: A handler that returns a value hides the label for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the label.
+
+[#private-event-label-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::private-event-label', handler)
+
+// handler: () => true | null
+----
+
+Return `true` to hide the label, or `null` to keep it. The Modern UI checks only whether the handler returned a value, and it does not draw the value.
+
+[#private-event-label-props]
+=== Props
+
+None.
+
+[#private-event-label-usage-notes]
+=== Usage notes
+
+* The label shows only for private events, in the details popover that opens when the user points at or selects an event. The popover opens in a window at least 1025 px wide.
+* The slot hides only the word. The lock icon stays.
+
+[#next-step]
+== Next step
+
+Continue with the Contacts slots in xref:reference/slots/contacts.adoc[Contacts], or return to the xref:reference/slots/calendar/calendar-view.adoc[Calendar view].

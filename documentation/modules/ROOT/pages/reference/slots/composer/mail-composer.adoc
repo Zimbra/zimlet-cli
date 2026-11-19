@@ -1,0 +1,322 @@
+= Mail composer
+
+These slots change the parts of the composer that only Mail has. They reach the sender selector, the S/MIME menu, the options menu, the attachment menu, the area below the subject and the send button. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] changes who sends a message or adds an action to a message that is being written. The composer also opens as an inline reply in the message viewer, and a draft opens read-only in a conversation. The slots that the composer shares with other screens are in xref:reference/slots/composer/editor-and-addresses.adoc[Editor and address fields]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#composer-layout]
+=== Layout of the composer
+
+On a window at least 1025 px wide, the composer has these parts from top to bottom:
+
+. The sender row: *From* with the selector of the sender, which the slot `from-options` replaces. Then the slot `mail-composer-smime-dropdown`, and the options menu with three dots, which ends with the slot `compose-sender-options-menu`.
+. The fields *To*, *Cc* and *Bcc*.
+. The field *Subject*.
+. The slot `mail-header-wrapper`.
+. The formatting toolbar of the editor, in an HTML message only.
+. The text of the message. In an HTML message, the slot xref:reference/slots/composer/editor-and-addresses.adoc#composer[`composer`] follows the editing area.
+. The list of attachments.
+. The bottom bar. From left to right it has:
+** The slot `mail-composer-toolbar-send`.
+** *Send & Archive*, only when it is enabled.
+** *Send*.
+** The *Attach* menu, which ends with the slot `compose-attachment-action-menu`.
+** The slots xref:reference/slots/composer/editor-and-addresses.adoc#composer-toolbar-start[`composer-toolbar-start`] and xref:reference/slots/composer/editor-and-addresses.adoc#composer-toolbar-end[`composer-toolbar-end`], the time the draft was saved and the delete button.
+
+[#narrow-window]
+=== Narrow window
+
+On a window narrower than 1025 px, a new message has no sender options in the header and no buttons in the bottom bar. The *Attach* menu, *Send*, the options menu and the slot `mail-composer-toolbar-send` are in the toolbar of the xref:reference/glossary.adoc#modern-ui[Modern UI] instead. An inline reply keeps the bottom bar at every width.
+
+[#members]
+== Members
+
+<<from-options,`from-options`>>::
+Replaces the selector of the sender.
+
+<<mail-composer-smime-dropdown,`mail-composer-smime-dropdown`>>::
+A menu in the sender row, for a Zimlet that signs and encrypts a message.
+
+<<compose-sender-options-menu,`compose-sender-options-menu`>>::
+Items in the options menu of the composer.
+
+<<mail-header-wrapper,`mail-header-wrapper`>>::
+Content below the subject.
+
+<<compose-attachment-action-menu,`compose-attachment-action-menu`>>::
+An item at the end of the *Attach* menu.
+
+<<mail-composer-toolbar-send,`mail-composer-toolbar-send`>>::
+Content next to the send button.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-composer.adoc[Add to the composer]::
+A recipe that adds the options *Insert confidentiality notice* and *Mark subject as confidential* to the options menu with <<compose-sender-options-menu,`compose-sender-options-menu`>>. You learn to group menu items with `ActionMenuGroup` and to insert HTML at the caret. You also learn to change the subject and to hide an option in a plain text message. Every other slot in this category that adds a menu item is registered the same way.
+
+[#from-options]
+== from-options
+
+Replaces the selector that follows *From* in the header of the composer. Use it when the user must choose the sender in another way, such as from a list that your Zimlet builds.
+
+WARNING: As soon as one handler returns content, the built-in selector is gone for every user. Your control must call `handleChangeFrom`. Otherwise the sender of the message does not change.
+
+[#from-options-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::from-options', handler)
+
+// handler: ({ handleChangeFrom, fromAccountId, matchesScreenMd, delegatedRights, accounts, messageFromId }) => element | null
+----
+
+Return an element. A handler that returns `null` or nothing keeps the built-in selector.
+
+[#from-options-props]
+=== Props
+
+[[from-options-handle-change-from]]pass:[<a class="anchor" href="#from-options-handle-change-from"></a>]`handleChangeFrom` (function `({ value }: { value: string }) => void`)::
+Call it with an object that has the id of the new sender as `value`. It sets the sender of the message and switches the signature to the one of that sender. Its return value is ignored.
+
+[[from-options-from-account-id]]pass:[<a class="anchor" href="#from-options-from-account-id"></a>]`fromAccountId` (string)::
+The id of the sender that is selected now. It is the `id` of one of the `accounts`, or `<address>(<right>)` for a sender that another account granted, such as `<address>(sendAs)`.
+
+[[from-options-accounts]]pass:[<a class="anchor" href="#from-options-accounts"></a>]`accounts` (array)::
+The identities of the user. Each entry is an object with fields such as `id`, `emailAddress`, `emailAddressType` and `fromDisplay`.
+
+[[from-options-delegated-rights]]pass:[<a class="anchor" href="#from-options-delegated-rights"></a>]`delegatedRights` (object)::
+The rights that other accounts granted to the user. Its `targets` array has one entry for each right, with the `right` and the accounts it applies to (`target`). It can be `undefined`.
+
+[[from-options-message-from-id]]pass:[<a class="anchor" href="#from-options-message-from-id"></a>]`messageFromId` (string)::
+The address of the sender that the draft has. It is `undefined` when the draft has none.
+
+[[from-options-matches-screen-md]]pass:[<a class="anchor" href="#from-options-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+`true` when the window is at least 1025 px wide.
+
+[#from-options-usage-notes]
+=== Usage notes
+
+* Every user who writes a message sees the content, while the header shows all its fields. The collapsed header of an inline reply has no *From* row.
+* The slot replaces the selector when at least one handler returns something that is not empty. Handlers that return `null`, `false` or nothing do not count.
+
+[#mail-composer-smime-dropdown]
+== mail-composer-smime-dropdown
+
+Adds a menu to the sender row, after the sender. Use it when your Zimlet lets the user sign or encrypt a message with S/MIME (Secure/Multipurpose Internet Mail Extensions). The Modern UI must run in a browser.
+
+[#mail-composer-smime-dropdown-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-composer-smime-dropdown', handler)
+
+// handler: ({ smimeOperation, changeSmimeOperation }) => element | null
+----
+
+Return the xref:reference/shims/components/buttons-and-actions.adoc#smime-operation-drop-down[`SMIMEOperationDropDown`] component, or a menu of your own.
+
+[#mail-composer-smime-dropdown-props]
+=== Props
+
+[[mail-composer-smime-dropdown-smime-operation]]pass:[<a class="anchor" href="#mail-composer-smime-dropdown-smime-operation"></a>]`smimeOperation` (string)::
+The operation that is selected now: `noSignOrEnc` (neither), `sign` or `signAndEnc` (sign and encrypt).
+
+[[mail-composer-smime-dropdown-change-smime-operation]]pass:[<a class="anchor" href="#mail-composer-smime-dropdown-change-smime-operation"></a>]`changeSmimeOperation` (function `(operation: string) => void`)::
+Call it with one of the three values above. It does nothing when the value is the current one. Otherwise it saves the draft with the new operation. Its return value is ignored.
++
+WARNING: Switching to or from `noSignOrEnc` removes every attachment of the message. When the message has attachments, the composer first shows a warning dialog and applies the change only if the user confirms.
+
+[#mail-composer-smime-dropdown-usage-notes]
+=== Usage notes
+
+* The slot shows only when the license of the server includes S/MIME. It never shows in the desktop app, which has its own built-in menu in the same place.
+
+[#compose-sender-options-menu]
+== compose-sender-options-menu
+
+Adds items to the options menu of the composer, the menu with three dots, below the built-in options. Use it for an action that changes the message as a whole, such as inserting a standard text. Use xref:reference/slots/composer/editor-and-addresses.adoc#composer-toolbar-start[`composer-toolbar-start`] or xref:reference/slots/composer/editor-and-addresses.adoc#composer-toolbar-end[`composer-toolbar-end`] for a button that acts on the text that the user is editing.
+
+[#compose-sender-options-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::compose-sender-options-menu', handler)
+
+// handler: ({ getMessage, insertAtCaret, getSubject, setSubject, isPlainText, getMode, getLocalTextBody, setLocalTextBody, getLocalHTMLBody, setLocalHTMLBody, matchesScreenMd }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-group[`ActionMenuGroup`] or an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`].
+
+[#compose-sender-options-menu-props]
+=== Props
+
+[[compose-sender-options-menu-get-message]]pass:[<a class="anchor" href="#compose-sender-options-menu-get-message"></a>]`getMessage` (function `() => object`)::
+Returns the message as it would be sent now, with fields such as `subject`, `to`, `cc`, `bcc` and `attachments`. Read it and do not change it.
+
+[[compose-sender-options-menu-insert-at-caret]]pass:[<a class="anchor" href="#compose-sender-options-menu-insert-at-caret"></a>]`insertAtCaret` (function `(html: string, whitespacePadded?: boolean) => void`)::
+Inserts HTML at the caret of the editor and replaces the text that is selected. It does nothing in a plain text message. Its return value is ignored.
+
+[[compose-sender-options-menu-get-subject]]pass:[<a class="anchor" href="#compose-sender-options-menu-get-subject"></a>]`getSubject` (function `() => string`)::
+Returns the subject that the user has typed so far.
+
+[[compose-sender-options-menu-set-subject]]pass:[<a class="anchor" href="#compose-sender-options-menu-set-subject"></a>]`setSubject` (function `(subject: string) => void`)::
+Replaces the subject and the title of the tab of the message. Its return value is ignored.
+
+[[compose-sender-options-menu-is-plain-text]]pass:[<a class="anchor" href="#compose-sender-options-menu-is-plain-text"></a>]`isPlainText` (boolean)::
+`true` while the message is in plain text mode.
+
+[[compose-sender-options-menu-get-mode]]pass:[<a class="anchor" href="#compose-sender-options-menu-get-mode"></a>]`getMode` (function `() => string`)::
+Returns the mode of the message when you call it: `html` or `text`.
+
+[[compose-sender-options-menu-get-local-text-body]]pass:[<a class="anchor" href="#compose-sender-options-menu-get-local-text-body"></a>]`getLocalTextBody` (function `() => string`)::
+Returns the body of the plain text version of the message.
+
+[[compose-sender-options-menu-set-local-text-body]]pass:[<a class="anchor" href="#compose-sender-options-menu-set-local-text-body"></a>]`setLocalTextBody` (function `(text: string) => void`)::
+Replaces the body of the plain text version that the composer holds. Its return value is ignored.
+
+[[compose-sender-options-menu-get-local-html-body]]pass:[<a class="anchor" href="#compose-sender-options-menu-get-local-html-body"></a>]`getLocalHTMLBody` (function `() => string`)::
+Returns the body of the HTML version of the message.
+
+[[compose-sender-options-menu-set-local-html-body]]pass:[<a class="anchor" href="#compose-sender-options-menu-set-local-html-body"></a>]`setLocalHTMLBody` (function `(html: string) => void`)::
+Replaces the body of the HTML version that the composer holds. Its return value is ignored.
+
+[[compose-sender-options-menu-matches-screen-md]]pass:[<a class="anchor" href="#compose-sender-options-menu-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+`true` when the menu is in the header, in a window at least 1025 px wide. It is `undefined` when the menu is in the toolbar of a narrow window.
+
+[#compose-sender-options-menu-usage-notes]
+=== Usage notes
+
+* Every user who writes a message sees the content, in a new message, a reply and a forward. On a narrow window it is in the toolbar (see <<narrow-window>>). An inline reply has the menu only on a wide window and while its header is open.
+* The menu is hidden, and so is the slot, when the account has no read receipts, priority or delivery notifications. It is also hidden when there is no signature to choose from.
+* For a complete example, see xref:build-by-goal/recipe-composer.adoc[Add to the composer].
+
+[#mail-header-wrapper]
+== mail-header-wrapper
+
+Adds content to the header of the composer, below the *Subject* field. Use it for a notice or a status line about the recipients, such as a warning about an address.
+
+[#mail-header-wrapper-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-header-wrapper', handler)
+
+// handler: ({ composerId }) => element | null
+----
+
+[#mail-header-wrapper-props]
+=== Props
+
+[[mail-header-wrapper-composer-id]]pass:[<a class="anchor" href="#mail-header-wrapper-composer-id"></a>]`composerId` (string)::
+The id of the message that is being written.
+
+[#mail-header-wrapper-usage-notes]
+=== Usage notes
+
+* Every user who writes a message sees the content, in a new message, a reply and a forward.
+* A collapsed header of an inline reply shows a short list of recipients instead of the fields. A draft that opens read-only does the same. The slot renders after that list.
+
+[#compose-attachment-action-menu]
+== compose-attachment-action-menu
+
+Adds an item at the end of the *Attach* menu, after a separator. Use it to offer another source of files, such as a cloud drive.
+
+[#compose-attachment-action-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::compose-attachment-action-menu', handler)
+
+// handler: ({ onAttachmentOptionSelection, addAttachments, actionButtonClass, iconClass, arrow, isOffline }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] or a `NestedActionMenuItem` (see xref:reference/shims/components/menus.adoc#nested-action-menu-item[`NestedActionMenuItem`]), because the content is drawn inside the menu.
+
+[#compose-attachment-action-menu-props]
+=== Props
+
+[[compose-attachment-action-menu-on-attachment-option-selection]]pass:[<a class="anchor" href="#compose-attachment-action-menu-on-attachment-option-selection"></a>]`onAttachmentOptionSelection` (function `(chooser: function) => void`)::
+Call it from the click handler of your item, with a function. The composer then calls that function with one object, whose fields are:
++
+* `addAttachments` (function `(files: File[], checkForMaxLength?: boolean) => void`): attaches the files. Pass `false` as the second argument to skip the check of the size limit.
+* `insertLinksAtCaret` (function `(links: object[]) => void`): inserts a link for each object at the caret. An object has a `url` and an optional `text`. Objects without a `url` are skipped.
+* `embedImages` (function `(images: File[]) => void`): adds the files as inline images.
+* `isPlainText` (function `() => string`): returns the mode of the message, `html` or `text`. Despite its name, it does not return a boolean.
+* `getSubject` (function `() => string`) and `setSubject` (function `(subject: string) => void`): read and replace the subject.
++
+It does nothing while the browser is offline. Its return value is ignored.
+
+[[compose-attachment-action-menu-add-attachments]]pass:[<a class="anchor" href="#compose-attachment-action-menu-add-attachments"></a>]`addAttachments` (function `(files: File[], checkForMaxLength?: boolean) => void`)::
+The same function as in the object above, for a handler that attaches files without a chooser.
+
+[[compose-attachment-action-menu-action-button-class]]pass:[<a class="anchor" href="#compose-attachment-action-menu-action-button-class"></a>]`actionButtonClass` (string)::
+The class name of the button that opens the menu.
+
+[[compose-attachment-action-menu-icon-class]]pass:[<a class="anchor" href="#compose-attachment-action-menu-icon-class"></a>]`iconClass` (string)::
+The class name of the icon of the button. It is `undefined` in the toolbar of a narrow window.
+
+[[compose-attachment-action-menu-arrow]]pass:[<a class="anchor" href="#compose-attachment-action-menu-arrow"></a>]`arrow` (boolean)::
+`false`, because the button that opens the menu has no arrow.
+
+[[compose-attachment-action-menu-is-offline]]pass:[<a class="anchor" href="#compose-attachment-action-menu-is-offline"></a>]`isOffline` (boolean)::
+Always `false`, because the slot does not render while the browser is offline.
+
+[[compose-attachment-action-menu-other-props]]pass:[<a class="anchor" href="#compose-attachment-action-menu-other-props"></a>]`monotone`, `colored` and `popoverClass`::
+Passed on from the menu. The composer sets none of them, so they are `undefined`.
+
+[#compose-attachment-action-menu-usage-notes]
+=== Usage notes
+
+* Every user who writes a message sees the item, in a new message, a reply and a forward. A draft that opens read-only has no *Attach* menu.
+* The separator and the slot show only while at least one handler is registered and the browser is online.
+* The *Attach* menu is disabled while the browser is offline and for a reply that cancels an event, so the user cannot open it.
+
+[#mail-composer-toolbar-send]
+== mail-composer-toolbar-send
+
+Adds content next to the send button, in the bottom bar of the composer or in the toolbar of a narrow window. Use it for a control that belongs to sending, such as another send button. To check a message before it is sent, use the `ONBEFORESEND` event of xref:go-deeper/app-events.adoc[App events].
+
+[#mail-composer-toolbar-send-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-composer-toolbar-send', handler)
+
+// handler: ({ scheduleSend, getMessageToSend, closeComposer, zimbraFeatureMailSendLaterEnabled }) => element | null
+----
+
+[#mail-composer-toolbar-send-props]
+=== Props
+
+[[mail-composer-toolbar-send-schedule-send]]pass:[<a class="anchor" href="#mail-composer-toolbar-send-schedule-send"></a>]`scheduleSend` (function `(autoSendTime?: number, doSendAndArchive?: boolean) => void`)::
+Sends the message, as the *Send* button does. It first sends the `ONBEFORESEND` event and flushes the editor. Pass the time to send as the first argument, in milliseconds since 1970, to send the message later. Pass `true` as the second argument to archive the original message after it is sent. Its return value is ignored.
+
+[[mail-composer-toolbar-send-get-message-to-send]]pass:[<a class="anchor" href="#mail-composer-toolbar-send-get-message-to-send"></a>]`getMessageToSend` (function `() => object`)::
+Returns the message as it would be sent now, with fields such as `subject`, `to`, `cc`, `bcc` and `attachments`.
+
+[[mail-composer-toolbar-send-close-composer]]pass:[<a class="anchor" href="#mail-composer-toolbar-send-close-composer"></a>]`closeComposer` (function `() => void`)::
+Closes the composer. Its return value is ignored.
+
+[[mail-composer-toolbar-send-zimbra-feature-mail-send-later-enabled]]pass:[<a class="anchor" href="#mail-composer-toolbar-send-zimbra-feature-mail-send-later-enabled"></a>]`zimbraFeatureMailSendLaterEnabled` (boolean)::
+`true` when the account may send a message later.
+
+[#mail-composer-toolbar-send-usage-notes]
+=== Usage notes
+
+* Every user who writes a message sees the content. It shows in the bottom bar on a wide window and in an inline reply, and in the toolbar of a narrow window. A draft that opens read-only, such as a draft in a conversation, has the same bottom bar and shows the slot too.
+* A handler can return an element that draws nothing. Its component still runs hooks and listens to events for as long as the slot is on screen.
+
+[#next-step]
+== Next step
+
+Continue with the slots that the composer shares with other screens in xref:reference/slots/composer/editor-and-addresses.adoc[Editor and address fields]. Or return to xref:reference/slots/composer.adoc[Composer and editor].

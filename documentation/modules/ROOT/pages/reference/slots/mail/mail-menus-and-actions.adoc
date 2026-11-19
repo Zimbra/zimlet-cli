@@ -1,0 +1,346 @@
+= Mail menus and actions
+
+These slots add items to the menus of a message and of a mail folder, or hide a standard item of them. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] adds an action for a message or a folder, or removes one. The message menus are the *More* menu of an open message and the *More Options* menu in the toolbar. The third is the right-click menu of a message in the list. The folder menus open from the folder list. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#message-menus]
+=== Message menus
+
+The slots of the message menus appear in these places.
+
+[cols="2,2,2,2",options="header"]
+|===
+|Slot |*More* menu of an open message |*More Options* menu in the toolbar |Right-click menu of a message
+
+|`action-menu-mail-more`
+|Last item
+|Last item
+|Last item
+
+|`mail-recall-menu-option`
+|After *Redirect*
+|After *Redirect*
+|After *Delete*
+
+|`mail-overflow-menu-option`
+|Not in this menu
+|After the item of `mail-recall-menu-option`
+|Not in this menu
+
+|`print-link`
+|Hides *Print*
+|Hides *Print*
+|Not in this menu
+|===
+
+[#folder-menus]
+=== Folder menus
+
+The folder menus open from the folder list. Each has these slots:
+
+Inbox, Drafts, Sent, Archive and Outbox::
+`empty-folder-option`.
+
+Other mail folders::
+`empty-folder-option` and `mail-folder-context-menu`. A shared folder also has `mail-shared-folder-context-menu`.
+
+Trash::
+`recover-discarded-mails-option`.
+
+Spam::
+No slot.
+
+[#slots-that-hide-an-item]
+=== Slots that hide an item
+
+The slots `print-link`, `empty-folder-option` and `recover-discarded-mails-option` hide a standard item and add nothing. The Modern UI checks only whether a handler returned a value. It does not draw the value.
+
+WARNING: A handler that returns a value hides the item for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the item.
+
+[#members]
+== Members
+
+<<action-menu-mail-more,`action-menu-mail-more`>>::
+An item at the end of every message menu.
+
+<<mail-overflow-menu-option,`mail-overflow-menu-option`>>::
+An item in the *More Options* menu only.
+
+<<mail-recall-menu-option,`mail-recall-menu-option`>>::
+An item next to the standard actions of a message.
+
+<<print-link,`print-link`>>::
+Hides *Print* in the message menus and in the Calendar toolbar.
+
+<<mail-folder-context-menu,`mail-folder-context-menu`>>::
+An item in the menu of a mail folder.
+
+<<mail-shared-folder-context-menu,`mail-shared-folder-context-menu`>>::
+An item in the menu of a shared mail folder.
+
+<<empty-folder-option,`empty-folder-option`>>::
+Hides *Empty folder*.
+
+<<recover-discarded-mails-option,`recover-discarded-mails-option`>>::
+Hides *Deleted Items* in the menu of Trash.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]::
+A recipe that adds a *Follow up* item to the menus of a message, with <<action-menu-mail-more,`action-menu-mail-more`>>. You learn to add an item to the menus of a message and to turn it off when it does not apply. You also learn to report the result. Every other slot in this category that adds an item is registered the same way, except <<mail-folder-context-menu,`mail-folder-context-menu`>> and <<mail-shared-folder-context-menu,`mail-shared-folder-context-menu`>>. The menu draws the item for those two, and the handler returns the content.
+
+[#action-menu-mail-more]
+== action-menu-mail-more
+
+Adds an item at the end of the menus of a message. Use it for an action that must be in every menu of a message. Use <<mail-overflow-menu-option,`mail-overflow-menu-option`>> for an item in the *More Options* menu only.
+
+[#action-menu-mail-more-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::action-menu-mail-more', handler)
+
+// handler: ({ emailData, selectedMails, isContextMenuSlot }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#action-menu-mail-more-props]
+=== Props
+
+[[action-menu-mail-more-email-data]]pass:[<a class="anchor" href="#action-menu-mail-more-email-data"></a>]`emailData` (object)::
+The open message, the selected message or the message that the user right-clicked. In a list that groups mail by conversation, it is the conversation. It is empty in the *More Options* menu when no message or several messages are selected.
+
+[[action-menu-mail-more-selected-mails]]pass:[<a class="anchor" href="#action-menu-mail-more-selected-mails"></a>]`selectedMails` (array of object)::
+The items that the user selected in the list. Read it when the user can select several messages. The *More* menu of an open message does not pass it.
+
+[[action-menu-mail-more-is-context-menu-slot]]pass:[<a class="anchor" href="#action-menu-mail-more-is-context-menu-slot"></a>]`isContextMenuSlot` (boolean)::
+`true` in the right-click menu. The other menus do not pass it. Return `null` for it when the item must stay out of that menu.
+
+[#action-menu-mail-more-usage-notes]
+=== Usage notes
+
+* Every user who opens a message or a list of mail sees the item.
+* The right-click menu opens only on a window at least 768 px wide, and not in the *Storage Cleanup* tab. It does not call the slot for messages in the Drafts folder. The *More Options* menu is not in the *Storage Cleanup* tab either.
+* For a complete example, see xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].
+
+[#mail-overflow-menu-option]
+== mail-overflow-menu-option
+
+Adds an item to the *More Options* menu in the toolbar, after the item of <<mail-recall-menu-option,`mail-recall-menu-option`>>. Use it when the item does not belong in the other menus of a message. Use <<action-menu-mail-more,`action-menu-mail-more`>> for an item in all of them.
+
+[#mail-overflow-menu-option-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-overflow-menu-option', handler)
+
+// handler: ({ emailData, isConversationView, multiple }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#mail-overflow-menu-option-props]
+=== Props
+
+[[mail-overflow-menu-option-email-data]]pass:[<a class="anchor" href="#mail-overflow-menu-option-email-data"></a>]`emailData` (object)::
+The open message. In a list that groups mail by conversation, it is the conversation. It is empty when no message is open, for example when the reading pane is off.
+
+[[mail-overflow-menu-option-is-conversation-view]]pass:[<a class="anchor" href="#mail-overflow-menu-option-is-conversation-view"></a>]`isConversationView` (boolean)::
+`true` when the list groups mail by conversation.
+
+[[mail-overflow-menu-option-multiple]]pass:[<a class="anchor" href="#mail-overflow-menu-option-multiple"></a>]`multiple` (boolean)::
+Always `false`, because the menu does not show the slot when several messages are selected.
+
+[#mail-overflow-menu-option-usage-notes]
+=== Usage notes
+
+* The slot appears in the *More Options* menu only, and only when one message or no message is selected.
+* The slot does not pass `selectedMails`.
+
+[#mail-recall-menu-option]
+== mail-recall-menu-option
+
+Adds an item to the menus of a message, next to the standard actions. It comes after *Redirect* in the two *More* menus and after *Delete* in the right-click menu. Use it when the item must sit with the standard actions and not at the end of the menu. Use <<action-menu-mail-more,`action-menu-mail-more`>> for an item at the end.
+
+[#mail-recall-menu-option-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-recall-menu-option', handler)
+
+// handler: ({ emailData, isConversation, isMultiple }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#mail-recall-menu-option-props]
+=== Props
+
+[[mail-recall-menu-option-email-data]]pass:[<a class="anchor" href="#mail-recall-menu-option-email-data"></a>]`emailData` (object)::
+The open message, the single selected message or the message that the user right-clicked. It is empty in the *More Options* menu when no message or several messages are selected.
+
+[[mail-recall-menu-option-is-conversation]]pass:[<a class="anchor" href="#mail-recall-menu-option-is-conversation"></a>]`isConversation` (boolean)::
+In the *More* menu of an open message, `true` for a message of an open conversation. In the other menus, `true` when the list groups mail by conversation.
+
+[[mail-recall-menu-option-is-multiple]]pass:[<a class="anchor" href="#mail-recall-menu-option-is-multiple"></a>]`isMultiple` (boolean)::
+`true` when the user selected more than one item in the list. Only the right-click menu passes it.
+
+[#mail-recall-menu-option-usage-notes]
+=== Usage notes
+
+* The *More Options* menu shows the slot only when one message or no message is selected.
+* The right-click menu opens only on a window at least 768 px wide, and not in the *Storage Cleanup* tab.
+
+[#print-link]
+== print-link
+
+Hides the *Print* item in the message menus and in the actions menu of the Calendar toolbar. Use it when users must not print from the Modern UI. See <<slots-that-hide-an-item,Slots that hide an item>>.
+
+[#print-link-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::print-link', handler)
+
+// handler: () => true | null
+----
+
+Return `true` to hide the item, or `null` to keep it.
+
+[#print-link-props]
+=== Props
+
+None.
+
+[#print-link-usage-notes]
+=== Usage notes
+
+* The slot hides the item in the *More* menu of an open message, in the *More Options* menu and in the Calendar toolbar. A handler cannot hide it in one of them only.
+* The *More Options* menu shows *Print* only when one message is selected and the window is at least 1025 px wide. The slot also hides the divider above it.
+
+[#mail-folder-context-menu]
+== mail-folder-context-menu
+
+Adds an item to the menu of a mail folder, below the standard items. Use it for an action on a folder. Use <<mail-shared-folder-context-menu,`mail-shared-folder-context-menu`>> for an action on shared folders only.
+
+[#mail-folder-context-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-folder-context-menu', handler)
+
+// handler: ({ folder }) => element | null
+----
+
+The menu draws the item and puts the content that you return inside it. Return the content of the item, such as a label or a link, and not an `ActionMenuItem`.
+
+[#mail-folder-context-menu-props]
+=== Props
+
+[[mail-folder-context-menu-folder]]pass:[<a class="anchor" href="#mail-folder-context-menu-folder"></a>]`folder` (object)::
+The folder of the menu. It has fields such as `id` and `name`.
+
+[#mail-folder-context-menu-usage-notes]
+=== Usage notes
+
+* The menu shows the item for the folders that the *Other mail folders* entry of <<folder-menus>> lists, and not for search folders.
+* The menu shows the item only when a Zimlet has registered a handler for the slot.
+
+[#mail-shared-folder-context-menu]
+== mail-shared-folder-context-menu
+
+Adds an item to the menu of a shared mail folder, below the standard items. Use it for an action that applies only to a folder that another user shared. Use <<mail-folder-context-menu,`mail-folder-context-menu`>> for an action on every folder.
+
+[#mail-shared-folder-context-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::mail-shared-folder-context-menu', handler)
+
+// handler: ({ folder }) => element | null
+----
+
+The menu draws the item and puts the content that you return inside it. Return the content of the item, such as a label or a link, and not an `ActionMenuItem`.
+
+[#mail-shared-folder-context-menu-props]
+=== Props
+
+[[mail-shared-folder-context-menu-folder]]pass:[<a class="anchor" href="#mail-shared-folder-context-menu-folder"></a>]`folder` (object)::
+The folder of the menu. It has fields such as `id` and `name`.
+
+[#mail-shared-folder-context-menu-usage-notes]
+=== Usage notes
+
+* The slot appears only in the menu of a shared folder, and only when a Zimlet has registered a handler for it.
+* A shared folder also shows the item of <<mail-folder-context-menu,`mail-folder-context-menu`>>. The two items are in the same group.
+
+[#empty-folder-option]
+== empty-folder-option
+
+Hides the *Empty folder* item in the menu of a mail folder. Use it when users must not empty folders from the folder list. See <<slots-that-hide-an-item,Slots that hide an item>>.
+
+[#empty-folder-option-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::empty-folder-option', handler)
+
+// handler: () => true | null
+----
+
+Return `true` to hide the item, or `null` to keep it.
+
+[#empty-folder-option-props]
+=== Props
+
+None.
+
+[#empty-folder-option-usage-notes]
+=== Usage notes
+
+* The slot applies to the menus of Inbox, Drafts, Sent, Archive, Outbox and other mail folders. It does not apply to *Empty trash* and *Empty spam*, which always show.
+
+[#recover-discarded-mails-option]
+== recover-discarded-mails-option
+
+Hides the *Deleted Items* item in the menu of Trash. The item opens the dialog that recovers deleted messages. Use it when users must not recover deleted messages from the folder list. See <<slots-that-hide-an-item,Slots that hide an item>>.
+
+[#recover-discarded-mails-option-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::recover-discarded-mails-option', handler)
+
+// handler: () => true | null
+----
+
+Return `true` to hide the item, or `null` to keep it.
+
+[#recover-discarded-mails-option-props]
+=== Props
+
+None.
+
+[#recover-discarded-mails-option-usage-notes]
+=== Usage notes
+
+* The item appears only for accounts that can recover deleted items, and not for a local folder. The slot has an effect only then.
+
+[#next-step]
+== Next step
+
+Continue with the attachments of a message in xref:reference/slots/mail/attachments.adoc[Attachments], or build a complete example in xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].

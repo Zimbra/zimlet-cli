@@ -1,0 +1,359 @@
+= General and writing
+
+These slots add content to the General, Writing Email, Signatures and Filters pages of the Settings dialog. They also hide a built-in control, or change how the dialog reads and saves values. Use them when a control belongs next to a built-in setting. To add a section of your own, use the `settings` key, as xref:reference/slots/settings/dialog-sections.adoc[Dialog sections] describes.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#slots-that-hide-a-control]
+=== Slots that hide a control
+
+The slots `delegates-setting` and `compose-direction-setting` hide a built-in control and add nothing. The Modern UI checks only whether a handler returned a value. It does not draw the value.
+
+WARNING: A handler that returns a value hides the control for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the control.
+
+[#members]
+== Members
+
+<<dynamic-settings,`dynamic-settings`>>::
+Registers field types and sources of values, and edits the fields of built-in sections.
+
+<<set-default-client,`set-default-client`>>::
+A control in the *Date & Time* block of the General page.
+
+<<general-setting-bottom,`general-setting-bottom`>>::
+Content at the bottom of the General page.
+
+<<delegates-setting,`delegates-setting`>>::
+Hides the delegate sections of the Writing Email page.
+
+<<writing-email-post-composer-settings,`writing-email-post-composer-settings`>>::
+A control in the *Composer* block of the Writing Email page, after the font choices.
+
+<<compose-direction-setting,`compose-direction-setting`>>::
+Hides *Compose Direction* on the Writing Email page.
+
+<<writting-email-additional-settings,`writting-email-additional-settings`>>::
+A control at the end of the Writing Email page.
+
+<<additional-signature-settings,`additional-signature-settings`>>::
+Content below the signature boxes of the Signatures page.
+
+<<filter-options,`filter-options`>>::
+Content after the *+ Add a filter* button of the Filters page.
+
+<<additional-filter-settings,`additional-filter-settings`>>::
+Content in each filter of the Filters page, and in the dialog that adds or edits a filter.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page]::
+A recipe that adds a *Closing phrase* field at the end of the Writing Email page, with <<writting-email-additional-settings,`writting-email-additional-settings`>>. You learn to pair a slot of a built-in page with the `settings` key. The slot shows the control, and the key makes the dialog save its value. <<writing-email-post-composer-settings,`writing-email-post-composer-settings`>> receives the same `value` and `onFieldChange`, so use the same steps with the page `id` `writingEmail`.
+
+[#dynamic-settings]
+== dynamic-settings
+
+Changes how the Settings dialog reads and saves values. Use it when a section needs a source of values, or a place to save them, that the built-in field types do not offer. To add fields to a built-in section, use it with the `settings` key.
+
+[#dynamic-settings-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::dynamic-settings', handler)
+
+// handler: ({ onEditSettings, onAddZimletDataSource, onRegisterFieldTypeMethod }) => null
+----
+
+The Modern UI calls the handler as a function and draws what it returns. Register what you need inside it and return `null`.
+
+[#dynamic-settings-props]
+=== Props
+
+[[dynamic-settings-on-edit-settings]]pass:[<a class="anchor" href="#dynamic-settings-on-edit-settings"></a>]`onEditSettings` (function `(sectionId: string, fields: object) => void`)::
+Adds fields to the built-in section with the given `id`. The `fields` object has the same shape as the `fields` of the `settings` key.
+
+[[dynamic-settings-on-add-zimlet-data-source]]pass:[<a class="anchor" href="#dynamic-settings-on-add-zimlet-data-source"></a>]`onAddZimletDataSource` (function `(key: string, load: (props: object) => Promise) => void`)::
+Loads a set of values. The dialog calls `load` with its own props and keeps the object that the promise returns under `key`. A selector of a field type reads it from `zimletDataSources[key]` in its second argument.
+
+[[dynamic-settings-on-register-field-type-method]]pass:[<a class="anchor" href="#dynamic-settings-on-register-field-type-method"></a>]`onRegisterFieldTypeMethod` (function `(name: string, methods: object) => void`)::
+Registers a field type. `methods.selector(key, props)` returns the current value of a field of the type. `methods.updateAction(changed, props)` saves the changed values and returns a promise. The dialog converts the name to camel case, so `'SMX'` is the type `smx` in a field.
+
+[#dynamic-settings-usage-notes]
+=== Usage notes
+
+* The Modern UI draws the slot once each time the dialog opens.
+* `onEditSettings` does not change the first section, General. Pass the id of another section that exists.
+* To use a type that you registered, set it as the `type` of a field. See xref:reference/slots/settings/dialog-sections.adoc#settings-field-type[Field] for the field keys.
+
+[#set-default-client]
+== set-default-client
+
+Adds a control to the *Date & Time* block of the General page, after the time format. Use it for a control that changes the client type preference of the user.
+
+[#set-default-client-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::set-default-client', handler)
+
+// handler: ({ clientType, onFieldChange }) => element | null
+----
+
+[#set-default-client-props]
+=== Props
+
+[[set-default-client-client-type]]pass:[<a class="anchor" href="#set-default-client-client-type"></a>]`clientType` (string)::
+The saved value of the client type preference of the account. It is `modern` when the account has no saved value.
+
+[[set-default-client-on-field-change]]pass:[<a class="anchor" href="#set-default-client-on-field-change"></a>]`onFieldChange` (function `(fieldName: string) => (event: object) => Promise`)::
+Reports a change. Call `onFieldChange('clientType')` with the field name and pass the new value in `target.value`. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-on-field-change[Component props].
+
+[#set-default-client-usage-notes]
+=== Usage notes
+
+* The dialog saves the `clientType` field with the other fields when the user chooses *Save*.
+
+[#general-setting-bottom]
+== general-setting-bottom
+
+Adds content at the bottom of the General page, below the *Date & Time* block. Use it for content that does not belong to one setting.
+
+[#general-setting-bottom-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::general-setting-bottom', handler)
+
+// handler: ({ matchesScreenMd }) => element | null
+----
+
+[#general-setting-bottom-props]
+=== Props
+
+[[general-setting-bottom-matches-screen-md]]pass:[<a class="anchor" href="#general-setting-bottom-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+`true` in a window at least 1025 px wide.
+
+[#general-setting-bottom-usage-notes]
+=== Usage notes
+
+* The slot passes no `value` and no `onFieldChange`, so the content cannot save a value in the dialog.
+
+[#delegates-setting]
+== delegates-setting
+
+Hides the *Delegates* and *Delegate send settings* sections of the Writing Email page. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#delegates-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::delegates-setting', handler)
+
+// handler: () => true | null
+----
+
+[#delegates-setting-props]
+=== Props
+
+None.
+
+[#writing-email-post-composer-settings]
+== writing-email-post-composer-settings
+
+Adds a control to the *Composer* block of the Writing Email page, after the font choices. Use it for a default that the composer applies to new messages.
+
+[#writing-email-post-composer-settings-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::writing-email-post-composer-settings', handler)
+
+// handler: ({ value, onFieldChange }) => element | null
+----
+
+[#writing-email-post-composer-settings-props]
+=== Props
+
+[[writing-email-post-composer-settings-value]]pass:[<a class="anchor" href="#writing-email-post-composer-settings-value"></a>]`value` (object)::
+The values of the fields of the Writing Email page, by field name. Read only your own field. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-value[Component props].
+
+[[writing-email-post-composer-settings-on-field-change]]pass:[<a class="anchor" href="#writing-email-post-composer-settings-on-field-change"></a>]`onFieldChange` (function `(fieldName: string) => (event: object) => Promise`)::
+Reports a change to one of your fields. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-on-field-change[Component props].
+
+[#writing-email-post-composer-settings-usage-notes]
+=== Usage notes
+
+* Add your field to the page with the `settings` key and the page `id` `writingEmail`. The dialog saves only fields that it knows.
+
+[#compose-direction-setting]
+== compose-direction-setting
+
+Hides *Compose Direction* on the Writing Email page. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#compose-direction-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::compose-direction-setting', handler)
+
+// handler: () => true | null
+----
+
+[#compose-direction-setting-props]
+=== Props
+
+None.
+
+[#writting-email-additional-settings]
+== writting-email-additional-settings
+
+Adds a control at the end of the Writing Email page, after *Show send and archive*. Use it for an option of your Zimlet that belongs with the writing options.
+
+[#writting-email-additional-settings-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::writting-email-additional-settings', handler)
+
+// handler: ({ value, onFieldChange }) => element | null
+----
+
+The name is spelled with two `t` in the Modern UI, so use it as written.
+
+[#writting-email-additional-settings-props]
+=== Props
+
+[[writting-email-additional-settings-value]]pass:[<a class="anchor" href="#writting-email-additional-settings-value"></a>]`value` (object)::
+The values of the fields of the Writing Email page, by field name. Read only your own field. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-value[Component props].
+
+[[writting-email-additional-settings-on-field-change]]pass:[<a class="anchor" href="#writting-email-additional-settings-on-field-change"></a>]`onFieldChange` (function `(fieldName: string) => (event: object) => Promise`)::
+Reports a change to one of your fields. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-on-field-change[Component props].
+
+[#writting-email-additional-settings-usage-notes]
+=== Usage notes
+
+* Add your field to the page with the `settings` key and the page `id` `writingEmail`. The dialog saves only fields that it knows.
+* For a complete example, see xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page].
+
+[#additional-signature-settings]
+== additional-signature-settings
+
+Adds content below the two signature boxes of the Signatures page. Use it to manage more signatures than the two that the page offers.
+
+[#additional-signature-settings-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::additional-signature-settings', handler)
+
+// handler: (props) => element | null
+----
+
+[#additional-signature-settings-props]
+=== Props
+
+[[additional-signature-settings-style]]pass:[<a class="anchor" href="#additional-signature-settings-style"></a>]`style` (object)::
+The class names of the Signatures page, such as `signatureTitle`. Use them to match the look of the page.
+
+[[additional-signature-settings-additional-signatures]]pass:[<a class="anchor" href="#additional-signature-settings-additional-signatures"></a>]`additionalSignatures` (array)::
+The additional signatures of the account, with the changes that the user has made and not saved. Each object has an `id`, a `name`, a `content` array of objects with `_content` and `type`, and the flags `isMarkedForCreation`, `isMarkedForModification` and `isMarkedForDeletion`.
+
+[[additional-signature-settings-additional-signature-actions]]pass:[<a class="anchor" href="#additional-signature-settings-additional-signature-actions"></a>]`additionalSignatureActions` (function `({ signature, value, action }) => void`)::
+Changes a signature or adds one. Pass `signature` and the new `value`, and the action from `additionalSignatureActionTypes`.
+
+[[additional-signature-settings-additional-signature-action-types]]pass:[<a class="anchor" href="#additional-signature-settings-additional-signature-action-types"></a>]`additionalSignatureActionTypes` (object)::
+The names of the actions: `ADD`, `MODIFY_NAME`, `MODIFY_CONTENT` and `DELETE`.
+
+[[additional-signature-settings-zimbra-mail-signature-max-length]]pass:[<a class="anchor" href="#additional-signature-settings-zimbra-mail-signature-max-length"></a>]`zimbraMailSignatureMaxLength` (number)::
+The longest signature that the account may have. `0` means no limit.
+
+[#additional-signature-settings-usage-notes]
+=== Usage notes
+
+* Report every change through `additionalSignatureActions`. The dialog saves the signatures when the user chooses *Save*.
+
+[#filter-options]
+== filter-options
+
+Adds content after the *+ Add a filter* button of the Filters page. Use it for a control that belongs beside the button that adds a filter.
+
+[#filter-options-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::filter-options', handler)
+
+// handler: ({ onFieldChange, value }) => element | null
+----
+
+[#filter-options-props]
+=== Props
+
+[[filter-options-value]]pass:[<a class="anchor" href="#filter-options-value"></a>]`value` (object)::
+The values of the fields of the Filters page, by field name. The `filters` field holds the list of filters. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-value[Component props].
+
+[[filter-options-on-field-change]]pass:[<a class="anchor" href="#filter-options-on-field-change"></a>]`onFieldChange` (function `(fieldName: string) => (event: object) => Promise`)::
+Reports a change to a field. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-on-field-change[Component props].
+
+[#additional-filter-settings]
+== additional-filter-settings
+
+Adds content in each filter of the Filters page and in the dialog that adds or edits a filter. Use it to mark reserved filters, which your Zimlet edits in a dialog of its own. Use it also to check the address of a redirect action.
+
+[#additional-filter-settings-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::additional-filter-settings', handler)
+
+// handler: (props) => element | null
+----
+
+[#additional-filter-settings-props]
+=== Props
+
+The slot appears in two places, and the props differ. A prop that is in both places does not do the same thing.
+
+[[additional-filter-settings-filter-rule]]pass:[<a class="anchor" href="#additional-filter-settings-filter-rule"></a>]`filterRule` (object)::
+In a filter of the list only. The filter that the entry shows.
+
+[[additional-filter-settings-shared-reserved-filter-data]]pass:[<a class="anchor" href="#additional-filter-settings-shared-reserved-filter-data"></a>]`sharedReservedFilterData` (function `(reservedFilters: object[]) => void`)::
+In both places. Pass the list of reserved filters. Each object has `name`, `exactMatch`, `draggable` and `error`. A filter is reserved when its name is equal to `name`, or starts with it when `exactMatch` is `false`. In the list, `draggable` decides whether the user can move the reserved filter. In the dialog, a filter with a reserved name cannot be saved, and the dialog shows `error`.
+
+[[additional-filter-settings-open-modal]]pass:[<a class="anchor" href="#additional-filter-settings-open-modal"></a>]`openModal` (boolean)::
+In a filter of the list only. `true` after the user chooses to edit a reserved filter. The standard dialog does not open for it, so draw your own.
+
+[[additional-filter-settings-set-open-modal]]pass:[<a class="anchor" href="#additional-filter-settings-set-open-modal"></a>]`setOpenModal` (function `(open: boolean) => void`)::
+In a filter of the list only. Call it with `false` to close your dialog.
+
+[[additional-filter-settings-trigger-update]]pass:[<a class="anchor" href="#additional-filter-settings-trigger-update"></a>]`triggerUpdate` (function `(filterRule: object) => void`)::
+In a filter of the list only. Saves the filter that you pass in place of the filter that the user is editing.
+
+[[additional-filter-settings-share-filter-validation-data]]pass:[<a class="anchor" href="#additional-filter-settings-share-filter-validation-data"></a>]`shareFilterValidationData` (function `(validations: object) => void`)::
+In the dialog only. Pass an object with `isValidEmail`, a function `(address: string) => boolean`. The dialog uses it instead of its own check of the address of a redirect action.
+
+[[additional-filter-settings-value]]pass:[<a class="anchor" href="#additional-filter-settings-value"></a>]`value` (object) and `onFieldChange` (function)::
+In a filter of the list only. The values of the Filters page and the function that reports a change, as in <<filter-options,`filter-options`>>.
+
+[#additional-filter-settings-usage-notes]
+=== Usage notes
+
+* The Modern UI calls the handler in each filter of the list and in the dialog. Pass the same list of reserved filters in each place.
+
+[#next-step]
+== Next step
+
+Continue with xref:reference/slots/settings/calendar-and-reminders.adoc[Calendar and reminders], or return to xref:reference/slots/settings.adoc[Settings].

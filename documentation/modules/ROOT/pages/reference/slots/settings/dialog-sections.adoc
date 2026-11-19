@@ -1,0 +1,117 @@
+= Dialog sections
+
+The `settings` key adds a section to the Settings dialog of the xref:reference/glossary.adoc#modern-ui[Modern UI], or adds fields to a section that the dialog already has. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] must save a value that the user sets once. For a control inside a built-in page, fill a slot of that page and use this key to save the value.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-settings/new-section.adoc[Add a section to the Settings dialog]::
+A recipe that adds a *Reply reminders* section with a check box and a number of days, with <<settings,`settings`>> and an id of your own. You learn to report a change with `onFieldChange` and to keep *Save* disabled for invalid values. You also learn to build controls with `ChoiceInput` and `TextInput`. Any section of your own follows the same steps.
+
+xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page]::
+A recipe that adds a *Closing phrase* field to the Writing Email page, with <<settings,`settings`>> and the id of a built-in section. You learn to register `fields` only and to show help text with `HelpTooltip`. For another built-in page, use the `id` of that page and fill the slot of that page for the control.
+
+[#settings]
+== settings
+
+Adds a section to the Settings dialog, or adds fields to a section that the dialog already has. The key belongs to the whole dialog and not to one page.
+
+[#settings-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('settings', settings)
+
+// settings: { id, title, component, fields, afterSave?, hide? }
+----
+
+Pass the object itself, or a function that returns it. The dialog reads every object registered under the key.
+
+[#settings-object]
+=== Settings object
+
+[[settings-id]]pass:[<a class="anchor" href="#settings-id"></a>]`id` (string)::
+The name of the section, and the key of the values that the dialog passes to your component. Use an id that no other section uses. The id of a built-in section, such as `writingEmail`, adds your `fields` to that section instead of adding a section.
+
+[[settings-title]]pass:[<a class="anchor" href="#settings-title"></a>]`title` (string or xref:reference/glossary.adoc#node[node])::
+The name of the section in the list on the left. Always set it for a section of your own. A built-in section has a title already.
+
+[[settings-component]]pass:[<a class="anchor" href="#settings-component"></a>]`component` (function `(props: object) => node`)::
+The component that the dialog shows when the user selects the section. Its props are in <<settings-component-props,Component props>>.
+
+[[settings-fields]]pass:[<a class="anchor" href="#settings-fields"></a>]`fields` (object)::
+The values that the section saves. Each key is the name of a field, and each value describes the field, as <<settings-field,Field>> shows.
+
+[[settings-after-save]]pass:[<a class="anchor" href="#settings-after-save"></a>]`afterSave` (function `(state: object) => void`, optional)::
+Runs when the user chooses *Save*, after the dialog has collected the changed values and before it sends them. The dialog calls it on every save, whether or not the values of the section changed. It receives the state of the dialog.
+
+[[settings-hide]]pass:[<a class="anchor" href="#settings-hide"></a>]`hide` (function `(props: object) => boolean`, optional)::
+Leaves the section out of the list when it returns `true`. It receives the properties of the list, which include `accountData`, the account of the user.
+
+[#settings-field]
+=== Field
+
+[[settings-field-type]]pass:[<a class="anchor" href="#settings-field-type"></a>]`type` (string)::
+Where the dialog reads the value and where it saves it. Use one of these:
++
+--
+`modifyProperties`:: A property of the account that belongs to your Zimlet. The key is the name of the property.
+`userPref`:: A user preference of the account. The key is the name of the preference.
+`mailboxMetadata`:: An entry in the metadata of the mailbox. The key is the name of the entry.
+`archiveMetadata`:: An entry in the archive metadata of the mailbox.
+`userAttribute`:: An attribute of the account. The dialog reads it and does not save it.
+`accountData`:: A field of the account. The dialog reads it and does not save it.
+`whiteBlacklist`:: The lists of allowed and blocked addresses.
+`filterRules`:: The mail filters.
+`zimletPrefs`:: The preferences of the Zimlets of the account.
+`desktopPrefLocal`:: A preference that the desktop app keeps on the computer. Other platforms do not save it.
+--
++
+A Zimlet that needs another type registers it with the `dynamic-settings` slot. See xref:reference/slots/settings/general-and-writing.adoc[General and writing].
+
+[[settings-field-key]]pass:[<a class="anchor" href="#settings-field-key"></a>]`key` (string)::
+The name under which the value is read and saved, as the type describes.
+
+[[settings-field-default-value]]pass:[<a class="anchor" href="#settings-field-default-value"></a>]`defaultValue` (string, number, boolean, object or array)::
+The value that the dialog shows when the account has no saved value.
+
+[[settings-field-to-js]]pass:[<a class="anchor" href="#settings-field-to-js"></a>]`toJS` (function `(stored: unknown) => unknown`, optional)::
+Turns the stored value into the value that your component reads from `value`.
+
+[[settings-field-from-js]]pass:[<a class="anchor" href="#settings-field-from-js"></a>]`fromJS` (function `(value: unknown) => unknown`, optional)::
+Turns the value of your component into the value that the dialog saves.
+
+[#settings-component-props]
+=== Component props
+
+[[settings-prop-active-id]]pass:[<a class="anchor" href="#settings-prop-active-id"></a>]`activeId` (string)::
+The `id` of the section.
+
+[[settings-prop-value]]pass:[<a class="anchor" href="#settings-prop-value"></a>]`value` (object)::
+The values of the fields of the section, by field name, after `toJS`.
+
+[[settings-prop-on-field-change]]pass:[<a class="anchor" href="#settings-prop-on-field-change"></a>]`onFieldChange` (function `(fieldName: string) => (event: object) => Promise`)::
+Reports a change. Call it with the name of the field, and call the function that it returns with an object whose `target.value` is the new value.
+
+[[settings-prop-handle-validity-of-tabs]]pass:[<a class="anchor" href="#settings-prop-handle-validity-of-tabs"></a>]`handleValidityOfTabs` (function `(id: string, hasError: boolean) => void`)::
+Tells the dialog whether the section holds a value that cannot be saved. Call it with `activeId` and `true` to disable *Save*, and with `false` to enable it again.
+
+[[settings-prop-on-change-active-id]]pass:[<a class="anchor" href="#settings-prop-on-change-active-id"></a>]`onChangeActiveId` (function `(id: string) => void`)::
+Opens the section with the given `id`.
+
+[#settings-usage-notes]
+=== Usage notes
+
+* The dialog reads the registered objects when it opens, and again when a Zimlet registers one.
+* Built-in sections come first. The sections of Zimlets follow in the order in which the Zimlets registered them. When two sections use the same new id, the dialog uses the first one.
+* When `id` is the id of a built-in section, the dialog adds your `fields` to it and ignores `title` and `component`.
+* When the user chooses *Save*, the dialog saves the fields whose value changed. A value that your component keeps to itself is not saved, so report every change with `onFieldChange`.
+* For a complete example, see xref:build-by-goal/recipe-settings/new-section.adoc[Add a section to the Settings dialog] and xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page].
+
+[#next-step]
+== Next step
+
+Continue with xref:reference/slots/settings/general-and-writing.adoc[General and writing], or build a section in xref:build-by-goal/recipe-settings/new-section.adoc[Add a section to the Settings dialog].

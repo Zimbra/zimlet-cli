@@ -1,0 +1,278 @@
+= Briefcase
+
+The Briefcase xref:reference/glossary.adoc#vertical[vertical] is where users store, share and edit files. Its slots add actions for the files and folders that the user selects. They also add items to the *New* menu and hide a standard item of the menu of Trash. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] works on files, for example to share, check or create them. Slots that serve every vertical, such as the folder list and the header menus, are in xref:reference/slots/app-shell.adoc[App shell]. The preview of a selected file is the slot `attachment-viewer`, in xref:reference/slots/mail/attachments.adoc#attachment-viewer[Attachments]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#toolbar]
+=== Toolbar above the file list
+
+The toolbar is above the preview of a file when the reading pane is on, and above the list when the reading pane is off. It shows in a window at least 1025 px wide. From left to right it has:
+
+. *Download*.
+. *Move*. It is not in the folder *Files shared with me*.
+. *Delete*. It is not in the folder *Files shared with me*.
+. *Make current version*. It shows when an earlier version of a file is selected, and not in the folder *Files shared with me*.
+. The slot `briefcase-document-header-action`. When one Zimbra document is selected, this is also where the standard *Edit* button is. See <<zimbra-documents,Zimbra documents>>.
+. The *More Options* menu, which is the button with three dots. It is not in the folder *Files shared with me*.
+. The button that sets the position of the reading pane.
+
+[#more-options-menu]
+=== More Options menu
+
+The menu has these items from top to bottom:
+
+. *Flag*.
+. *Clear Flag*.
+. *Rename file*.
+. *Share...*. It shows when the first selected item is a folder.
+. The slot `action-menu-briefcase-more`.
+. *Tag*. It shows when tagging is enabled for the account.
+. *Rename folder*.
+. *Create subfolder*.
+
+[#file-menu]
+=== File menu
+
+The right-click menu of a file has these items from top to bottom:
+
+. *Remove from list* when the preview shows that a file of a shared folder no longer exists, and *Download* in every other case.
+. *Rename*, *Flag* and *Clear Flag*. They show when the selection is not an earlier version of a file and not in the folder *Files shared with me*.
+. *Tag*. It shows when tagging is enabled for the account and the selection is not an earlier version of a file.
+. *Delete*. It is not in the folder *Files shared with me*.
+. *Make current version*. It shows when one earlier version of a file is selected, and not in the folder *Files shared with me*.
+. The slot `briefcase-document-context-menu`. When one Zimbra document is selected, this is also where the standard *Edit* item is. See <<zimbra-documents,Zimbra documents>>.
+
+[#selected-files-and-folders]
+=== Selected files and folders
+
+Three slots pass the selection as `selectedList`, an array of the selected rows of the list. `action-menu-briefcase-more` removes the folders first. A file has fields such as `id`, `name`, `contentType` and `version`. A folder has `absFolderPath`, and a file does not. A row of an earlier version of a file has `isLatest` set to `false`.
+
+[#zimbra-documents]
+=== Zimbra documents
+
+A Zimbra document is a file with the content type `application/x-zimbra-doc`. When one is selected, the Modern UI draws its own *Edit* button or item only if no handler of `briefcase-document-header-action` or `briefcase-document-context-menu` returns content. The slot then passes `handleEditZimbraDocument` when the user can edit the document.
+
+WARNING: A handler that returns an element for a Zimbra document replaces *Edit* for every user who has the Zimlet. Return `null` for it when your Zimlet must not replace *Edit*.
+
+[#members]
+== Members
+
+<<action-menu-briefcase-more,`action-menu-briefcase-more`>>::
+An item in the *More Options* menu above the file list.
+
+<<briefcase-document-context-menu,`briefcase-document-context-menu`>>::
+An item at the end of the right-click menu of a file.
+
+<<briefcase-document-header-action,`briefcase-document-header-action`>>::
+A button in the toolbar above the file list.
+
+<<briefcase-upload-button,`briefcase-upload-button`>>::
+Items in the *New* menu of the sidebar, in place of *Document*.
+
+<<recover-discarded-briefcase-option,`recover-discarded-briefcase-option`>>::
+Hides *Deleted Items* in the menu of Trash.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-briefcase-file-actions.adoc[Add a Briefcase action]::
+A recipe that adds a *Check before sharing* action for the selected files. The action is in the right-click menu of a file and in the toolbar, with <<briefcase-document-context-menu,`briefcase-document-context-menu`>> and <<briefcase-document-header-action,`briefcase-document-header-action`>>. You learn to read the selected files and skip the folders. You also learn to return a menu item and a button, and to show a result in a dialog. <<action-menu-briefcase-more,`action-menu-briefcase-more`>> passes `selectedList` too and takes the same menu item.
+
+[#action-menu-briefcase-more]
+== action-menu-briefcase-more
+
+Adds an item to the *More Options* menu above the file list. Use it for an action on the selected files that users need less often than *Download* or *Delete*. Use <<briefcase-document-header-action,`briefcase-document-header-action`>> for a button in the toolbar and <<briefcase-document-context-menu,`briefcase-document-context-menu`>> for the right-click menu.
+
+[#action-menu-briefcase-more-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::action-menu-briefcase-more', handler)
+
+// handler: ({ selectedList, disableRename, errorCode, isSelectedFolder }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#action-menu-briefcase-more-props]
+=== Props
+
+[[action-menu-briefcase-more-selected-list]]pass:[<a class="anchor" href="#action-menu-briefcase-more-selected-list"></a>]`selectedList` (array of object)::
+The selected files. It holds no folders, because the Modern UI removes them before it calls the slot. It is empty when only folders are selected.
+
+[[action-menu-briefcase-more-disable-rename]]pass:[<a class="anchor" href="#action-menu-briefcase-more-disable-rename"></a>]`disableRename` (boolean)::
+`true` when the Modern UI turns off its own *Rename file* item. That is when no file is selected, or when the user may not change the selected files.
+
+[[action-menu-briefcase-more-error-code]]pass:[<a class="anchor" href="#action-menu-briefcase-more-error-code"></a>]`errorCode` (number or null)::
+`404` when the preview of a file in a shared folder shows that the file no longer exists. It is `null` otherwise.
+
+[[action-menu-briefcase-more-is-selected-folder]]pass:[<a class="anchor" href="#action-menu-briefcase-more-is-selected-folder"></a>]`isSelectedFolder` (boolean)::
+`true` when the first selected item is a folder.
+
+[#action-menu-briefcase-more-usage-notes]
+=== Usage notes
+
+* The menu is part of the toolbar, so it shows in a window at least 1025 px wide. It is off while nothing is selected. See <<toolbar,Toolbar above the file list>>.
+* The menu is not in the folder *Files shared with me*, so the slot does not show there.
+* The dialog *Attach from Briefcase* of the composer reuses the file list. It shows the slot only while the Briefcase screen is open behind the dialog.
+
+[#briefcase-document-context-menu]
+== briefcase-document-context-menu
+
+Adds an item at the end of the right-click menu of a file. Use it for an action that users reach from a single file or from several files. Use <<action-menu-briefcase-more,`action-menu-briefcase-more`>> for the menu of the toolbar.
+
+[#briefcase-document-context-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::briefcase-document-context-menu', handler)
+
+// handler: ({ selectedList, disableRename, isFileSharedFolder, errorCode, handleEditZimbraDocument }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu. For a Zimbra document, see <<zimbra-documents,Zimbra documents>>.
+
+[#briefcase-document-context-menu-props]
+=== Props
+
+[[briefcase-document-context-menu-selected-list]]pass:[<a class="anchor" href="#briefcase-document-context-menu-selected-list"></a>]`selectedList` (array of object)::
+The selected files. See <<selected-files-and-folders,Selected files and folders>>.
+
+[[briefcase-document-context-menu-disable-rename]]pass:[<a class="anchor" href="#briefcase-document-context-menu-disable-rename"></a>]`disableRename` (boolean)::
+`true` when the Modern UI turns off its own *Rename* item. That is when no file is selected, or when the user may not change the selected files.
+
+[[briefcase-document-context-menu-is-file-shared-folder]]pass:[<a class="anchor" href="#briefcase-document-context-menu-is-file-shared-folder"></a>]`isFileSharedFolder` (boolean)::
+`true` when the file is in the folder *Files shared with me*.
+
+[[briefcase-document-context-menu-error-code]]pass:[<a class="anchor" href="#briefcase-document-context-menu-error-code"></a>]`errorCode` (number or null)::
+`404` when the preview of a file in a shared folder shows that the file no longer exists. It is `null` otherwise.
+
+[[briefcase-document-context-menu-handle-edit-zimbra-document]]pass:[<a class="anchor" href="#briefcase-document-context-menu-handle-edit-zimbra-document"></a>]`handleEditZimbraDocument` (function `() => void`)::
+Opens the document in the editor, in a new tab. The slot passes it only when one Zimbra document is selected and the user can edit it.
+
+[#briefcase-document-context-menu-usage-notes]
+=== Usage notes
+
+* The menu opens for a file, not for a folder. It does not open when the selection holds both files and folders. A right-click on a file that is not selected selects it first.
+* The dialog *Attach from Briefcase* of the composer reuses the file list. It shows the menu only while the Briefcase screen is open behind the dialog.
+* For a complete example, see xref:build-by-goal/recipe-briefcase-file-actions.adoc[Add a Briefcase action].
+
+[#briefcase-document-header-action]
+== briefcase-document-header-action
+
+Adds a button to the toolbar above the file list, before the *More Options* menu. Use it for an action on the selected files that users need often. Use <<action-menu-briefcase-more,`action-menu-briefcase-more`>> for an item in the *More Options* menu.
+
+[#briefcase-document-header-action-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::briefcase-document-header-action', handler)
+
+// handler: ({ selectedList, isFileSharedFolder, errorCode, handleEditZimbraDocument }) => element | null
+----
+
+Return an xref:reference/shims/components/buttons-and-actions.adoc#action-button[`ActionButton`] from `@zimbra-client/components`, so that the button looks like the others in the toolbar. For a Zimbra document, see <<zimbra-documents,Zimbra documents>>.
+
+[#briefcase-document-header-action-props]
+=== Props
+
+[[briefcase-document-header-action-selected-list]]pass:[<a class="anchor" href="#briefcase-document-header-action-selected-list"></a>]`selectedList` (array of object)::
+The selected files and folders, and an empty array when nothing is selected. See <<selected-files-and-folders,Selected files and folders>>.
+
+[[briefcase-document-header-action-is-file-shared-folder]]pass:[<a class="anchor" href="#briefcase-document-header-action-is-file-shared-folder"></a>]`isFileSharedFolder` (boolean)::
+`true` when the open folder is *Files shared with me*.
+
+[[briefcase-document-header-action-error-code]]pass:[<a class="anchor" href="#briefcase-document-header-action-error-code"></a>]`errorCode` (number or null)::
+`404` when the preview of a file in a shared folder shows that the file no longer exists. It is `null` otherwise.
+
+[[briefcase-document-header-action-handle-edit-zimbra-document]]pass:[<a class="anchor" href="#briefcase-document-header-action-handle-edit-zimbra-document"></a>]`handleEditZimbraDocument` (function `() => void`)::
+Opens the document in the editor, in a new tab. The slot passes it only when one Zimbra document is selected and the user can edit it.
+
+[#briefcase-document-header-action-usage-notes]
+=== Usage notes
+
+* The toolbar shows in a window at least 1025 px wide. See <<toolbar,Toolbar above the file list>>.
+* The toolbar shows with no selection, so the handler also runs for an empty `selectedList`. Turn your button off then.
+* The slot shows in the folder *Files shared with me*, where *Move*, *Delete* and *More Options* are hidden.
+* The dialog *Attach from Briefcase* of the composer reuses the file list. It shows the toolbar only while the Briefcase screen is open behind the dialog.
+* For a complete example, see xref:build-by-goal/recipe-briefcase-file-actions.adoc[Add a Briefcase action].
+
+[#briefcase-upload-button]
+== briefcase-upload-button
+
+Adds items to the *New* menu above the folder list of Briefcase. Use it when your Zimlet creates a file in the open folder, such as a spreadsheet or a presentation.
+
+WARNING: A handler that returns content removes the standard *Document* item for every user who has the Zimlet. Add your own *Document* item, or return `null` to keep the standard menu.
+
+[#briefcase-upload-button-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::briefcase-upload-button', handler)
+
+// handler: ({ folder, documentRefetchQueries, disabled }) => element | null
+----
+
+Return one or more xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] elements from `@zimbra-client/components`, so that the items look like the others in the menu.
+
+[#briefcase-upload-button-props]
+=== Props
+
+[[briefcase-upload-button-folder]]pass:[<a class="anchor" href="#briefcase-upload-button-folder"></a>]`folder` (object)::
+The open folder, with fields such as `id`, `name` and `absFolderPath`. It is `undefined` when no folder matches the open view.
+
+[[briefcase-upload-button-document-refetch-queries]]pass:[<a class="anchor" href="#briefcase-upload-button-document-refetch-queries"></a>]`documentRefetchQueries` (function `(folder?: object) => object[] | false`)::
+Returns the queries to run again after your handler saves a file, so that the file list shows the new file. Call it with the folder that received the file. It returns `false` for the Trash folder.
+
+[[briefcase-upload-button-disabled]]pass:[<a class="anchor" href="#briefcase-upload-button-disabled"></a>]`disabled` (boolean)::
+`true` when the user may not add files to the open folder, when the device is offline or while an upload runs. Pass it to your items, so that they turn off with the standard ones.
+
+[#briefcase-upload-button-usage-notes]
+=== Usage notes
+
+* The sidebar of the Briefcase screen shows the slot, in a window at least 1025 px wide. It is not in the editor of a document.
+* The menu lists *Upload* first. Then it lists the items of all handlers, or *Document* when no handler returns content.
+* Two upload buttons do not show the slot. One is in the composer dialog *Message size exceeds the limit*. The other is in the toolbar of a narrow window.
+
+[#recover-discarded-briefcase-option]
+== recover-discarded-briefcase-option
+
+Hides the *Deleted Items* item in the menu of the Trash folder of Briefcase. The item opens the dialog that recovers deleted files. Use it when users must not recover deleted files from the folder list. The folder list is in the sidebar of the Briefcase screen.
+
+WARNING: A handler that returns a value hides the item for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the item.
+
+[#recover-discarded-briefcase-option-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::recover-discarded-briefcase-option', handler)
+
+// handler: () => true | null
+----
+
+Return `true` to hide the item, or `null` to keep it.
+
+[#recover-discarded-briefcase-option-props]
+=== Props
+
+None.
+
+[#recover-discarded-briefcase-option-usage-notes]
+=== Usage notes
+
+* The item appears only for accounts that can recover deleted items. The slot has an effect only then.
+* The Modern UI checks only whether a handler returned a value. It does not draw the value.
+
+[#next-step]
+== Next step
+
+Continue with the dialog and the pages of the Settings screen in xref:reference/slots/settings.adoc[Settings], or return to the xref:reference/slots.adoc[slot index].

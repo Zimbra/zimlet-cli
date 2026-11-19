@@ -27,13 +27,13 @@ The two options act on the message as a whole and are a choice that the user mak
 === The slot
 
 `slot::compose-sender-options-menu`::
-The menu at the right end of the header of the composer, opened with the three dots. It comes below the built-in options such as *High priority* and *Plain text*. It shows in the layout for large screens only. Look up the slot in the xref:reference/slots.adoc[slot index].
+The menu at the right end of the header of the composer, opened with the three dots. It comes below the built-in options such as *High priority* and *Plain text*. On a narrow window the same menu is in the toolbar of the xref:reference/glossary.adoc#modern-ui[Modern UI]. Look up the slot in the xref:reference/slots.adoc[slot index].
 
 [#other-slots]
 === Other slots
 
 `slot::composer-toolbar-start` and `slot::composer-toolbar-end`::
-The formatting toolbar of the editor, before and after its buttons. Choose one for a button that acts on the text that the user is editing, such as a button for dictation. Both pass `activeEditor`.
+The bar at the bottom of the composer, after the *Send* and *Attach* buttons. In the event editor of Calendar they are before and after the editor toolbar. Choose one for a button that acts on the text that the user is editing, such as a button for dictation. Both pass `activeEditor`.
 
 `slot::composer`::
 The slot after the editing area of the editor. Choose it for code that works on the editor itself. It passes `getComposer` and `editorType`.
@@ -137,7 +137,7 @@ include::example$composer-options/index.js[]
 [#limits]
 == Know the limits
 
-* The menu shows only in the layout for large screens. The slot has no place on a small screen.
+* The menu is in the header on a wide window and in the toolbar of the Modern UI on a narrow one. An inline reply has it only on a wide window.
 * The notice goes into the message in the language of the Modern UI of the user, not in the language of the recipient.
 * The example does not remove the notice or the prefix again. The user deletes them like any other text.
 * The notice replaces the text that is selected in the body, because the editor inserts at the caret and over a selection.
@@ -175,8 +175,8 @@ The outlined subject and body line are what the two options added.
 == If it didn't work
 
 The options are not in the menu.::
-* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error. The window can also be in the layout for small screens.
-* Fix: Check that the sideloader shows *Running*. Check that the key is `slot::compose-sender-options-menu` and that you register in `init()`. Widen the window, reload the page and open the menu again.
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows *Running*. Check that the key is `slot::compose-sender-options-menu` and that you register in `init()`. Reload the page and open the menu again.
 
 The notice is not inserted.::
 * Cause: The message is in plain text mode. The editor inserts only HTML.

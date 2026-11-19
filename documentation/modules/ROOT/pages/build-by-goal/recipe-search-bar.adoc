@@ -41,7 +41,7 @@ NOTE: A handler for `web-search` replaces the Modern UI field for as long as it 
 The hint of the Modern UI field. Choose it when you only want to change the word that completes `Search your …`, as xref:fundamentals/extending-the-ui.adoc#render-prop-slots[Render-prop slots] shows.
 
 `slot::search-tips-link`::
-The link to the search tips. Choose it to point users to your own help page. See xref:reference/slots/app-shell/search.adoc[Search] for the slots of the search bar.
+The link to the search tips. A handler hides the link and cannot replace it with a page of your own. See xref:reference/slots/app-shell/search.adoc[Search] for the slots of the search bar.
 
 [#set-up-the-project]
 == Set up the project

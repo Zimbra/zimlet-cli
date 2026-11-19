@@ -1,0 +1,25 @@
+= Mail
+
+The Mail xref:reference/glossary.adoc#vertical[vertical] is where users read, write and organize email. Its slots add content to the viewer of a message, the message list and the sidebar. They also reach the menus of messages and folders and the attachments of a message. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] extends how users work with messages. Slots that serve every vertical, such as the menus in the header and the folder list, are in xref:reference/slots/app-shell.adoc[App shell]. The slots of the composer are in xref:reference/slots/composer.adoc[Composer and editor].
+
+Every slot has an entry with the place where it appears, the props its handler receives and what the handler returns. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#screens]
+== Screens
+
+[[message-viewer]]pass:[<a class="anchor" href="#message-viewer"></a>]xref:reference/slots/mail/message-viewer.adoc[Message viewer]::
+Add a banner above the text of a message, a button or a status line in its header, or an action in its footer. Slots: `message-body-top`, `message-header-additional-buttons`, `message-smime-status` and `desktop-viewer-footer`.
+
+[[mail-list-and-sidebar]]pass:[<a class="anchor" href="#mail-list-and-sidebar"></a>]xref:reference/slots/mail/mail-list-and-sidebar.adoc[Mail list and sidebar]::
+Add content or code for the Mail pane, replace the reading pane or change the sender names in the message list. Add content to the sidebar, or an item to the toolbar. Slots: `mail-pane`, `mail-preview-pane`, `mail-sender`, `mail-sidebar-footer` and `header-action-menu-item`.
+
+[[mail-menus-and-actions]]pass:[<a class="anchor" href="#mail-menus-and-actions"></a>]xref:reference/slots/mail/mail-menus-and-actions.adoc[Mail menus and actions]::
+Add items to the menus of a message and of a folder, or hide a standard item. Slots: `action-menu-mail-more`, `mail-overflow-menu-option`, `mail-recall-menu-option`, `print-link`, `mail-folder-context-menu`, `mail-shared-folder-context-menu`, `empty-folder-option` and `recover-discarded-mails-option`.
+
+[[attachments]]pass:[<a class="anchor" href="#attachments"></a>]xref:reference/slots/mail/attachments.adoc[Attachments]::
+Add an action to an attachment, add a button to the dialog that saves attachments, or replace the preview in the attachment viewer. Slots: `attachment-multi-action`, `attachment-single-action`, `email-attachment-action` and `attachment-viewer`.
+
+[#next-step]
+== Next step
+
+Start with xref:reference/slots/mail/message-viewer.adoc[Message viewer], or return to the xref:reference/slots.adoc[slot index].

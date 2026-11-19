@@ -1,0 +1,196 @@
+= Calendar and reminders
+
+These slots hide controls of the Calendar and Reminders page of the Settings dialog, and add one control after the reminder options. Use them when a deployment must remove a calendar option, or when a Zimlet has a calendar option of its own. To add a section of your own, use the `settings` key, as xref:reference/slots/settings/dialog-sections.adoc[Dialog sections] describes.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#slots-that-hide-a-control]
+=== Slots that hide a control
+
+Six of the slots hide a built-in control and add nothing. The Modern UI checks only whether a handler returned a value. It does not draw the value.
+
+WARNING: A handler that returns a value hides the control for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the control.
+
+[#members]
+== Members
+
+<<default-calendar-setting,`default-calendar-setting`>>::
+Hides *Default Calendar*.
+
+<<workday-time-zone-setting,`workday-time-zone-setting`>>::
+Hides *Workday Time Zone*.
+
+<<show-event-timezone-setting,`show-event-timezone-setting`>>::
+Hides *Show time zones for start and end times*.
+
+<<declined-event-setting,`declined-event-setting`>>::
+Hides the *Declined Events* option.
+
+<<browser-calendar-notification-setting,`browser-calendar-notification-setting`>>::
+Hides *Show Browser Notifications*.
+
+<<calendar-and-reminders-video-call-preferences,`calendar-and-reminders-video-call-preferences`>>::
+A control after *Show Reminders for Past-Due Events*.
+
+<<free-busy-permission-setting,`free-busy-permission-setting`>>::
+Hides the *Free Busy Permission* section.
+
+[#default-calendar-setting]
+== default-calendar-setting
+
+Hides *Default Calendar*, the list that sets the calendar for new events and invitations. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#default-calendar-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::default-calendar-setting', handler)
+
+// handler: () => true | null
+----
+
+[#default-calendar-setting-props]
+=== Props
+
+None.
+
+[#default-calendar-setting-usage-notes]
+=== Usage notes
+
+* The control appears only when the account has more than one calendar that can hold new events. The slot is used only then.
+
+[#workday-time-zone-setting]
+== workday-time-zone-setting
+
+Hides *Workday Time Zone*, the time zone of the start and the end of the workday. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#workday-time-zone-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::workday-time-zone-setting', handler)
+
+// handler: () => true | null
+----
+
+[#workday-time-zone-setting-props]
+=== Props
+
+None.
+
+[#show-event-timezone-setting]
+== show-event-timezone-setting
+
+Hides *Show time zones for start and end times*, under *When creating or editing events*. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#show-event-timezone-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::show-event-timezone-setting', handler)
+
+// handler: () => true | null
+----
+
+[#show-event-timezone-setting-props]
+=== Props
+
+None.
+
+[#declined-event-setting]
+== declined-event-setting
+
+Hides the *Declined Events* option, which shows declined events in the calendar. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#declined-event-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::declined-event-setting', handler)
+
+// handler: () => true | null
+----
+
+[#declined-event-setting-props]
+=== Props
+
+None.
+
+[#browser-calendar-notification-setting]
+== browser-calendar-notification-setting
+
+Hides *Show Browser Notifications* in the *Event Reminders* block. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#browser-calendar-notification-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::browser-calendar-notification-setting', handler)
+
+// handler: () => true | null
+----
+
+[#browser-calendar-notification-setting-props]
+=== Props
+
+None.
+
+[#calendar-and-reminders-video-call-preferences]
+== calendar-and-reminders-video-call-preferences
+
+Adds a control in the *Event Reminders* block, after *Show Reminders for Past-Due Events* and before *Free Busy Permission*. Use it for an option of your Zimlet that belongs with the calendar options, such as a preference for video calls.
+
+[#calendar-and-reminders-video-call-preferences-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-and-reminders-video-call-preferences', handler)
+
+// handler: ({ value, onFieldChange }) => element | null
+----
+
+[#calendar-and-reminders-video-call-preferences-props]
+=== Props
+
+[[calendar-and-reminders-video-call-preferences-value]]pass:[<a class="anchor" href="#calendar-and-reminders-video-call-preferences-value"></a>]`value` (object)::
+The values of the fields of the Calendar and Reminders page, by field name. Read only your own field. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-value[Component props].
+
+[[calendar-and-reminders-video-call-preferences-on-field-change]]pass:[<a class="anchor" href="#calendar-and-reminders-video-call-preferences-on-field-change"></a>]`onFieldChange` (function `(fieldName: string) => (event: object) => Promise`)::
+Reports a change to one of your fields. See xref:reference/slots/settings/dialog-sections.adoc#settings-prop-on-field-change[Component props].
+
+[#calendar-and-reminders-video-call-preferences-usage-notes]
+=== Usage notes
+
+* Add your field to the page with the `settings` key and the page `id` `calendarAndReminders`. The dialog saves only fields that it knows.
+
+[#free-busy-permission-setting]
+== free-busy-permission-setting
+
+Hides the *Free Busy Permission* section, which sets who can see when the user is free or busy. See <<slots-that-hide-a-control,Slots that hide a control>>.
+
+[#free-busy-permission-setting-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::free-busy-permission-setting', handler)
+
+// handler: () => true | null
+----
+
+[#free-busy-permission-setting-props]
+=== Props
+
+None.
+
+[#next-step]
+== Next step
+
+Return to xref:reference/slots/settings.adoc[Settings], or continue with xref:reference/slots/content-processors.adoc[Content processors].

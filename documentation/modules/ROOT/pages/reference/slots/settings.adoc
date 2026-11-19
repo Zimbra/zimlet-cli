@@ -1,0 +1,20 @@
+= Settings
+
+The Settings dialog is where users change their options. A xref:reference/glossary.adoc#zimlet[Zimlet] can add a section of its own with the `settings` key. It can also fill a slot to add a control to a page that the dialog already has. Use a section for options that your Zimlet owns. Use a slot for one control that belongs next to a built-in setting.
+
+[#pages]
+== Pages
+
+[[dialog-sections]]pass:[<a class="anchor" href="#dialog-sections"></a>]xref:reference/slots/settings/dialog-sections.adoc[Dialog sections]::
+Add a section to the dialog, or add fields to a built-in section, and save their values. Key: `settings`.
+
+[[general-and-writing]]pass:[<a class="anchor" href="#general-and-writing"></a>]xref:reference/slots/settings/general-and-writing.adoc[General and writing]::
+Add a control to the General, Writing Email, Signatures or Filters page, or change the fields and field types of the dialog while it loads. Slots: `dynamic-settings`, `general-setting-bottom`, `set-default-client`, `compose-direction-setting`, `delegates-setting`, `writing-email-post-composer-settings`, `writting-email-additional-settings`, `additional-signature-settings`, `filter-options` and `additional-filter-settings`.
+
+[[calendar-and-reminders]]pass:[<a class="anchor" href="#calendar-and-reminders"></a>]xref:reference/slots/settings/calendar-and-reminders.adoc[Calendar and reminders]::
+Add a control to the Calendar and Reminders page. Slots: `browser-calendar-notification-setting`, `calendar-and-reminders-video-call-preferences`, `declined-event-setting`, `default-calendar-setting`, `free-busy-permission-setting`, `show-event-timezone-setting` and `workday-time-zone-setting`.
+
+[#next-step]
+== Next step
+
+Start with xref:reference/slots/settings/dialog-sections.adoc[Dialog sections], or return to the xref:reference/slots.adoc[slot index].
