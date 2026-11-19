@@ -28,23 +28,35 @@ Choose it for a menu item that opens a link or runs an action. The slots `settin
 xref:build-by-goal/recipe-app-content.adoc[Run an app-wide feature]::
 Choose it for a feature that starts when the app has loaded and has no screen, such as an overlay, a dialog or a listener. The slot `app` is not tied to a screen.
 
+xref:build-by-goal/recipe-policy-rollout.adoc[Hide items with a notice]::
+Choose it to remove a built-in item for a group of users and to tell them why. The slots `print-link` and `empty-folder-option` hide an item when a handler returns `true`. The slot `adSlot-300-250-top` shows a notice in a box at the right of the screen.
+
 xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar]::
 Choose it for a control in the search bar, or for a second search that replaces the Modern UI field on request. The slot `web-search-toggle` adds a button before the field, and the slot `web-search` replaces the field.
 
 ==== Mail
 
-xref:build-by-goal/recipe-message-banner.adoc[Show a banner above the message text]::
+xref:build-by-goal/recipe-message-banner.adoc[Show a message banner]::
 Choose it for a note or a warning above the text of an open message. The slot `message-body-top` passes the message as `emailData` and the element of its text as `viewerRef`.
 
 xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]::
 Choose it for an action on the open or selected message. The slot `action-menu-mail-more` adds to the three menus of a message. The slot `mail-overflow-menu-option` adds to the toolbar menu only.
+
+xref:build-by-goal/recipe-attachment-destination.adoc[Save attachment dialog]::
+Choose it to offer another place to save attachments. The slots `attachment-single-action` and `attachment-multi-action` add a button to the *Save file to* dialog and pass the attachment or the list of attachments.
+
+xref:build-by-goal/recipe-partner-mail.adoc[Mark senders]::
+Choose it to mark mail from some senders in the message list and to add a group of shortcuts to the folder list. The slot `mail-sender` replaces the sender names of a row, and the slot `folder-group` adds a group to the folder list of every vertical.
 
 xref:build-by-goal/recipe-composer.adoc[Add to the composer]::
 Choose it for an option that reads or changes the message that the user is writing, such as inserting a text or changing the subject. The slot `compose-sender-options-menu` adds to the menu of the composer and passes the functions that work on the message.
 
 ==== Calendar
 
-xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an action to a calendar event menu]::
+xref:build-by-goal/recipe-calendar-subscription.adoc[Subscribe to a calendar]::
+Choose it for a flow that starts in the Calendar sidebar, such as subscribing to a calendar from its address. The slot `calendar-subscription-menu` adds the item, `calendar-subscription-modal-flow` draws the dialog and `calendar-subscription-list` lists the calendars in the group *Others*.
+
+xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an event action]::
 Choose it for an action on one event. The slot `action-menu-event-context-menu` adds to the menu that opens when the user right-clicks an event. The slot `action-menu-event-more` adds to the *More Options* menu of an open event. Both pass the event as `eventToDisplay`.
 
 xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field]::

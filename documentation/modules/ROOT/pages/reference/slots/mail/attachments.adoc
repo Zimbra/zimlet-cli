@@ -1,0 +1,198 @@
+= Attachments
+
+These slots add an action to an attachment, add a button to the dialog that saves attachments, and replace the preview of an attachment. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] acts on an attachment, offers another place to save it, or shows a file in its own way. The list of attachments also shows in the composer and in Calendar events. `email-attachment-action` renders in all of them, and the saving slots render in the event details. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#attachment-tile]
+=== Attachment tile
+
+The list of attachments shows in the message viewer, in the composer, in the event editor of Calendar and in the event details of Calendar. Each attachment is a tile. From left to right a tile has the name and the size of the file and the slot `email-attachment-action`. Then come the buttons *Remove Attachment*, *Save to briefcase* and *Download*, where they apply.
+
+.The list of attachments of an open message in Mail
+image::slots-attachments-tiles.png["The Mail screen with an open message that has two attachments. Outlined in red: the two attachment tiles, Demo doc.docx and Demo doc.pdf. The second tile shows a Save to briefcase button and a Download button."]
+
+The outlined area holds two tiles, one for each attachment. Each tile has the name of the file. The second tile also shows the buttons *Save to briefcase* and *Download*.
+
+[#save-file-to-dialog]
+=== Save file to dialog
+
+The dialog has the *Download* button, followed by the content of one slot. It shows `attachment-single-action` when it saves one attachment and `attachment-multi-action` when it saves several.
+
+[#saving-an-attachment]
+=== Saving an attachment
+
+A handler for `attachment-single-action` or for `attachment-multi-action` changes how saving works for every user who has the Zimlet. The download button of a tile and the button above the list then open the *Save file to* dialog. They no longer download the file at once. The button above the list reads *Save* or *Save All*.
+
+The dialog is only for lists that the user cannot edit: the message viewer and the event details of Calendar. In Mail, an account that blocks attachments, or lets users view them only as HTML, has no download button, so the dialog never opens.
+
+[#members]
+== Members
+
+<<email-attachment-action,`email-attachment-action`>>::
+An action on an attachment tile.
+
+<<attachment-single-action,`attachment-single-action`>>::
+A button in the dialog that saves one attachment.
+
+<<attachment-multi-action,`attachment-multi-action`>>::
+A button in the dialog that saves several attachments.
+
+<<attachment-viewer,`attachment-viewer`>>::
+Replaces the preview of an attachment.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-attachment-destination.adoc[Save attachment dialog]::
+A recipe that adds the button *Save to Team drive* to the *Save file to* dialog, with <<attachment-single-action,`attachment-single-action`>> for one attachment and <<attachment-multi-action,`attachment-multi-action`>> for several. You learn to save a part of a message to Briefcase with a request to the server. You also learn to close the dialog and to report the result in a notification. Both slots take the same kind of handler, so one component serves them.
+
+[#email-attachment-action]
+== email-attachment-action
+
+Adds an action button to an attachment tile, before the buttons of the tile. Use it for an action on one attachment, such as editing the file or adding it to a calendar.
+
+[#email-attachment-action-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::email-attachment-action', handler)
+
+// handler: ({ attachment, removable }) => element | null
+----
+
+Return a `button`. The tile styles a `button` in the slot like its own buttons.
+
+[#email-attachment-action-props]
+=== Props
+
+[[email-attachment-action-attachment]]pass:[<a class="anchor" href="#email-attachment-action-attachment"></a>]`attachment` (object)::
+The attachment of the tile. It has fields such as `filename` or `name`, `size`, `part` and `messageId`.
+
+[[email-attachment-action-removable]]pass:[<a class="anchor" href="#email-attachment-action-removable"></a>]`removable` (boolean)::
+`true` when the user can remove the attachment, as in the composer and the event editor. In the other lists it is `false` or not set.
+
+[#email-attachment-action-usage-notes]
+=== Usage notes
+
+* Every user who sees an attachment tile sees the content, in the four places that <<attachment-tile>> lists. The slot also renders on a tile whose file is still uploading.
+* On a window wider than 1024 px, a `button` in the slot shows only while the pointer is over the tile. On a narrower window it always shows.
+
+[#attachment-single-action]
+== attachment-single-action
+
+Adds a button to the *Save file to* dialog when the user saves one attachment. Use it to offer another place to save the file, such as a cloud drive. Use <<attachment-multi-action,`attachment-multi-action`>> for the dialog that saves several attachments.
+
+[#attachment-single-action-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::attachment-single-action', handler)
+
+// handler: ({ attachment, buttonClass, iconClass, divClass, closeModal }) => element | null
+----
+
+[#attachment-single-action-props]
+=== Props
+
+[[attachment-single-action-attachment]]pass:[<a class="anchor" href="#attachment-single-action-attachment"></a>]`attachment` (object)::
+The attachment to save. It has fields such as `filename` or `name`, `size`, `part` and `messageId`.
+
+[[attachment-single-action-button-class]]pass:[<a class="anchor" href="#attachment-single-action-button-class"></a>]`buttonClass` (string)::
+The style class of the buttons of the dialog. Put it on your button, so that it looks like *Download*.
+
+[[attachment-single-action-icon-class]]pass:[<a class="anchor" href="#attachment-single-action-icon-class"></a>]`iconClass` (string)::
+The style class of the icon of a button.
+
+[[attachment-single-action-div-class]]pass:[<a class="anchor" href="#attachment-single-action-div-class"></a>]`divClass` (string)::
+The style class of the block that holds a button.
+
+[[attachment-single-action-close-modal]]pass:[<a class="anchor" href="#attachment-single-action-close-modal"></a>]`closeModal` (function `() => void`)::
+Closes the dialog. The dialog does not close when the user chooses your button, so call it.
+
+[#attachment-single-action-usage-notes]
+=== Usage notes
+
+* The dialog shows the slot when it saves one attachment. That is when the user chooses the download button of a tile, or the button above a list that has one attachment.
+* A handler for this slot, or for <<attachment-multi-action,`attachment-multi-action`>>, makes every save open the dialog. See <<saving-an-attachment>>.
+* For a complete example, see xref:build-by-goal/recipe-attachment-destination.adoc[Save attachment dialog].
+
+[#attachment-multi-action]
+== attachment-multi-action
+
+Adds a button to the *Save file to* dialog when the user saves several attachments at once. Use it to offer another place to save them all, such as a cloud drive. Use <<attachment-single-action,`attachment-single-action`>> for the dialog that saves one attachment.
+
+[#attachment-multi-action-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::attachment-multi-action', handler)
+
+// handler: ({ attachments, buttonClass, iconClass, divClass, closeModal }) => element | null
+----
+
+[#attachment-multi-action-props]
+=== Props
+
+[[attachment-multi-action-attachments]]pass:[<a class="anchor" href="#attachment-multi-action-attachments"></a>]`attachments` (array of object)::
+The attachments to save. Each has fields such as `filename` or `name`, `size`, `part` and `messageId`.
+
+[[attachment-multi-action-button-class]]pass:[<a class="anchor" href="#attachment-multi-action-button-class"></a>]`buttonClass` (string)::
+The style class of the buttons of the dialog. Put it on your button, so that it looks like *Download*.
+
+[[attachment-multi-action-icon-class]]pass:[<a class="anchor" href="#attachment-multi-action-icon-class"></a>]`iconClass` (string)::
+The style class of the icon of a button.
+
+[[attachment-multi-action-div-class]]pass:[<a class="anchor" href="#attachment-multi-action-div-class"></a>]`divClass` (string)::
+The style class of the block that holds a button.
+
+[[attachment-multi-action-close-modal]]pass:[<a class="anchor" href="#attachment-multi-action-close-modal"></a>]`closeModal` (function `() => void`)::
+Closes the dialog. The dialog does not close when the user chooses your button, so call it.
+
+[#attachment-multi-action-usage-notes]
+=== Usage notes
+
+* The dialog shows the slot when it saves more than one attachment. That is when the user chooses the button above a list that has several attachments.
+* A handler for this slot, or for <<attachment-single-action,`attachment-single-action`>>, makes every save open the dialog. See <<saving-an-attachment>>.
+* For a complete example, see xref:build-by-goal/recipe-attachment-destination.adoc[Save attachment dialog].
+
+[#attachment-viewer]
+== attachment-viewer
+
+Replaces the preview of an attachment in the attachment viewer with content of your own. Use it for a file type that the viewer cannot show, or to show a file in a different way.
+
+WARNING: A handler that returns a value replaces the preview of every attachment, whatever its file type, for every user who has the Zimlet. Return `null` for a file that your Zimlet does not handle, and the viewer keeps the standard preview.
+
+[#attachment-viewer-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::attachment-viewer', handler)
+
+// handler: ({ attachment }) => element | null
+----
+
+[#attachment-viewer-props]
+=== Props
+
+[[attachment-viewer-attachment]]pass:[<a class="anchor" href="#attachment-viewer-attachment"></a>]`attachment` (object)::
+The attachment that the viewer shows. It has fields such as `filename` or `name`. A message attachment has a `messageId` and a `part`. A document of Briefcase has an `id`.
+
+[#attachment-viewer-usage-notes]
+=== Usage notes
+
+* The slot renders in the attachment viewer wherever it opens. That is for an attachment of a message, an event or a contact, and in the document pane of Briefcase.
+* The slot replaces the preview of the file. The controls of the viewer for the next and previous file, and for zoom, stay.
+* A handler that returns a function, which the slot renders as a component, always replaces the preview, even when the component renders nothing. Return `null` from the handler to keep the preview.
+
+[#next-step]
+== Next step
+
+Continue with the slot of the composer's attachment menu in xref:reference/slots/composer/mail-composer.adoc[Mail composer]. Or return to xref:reference/slots/mail.adoc[Mail].

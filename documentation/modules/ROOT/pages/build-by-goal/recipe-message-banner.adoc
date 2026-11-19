@@ -1,4 +1,4 @@
-= Show a banner above the message text
+= Show a message banner
 
 This recipe shows a warning banner above the text of an open message in the xref:reference/glossary.adoc#modern-ui[Modern UI]. The example warns when a message comes from outside the organization of the user. The banner names the sender's domain and counts the links in the text. It also offers a link to security tips and a button that hides it. Use the same pattern for a note that the user must see before reading a message, such as a warning about its content. A xref:reference/glossary.adoc#zimlet[Zimlet] adds the banner by registering one component for a xref:fundamentals/extending-the-ui.adoc[slot] of the message viewer.
 

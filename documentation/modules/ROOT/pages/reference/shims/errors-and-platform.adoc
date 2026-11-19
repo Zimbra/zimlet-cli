@@ -1,6 +1,6 @@
-= Errors, platform and PWA
+= Errors and platform
 
-Eight exports for jobs that many Zimlets share. They read the reason of a failed request and tell where the xref:reference/glossary.adoc#modern-ui[Modern UI] runs. They also open an address outside it, give the display name of a contact and offer to install the Modern UI as an app. Use them to show a useful message when a request fails, to register a feature on one platform only, or to add an install action. The Modern UI shares them with every xref:reference/glossary.adoc#zimlet[Zimlet], so the build does not copy them into yours. See xref:reference/shims.adoc[Shared modules] for the other modules.
+Six exports for jobs that many Zimlets share. They read the reason of a failed request and tell where the xref:reference/glossary.adoc#modern-ui[Modern UI] runs. They also open an address outside it and give the display name of a contact. Use them to show a useful message when a request fails, or to register a feature on one platform only. The Modern UI shares them with every xref:reference/glossary.adoc#zimlet[Zimlet], so the build does not copy them into yours. See xref:reference/shims.adoc[Shared modules] for the other modules.
 
 [#members]
 == Members
@@ -22,12 +22,6 @@ Opens an address outside the Modern UI. From `@zimbra-client/browser`.
 
 <<get-name,`getName`>>::
 Gives the display name of a contact. From `@zimbra-client/util/contacts`.
-
-<<is-standalone,`isStandalone`>>::
-Tells whether the Modern UI runs as an installed app. From `@zimbra-client/pwa-utils`.
-
-<<await-install-prompt,`awaitInstallPrompt`>>::
-Waits for the browser to offer the installation of the Modern UI. From `@zimbra-client/pwa-utils`.
 
 [#error-message]
 == errorMessage
@@ -252,74 +246,6 @@ A string, or `undefined` when the contact has none of these values. With `saniti
 * For the email address, it uses the first field that exists in this order: `email`, `workEmail`, `homeEmail`, each followed by its numbered fields. It uses the part before the `@`. A field that exists with an empty value still counts as the first. The function does not look at later email fields and goes on to the phone number.
 * Do not set `sanitize` for text that you render as a child in JSX. Preact escapes text itself, so the encoded name shows as `&lt;`. Set it only when you put the name into an HTML string.
 * Calling it without an argument throws a `TypeError`.
-
-[#is-standalone]
-== isStandalone
-
-Tells whether the Modern UI runs as an installed app, in a window of its own, and not in a browser tab. Use it to hide an install action once the Modern UI is installed. Call it before <<await-install-prompt,`awaitInstallPrompt`>>, which returns `null` for an installed app.
-
-=== Signature
-
-[source,js]
-----
-import { isStandalone } from '@zimbra-client/pwa-utils';
-
-const installed = isStandalone();
-----
-
-=== Parameters
-
-None.
-
-=== Returns
-
-A boolean. `true` when the display mode of the window is `standalone`, or on iOS when the Modern UI was started from the home screen. Otherwise `false`.
-
-=== Usage notes
-
-* It reads the state when you call it. Call it once, when the component starts, and keep the result in a state.
-* It returns `false` in a browser that has no display mode query.
-
-[#await-install-prompt]
-== awaitInstallPrompt
-
-Waits for the browser to offer the installation of the Modern UI as an app, and hands your function a function that shows the offer. Use it to add an install action to a menu, shown only when the browser makes the offer. See the https://developer.mozilla.org/en-US/docs/Web/API/BeforeInstallPromptEvent[BeforeInstallPromptEvent documentation^] for the browser side.
-
-=== Signature
-
-[source,js]
-----
-import { awaitInstallPrompt } from '@zimbra-client/pwa-utils';
-
-const stop = awaitInstallPrompt(onPrompt);
-----
-
-=== Parameters
-
-[cols="2,3,6",options="header"]
-|===
-|Name |Type |Description
-
-|`onPrompt`
-a|function `(prompt: (() => Promise<boolean>) \| null) => void`
-a|Called with a function when the browser offers the installation. Call that function to show the offer. It returns a promise of boolean: `true` when the user installs the app, and `false` otherwise. `onPrompt` is called again with `null` after the user installs the app. It is called at once when an offer already waits.
-
-WARNING: Always pass `onPrompt`. Without it, the call returns a function that, when you call it, removes every listener, including those of the Modern UI and of other Zimlets. An offer that the browser already sent is then lost.
-
-|===
-
-=== Returns
-
-A function `() => void`. Call it to stop listening, for example when the component unmounts. It returns `null`, and adds no listener, when the Modern UI runs as an installed app.
-
-=== Usage notes
-
-* In a component, call it in an effect and return its result, so that the listener goes when the component unmounts. Check the installed state first with <<is-standalone,`isStandalone`>>.
-* A state setter calls a function that you pass to it. Keep the offer in a state with `setPrompt(() => prompt)`.
-* Call the function that `onPrompt` receives from a click. The https://developer.mozilla.org/en-US/docs/Web/API/BeforeInstallPromptEvent/prompt[prompt() documentation^] requires a user action such as a button click.
-* An offer works once. After the user answers, `onPrompt` gets no new function until the browser sends another offer. The same documentation says that `prompt()` may be called once for each offer.
-* A browser that does not offer the installation never calls `onPrompt`. Show the action only when it has been called.
-* The Modern UI starts to listen when it loads, so an offer that came before your call still reaches `onPrompt`.
 
 [#next-step]
 == Next step

@@ -1,0 +1,250 @@
+= Subscribe to a calendar
+
+This recipe lets users subscribe to a calendar from its web address in the xref:reference/glossary.adoc#modern-ui[Modern UI]. The example adds the item *Subscribe to a calendar* to a menu of the Calendar sidebar. The item opens a dialog that asks for the address of an iCalendar feed and for a name. The new calendar then shows in the group *Others*. Use the same pattern for any flow that starts in the Calendar sidebar and ends in a list of calendars of your own. A xref:reference/glossary.adoc#zimlet[Zimlet] adds the item, the dialog and the list by filling three xref:fundamentals/extending-the-ui.adoc[slots].
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose the three slots of a flow that starts in the Calendar sidebar.
+* Open a dialog with a flag, and close it by removing the flag.
+* Create a calendar from an address with a request to the server.
+* List calendars of your own in the group *Others*, with the row that the Modern UI draws for a calendar.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of the xref:go-deeper/server-data/batch-client.adoc[batch client], because the dialog sends its request with it.
+* Knowledge of xref:go-deeper/redux.adoc[Shared state with Redux], because the item and the dialog share a flag in the store.
+* Knowledge of xref:go-deeper/server-data/data-hooks.adoc[data hooks], because the list reads the calendars with one.
+
+[#choose-the-slots]
+== Choose the slots
+
+The Modern UI has no calendar subscription of its own, and it draws no group for a calendar that has the address of a feed. A flow therefore needs an item that starts it, a dialog that creates the calendar and a place where the calendar shows. The example fills one slot for each.
+
+[#the-slots]
+=== The slots
+
+`slot::calendar-subscription-menu`::
+The menu of the group *Others*, and the menu of the *Calendar* heading in a narrow window. The slot passes nothing to the handler. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+`slot::calendar-subscription-modal-flow`::
+The Calendar screen. The slot draws all the time, and the Calendar passes a flag as `isActive` that says when the dialog must show. It also passes `refetchCalendars`, which loads the calendars again.
+
+`slot::calendar-subscription-list`::
+The end of each of the three groups of the sidebar. It passes `isActive`, which is `true` in the group *Others*, and `renderItem`, which draws the row of a calendar. See xref:reference/slots/calendar/calendar-view.adoc#subscription-slots[Subscription slots] for how the three work together.
+
+[#other-slots]
+=== Other slots
+
+`slot::calendar-context-add-holiday`::
+The *More Options* menu of the Calendar toolbar. Choose it for an action on calendars as a whole that must not depend on the group *Others*.
+
+`slot::calendar-folder-list-end`::
+Below the folder list of the sidebar. Choose it for calendars that the Modern UI does not draw and that need a group of their own. The holiday calendars of the user are an example.
+
+For a dialog that has no relation to the Calendar, use `addModal`, as xref:build-by-goal/recipe-app-events.adoc[React to app events] shows.
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the three handlers in `init()`. It replaces the generated file.
+** `constants/index.js` holds the id of the flag. It replaces the generated file.
+** `api/calendars.js` sends the request that creates the calendar.
+** `utils/is-web-address.js` checks the address that the user typed.
+** `components/subscribe-menu-item/` is the item in the menu.
+** `components/subscribe-dialog/` is the dialog.
+** `components/subscribed-calendars/` is the list in the group *Others*.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$calendar-subscription/intl/en_US.json[]
+----
+
+[#open-the-dialog]
+== Open the dialog with a flag
+
+The item and the dialog are two handlers for two slots, so they cannot call each other. They share a flag in the store of the Modern UI instead. The item stores the flag with `addSlot`. The Calendar passes it to the dialog slot as `isActive`. The dialog removes it with `removeSlot` when it closes. See xref:reference/context/store/zimlet-redux/actions.adoc#add-slot[addSlot] and xref:reference/context/store/zimlet-redux/actions.adoc#remove-slot[removeSlot].
+
+The Calendar reads the flag only under the id `calendar-subscription-modal-flow`. A flag under another id opens nothing.
+
+.constants/index.js
+[source,js]
+----
+include::example$calendar-subscription/constants/index.js[]
+----
+
+`index.js` takes the two actions from the store once, and passes each one to the component that needs it. A component sends the action with `useDispatch`, as xref:go-deeper/redux.adoc[Shared state with Redux] describes, and no component gets the whole store.
+
+.components/subscribe-menu-item/index.js
+[source,js]
+----
+include::example$calendar-subscription/components/subscribe-menu-item/index.js[]
+----
+
+The item is an `ActionMenuItem`, so it looks like the other items of the menu. See xref:build-by-goal/recipe-gear-and-settings-menu.adoc#action-menu-item[The ActionMenuItem component] for what it is and for its props.
+
+[#draw-the-dialog]
+== Draw the dialog
+
+The dialog holds the address, the name, the error and whether the request is running. The handler returns it only while `isActive` is `true`. The slot draws all the time, so a handler that ignores the flag shows its dialog on every visit to the Calendar. Because the component leaves the screen when the flag goes, its fields start empty each time the dialog opens.
+
+.components/subscribe-dialog/index.js
+[source,js]
+----
+include::example$calendar-subscription/components/subscribe-dialog/index.js[]
+----
+
+.components/subscribe-dialog/style.less
+[source,less]
+----
+include::example$calendar-subscription/components/subscribe-dialog/style.less[]
+----
+
+The check of the address accepts only `http` and `https` addresses. The server stays the judge of whether it can read the feed.
+
+.utils/is-web-address.js
+[source,js]
+----
+include::example$calendar-subscription/utils/is-web-address.js[]
+----
+
+[#modal-dialog]
+=== The ModalDialog component
+
+`ModalDialog` is the frame of a dialog. xref:build-by-goal/recipe-app-events.adoc#modal-dialog[React to app events] explains it, and xref:reference/shims/components/dialogs.adoc#modal-dialog[Dialogs] lists every prop. This dialog asks for input, so it uses the buttons too:
+
+`onAction` and `actionLabel`::
+`onAction` runs when the user chooses the primary button. `actionLabel` is the id of the text on that button, taken from `en_US.json`.
+
+`disablePrimary`::
+Disables the primary button. The example disables it until both fields have text.
+
+`pending`::
+Shows a spinner and disables the primary button while the request runs. *Cancel* and the close button stay active.
+
+`error`::
+A message that the dialog shows above the content. It reports a wrong address and a failed request.
+
+`onClose`::
+Called for the close button, *Cancel*, the *Escape* key and a click outside the dialog. The dialog does not close itself, so this function removes the flag.
+
+`autofocusChildIndex`::
+The element that gets the focus when the dialog opens. The close button is the first, so `1` is the first field.
+
+[#text-input]
+=== The TextInput component
+
+Each field is a `TextInput`. See xref:build-by-goal/recipe-settings/new-section.adoc#text-input[The TextInput component] for `value` and `onInput`, and xref:build-by-goal/recipe-server-data.adoc#text-input[Manage server data] for `placeholderId` and `aria-label`. The example also sets `wide`, which stretches the field to the width of the dialog.
+
+[#create-the-calendar]
+== Create the calendar
+
+A subscribed calendar is a folder of the view `appointment` that has an address. The `CreateFolder` request creates it, and the server fills it from the feed at `url`. The flag `#` marks the calendar as checked, so its events show. The request fails when the server cannot read the address, for example when the feed asks for a password. The dialog then shows its error. See xref:reference/context/batch-client/json-request.adoc[jsonRequest] for the options of the call.
+
+.api/calendars.js
+[source,js]
+----
+include::example$calendar-subscription/api/calendars.js[]
+----
+
+When the request succeeds, the dialog removes the flag and calls `refetchCalendars`, the function that the slot passes. The Calendar loads the calendars again, and the sidebar shows the new one.
+
+[#list-the-calendars]
+== List the subscribed calendars
+
+The list reads the calendars of the user with `useCalendarsData`. A calendar that has an address and no owner is one that the user subscribed to. A calendar that another user shares has an owner, and a calendar of the user has no address. See xref:reference/shims/hooks/calendar-and-metadata.adoc#use-calendars-data[useCalendarsData] for the hook.
+
+Draw every calendar with `renderItem`, which the slot passes. The row has the check box, the name and the menu of a calendar, as in the groups above. A row that you draw yourself lacks them.
+
+.components/subscribed-calendars/index.js
+[source,js]
+----
+include::example$calendar-subscription/components/subscribed-calendars/index.js[]
+----
+
+The Modern UI draws the slot at the end of all three groups. The handler returns `null` unless `isActive` is `true`, so the calendars appear only in the group *Others*.
+
+[#register-the-handlers]
+== Register the handlers
+
+Register one handler for each slot in `init()` with `plugins.register`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The handlers of the dialog and the list check `isActive` first.
+
+.index.js
+[source,js]
+----
+include::example$calendar-subscription/index.js[]
+----
+
+[#limits]
+== Know the limits
+
+* The item shows in two menus, and the handler cannot tell which one opened. See xref:reference/slots/calendar/calendar-view.adoc#sidebar-menus[Sidebar menus].
+* The group *Others* is closed when the sidebar first draws in a wide window. The new calendar shows after the user opens the group.
+* The component lists every calendar that has an address and no owner. The Modern UI treats a calendar whose address contains the word `holiday` as a holiday calendar and passes it to `calendar-folder-list-end`. The component lists it as well, because it ignores the word.
+* Any failure of the request shows the same message, whatever the reason.
+* The example does not hide the item while the Modern UI is offline.
+* The slots show the content of every handler. Enable only one Zimlet that fills these slots, or the user sees two items and two dialogs.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Open *Calendar* in a window at least 1024 px wide. Choose the *Folder Setting* button of the group *Others*. The menu has the item *Subscribe to a calendar*.
+. Choose the item. A dialog opens with two fields. *Subscribe* is disabled while a field is empty. *Cancel* closes the dialog.
+. Open the dialog again. Enter `abc` as the address and `Test` as the name, and choose *Subscribe*. The dialog stays open and shows the message that the address must start with `http://` or `https://`.
+. Enter the address `<public-ical-feed-address>` and the name `US holidays`. `<public-ical-feed-address>` is a placeholder: replace it with the address of a public iCalendar feed that your Zimbra server can reach without signing in. The screenshot below was taken with the public US holidays feed of Google Calendar, which is only an example. Choose *Subscribe*. The dialog closes.
+. Open the group *Others*. *US holidays* is listed there, and not in *My Calendars*.
++
+.The group Others with the calendar that the Zimlet subscribed to
+image::calendar-subscription-others-group.png["The Calendar screen of the Modern UI in the month view. A red outline surrounds the group Others in the sidebar. The group is open and lists the calendar US holidays, below My Calendars and Trash."]
++
+The outlined group is the one that holds the calendar of the Zimlet. Its events show in the month view.
+. Repeat step 5 with an address that asks for a password. The dialog stays open and shows that the calendar could not be added.
+
+[#expected-result]
+== Expected result
+
+* The menu of the group *Others* has the item *Subscribe to a calendar*, and the item opens the dialog.
+* A wrong address and a failed request show a message in the dialog, and the dialog stays open.
+* A successful subscription closes the dialog and lists the calendar in the group *Others*.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+The item is missing.::
+* Cause: The Zimlet is not loaded, or the handler is registered under another key. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows *Running*, that the key is `slot::calendar-subscription-menu` and that you register in `init()`. Reload the page.
+
+The item does nothing.::
+* Cause: The flag has another id than `calendar-subscription-modal-flow`, or the handler of the dialog slot ignores `isActive`.
+* Fix: Use the id of `constants/index.js` in both places, and return `null` while `isActive` is not `true`.
+
+The dialog shows on every visit to the Calendar.::
+* Cause: The handler of `slot::calendar-subscription-modal-flow` does not check `isActive`.
+* Fix: Return `null` unless `isActive` is `true`.
+
+The dialog says that the calendar could not be added.::
+* Cause: The server could not read the address, for example because the feed asks for a password.
+* Fix: Open the address in a private browser window. If it asks for a password, use another address.
+
+The calendar does not show in the sidebar.::
+* Cause: The group *Others* is closed, the dialog did not call `refetchCalendars`, or the handler of the list ignores `isActive` and draws in another group.
+* Fix: Open the group. Check that the dialog calls the function that the slot passes, and that the list returns `null` unless `isActive` is `true`.
+
+The texts show as keys.::
+* Cause: The texts are not merged into `src/intl/en_US.json`, or a component is not wrapped with `withIntl`.
+* Fix: Merge the texts as the set up describes, and keep `withIntl()` around the item and the dialog.
+
+[#next-step]
+== Next step
+
+Add an action to an event in xref:build-by-goal/recipe-calendar-event-menu.adoc[Add an event action]. Add a control to the form of an event in xref:build-by-goal/recipe-appointment-field.adoc[Enhance the event location field]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

@@ -1,0 +1,526 @@
+= All slots A to Z
+
+Every extension point of the xref:reference/glossary.adoc#modern-ui[Modern UI] in one alphabetical list: 146 slots and 9 data keys, each with a link to its entry. Use it when you already know a name, such as one from a Zimlet you read or from the browser console. To browse by screen instead, start from xref:reference/slots.adoc[Slots and extension points].
+
+You register a slot as `slot::<name>`, and the names here have no prefix. A data key has no prefix, so it appears as you register it. The names that repeat for each xref:reference/glossary.adoc#vertical[vertical] share one entry, such as `<vertical>-tab-item`. See xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers work.
+
+[#names-starting-with-a]
+== Names starting with A
+
+[[about-link]]pass:[<a class="anchor" href="#about-link"></a>]xref:reference/slots/hide-built-in-ui.adoc#about-link[`about-link`]::
+Slot. Hide built-in UI.
+
+[[action-menu-briefcase-more]]pass:[<a class="anchor" href="#action-menu-briefcase-more"></a>]xref:reference/slots/briefcase.adoc#action-menu-briefcase-more[`action-menu-briefcase-more`]::
+Slot. Briefcase.
+
+[[action-menu-contact-list]]pass:[<a class="anchor" href="#action-menu-contact-list"></a>]xref:reference/slots/contacts.adoc#action-menu-contact-list[`action-menu-contact-list`]::
+Slot. Contacts.
+
+[[action-menu-contacts-more]]pass:[<a class="anchor" href="#action-menu-contacts-more"></a>]xref:reference/slots/contacts.adoc#action-menu-contacts-more[`action-menu-contacts-more`]::
+Slot. Contacts.
+
+[[action-menu-event-context-menu]]pass:[<a class="anchor" href="#action-menu-event-context-menu"></a>]xref:reference/slots/calendar/events-and-appointments.adoc#action-menu-event-context-menu[`action-menu-event-context-menu`]::
+Slot. Calendar, Events and appointments.
+
+[[action-menu-event-more]]pass:[<a class="anchor" href="#action-menu-event-more"></a>]xref:reference/slots/calendar/events-and-appointments.adoc#action-menu-event-more[`action-menu-event-more`]::
+Slot. Calendar, Events and appointments.
+
+[[action-menu-mail-more]]pass:[<a class="anchor" href="#action-menu-mail-more"></a>]xref:reference/slots/mail/mail-menus-and-actions.adoc#action-menu-mail-more[`action-menu-mail-more`]::
+Slot. Mail, Mail menus and actions.
+
+[[action-menu-restore-contacts]]pass:[<a class="anchor" href="#action-menu-restore-contacts"></a>]xref:reference/slots/contacts.adoc#action-menu-restore-contacts[`action-menu-restore-contacts`]::
+Slot. Contacts.
+
+[[additional-filter-settings]]pass:[<a class="anchor" href="#additional-filter-settings"></a>]xref:reference/slots/settings.adoc#additional-filter-settings[`additional-filter-settings`]::
+Slot. Settings.
+
+[[additional-signature-settings]]pass:[<a class="anchor" href="#additional-signature-settings"></a>]xref:reference/slots/settings.adoc#additional-signature-settings[`additional-signature-settings`]::
+Slot. Settings.
+
+[[address-pill]]pass:[<a class="anchor" href="#address-pill"></a>]xref:reference/slots/composer/editor-and-addresses.adoc#address-pill[`address-pill`]::
+Slot. Composer and editor, Editor and address fields.
+
+[[adslot-160-600]]pass:[<a class="anchor" href="#adslot-160-600"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-160-600[`adSlot-160-600`]::
+Slot. App shell, Ad slots.
+
+[[adslot-300-250-bottom]]pass:[<a class="anchor" href="#adslot-300-250-bottom"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-300-250-bottom[`adSlot-300-250-bottom`]::
+Slot. App shell, Ad slots.
+
+[[adslot-300-250-top]]pass:[<a class="anchor" href="#adslot-300-250-top"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-300-250-top[`adSlot-300-250-top`]::
+Slot. App shell, Ad slots.
+
+[[adslot-300-600]]pass:[<a class="anchor" href="#adslot-300-600"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-300-600[`adSlot-300-600`]::
+Slot. App shell, Ad slots.
+
+[[adslot-adhesion-320-50]]pass:[<a class="anchor" href="#adslot-adhesion-320-50"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-adhesion-320-50[`adSlot-adhesion-320-50`]::
+Slot. App shell, Ad slots.
+
+[[adslot-adhesion-728-90]]pass:[<a class="anchor" href="#adslot-adhesion-728-90"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-adhesion-728-90[`adSlot-adhesion-728-90`]::
+Slot. App shell, Ad slots.
+
+[[adslot-left-120-90]]pass:[<a class="anchor" href="#adslot-left-120-90"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-left-120-90[`adSlot-left-120-90`]::
+Slot. App shell, Ad slots.
+
+[[adslot-left-180-150]]pass:[<a class="anchor" href="#adslot-left-180-150"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-left-180-150[`adSlot-left-180-150`]::
+Slot. App shell, Ad slots.
+
+[[adslot-left-300-250]]pass:[<a class="anchor" href="#adslot-left-300-250"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-left-300-250[`adSlot-left-300-250`]::
+Slot. App shell, Ad slots.
+
+[[adslot-news]]pass:[<a class="anchor" href="#adslot-news"></a>]xref:reference/slots/app-shell/ad-slots.adoc#adslot-news[`adSlot-news`]::
+Slot. App shell, Ad slots.
+
+[[app]]pass:[<a class="anchor" href="#app"></a>]xref:reference/slots/app-shell/app-frame.adoc#app[`app`]::
+Slot. App shell, App frame.
+
+[[attachment-multi-action]]pass:[<a class="anchor" href="#attachment-multi-action"></a>]xref:reference/slots/mail/attachments.adoc#attachment-multi-action[`attachment-multi-action`]::
+Slot. Mail, Attachments.
+
+[[attachment-single-action]]pass:[<a class="anchor" href="#attachment-single-action"></a>]xref:reference/slots/mail/attachments.adoc#attachment-single-action[`attachment-single-action`]::
+Slot. Mail, Attachments.
+
+[[attachment-viewer]]pass:[<a class="anchor" href="#attachment-viewer"></a>]xref:reference/slots/mail/attachments.adoc#attachment-viewer[`attachment-viewer`]::
+Slot. Mail, Attachments.
+
+[[attendees-chooser-attendees]]pass:[<a class="anchor" href="#attendees-chooser-attendees"></a>]xref:reference/slots/calendar/events-and-appointments.adoc#attendees-chooser-attendees[`attendees-chooser-attendees`]::
+Slot. Calendar, Events and appointments.
+
+[#names-starting-with-b]
+== Names starting with B
+
+[[briefcase-default-tab]]pass:[<a class="anchor" href="#briefcase-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`briefcase-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[briefcase-document-context-menu]]pass:[<a class="anchor" href="#briefcase-document-context-menu"></a>]xref:reference/slots/briefcase.adoc#briefcase-document-context-menu[`briefcase-document-context-menu`]::
+Slot. Briefcase.
+
+[[briefcase-document-header-action]]pass:[<a class="anchor" href="#briefcase-document-header-action"></a>]xref:reference/slots/briefcase.adoc#briefcase-document-header-action[`briefcase-document-header-action`]::
+Slot. Briefcase.
+
+[[briefcase-landing-page]]pass:[<a class="anchor" href="#briefcase-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`briefcase-landing-page`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
+
+[[briefcase-landing-page-description]]pass:[<a class="anchor" href="#briefcase-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`briefcase-landing-page-description`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
+
+[[briefcase-landing-page-videos]]pass:[<a class="anchor" href="#briefcase-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`briefcase-landing-page-videos`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
+
+[[briefcase-tab-item]]pass:[<a class="anchor" href="#briefcase-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`briefcase-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[[briefcase-upload-button]]pass:[<a class="anchor" href="#briefcase-upload-button"></a>]xref:reference/slots/briefcase.adoc#briefcase-upload-button[`briefcase-upload-button`]::
+Slot. Briefcase.
+
+[[browser-calendar-notification-setting]]pass:[<a class="anchor" href="#browser-calendar-notification-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#browser-calendar-notification-setting[`browser-calendar-notification-setting`]::
+Slot. Hide built-in UI.
+
+[#names-starting-with-c]
+== Names starting with C
+
+[[calendar-and-reminders-video-call-preferences]]pass:[<a class="anchor" href="#calendar-and-reminders-video-call-preferences"></a>]xref:reference/slots/settings.adoc#calendar-and-reminders-video-call-preferences[`calendar-and-reminders-video-call-preferences`]::
+Slot. Settings.
+
+[[calendar-appointment-edit-location]]pass:[<a class="anchor" href="#calendar-appointment-edit-location"></a>]xref:reference/slots/calendar/events-and-appointments.adoc#calendar-appointment-edit-location[`calendar-appointment-edit-location`]::
+Slot. Calendar, Events and appointments.
+
+[[calendar-appointment-edit-video-call]]pass:[<a class="anchor" href="#calendar-appointment-edit-video-call"></a>]xref:reference/slots/calendar/events-and-appointments.adoc#calendar-appointment-edit-video-call[`calendar-appointment-edit-video-call`]::
+Slot. Calendar, Events and appointments.
+
+[[calendar-body-end]]pass:[<a class="anchor" href="#calendar-body-end"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-body-end[`calendar-body-end`]::
+Slot. Calendar, Calendar view.
+
+[[calendar-context-add-holiday]]pass:[<a class="anchor" href="#calendar-context-add-holiday"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-context-add-holiday[`calendar-context-add-holiday`]::
+Slot. Calendar, Calendar view.
+
+[[calendar-default-tab]]pass:[<a class="anchor" href="#calendar-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`calendar-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[calendar-folder-list-end]]pass:[<a class="anchor" href="#calendar-folder-list-end"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-folder-list-end[`calendar-folder-list-end`]::
+Slot. Calendar, Calendar view.
+
+[[calendar-landing-page]]pass:[<a class="anchor" href="#calendar-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`calendar-landing-page`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
+
+[[calendar-landing-page-description]]pass:[<a class="anchor" href="#calendar-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`calendar-landing-page-description`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
+
+[[calendar-landing-page-videos]]pass:[<a class="anchor" href="#calendar-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`calendar-landing-page-videos`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
+
+[[calendar-subscription-list]]pass:[<a class="anchor" href="#calendar-subscription-list"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-subscription-list[`calendar-subscription-list`]::
+Slot. Calendar, Calendar view.
+
+[[calendar-subscription-menu]]pass:[<a class="anchor" href="#calendar-subscription-menu"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-subscription-menu[`calendar-subscription-menu`]::
+Slot. Calendar, Calendar view.
+
+[[calendar-subscription-modal-flow]]pass:[<a class="anchor" href="#calendar-subscription-modal-flow"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-subscription-modal-flow[`calendar-subscription-modal-flow`]::
+Slot. Calendar, Calendar view.
+
+[[calendar-tab-item]]pass:[<a class="anchor" href="#calendar-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`calendar-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[[change-password-description]]pass:[<a class="anchor" href="#change-password-description"></a>]xref:reference/slots/app-shell/header-menus.adoc#change-password-description[`change-password-description`]::
+Slot. App shell, Header menus.
+
+[[chatapps-default-tab]]pass:[<a class="anchor" href="#chatapps-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`chatapps-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[chatapps-landing-page]]pass:[<a class="anchor" href="#chatapps-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`chatapps-landing-page`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
+
+[[chatapps-landing-page-description]]pass:[<a class="anchor" href="#chatapps-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`chatapps-landing-page-description`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
+
+[[chatapps-landing-page-videos]]pass:[<a class="anchor" href="#chatapps-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`chatapps-landing-page-videos`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
+
+[[chatapps-tab-item]]pass:[<a class="anchor" href="#chatapps-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`chatapps-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[[cloudapps-default-tab]]pass:[<a class="anchor" href="#cloudapps-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`cloudapps-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[cloudapps-landing-page]]pass:[<a class="anchor" href="#cloudapps-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`cloudapps-landing-page`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
+
+[[cloudapps-landing-page-videos]]pass:[<a class="anchor" href="#cloudapps-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`cloudapps-landing-page-videos`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
+
+[[cloudapps-tab-item]]pass:[<a class="anchor" href="#cloudapps-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`cloudapps-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[[compose-attachment-action-menu]]pass:[<a class="anchor" href="#compose-attachment-action-menu"></a>]xref:reference/slots/composer/mail-composer.adoc#compose-attachment-action-menu[`compose-attachment-action-menu`]::
+Slot. Composer and editor, Mail composer.
+
+[[compose-direction-setting]]pass:[<a class="anchor" href="#compose-direction-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#compose-direction-setting[`compose-direction-setting`]::
+Slot. Hide built-in UI.
+
+[[compose-sender-options-menu]]pass:[<a class="anchor" href="#compose-sender-options-menu"></a>]xref:reference/slots/composer/mail-composer.adoc#compose-sender-options-menu[`compose-sender-options-menu`]::
+Slot. Composer and editor, Mail composer.
+
+[[composer]]pass:[<a class="anchor" href="#composer"></a>]xref:reference/slots/composer/editor-and-addresses.adoc#composer[`composer`]::
+Slot. Composer and editor, Editor and address fields.
+
+[[composer-toolbar-end]]pass:[<a class="anchor" href="#composer-toolbar-end"></a>]xref:reference/slots/composer/editor-and-addresses.adoc#composer-toolbar-end[`composer-toolbar-end`]::
+Slot. Composer and editor, Editor and address fields.
+
+[[composer-toolbar-start]]pass:[<a class="anchor" href="#composer-toolbar-start"></a>]xref:reference/slots/composer/editor-and-addresses.adoc#composer-toolbar-start[`composer-toolbar-start`]::
+Slot. Composer and editor, Editor and address fields.
+
+[[contact-add-server-smime-cert]]pass:[<a class="anchor" href="#contact-add-server-smime-cert"></a>]xref:reference/slots/contacts.adoc#contact-add-server-smime-cert[`contact-add-server-smime-cert`]::
+Slot. Contacts.
+
+[[contact-card-item]]pass:[<a class="anchor" href="#contact-card-item"></a>]xref:reference/slots/contacts.adoc#contact-card-item[`contact-card-item`]::
+Slot. Contacts.
+
+[[contact-card-messages-and-files]]pass:[<a class="anchor" href="#contact-card-messages-and-files"></a>]xref:reference/slots/contacts.adoc#contact-card-messages-and-files[`contact-card-messages-and-files`]::
+Slot. Contacts.
+
+[[contact-hover-card-details]]pass:[<a class="anchor" href="#contact-hover-card-details"></a>]xref:reference/slots/contacts.adoc#contact-hover-card-details[`contact-hover-card-details`]::
+Slot. Contacts.
+
+[[contact-input-token-button-inner-content]]pass:[<a class="anchor" href="#contact-input-token-button-inner-content"></a>]xref:reference/slots/composer/editor-and-addresses.adoc#contact-input-token-button-inner-content[`contact-input-token:button-inner-content`]::
+Slot. Composer and editor, Editor and address fields.
+
+[[contacts-default-tab]]pass:[<a class="anchor" href="#contacts-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`contacts-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[contacts-landing-page]]pass:[<a class="anchor" href="#contacts-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`contacts-landing-page`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
+
+[[contacts-landing-page-description]]pass:[<a class="anchor" href="#contacts-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`contacts-landing-page-description`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
+
+[[contacts-landing-page-videos]]pass:[<a class="anchor" href="#contacts-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`contacts-landing-page-videos`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
+
+[[contacts-tab-item]]pass:[<a class="anchor" href="#contacts-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`contacts-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[[custom-fonts]]pass:[<a class="anchor" href="#custom-fonts"></a>]xref:reference/slots/composer/editor-and-addresses.adoc#custom-fonts[`custom-fonts`]::
+Slot. Composer and editor, Editor and address fields.
+
+[#names-starting-with-d]
+== Names starting with D
+
+[[declined-event-setting]]pass:[<a class="anchor" href="#declined-event-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#declined-event-setting[`declined-event-setting`]::
+Slot. Hide built-in UI.
+
+[[default-calendar-setting]]pass:[<a class="anchor" href="#default-calendar-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#default-calendar-setting[`default-calendar-setting`]::
+Slot. Hide built-in UI.
+
+[[delegates-setting]]pass:[<a class="anchor" href="#delegates-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#delegates-setting[`delegates-setting`]::
+Slot. Hide built-in UI.
+
+[[desktop-viewer-footer]]pass:[<a class="anchor" href="#desktop-viewer-footer"></a>]xref:reference/slots/mail/message-viewer.adoc#desktop-viewer-footer[`desktop-viewer-footer`]::
+Slot. Mail, Message viewer.
+
+[[dynamic-settings]]pass:[<a class="anchor" href="#dynamic-settings"></a>]xref:reference/slots/settings.adoc#dynamic-settings[`dynamic-settings`]::
+Slot. Settings.
+
+[#names-starting-with-e]
+== Names starting with E
+
+[[email-attachment-action]]pass:[<a class="anchor" href="#email-attachment-action"></a>]xref:reference/slots/mail/attachments.adoc#email-attachment-action[`email-attachment-action`]::
+Slot. Mail, Attachments.
+
+[[email-default-tab]]pass:[<a class="anchor" href="#email-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`email-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[email-landing-page]]pass:[<a class="anchor" href="#email-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`email-landing-page`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
+
+[[email-landing-page-description]]pass:[<a class="anchor" href="#email-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`email-landing-page-description`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
+
+[[email-landing-page-videos]]pass:[<a class="anchor" href="#email-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`email-landing-page-videos`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
+
+[[email-tab-item]]pass:[<a class="anchor" href="#email-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`email-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[[empty-folder-option]]pass:[<a class="anchor" href="#empty-folder-option"></a>]xref:reference/slots/hide-built-in-ui.adoc#empty-folder-option[`empty-folder-option`]::
+Slot. Hide built-in UI.
+
+[#names-starting-with-f]
+== Names starting with F
+
+[[filter-options]]pass:[<a class="anchor" href="#filter-options"></a>]xref:reference/slots/settings.adoc#filter-options[`filter-options`]::
+Slot. Settings.
+
+[[folder-group]]pass:[<a class="anchor" href="#folder-group"></a>]xref:reference/slots/app-shell/folder-list.adoc#folder-group[`folder-group`]::
+Slot. App shell, Folder list.
+
+[[folder-list-end]]pass:[<a class="anchor" href="#folder-list-end"></a>]xref:reference/slots/app-shell/folder-list.adoc#folder-list-end[`folder-list-end`]::
+Slot. App shell, Folder list.
+
+[[folder-list-middle]]pass:[<a class="anchor" href="#folder-list-middle"></a>]xref:reference/slots/app-shell/folder-list.adoc#folder-list-middle[`folder-list-middle`]::
+Slot. App shell, Folder list.
+
+[[free-busy-permission-setting]]pass:[<a class="anchor" href="#free-busy-permission-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#free-busy-permission-setting[`free-busy-permission-setting`]::
+Slot. Hide built-in UI.
+
+[[from-options]]pass:[<a class="anchor" href="#from-options"></a>]xref:reference/slots/composer/mail-composer.adoc#from-options[`from-options`]::
+Slot. Composer and editor, Mail composer.
+
+[#names-starting-with-g]
+== Names starting with G
+
+[[gear-menu]]pass:[<a class="anchor" href="#gear-menu"></a>]xref:reference/slots/app-shell/header-menus.adoc#gear-menu[`gear-menu`]::
+Slot. App shell, Header menus.
+
+[[general-setting-bottom]]pass:[<a class="anchor" href="#general-setting-bottom"></a>]xref:reference/slots/settings.adoc#general-setting-bottom[`general-setting-bottom`]::
+Slot. Settings.
+
+[#names-starting-with-h]
+== Names starting with H
+
+[[header-action-menu-item]]pass:[<a class="anchor" href="#header-action-menu-item"></a>]xref:reference/slots/mail/mail-list-and-sidebar.adoc#header-action-menu-item[`header-action-menu-item`]::
+Slot. Mail, Mail list and sidebar.
+
+[[header-menu-item]]pass:[<a class="anchor" href="#header-menu-item"></a>]xref:reference/slots/app-shell/header-menus.adoc#header-menu-item[`header-menu-item`]::
+Slot. App shell, Header menus.
+
+[#names-starting-with-i]
+== Names starting with I
+
+[[integrations-default-tab]]pass:[<a class="anchor" href="#integrations-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`integrations-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[integrations-tab-item]]pass:[<a class="anchor" href="#integrations-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`integrations-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[#names-starting-with-l]
+== Names starting with L
+
+[[language-link]]pass:[<a class="anchor" href="#language-link"></a>]xref:reference/slots/hide-built-in-ui.adoc#language-link[`language-link`]::
+Slot. Hide built-in UI.
+
+[#names-starting-with-m]
+== Names starting with M
+
+[[mail-composer-smime-dropdown]]pass:[<a class="anchor" href="#mail-composer-smime-dropdown"></a>]xref:reference/slots/composer/mail-composer.adoc#mail-composer-smime-dropdown[`mail-composer-smime-dropdown`]::
+Slot. Composer and editor, Mail composer.
+
+[[mail-composer-toolbar-send]]pass:[<a class="anchor" href="#mail-composer-toolbar-send"></a>]xref:reference/slots/composer/mail-composer.adoc#mail-composer-toolbar-send[`mail-composer-toolbar-send`]::
+Slot. Composer and editor, Mail composer.
+
+[[mail-folder-context-menu]]pass:[<a class="anchor" href="#mail-folder-context-menu"></a>]xref:reference/slots/mail/mail-menus-and-actions.adoc#mail-folder-context-menu[`mail-folder-context-menu`]::
+Slot. Mail, Mail menus and actions.
+
+[[mail-header-wrapper]]pass:[<a class="anchor" href="#mail-header-wrapper"></a>]xref:reference/slots/composer/mail-composer.adoc#mail-header-wrapper[`mail-header-wrapper`]::
+Slot. Composer and editor, Mail composer.
+
+[[mail-overflow-menu-option]]pass:[<a class="anchor" href="#mail-overflow-menu-option"></a>]xref:reference/slots/mail/mail-menus-and-actions.adoc#mail-overflow-menu-option[`mail-overflow-menu-option`]::
+Slot. Mail, Mail menus and actions.
+
+[[mail-pane]]pass:[<a class="anchor" href="#mail-pane"></a>]xref:reference/slots/mail/mail-list-and-sidebar.adoc#mail-pane[`mail-pane`]::
+Slot. Mail, Mail list and sidebar.
+
+[[mail-preview-pane]]pass:[<a class="anchor" href="#mail-preview-pane"></a>]xref:reference/slots/mail/mail-list-and-sidebar.adoc#mail-preview-pane[`mail-preview-pane`]::
+Slot. Mail, Mail list and sidebar.
+
+[[mail-recall-menu-option]]pass:[<a class="anchor" href="#mail-recall-menu-option"></a>]xref:reference/slots/mail/mail-menus-and-actions.adoc#mail-recall-menu-option[`mail-recall-menu-option`]::
+Slot. Mail, Mail menus and actions.
+
+[[mail-sender]]pass:[<a class="anchor" href="#mail-sender"></a>]xref:reference/slots/mail/mail-list-and-sidebar.adoc#mail-sender[`mail-sender`]::
+Slot. Mail, Mail list and sidebar.
+
+[[mail-shared-folder-context-menu]]pass:[<a class="anchor" href="#mail-shared-folder-context-menu"></a>]xref:reference/slots/mail/mail-menus-and-actions.adoc#mail-shared-folder-context-menu[`mail-shared-folder-context-menu`]::
+Slot. Mail, Mail menus and actions.
+
+[[mail-sidebar-footer]]pass:[<a class="anchor" href="#mail-sidebar-footer"></a>]xref:reference/slots/mail/mail-list-and-sidebar.adoc#mail-sidebar-footer[`mail-sidebar-footer`]::
+Slot. Mail, Mail list and sidebar.
+
+[[menu]]pass:[<a class="anchor" href="#menu"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#menu[`menu`]::
+Slot. App shell, Navigation and tabs.
+
+[[message-body-top]]pass:[<a class="anchor" href="#message-body-top"></a>]xref:reference/slots/mail/message-viewer.adoc#message-body-top[`message-body-top`]::
+Slot. Mail, Message viewer.
+
+[[message-header-additional-buttons]]pass:[<a class="anchor" href="#message-header-additional-buttons"></a>]xref:reference/slots/mail/message-viewer.adoc#message-header-additional-buttons[`message-header-additional-buttons`]::
+Slot. Mail, Message viewer.
+
+[[message-smime-status]]pass:[<a class="anchor" href="#message-smime-status"></a>]xref:reference/slots/mail/message-viewer.adoc#message-smime-status[`message-smime-status`]::
+Slot. Mail, Message viewer.
+
+[[messageprocessors-attachpopover]]pass:[<a class="anchor" href="#messageprocessors-attachpopover"></a>]xref:reference/slots/content-processors.adoc#attach-popover[`messageProcessors:attachPopover`]::
+Data key. Content processors.
+
+[[messageprocessors-composerprocessor]]pass:[<a class="anchor" href="#messageprocessors-composerprocessor"></a>]xref:reference/slots/content-processors.adoc#composer-processor[`messageProcessors:composerProcessor`]::
+Data key. Content processors.
+
+[[messageprocessors-dateinfopopover]]pass:[<a class="anchor" href="#messageprocessors-dateinfopopover"></a>]xref:reference/slots/content-processors.adoc#date-info-popover[`messageProcessors:dateInfoPopover`]::
+Data key. Content processors.
+
+[[messageprocessors-emailprocessor]]pass:[<a class="anchor" href="#messageprocessors-emailprocessor"></a>]xref:reference/slots/content-processors.adoc#email-processor[`messageProcessors:emailProcessor`]::
+Data key. Content processors.
+
+[[messageprocessors-eventexcerptprocessor]]pass:[<a class="anchor" href="#messageprocessors-eventexcerptprocessor"></a>]xref:reference/slots/content-processors.adoc#event-excerpt-processor[`messageProcessors:eventExcerptProcessor`]::
+Data key. Content processors.
+
+[[messageprocessors-eventlocationprocessor]]pass:[<a class="anchor" href="#messageprocessors-eventlocationprocessor"></a>]xref:reference/slots/content-processors.adoc#event-location-processor[`messageProcessors:eventLocationProcessor`]::
+Data key. Content processors.
+
+[[messageprocessors-eventnotesprocessor]]pass:[<a class="anchor" href="#messageprocessors-eventnotesprocessor"></a>]xref:reference/slots/content-processors.adoc#event-notes-processor[`messageProcessors:eventNotesProcessor`]::
+Data key. Content processors.
+
+[[messageprocessors-mailprintprocessor]]pass:[<a class="anchor" href="#messageprocessors-mailprintprocessor"></a>]xref:reference/slots/content-processors.adoc#mail-print-processor[`messageProcessors:mailPrintProcessor`]::
+Data key. Content processors.
+
+[#names-starting-with-p]
+== Names starting with P
+
+[[print-link]]pass:[<a class="anchor" href="#print-link"></a>]xref:reference/slots/hide-built-in-ui.adoc#print-link[`print-link`]::
+Slot. Hide built-in UI.
+
+[[private-event-label]]pass:[<a class="anchor" href="#private-event-label"></a>]xref:reference/slots/hide-built-in-ui.adoc#private-event-label[`private-event-label`]::
+Slot. Hide built-in UI.
+
+[#names-starting-with-r]
+== Names starting with R
+
+[[recover-discarded-appointments-option]]pass:[<a class="anchor" href="#recover-discarded-appointments-option"></a>]xref:reference/slots/hide-built-in-ui.adoc#recover-discarded-appointments-option[`recover-discarded-appointments-option`]::
+Slot. Hide built-in UI.
+
+[[recover-discarded-briefcase-option]]pass:[<a class="anchor" href="#recover-discarded-briefcase-option"></a>]xref:reference/slots/hide-built-in-ui.adoc#recover-discarded-briefcase-option[`recover-discarded-briefcase-option`]::
+Slot. Hide built-in UI.
+
+[[recover-discarded-contacts-option]]pass:[<a class="anchor" href="#recover-discarded-contacts-option"></a>]xref:reference/slots/hide-built-in-ui.adoc#recover-discarded-contacts-option[`recover-discarded-contacts-option`]::
+Slot. Hide built-in UI.
+
+[[recover-discarded-mails-option]]pass:[<a class="anchor" href="#recover-discarded-mails-option"></a>]xref:reference/slots/hide-built-in-ui.adoc#recover-discarded-mails-option[`recover-discarded-mails-option`]::
+Slot. Hide built-in UI.
+
+[[rightbar-50px]]pass:[<a class="anchor" href="#rightbar-50px"></a>]xref:reference/slots/app-shell/app-frame.adoc#rightbar-50px[`rightbar-50px`]::
+Slot. App shell, App frame.
+
+[[rightside-zimlet-slot]]pass:[<a class="anchor" href="#rightside-zimlet-slot"></a>]xref:reference/slots/app-shell/app-frame.adoc#rightside-zimlet-slot[`rightside-zimlet-slot`]::
+Slot. App shell, App frame.
+
+[[routes]]pass:[<a class="anchor" href="#routes"></a>]xref:reference/slots/app-shell/app-frame.adoc#routes[`routes`]::
+Slot. App shell, App frame.
+
+[#names-starting-with-s]
+== Names starting with S
+
+[[search-tips-link]]pass:[<a class="anchor" href="#search-tips-link"></a>]xref:reference/slots/hide-built-in-ui.adoc#search-tips-link[`search-tips-link`]::
+Slot. Hide built-in UI.
+
+[[searchinputplaceholder]]pass:[<a class="anchor" href="#searchinputplaceholder"></a>]xref:reference/slots/app-shell/search.adoc#search-input-placeholder[`searchInputPlaceholder`]::
+Slot. App shell, Search.
+
+[[sender-list-item]]pass:[<a class="anchor" href="#sender-list-item"></a>]xref:reference/slots/composer/editor-and-addresses.adoc#sender-list-item[`sender-list-item`]::
+Slot. Composer and editor, Editor and address fields.
+
+[[set-default-client]]pass:[<a class="anchor" href="#set-default-client"></a>]xref:reference/slots/settings.adoc#set-default-client[`set-default-client`]::
+Slot. Settings.
+
+[[settings]]pass:[<a class="anchor" href="#settings"></a>]xref:reference/slots/settings.adoc#settings[`settings`]::
+Data key. Settings.
+
+[[settings-dropdown-item]]pass:[<a class="anchor" href="#settings-dropdown-item"></a>]xref:reference/slots/app-shell/header-menus.adoc#settings-dropdown-item[`settings-dropdown-item`]::
+Slot. App shell, Header menus.
+
+[[settings-dropdown-item-end]]pass:[<a class="anchor" href="#settings-dropdown-item-end"></a>]xref:reference/slots/app-shell/header-menus.adoc#settings-dropdown-item-end[`settings-dropdown-item-end`]::
+Slot. App shell, Header menus.
+
+[[show-details-notification-button]]pass:[<a class="anchor" href="#show-details-notification-button"></a>]xref:reference/slots/hide-built-in-ui.adoc#show-details-notification-button[`show-details-notification-button`]::
+Slot. Hide built-in UI.
+
+[[show-event-timezone-setting]]pass:[<a class="anchor" href="#show-event-timezone-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#show-event-timezone-setting[`show-event-timezone-setting`]::
+Slot. Hide built-in UI.
+
+[#names-starting-with-t]
+== Names starting with T
+
+[[top-mail-ad-item]]pass:[<a class="anchor" href="#top-mail-ad-item"></a>]xref:reference/slots/app-shell/ad-slots.adoc#top-mail-ad-item[`top-mail-ad-item`]::
+Slot. App shell, Ad slots.
+
+[[top-mail-generic-slot]]pass:[<a class="anchor" href="#top-mail-generic-slot"></a>]xref:reference/slots/app-shell/ad-slots.adoc#top-mail-generic-slot[`top-mail-generic-slot`]::
+Slot. App shell, Ad slots.
+
+[#names-starting-with-v]
+== Names starting with V
+
+[[vertical-menu-item]]pass:[<a class="anchor" href="#vertical-menu-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-menu-item[`vertical-menu-item`]::
+Slot. App shell, Navigation and tabs.
+
+[[videoapps-default-tab]]pass:[<a class="anchor" href="#videoapps-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`videoapps-default-tab`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
+
+[[videoapps-landing-page]]pass:[<a class="anchor" href="#videoapps-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`videoapps-landing-page`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
+
+[[videoapps-landing-page-description]]pass:[<a class="anchor" href="#videoapps-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`videoapps-landing-page-description`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
+
+[[videoapps-landing-page-videos]]pass:[<a class="anchor" href="#videoapps-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`videoapps-landing-page-videos`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
+
+[[videoapps-tab-item]]pass:[<a class="anchor" href="#videoapps-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`videoapps-tab-item`]::
+Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
+
+[#names-starting-with-w]
+== Names starting with W
+
+[[web-search]]pass:[<a class="anchor" href="#web-search"></a>]xref:reference/slots/app-shell/search.adoc#web-search[`web-search`]::
+Slot. App shell, Search.
+
+[[web-search-toggle]]pass:[<a class="anchor" href="#web-search-toggle"></a>]xref:reference/slots/app-shell/search.adoc#web-search-toggle[`web-search-toggle`]::
+Slot. App shell, Search.
+
+[[workday-time-zone-setting]]pass:[<a class="anchor" href="#workday-time-zone-setting"></a>]xref:reference/slots/hide-built-in-ui.adoc#workday-time-zone-setting[`workday-time-zone-setting`]::
+Slot. Hide built-in UI.
+
+[[writing-email-post-composer-settings]]pass:[<a class="anchor" href="#writing-email-post-composer-settings"></a>]xref:reference/slots/settings.adoc#writing-email-post-composer-settings[`writing-email-post-composer-settings`]::
+Slot. Settings.
+
+[[writting-email-additional-settings]]pass:[<a class="anchor" href="#writting-email-additional-settings"></a>]xref:reference/slots/settings.adoc#writting-email-additional-settings[`writting-email-additional-settings`]::
+Slot. Settings.
+
+[#next-step]
+== Next step
+
+Learn how a handler is registered and what it returns in xref:fundamentals/extending-the-ui.adoc[Slots and handlers].

@@ -1,11 +1,14 @@
 = Navigation and tabs
 
-These slots add items to the navigation of the xref:reference/glossary.adoc#modern-ui[Modern UI]. The navigation has the tab bar of a xref:reference/glossary.adoc#vertical[vertical], the list of verticals at the top and the account menu. Use the slots when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a tab or a link in one of them. A Zimlet that adds a screen usually starts with `<vertical>-tab-item`, as xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen] shows. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+These slots add items to the navigation of the xref:reference/glossary.adoc#modern-ui[Modern UI], and content to the start page of a vertical. The navigation has the tab bar of a xref:reference/glossary.adoc#vertical[vertical] and the list of verticals at the top. The start page is the landing page that opens when a user chooses Video, Chat or Cloud Storage. Use the slots when your xref:reference/glossary.adoc#zimlet[Zimlet] needs a tab or a link in the navigation. Use them also to tell users what it offers on a start page. For the menus in the header, see xref:reference/slots/app-shell/header-menus.adoc[Header menus]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
 
 [#vertical-names]
-== Vertical names
+=== Vertical names
 
-The Modern UI groups its screens into verticals, and the top navigation lists them. The first part of the address of a screen is the name of its vertical. Two slots, `<vertical>-tab-item` and `<vertical>-default-tab`, put that name in their own name. The defaults are:
+The first part of the address of a screen is the name of its xref:reference/glossary.adoc#vertical[vertical]. The slots `<vertical>-tab-item` and `<vertical>-default-tab` put that name in their own name. The defaults are:
 
 * `email` for Mail
 * `calendar` for Calendar
@@ -16,7 +19,41 @@ The Modern UI groups its screens into verticals, and the top navigation lists th
 * `cloudapps` for Cloud Storage
 * `integrations` for Integrations
 
-A deployment can use other names, because the Modern UI reads them from its client configuration. Read them at run time, as xref:build-by-goal/recipe-tab-and-route.adoc#read-the-vertical-name[Read the vertical name] shows.
+The list at the top of the screen has one item for each vertical. The item shows the display name of the vertical, which is not the name in the slots. For example, the item *Video* belongs to `videoapps`.
+
+.The Mail screen with the list of verticals and a tab that a Zimlet adds
+image::slots-navigation-and-tabs-vertical-names.png["The Mail screen. Outlined in red at the top: the list of verticals, with the items Mail, Calendar, Contacts, Briefcase, Video and Integrations. Outlined in red in the tab bar of Mail: the tab Zimlet tab, next to the tab Mail. A Zimlet adds the tab Zimlet tab."]
+
+The outlined list has the items Mail, Calendar, Contacts, Briefcase, Video and Integrations. A deployment can list other verticals, such as Chat and Cloud Storage. The tab bar of the open vertical is below the list. A Zimlet adds the outlined tab *Zimlet tab* to it, next to the tab *Mail* of the Modern UI. In Mail, the slot for that tab is `email-tab-item`.
+
+NOTE: A deployment can use other names, because the Modern UI reads them from its client configuration. Read them at run time, as xref:build-by-goal/recipe-tab-and-route.adoc#read-the-vertical-name[Read the vertical name] shows.
+
+[#verticals-with-a-landing-page]
+=== Verticals with a landing page
+
+Only three verticals have a landing page. The slot names put the name of the vertical in front. The defaults are:
+
+* `videoapps` for Video
+* `chatapps` for Chat
+* `cloudapps` for Cloud Storage, which has no description slot
+
+Mail, Calendar, Contacts, Briefcase and Integrations have no landing page. A handler for a landing page slot with one of their names adds nothing. A deployment can use other names for the verticals. See <<vertical-names,Vertical names>> for where the names come from.
+
+[#standard-landing-page]
+=== Standard landing page
+
+From top to bottom and left to right, the standard page has these parts:
+
+. The name of the vertical as a heading.
+. A short introduction.
+. A list under the introduction. It holds the items of the slot `<vertical>-landing-page-description`. The list of Cloud Storage has one fixed item and no slot.
+. A second column to the right of the list, with the content of the slot `<vertical>-landing-page-videos`.
+. A faded icon of the vertical behind the content.
+
+.The standard landing page of Video with one list item and one line of videos content
+image::slots-landing-page-default.png["The Video landing page. Outlined in red: the heading Video, the introduction, one item in the list, one line of text in the second column and the faded video icon behind the content. A Zimlet adds the list item and the line of text."]
+
+A Zimlet adds the outlined list item and the outlined text in the second column. The Modern UI draws the heading, the introduction and the icon.
 
 [#members]
 == Members
@@ -33,55 +70,69 @@ Items in the tab bar of the Integrations vertical.
 <<vertical-menu-item,`vertical-menu-item`>>::
 An item at the end of the list of verticals at the top.
 
-<<header-menu-item,`header-menu-item`>>::
-An item in the account menu.
+<<vertical-landing-page,`<vertical>-landing-page`>>::
+Replaces the whole standard landing page of one vertical.
+
+<<vertical-landing-page-description,`<vertical>-landing-page-description`>>::
+An item in the list of the standard landing page of Video or Chat.
+
+<<vertical-landing-page-videos,`<vertical>-landing-page-videos`>>::
+Content in the second column of the standard landing page.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen]::
+A recipe that adds a *Meeting rooms* tab to the Video vertical with <<vertical-tab-item,`<vertical>-tab-item`>>, and a screen that the tab opens. It also adds a line to the standard start page of Video with <<vertical-landing-page-description,`<vertical>-landing-page-description`>>. You learn to read the name of a vertical, to add a tab with `MenuItem` and to open a screen with a route. You also learn to add a line to a start page and to make the screen work on a narrow window. Every other slot in this category that adds an item or content is registered the same way. <<vertical-default-tab,`<vertical>-default-tab`>> and <<vertical-landing-page,`<vertical>-landing-page`>> replace content and are the exceptions.
 
 [#vertical-tab-item]
 == <vertical>-tab-item
 
-Adds an item to the tab bar of one vertical, such as a link that opens a screen of your Zimlet. Use it when the screen belongs to a vertical and the user must reach it from that vertical. Use <<vertical-menu-item,`vertical-menu-item`>> for a control that belongs beside the verticals, and <<header-menu-item,`header-menu-item`>> for an item in the account menu.
+Adds an item to the tab bar of one vertical, such as a link that opens a screen of your Zimlet. Use it when the screen belongs to a vertical and the user must reach it from that vertical. Use <<vertical-menu-item,`vertical-menu-item`>> for a control that belongs beside the verticals, and xref:reference/slots/app-shell/header-menus.adoc#header-menu-item[`header-menu-item`] for an item in the account menu.
 
-The slot appears only while the user is in the vertical that its name gives. A handler for `slot::videoapps-tab-item` adds nothing to Mail. On a window at least 1025 px wide, the items appear in the navigation bar under the header, after the first item of the vertical. On a narrower window they appear in the sidebar, below its content. See <<vertical-names>> for the vertical names.
-
-[#vertical-tab-item-signature]
-=== Signature
+[#vertical-tab-item-register-a-handler]
+=== Register a handler
 
 [source,js]
 ----
 plugins.register('slot::<vertical>-tab-item', handler)
+
+// handler: () => element | null
 ----
+
+Return an element, such as a `MenuItem` from `@zimbra-client/components`.
 
 [#vertical-tab-item-props]
 === Props
 
 None.
 
-[#vertical-tab-item-returns]
-=== Returns
-
-An element for the item, such as a `MenuItem` from `@zimbra-client/components`. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
-
 [#vertical-tab-item-usage-notes]
 === Usage notes
 
+* The slot appears only while the user is in the vertical that its name gives. A handler for `slot::videoapps-tab-item` adds nothing to Mail. See <<vertical-names>> for the vertical names.
+* On a window at least 1025 px wide, the items appear in the navigation bar under the header, after the first item of the vertical. On a narrower window they appear in the sidebar, below its content.
 * A handler for the tab slot of Video, Chat, Cloud Storage or Integrations also adds that vertical to the top navigation. Only users who have the Zimlet see it. Mail, Calendar, Contacts and Briefcase exist when the account has the feature.
-* The slot adds only the item. Add the screen that the item opens with a route, as xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen] shows.
+* The slot adds only the item. Add the screen that the item opens with a route.
+* For a complete example, see xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen].
 
 [#vertical-default-tab]
 == <vertical>-default-tab
 
 Replaces the first item of the tab bar of one vertical. That item shows the icon and the name of the vertical and links to the vertical. Use it when your Zimlet owns a vertical and needs its own first item. Use <<vertical-tab-item,`<vertical>-tab-item`>> to add an item beside the first item and keep it.
 
-The slot appears in the navigation bar under the header while the user is in the vertical. It is available on a window at least 1025 px wide. A narrower window always shows the standard item. See <<vertical-names>> for the vertical names.
-
 WARNING: A handler that returns an element hides the standard item, with its link to the vertical, for every user who has the Zimlet. Return `null` when your Zimlet does not apply, and the Modern UI keeps the standard item.
 
-[#vertical-default-tab-signature]
-=== Signature
+[#vertical-default-tab-register-a-handler]
+=== Register a handler
 
 [source,js]
 ----
 plugins.register('slot::<vertical>-default-tab', handler)
+
+// handler: ({ slugs }) => element | null
 ----
 
 [#vertical-default-tab-props]
@@ -90,14 +141,10 @@ plugins.register('slot::<vertical>-default-tab', handler)
 [[vertical-default-tab-slugs]]pass:[<a class="anchor" href="#vertical-default-tab-slugs"></a>]`slugs` (object)::
 The names that the Modern UI uses in addresses, as set in its client configuration. Each key is a name such as `videoapps` and each value is a string. Use it to build the address of a screen.
 
-[#vertical-default-tab-returns]
-=== Returns
-
-An element that takes the place of the standard item. The slot shows the results of all handlers when at least one is not empty. A result is empty when it is false in JavaScript, such as `null`, `false` or `undefined`.
-
 [#vertical-default-tab-usage-notes]
 === Usage notes
 
+* The slot appears in the navigation bar under the header while the user is in the vertical. It is available on a window at least 1025 px wide. A narrower window always shows the standard item. See <<vertical-names>> for the vertical names.
 * A handler that returns a function, which the slot renders as a component, always replaces the standard item, even when the component renders nothing. Return `null` from the handler to keep the standard item.
 * The slot draws nothing of its own. With `?zimletSlots=show` it writes `non-visible ZimletSlot name=<slot-name>` to the console and shows no label. See xref:run-package-deploy/run-and-debug.adoc#debug-slots[Show every slot in the page].
 * A handler for this slot does not add a vertical to the top navigation. Add the vertical with <<vertical-tab-item,`<vertical>-tab-item`>>.
@@ -105,14 +152,16 @@ An element that takes the place of the standard item. The slot shows the results
 [#menu]
 == menu
 
-Adds items to the tab bar of the Integrations vertical. Use it when you want your item ahead of the items that other Zimlets add with `integrations-tab-item`. The slot appears only while the user is in Integrations, after the first item of the vertical and before the items of `integrations-tab-item`. On a narrower window than 1025 px it appears in the sidebar, in the same order.
+Adds items to the tab bar of the Integrations vertical. Use it when you want your item ahead of the items that other Zimlets add with `integrations-tab-item`. The slot has no vertical in its name, so it works only for Integrations. Use <<vertical-tab-item,`<vertical>-tab-item`>> for every other vertical.
 
-[#menu-signature]
-=== Signature
+[#menu-register-a-handler]
+=== Register a handler
 
 [source,js]
 ----
 plugins.register('slot::menu', handler)
+
+// handler: () => element | null
 ----
 
 [#menu-props]
@@ -120,28 +169,25 @@ plugins.register('slot::menu', handler)
 
 None.
 
-[#menu-returns]
-=== Returns
-
-An element for the item. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
-
 [#menu-usage-notes]
 === Usage notes
 
+* The slot appears only while the user is in Integrations, after the first item of the vertical and before the items of `integrations-tab-item`. On a narrower window than 1025 px it appears in the sidebar, in the same order.
 * A handler for this slot adds the Integrations vertical to the top navigation for users who have the Zimlet, as `integrations-tab-item` does.
-* The slot has no vertical in its name, so it works only for Integrations. Use <<vertical-tab-item,`<vertical>-tab-item`>> for every other vertical.
 
 [#vertical-menu-item]
 == vertical-menu-item
 
-Adds an item at the end of the list of verticals in the top navigation, after Mail, Calendar and the other verticals. Use it when a control must sit in that list, whichever vertical is open. The slot does not add a vertical. To add a vertical, use the tab slot of Video, Chat, Cloud Storage or Integrations, as <<vertical-tab-item,`<vertical>-tab-item`>> describes.
+Adds an item at the end of the list of verticals in the top navigation, after Mail, Calendar and the other verticals. Use it when a control must sit in that list, whichever vertical is open.
 
-[#vertical-menu-item-signature]
-=== Signature
+[#vertical-menu-item-register-a-handler]
+=== Register a handler
 
 [source,js]
 ----
 plugins.register('slot::vertical-menu-item', handler)
+
+// handler: () => element | null
 ----
 
 [#vertical-menu-item-props]
@@ -149,35 +195,98 @@ plugins.register('slot::vertical-menu-item', handler)
 
 None.
 
-[#vertical-menu-item-returns]
-=== Returns
+[#vertical-menu-item-usage-notes]
+=== Usage notes
 
-An element for the item. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
+* The slot does not add a vertical. To add a vertical, use the tab slot of Video, Chat, Cloud Storage or Integrations, as <<vertical-tab-item,`<vertical>-tab-item`>> describes.
 
-[#header-menu-item]
-== header-menu-item
+[#vertical-landing-page]
+== <vertical>-landing-page
 
-Adds an item to the account menu, the menu that opens from the avatar of the user in the header. Use it for a link that belongs with the account, such as a link to an external page. The items appear above *Logout*. For the menu behind the gear icon, see xref:reference/slots/app-shell/settings-and-gear-menus.adoc[Settings and gear menus].
+Replaces the standard landing page of Video, Chat or Cloud Storage with content of your own. Use it when your Zimlet owns the vertical and has a screen that must open first. Use <<vertical-landing-page-description,`<vertical>-landing-page-description`>> or <<vertical-landing-page-videos,`<vertical>-landing-page-videos`>> to add to the standard page and keep it.
 
-[#header-menu-item-signature]
-=== Signature
+WARNING: A registered handler hides the standard page for every user who has the Zimlet. It does so even when the handler returns nothing, such as `null` or `false`. Return content in every state of your Zimlet.
+
+[#vertical-landing-page-register-a-handler]
+=== Register a handler
 
 [source,js]
 ----
-plugins.register('slot::header-menu-item', handler)
+plugins.register('slot::<vertical>-landing-page', handler)
+
+// handler: () => element | null
 ----
 
-[#header-menu-item-props]
+[#vertical-landing-page-props]
 === Props
 
 None.
 
-[#header-menu-item-returns]
-=== Returns
+[#vertical-landing-page-usage-notes]
+=== Usage notes
 
-An element for the item. Return an `ActionMenuItem` from `@zimbra-client/components`, so that the item looks like the others in the menu. A handler that returns `null` adds nothing. The slot shows the results of all handlers, in the order in which the Zimlets registered them.
+* The slot appears when the user opens the vertical, at its address (`/videoapps`, `/chatapps` or `/cloudapps` by default). See <<verticals-with-a-landing-page>> for the verticals that have a landing page.
+* The handler replaces the heading, the introduction, the list, the second column and the icon. The slots `<vertical>-landing-page-description` and `<vertical>-landing-page-videos` draw nothing while this slot has a handler.
+* A handler for this slot adds the vertical to the top navigation, as <<vertical-tab-item,`<vertical>-tab-item`>> does.
+
+[#vertical-landing-page-description]
+== <vertical>-landing-page-description
+
+Adds an item to the list under the introduction of the standard landing page of Video or Chat. Use it to say what your Zimlet lets the user do there. Use <<vertical-landing-page,`<vertical>-landing-page`>> to replace the page instead.
+
+[#vertical-landing-page-description-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::<vertical>-landing-page-description', handler)
+
+// handler: () => element | null
+----
+
+Return a list item (`<li>`), because the slot sits inside a bulleted list.
+
+[#vertical-landing-page-description-props]
+=== Props
+
+None.
+
+[#vertical-landing-page-description-usage-notes]
+=== Usage notes
+
+* The slot exists for Video and Chat. The standard landing page of Cloud Storage has a fixed list item and no slot. See <<verticals-with-a-landing-page>> for the vertical names.
+* The slot draws nothing when a Zimlet fills <<vertical-landing-page,`<vertical>-landing-page`>>.
+* The slot does not add the vertical to the top navigation. Also fill <<vertical-tab-item,`<vertical>-tab-item`>> or <<vertical-landing-page,`<vertical>-landing-page`>>, so that users can reach the page.
+* For a complete example, see xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen].
+
+[#vertical-landing-page-videos]
+== <vertical>-landing-page-videos
+
+Adds content to the second column of the standard landing page, beside the list. Use it for demo videos or other media that show what your Zimlet does. Use <<vertical-landing-page-description,`<vertical>-landing-page-description`>> for a line of text in the list.
+
+[#vertical-landing-page-videos-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::<vertical>-landing-page-videos', handler)
+
+// handler: () => element | null
+----
+
+[#vertical-landing-page-videos-props]
+=== Props
+
+None.
+
+[#vertical-landing-page-videos-usage-notes]
+=== Usage notes
+
+* The slot exists for Video, Chat and Cloud Storage. See <<verticals-with-a-landing-page>> for the vertical names.
+* The slot draws nothing when a Zimlet fills <<vertical-landing-page,`<vertical>-landing-page`>>.
+* The slot does not add the vertical to the top navigation. Also fill <<vertical-tab-item,`<vertical>-tab-item`>> or <<vertical-landing-page,`<vertical>-landing-page`>>, so that users can reach the page.
 
 [#next-step]
 == Next step
 
-Find the slots for the start page of a vertical in xref:reference/slots/app-shell/landing-pages.adoc[Landing pages].
+Find the slots for the frame around every screen in xref:reference/slots/app-shell/app-frame.adoc[App frame].

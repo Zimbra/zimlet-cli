@@ -1,0 +1,11 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Turns off printing and emptying folders and shows a notice about the policy."
+	},
+	"my-zimlet": {
+		"title": "Company policy",
+		"text": "Printing and emptying folders are turned off for your account.",
+		"readPolicy": "Read the policy"
+	}
+}

@@ -79,7 +79,7 @@ In the desktop app, a promise of object that resolves with the result of the ope
 
 === Usage notes
 
-* Call it only when xref:reference/shims/errors-platform-and-pwa.adoc#get-platform-type[`getPlatformType()`] returns `PLATFORM_TYPES.ELECTRON`. In a browser the call returns `undefined`, and `.then` on it throws a `TypeError`. See xref:go-deeper/platform-checks.adoc[Platform checks].
+* Call it only when xref:reference/shims/errors-and-platform.adoc#get-platform-type[`getPlatformType()`] returns `PLATFORM_TYPES.ELECTRON`. In a browser the call returns `undefined`, and `.then` on it throws a `TypeError`. See xref:go-deeper/platform-checks.adoc[Platform checks].
 * The desktop app owns the operations and their fields. S/MIME is available only in the desktop app on macOS and Windows.
 * `encode` rejects a request with neither `sign` nor `encrypt`, and a request with `encrypt` and without `sign`.
 * In a browser, use <<is-server-smime-feature-available,`isServerSMIMEFeatureAvailable`>> to find out whether the server handles S/MIME.

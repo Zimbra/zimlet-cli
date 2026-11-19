@@ -1,0 +1,12 @@
+{
+	"zimlet": {
+		"label": "My Zimlet",
+		"description": "Adds a button to the Save file to dialog that saves attachments to the Team drive folder of the Briefcase."
+	},
+	"my-zimlet": {
+		"saveOne": "Save to Team drive",
+		"saveAll": "Save all to Team drive",
+		"saved": "Saved to the Team drive folder.",
+		"failed": "The attachments could not be saved to the Team drive folder."
+	}
+}

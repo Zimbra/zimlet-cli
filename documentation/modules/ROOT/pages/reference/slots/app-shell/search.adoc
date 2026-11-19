@@ -1,0 +1,147 @@
+= Search
+
+The search bar is the field at the top of the xref:reference/glossary.adoc#modern-ui[Modern UI] where users search the open xref:reference/glossary.adoc#vertical[vertical]. Its slots change the word in the hint of the field and add a button before the field. They also replace the field with one of your own. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] adds a second place to search, such as an intranet, or changes how the search bar reads. To hide the link to the search tips, use the slot xref:reference/slots/hide-built-in-ui.adoc#search-tips-link[`search-tips-link`]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#search-bar]
+=== Search bar
+
+From left to right, the search bar has these parts:
+
+. The slot `web-search-toggle`.
+. The search field, or the content of the slot `web-search` when a handler returns content. The field has these parts:
+.. The menu that sets where to search, in Contacts, when the account has the global address list.
+.. The search button.
+.. The tag of a person, when the search is for one person.
+.. The text input, with the hint that `searchInputPlaceholder` completes.
+.. The *Clear* button, when the input has text, in the search bar of a large screen.
+.. The *Advanced search* button, in Mail only, in the search bar of a large screen.
+
+The advanced search panel opens below the bar from the *Advanced search* button. It has the link that the slot xref:reference/slots/hide-built-in-ui.adoc#search-tips-link[`search-tips-link`] hides, and the buttons *Search* and *Cancel*.
+
+.The search field of Mail with the advanced search panel open
+image::slots-search-bar.png["The Mail screen with the advanced search panel open below the search bar. Outlined in red: the search field with the search button, the typed text test, the Clear button and the Advanced search button; the buttons Search and Cancel; and the Search Tips link."]
+
+The outlined field has the search button, the text input, the *Clear* button and the *Advanced search* button. The outlined buttons *Search* and *Cancel* and the outlined *Search Tips* link are in the panel. The button of the slot `web-search-toggle` goes before the field. It is not in the screenshot because no Zimlet fills it.
+
+[#members]
+== Members
+
+<<search-input-placeholder,`searchInputPlaceholder`>>::
+The word that completes the hint of the search field.
+
+<<web-search-toggle,`web-search-toggle`>>::
+A button or control before the search field.
+
+<<web-search,`web-search`>>::
+Replaces the search field.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar]::
+A recipe that adds a button to the search bar with <<web-search-toggle,`web-search-toggle`>>. While the button is on, it replaces the search field with a field that searches a knowledge base, with <<web-search,`web-search`>>. You learn to register a handler only while it applies and to remove it again. You also learn to hide the button in the small screen layout.
+
+[#search-input-placeholder]
+== searchInputPlaceholder
+
+Sets the word that completes the hint of the search field, `Search your <word>`. Use it when your Zimlet changes what the field searches, or when a vertical needs a clearer word. Use <<web-search,`web-search`>> to replace the field itself.
+
+[#search-input-placeholder-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::searchInputPlaceholder', handler)
+
+// handler: ({ pathType }) => string | null
+----
+
+Return the word as text, or `null` to keep the standard word.
+
+[#search-input-placeholder-props]
+=== Props
+
+[[search-input-placeholder-path-type]]pass:[<a class="anchor" href="#search-input-placeholder-path-type"></a>]`pathType` (string)::
+The vertical that is open: `email`, `calendar`, `contacts` or `briefcase`. A screen of any other vertical passes `email`. A deployment can use other names for the verticals. See xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-names[Vertical names].
+
+[#search-input-placeholder-usage-notes]
+=== Usage notes
+
+* The field uses only the first result that is not empty. The standard words are *mailbox*, *calendar*, *contacts* and *briefcase*.
+* The hint shows while the input is empty. A field that your Zimlet draws with <<web-search,`web-search`>> has its own hint.
+
+[#web-search-toggle]
+== web-search-toggle
+
+Adds a control before the search field. Use it for a button that changes the field or opens a second search, because a control that changes the field belongs next to it. Use <<web-search,`web-search`>> to draw the field itself.
+
+[#web-search-toggle-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::web-search-toggle', handler)
+
+// handler: ({ viewLabel, showAdvanced, isMobile }) => element | null
+----
+
+Return an xref:reference/shims/components/buttons-and-actions.adoc#action-button[`ActionButton`] from `@zimbra-client/components`, so that the button looks like the buttons of the search bar.
+
+[#web-search-toggle-props]
+=== Props
+
+[[web-search-toggle-view-label]]pass:[<a class="anchor" href="#web-search-toggle-view-label"></a>]`viewLabel` (xref:reference/glossary.adoc#element[element])::
+The name of the area that is open, as translated text: *mailbox*, *calendar*, *contacts* or *briefcase*. Use it in the label of your button.
+
+[[web-search-toggle-show-advanced]]pass:[<a class="anchor" href="#web-search-toggle-show-advanced"></a>]`showAdvanced` (boolean)::
+`true` while the advanced search panel is open.
+
+[[web-search-toggle-is-mobile]]pass:[<a class="anchor" href="#web-search-toggle-is-mobile"></a>]`isMobile` (boolean)::
+`true` in the search bar of the small screen layout, which opens from the search button of the toolbar. The header passes no value, so read it as `false` there.
+
+[#web-search-toggle-usage-notes]
+=== Usage notes
+
+* Every user who sees the search bar sees the control, in every vertical. Return `null` where your control does not apply.
+* For a complete example, see xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar].
+
+[#web-search]
+== web-search
+
+Replaces the search field of the Modern UI with content of your own. Use it for a second search, such as a knowledge base, that the user switches on. Use <<search-input-placeholder,`searchInputPlaceholder`>> when you only change the hint.
+
+WARNING: A handler that returns content replaces the search field in every vertical, for every user who has the Zimlet, while it is registered. Register it only while the user asks for it, and remove it when it no longer applies.
+
+[#web-search-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::web-search', handler)
+
+// handler: ({ isMobile }) => element | null
+----
+
+[#web-search-props]
+=== Props
+
+[[web-search-is-mobile]]pass:[<a class="anchor" href="#web-search-is-mobile"></a>]`isMobile` (boolean)::
+`true` in the search bar of the small screen layout, which opens from the search button of the toolbar. The header passes no value, so read it as `false` there.
+
+[#web-search-usage-notes]
+=== Usage notes
+
+* The slot is a render-prop slot. The search bar draws the standard field only when no handler returns content, and draws the content of every handler otherwise. See xref:fundamentals/extending-the-ui.adoc#render-prop-slots[Render-prop slots].
+* The standard field has the search button, the tag of a person, the *Clear* button and the *Advanced search* button. Your content has none of them, so draw what your search needs.
+* The advanced search panel belongs to the standard field. If it is open when your content appears, it stays open. The recipe removes its content while the panel is open.
+* For a complete example, see xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar].
+
+[#next-step]
+== Next step
+
+Continue with the folder list in xref:reference/slots/app-shell/folder-list.adoc[Folder list], or return to the xref:reference/slots.adoc[slot index].

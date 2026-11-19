@@ -1,0 +1,288 @@
+= Editor and address fields
+
+The rich text editor and the address fields are components that several screens share, so their slots reach every place that draws them. Use these slots when your xref:reference/glossary.adoc#zimlet[Zimlet] adds a control to an editor, adds fonts to its font list, or marks an address wherever it shows. The slots that only the Mail composer has, such as the send button and the options menu, are in xref:reference/slots/composer/mail-composer.adoc[Mail composer]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#rich-text-editor]
+=== Rich text editor
+
+The editor draws in four places. A plain text message or signature uses a plain text field instead, which has none of the slots of the editor.
+
+* The Mail composer, for an HTML message. Its `editorType` is `composer`.
+* The *Notes* field of the event editor in Calendar. Its `editorType` is `notes`.
+* The document editor of Briefcase. Its `editorType` is `briefcase`.
+* The editor of an HTML signature in Settings. Its `editorType` is `signature`.
+
+.The rich text editor in the Mail composer
+image::slots-editor-and-addresses-editor.png["The Mail composer with a new HTML message. Outlined in red: the rich text editor, with the formatting toolbar above the text area that holds the text Test message."]
+
+The outlined editor is the one of the Mail composer. It has the formatting toolbar and the text area.
+
+The slots `composer` and `custom-fonts` render in all four places. `custom-fonts` also changes the font list of the default font in the Writing Email settings. The slots `composer-toolbar-start` and `composer-toolbar-end` render in the Mail composer and in the event editor of Calendar.
+
+[#address-fields]
+=== Address fields
+
+An address shows as a pill, in two kinds of place.
+
+* Editable fields:
+** *To*, *Cc* and *Bcc* of the Mail composer.
+** The attendees and resources of Calendar events.
+** The distribution lists of Contacts.
+** The redirect of a message and the address filters of the advanced search.
+** The sharing dialogs and settings, and the dialog of delegates.
+* Read-only lists:
+** The sender and recipient lines of an open message.
+** The short recipient line of the composer, when its header is collapsed or the draft opens read-only.
+** The invitees of an event invitation, in a message and in the details of a Calendar event.
+
+
+.Address pills in the fields To and Cc of the Mail composer
+image::slots-editor-and-addresses-address-fields.png["The Mail composer with a new message. Outlined in red: the pills alice and bob in the field To, and the pill carol in the field Cc."]
+
+The outlined pills are addresses in editable fields of the Mail composer.
+
+Each slot of an address renders once for every address.
+
+[#members]
+== Members
+
+<<composer,`composer`>>::
+Content after the editing area of every rich text editor.
+
+<<composer-toolbar-start,`composer-toolbar-start`>>::
+A control at the start of the bar around the editor toolbar.
+
+<<composer-toolbar-end,`composer-toolbar-end`>>::
+A control at the end of the bar around the editor toolbar.
+
+<<custom-fonts,`custom-fonts`>>::
+Fonts for the font list of the editors.
+
+<<address-pill,`address-pill`>>::
+Content in front of an address in editable fields and in read-only lists.
+
+<<sender-list-item,`sender-list-item`>>::
+Content in front of the name inside a pill of a read-only list.
+
+<<contact-input-token-button-inner-content,`contact-input-token:button-inner-content`>>::
+Content in front of the name inside a pill of an editable field.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards]::
+A recipe that keeps a personal list of VIP addresses and shows a star in front of every VIP address with <<address-pill,`address-pill`>>. It also fills two slots of contact cards. You learn to add a mark next to an address, to share state between handlers with Redux and to save the list in mailbox metadata. <<sender-list-item,`sender-list-item`>> and <<contact-input-token-button-inner-content,`contact-input-token:button-inner-content`>> take the same `email` prop and are registered the same way.
+
+[#composer]
+== composer
+
+Adds content after the editing area of every rich text editor, such as a button that acts on the text. Despite its name, the slot is not specific to the Mail composer. Use <<composer-toolbar-start,`composer-toolbar-start`>> or <<composer-toolbar-end,`composer-toolbar-end`>> for a control in the bar around the editor toolbar.
+
+[#composer-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::composer', handler)
+
+// handler: ({ getComposer, editorType }) => element | null
+----
+
+Return `null` for an editor that your handler does not serve, as <<composer-usage-notes>> explains.
+
+[#composer-props]
+=== Props
+
+[[composer-get-composer]]pass:[<a class="anchor" href="#composer-get-composer"></a>]`getComposer` (function `() => object`)::
+Returns the TinyMCE editor of this editor. It returns `undefined` until the editor has started, so call it from an event handler and not while your component renders.
+
+[[composer-editor-type]]pass:[<a class="anchor" href="#composer-editor-type"></a>]`editorType` (string)::
+The place of the editor: `composer`, `notes`, `briefcase` or `signature`. See <<rich-text-editor>>.
+
+[#composer-usage-notes]
+=== Usage notes
+
+* Every user who opens one of the editors sees the content, once for each editor. A handler for one place checks `editorType` and returns `null` for the others, or its content shows in all four.
+* A Zimlet that draws the shared editor itself with `TinyMceComposer` gets the slot as well. See xref:reference/shims/components/recipients-and-rich-text.adoc#tiny-mce-composer[TinyMceComposer].
+
+[#composer-toolbar-start]
+== composer-toolbar-start
+
+Adds a control at the start of the bar that holds the editor toolbar. Use it for a button that acts on the text, such as a button for dictation. Use <<composer-toolbar-end,`composer-toolbar-end`>> for a control at the end of the bar.
+
+[#composer-toolbar-start-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::composer-toolbar-start', handler)
+
+// handler: ({ activeEditor }) => element | null
+----
+
+[#composer-toolbar-start-props]
+=== Props
+
+[[composer-toolbar-start-active-editor]]pass:[<a class="anchor" href="#composer-toolbar-start-active-editor"></a>]`activeEditor` (object or https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^])::
+The editor of the message. In an HTML message it is the editor component, whose `getEditor` method returns the TinyMCE editor. In a plain text message it is the `textarea`. It is `null` or `undefined` before the editor has started, in a draft that opens read-only and in the event editor of Calendar.
+
+[#composer-toolbar-start-usage-notes]
+=== Usage notes
+
+* In the Mail composer the slot is in the bottom bar, after the *Send* and *Attach* buttons and before the time the draft was saved. It shows on every window width and in an inline reply. A draft that opens read-only has the same bar.
+* In the event editor of Calendar the slot is above the notes, before the editor toolbar and after the button that adds an attachment.
+* A handler that needs the editor returns `null` until `activeEditor` is set, and checks which kind it is by testing for `getEditor`.
+
+[#composer-toolbar-end]
+== composer-toolbar-end
+
+Adds a control at the end of the bar that holds the editor toolbar. Use it for a button that acts on the text, such as a button for dictation. Use <<composer-toolbar-start,`composer-toolbar-start`>> for a control at the start of the bar.
+
+[#composer-toolbar-end-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::composer-toolbar-end', handler)
+
+// handler: ({ activeEditor }) => element | null
+----
+
+[#composer-toolbar-end-props]
+=== Props
+
+[[composer-toolbar-end-active-editor]]pass:[<a class="anchor" href="#composer-toolbar-end-active-editor"></a>]`activeEditor` (object or https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^])::
+The editor of the message, as for <<composer-toolbar-start-active-editor,`composer-toolbar-start`>>.
+
+[#composer-toolbar-end-usage-notes]
+=== Usage notes
+
+* In the Mail composer the slot is in the bottom bar, after <<composer-toolbar-start,`composer-toolbar-start`>> and before the time the draft was saved. It shows on every window width and in an inline reply.
+* In the event editor of Calendar the slot is above the notes, after the editor toolbar.
+
+[#custom-fonts]
+== custom-fonts
+
+Adds fonts to the font list of the rich text editors, and to the list of default fonts in the Writing Email settings. Use it when the users of your organization need fonts that the list does not have.
+
+WARNING: The editors and the font setting do not draw while the first handler returns something that has no `customFonts`. Return `{ customFonts: [] }` when there are no fonts, and not `null`.
+
+[#custom-fonts-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::custom-fonts', handler)
+
+// handler: () => { customFonts: string[] } | null
+----
+
+Return an object, not an element. Write each font as `Name=font family`, for example `My Font=my font,sans-serif`. The Modern UI adds `roboto` as a fallback to the font family, unless it is already there.
+
+[#custom-fonts-props]
+=== Props
+
+None.
+
+[#custom-fonts-usage-notes]
+=== Usage notes
+
+* Every user who opens an editor, or the Writing Email settings, uses the fonts. See <<rich-text-editor>> for the editors.
+* Only the first handler that is registered is used. The results of the others are ignored.
+* While no handler is registered, the editors use the built-in list.
+
+[#address-pill]
+== address-pill
+
+Adds content in front of an address. Use it for a mark that must show with the address everywhere, such as an icon for a VIP. Use <<sender-list-item,`sender-list-item`>> or <<contact-input-token-button-inner-content,`contact-input-token:button-inner-content`>> when the mark belongs in one kind of place only.
+
+[#address-pill-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::address-pill', handler)
+
+// handler: ({ email }) => element | null
+----
+
+[#address-pill-props]
+=== Props
+
+[[address-pill-email]]pass:[<a class="anchor" href="#address-pill-email"></a>]`email` (string)::
+The address of the pill.
+
+[#address-pill-usage-notes]
+=== Usage notes
+
+* Every user who sees an address sees the content, in the places that <<address-fields>> lists. In an editable field it is the first item inside the pill. In a read-only list it is in front of the pill and outside it.
+* The handler runs for every address. Return `null` for the addresses that your Zimlet does not mark.
+* In an editable field the slot and <<contact-input-token-button-inner-content,`contact-input-token:button-inner-content`>> both render. A handler for both shows its mark twice.
+* For a complete example, see xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards].
+
+[#sender-list-item]
+== sender-list-item
+
+Adds content inside the pill of an address in a read-only list, in front of the name. Use it for a mark that shows in a message and not in the composer.
+
+[#sender-list-item-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::sender-list-item', handler)
+
+// handler: ({ email }) => element | null
+----
+
+[#sender-list-item-props]
+=== Props
+
+[[sender-list-item-email]]pass:[<a class="anchor" href="#sender-list-item-email"></a>]`email` (string)::
+The address of the pill.
+
+[#sender-list-item-usage-notes]
+=== Usage notes
+
+* Every user who sees a read-only list of addresses sees the content, in the places that <<address-fields>> lists. Editable fields do not draw it.
+* The handler runs for every address. Return `null` for the addresses that your Zimlet does not mark.
+* <<address-pill,`address-pill`>> also renders in these lists, in front of the pill and outside it.
+
+[#contact-input-token-button-inner-content]
+== contact-input-token:button-inner-content
+
+Adds content in front of the name inside the pill of an address in an editable field. Use it for a mark that shows in the composer and in the other fields and not in a message.
+
+[#contact-input-token-button-inner-content-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::contact-input-token:button-inner-content', handler)
+
+// handler: ({ email }) => element | null
+----
+
+[#contact-input-token-button-inner-content-props]
+=== Props
+
+[[contact-input-token-button-inner-content-email]]pass:[<a class="anchor" href="#contact-input-token-button-inner-content-email"></a>]`email` (string)::
+The address of the pill.
+
+[#contact-input-token-button-inner-content-usage-notes]
+=== Usage notes
+
+* Every user who has an address in an editable field sees the content, in the fields that <<address-fields>> lists. Read-only lists do not draw it.
+* The content comes after the certificate icon, if the pill has one, and before the name.
+* The handler runs for every address. Return `null` for the addresses that your Zimlet does not mark.
+* <<address-pill,`address-pill`>> also renders in editable fields, and a handler for both shows its mark twice.
+
+[#next-step]
+== Next step
+
+Fill a slot with a complete example in xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards]. Or return to xref:reference/slots/composer.adoc[Composer and editor].

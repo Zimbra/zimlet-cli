@@ -1,0 +1,315 @@
+= Contacts
+
+The Contacts xref:reference/glossary.adoc#vertical[vertical] is where users keep people and distribution lists. Its slots add items to the menus of the contact list and rows to the details of a contact. They also extend the contact editor. Two slots reach further than Contacts. The card of a person opens from addresses in Mail, in Calendar and in the search field. The editor of a contact opens from that card in any vertical. Use these slots when your xref:reference/glossary.adoc#zimlet[Zimlet] adds to how users see or manage a person. Slots that serve every vertical, such as the folder list, are in xref:reference/slots/app-shell.adoc[App shell]. To hide the item of the menu of Trash that recovers deleted contacts, use xref:reference/slots/hide-built-in-ui.adoc#menus[Hide built-in UI]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#sort-menu]
+=== Sort menu above the list
+
+The menu above the list of contacts has the current sort field as its label. It shows the same items in the contact search results. From top to bottom it has:
+
+. *First Name*, *Last Name*, *Email* and *Display Name*. The sort field in use is checked.
+. A group with the slots `action-menu-contact-list` and `action-menu-restore-contacts`, then *Print*. *Print* shows in a window at least 1025 px wide, and not while the device is offline.
+. *Add to Contacts*, when the global address list is open and contacts are selected.
+. *Delete List*, when a contact list that the user created is open.
+
+The global address list has only *Print* in a window at least 1025 px wide, in place of the group. A distribution list has no group.
+
+.The sort menu above the list of contacts
+image::slots-contacts-sort-menu.png["The Contacts screen with the sort menu above the list open. Outlined in red: the menu with the sort fields First Name, Last Name, Email and Display Name, where Display Name is checked, and the item Print below them."]
+
+The outlined menu opens from the sort field above the list.
+
+[#more-options-menu]
+=== More Options menu of a contact
+
+The button with three dots is the last button of the toolbar above the details of a contact. With one contact selected, the toolbar shows in a window at least 1025 px wide. A distribution list has no such menu. The menu has these items from top to bottom:
+
+. *Print*.
+. *Tag*, when tagging is enabled for the account.
+. The slot `action-menu-contacts-more`.
+
+.The *More Options* menu of a contact
+image::slots-contacts-more-options-menu.png["The Contacts screen with one contact selected and the More Options menu of the toolbar open. Outlined in red: the menu with the items Print and Tag."]
+
+The outlined menu is the *More Options* menu of the selected contact.
+
+[#contact-details]
+=== Details of a contact
+
+The details open when the user selects a contact, and in a drawer in a narrow window. A distribution list shows its own properties instead. The details have two parts.
+
+* The card has the photo, the name, the tags, the job title, the company and the email addresses and phone numbers. The slot `contact-card-item` follows the phone numbers. The other fields, addresses, dates, websites, notes and lists of the contact come after it.
+* The column of communications has up to five recent messages, files and photos that the contact sent, and then the slot `contact-card-messages-and-files`. It loads shortly after the user selects the contact.
+
+.The details of a contact
+image::slots-contacts-details.png["The Contacts screen with the details of a contact. Outlined in red: the card with the photo, the name and the email address, and at the right the column with the messages and the files from the contact."]
+
+The outlined card and the outlined column of communications are the two parts of the details.
+
+[#hover-card]
+=== Contact card of an address
+
+The card has the name, the job title, the email address as a link and the phone number as a link. Then comes the slot `contact-hover-card-details`. The photo is at the right in a window at least 769 px wide. The footer has *Edit contact* or *Add to contacts* and buttons that search the emails of the person, write an email and copy the details.
+
+.The contact card of an address in a message
+image::slots-contacts-hover-card.png["The Mail screen with the contact card of an address open over a message. Outlined in red: the card with the name Adam.Case, the email address, the photo and the link Edit contact."]
+
+The outlined card opens from the address of a recipient.
+
+The card opens when the user clicks an address. In a window at least 769 px wide, it also opens when the user points at the address for about a second. It opens from:
+
+* The sender and recipient lines of a message, of the composer when its header is read only, and of an event invitation.
+* The address pills of the editable address fields.
+* The links to an email address in the text of a message, and in the print views of a message and of an event.
+* The notes of an event invitation.
+* The contact tag in the search field, when the search is for one person.
+
+In the address lines and fields, a distribution list and an invalid address have no card. *Edit contact* opens the contact editor in a dialog, in the vertical that is open. That dialog has the slot `contact-add-server-smime-cert`.
+
+[#members]
+== Members
+
+<<action-menu-contact-list,`action-menu-contact-list`>>::
+An item in the sort menu above the list of contacts.
+
+<<action-menu-restore-contacts,`action-menu-restore-contacts`>>::
+A second item in the same place, after the item of the first slot.
+
+<<action-menu-contacts-more,`action-menu-contacts-more`>>::
+An item in the *More Options* menu of a contact.
+
+<<contact-card-item,`contact-card-item`>>::
+A row in the details of a contact, below the phone numbers.
+
+<<contact-card-messages-and-files,`contact-card-messages-and-files`>>::
+Content below the messages, files and photos of a contact.
+
+<<contact-hover-card-details,`contact-hover-card-details`>>::
+Content in the card that opens from an address, below the phone number.
+
+<<contact-add-server-smime-cert,`contact-add-server-smime-cert`>>::
+A section in the contact editor for a certificate from the server.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards]::
+A recipe that adds a link to *Add to VIP list* or *Remove from VIP list*. The link is in the card of an address and in the details of a contact, with <<contact-hover-card-details,`contact-hover-card-details`>> and <<contact-card-item,`contact-card-item`>>. You learn to share state between handlers and to save it on the server. You also learn to draw nothing when the slot passes no address. <<contact-card-messages-and-files,`contact-card-messages-and-files`>> passes the same `email` and `contact`, so you register the same handler for it.
+
+[#action-menu-contact-list]
+== action-menu-contact-list
+
+Adds an item to the sort menu above the list of contacts, before *Print*. Use it for an action on the list that users need rarely. Use <<action-menu-contacts-more,`action-menu-contacts-more`>> for an action on the selected contact.
+
+[#action-menu-contact-list-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::action-menu-contact-list', handler)
+
+// handler: () => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#action-menu-contact-list-props]
+=== Props
+
+None.
+
+[#action-menu-contact-list-usage-notes]
+=== Usage notes
+
+* The slot passes no props, so a handler cannot tell which contacts are selected.
+* The menu is in the list header of the Contacts screen. See <<sort-menu,Sort menu above the list>>. The slot does not show in the global address list or in a distribution list.
+
+[#action-menu-restore-contacts]
+== action-menu-restore-contacts
+
+Adds an item to the sort menu above the list of contacts, after the item of <<action-menu-contact-list,`action-menu-contact-list`>> and before *Print*. The Modern UI draws no standard item in this place. Use it when an item belongs after the item of the first slot.
+
+[#action-menu-restore-contacts-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::action-menu-restore-contacts', handler)
+
+// handler: () => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#action-menu-restore-contacts-props]
+=== Props
+
+None.
+
+[#action-menu-restore-contacts-usage-notes]
+=== Usage notes
+
+* The slot sits in the same place and has the same limits as <<action-menu-contact-list,`action-menu-contact-list`>>. It shows in every folder that has the group, not only in Trash.
+
+[#action-menu-contacts-more]
+== action-menu-contacts-more
+
+Adds an item to the *More Options* menu above the details of a contact, after *Print* and *Tag*. Use it for an action on the selected contact. Use <<action-menu-contact-list,`action-menu-contact-list`>> for an action on the whole list.
+
+[#action-menu-contacts-more-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::action-menu-contacts-more', handler)
+
+// handler: ({ selectedContacts }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#action-menu-contacts-more-props]
+=== Props
+
+[[action-menu-contacts-more-selected-contacts]]pass:[<a class="anchor" href="#action-menu-contacts-more-selected-contacts"></a>]`selectedContacts` (array of object)::
+The selected contacts, each with fields such as `id`, `folderId` and `attributes`. It is `undefined` when the user selected several contacts, because the Modern UI does not pass it then.
+
+[#action-menu-contacts-more-usage-notes]
+=== Usage notes
+
+* With one contact selected, the toolbar shows in a window at least 1025 px wide. See <<more-options-menu,More Options menu of a contact>>.
+* The menu also shows when several contacts are selected. The slot then passes no `selectedContacts`.
+
+[#contact-card-item]
+== contact-card-item
+
+Adds a row to the details of a contact, below the phone numbers. Use it to show data of your own about the contact, or a link that acts on the contact. Use <<contact-hover-card-details,`contact-hover-card-details`>> for the card that opens from an address.
+
+[#contact-card-item-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::contact-card-item', handler)
+
+// handler: ({ email, contact }) => element | null
+----
+
+Return an element. The slot draws no label. The other rows of the card show a label above the value.
+
+[#contact-card-item-props]
+=== Props
+
+[[contact-card-item-email]]pass:[<a class="anchor" href="#contact-card-item-email"></a>]`email` (string)::
+The address in the plain *Email* field of the contact. It is `undefined` when the contact has only a work or a home address.
+
+[[contact-card-item-contact]]pass:[<a class="anchor" href="#contact-card-item-contact"></a>]`contact` (object)::
+The contact that the details show, with fields such as `id`, `folderId` and `attributes`.
+
+[#contact-card-item-usage-notes]
+=== Usage notes
+
+* The slot shows when the user selects a contact in the Contacts screen, including a contact of the global address list. See <<contact-details,Details of a contact>>.
+* The slot is not in a distribution list, and not in the contact editor.
+* For a complete example, see xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards].
+
+[#contact-card-messages-and-files]
+== contact-card-messages-and-files
+
+Adds content below the recent messages, files and photos of a contact, in the column of communications beside the details. Use it for data about the contact that comes from another source, such as a CRM or a drive. Use <<contact-card-item,`contact-card-item`>> for a row in the details.
+
+[#contact-card-messages-and-files-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::contact-card-messages-and-files', handler)
+
+// handler: ({ contact, email }) => element | null
+----
+
+[#contact-card-messages-and-files-props]
+=== Props
+
+[[contact-card-messages-and-files-contact]]pass:[<a class="anchor" href="#contact-card-messages-and-files-contact"></a>]`contact` (object)::
+The contact that the details show, with fields such as `id`, `folderId` and `attributes`.
+
+[[contact-card-messages-and-files-email]]pass:[<a class="anchor" href="#contact-card-messages-and-files-email"></a>]`email` (string)::
+The address in the plain *Email* field of the contact. It is `undefined` when the contact has only a work or a home address.
+
+[#contact-card-messages-and-files-usage-notes]
+=== Usage notes
+
+* The column loads shortly after the user selects a contact, so the slot appears after the card. It shows when the contact has no messages, files or photos.
+* The slot is not in a distribution list. See <<contact-details,Details of a contact>>.
+
+[#contact-hover-card-details]
+== contact-hover-card-details
+
+Adds content to the card that opens from an address, below the phone number. Use it for a link or a fact about the person that users need where the address shows. Use <<contact-card-item,`contact-card-item`>> for the details of a contact in Contacts.
+
+[#contact-hover-card-details-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::contact-hover-card-details', handler)
+
+// handler: ({ email, contact }) => element | null
+----
+
+[#contact-hover-card-details-props]
+=== Props
+
+[[contact-hover-card-details-email]]pass:[<a class="anchor" href="#contact-hover-card-details-email"></a>]`email` (string)::
+The primary email address of the person. It is the address that opened the card when no contact has it.
+
+[[contact-hover-card-details-contact]]pass:[<a class="anchor" href="#contact-hover-card-details-contact"></a>]`contact` (object)::
+The contact for the address, with its photo when it has one, and with fields such as `id`, `folderId` and `attributes`. It is an empty object while the contact loads and when the address is not a saved contact.
+
+[#contact-hover-card-details-usage-notes]
+=== Usage notes
+
+* The slot shows wherever the card opens, in every vertical. See <<hover-card,Contact card of an address>>.
+* Every user who opens the card sees the slot. Draw nothing when your handler has nothing to say about the address.
+* For a complete example, see xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards].
+
+[#contact-add-server-smime-cert]
+== contact-add-server-smime-cert
+
+Adds a section to the contact editor, after the section for the public certificate of the contact. Use it for a control that changes the contact in the editor, such as one that adds a certificate.
+
+[#contact-add-server-smime-cert-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::contact-add-server-smime-cert', handler)
+
+// handler: ({ setContactState, contact }) => element | null
+----
+
+[#contact-add-server-smime-cert-props]
+=== Props
+
+[[contact-add-server-smime-cert-set-contact-state]]pass:[<a class="anchor" href="#contact-add-server-smime-cert-set-contact-state"></a>]`setContactState` (function `(contact: object) => void`)::
+Replaces the contact that the editor holds with `contact`. The editor shows the new fields and saves them with the form. Its return value is ignored.
+
+[[contact-add-server-smime-cert-contact]]pass:[<a class="anchor" href="#contact-add-server-smime-cert-contact"></a>]`contact` (object)::
+The contact that the editor holds, with the changes that the user has not saved yet. Its `attributes` object has the fields, such as `userCertificate`. Pass a changed copy to `setContactState`.
+
+[#contact-add-server-smime-cert-usage-notes]
+=== Usage notes
+
+* The slot shows only when the license of the server includes S/MIME. It is not in the desktop app.
+* The editor opens in the Contacts screen for a new or an edited contact. It also opens in the dialog *Edit Details*, from *Edit contact* in the card of an address. The slot shows in both.
+
+[#next-step]
+== Next step
+
+Continue with the Briefcase slots in xref:reference/slots/briefcase.adoc[Briefcase], or return to the xref:reference/slots.adoc[slot index].

@@ -111,7 +111,7 @@ An object, or `undefined` when the Modern UI does not run in the desktop app. Th
 
 === Usage notes
 
-* Call it only when xref:reference/shims/errors-platform-and-pwa.adoc#get-platform-type[`getPlatformType()`] returns `PLATFORM_TYPES.ELECTRON`. In a browser, reading a field of the result throws a `TypeError`. See xref:go-deeper/platform-checks.adoc[Platform checks].
+* Call it only when xref:reference/shims/errors-and-platform.adoc#get-platform-type[`getPlatformType()`] returns `PLATFORM_TYPES.ELECTRON`. In a browser, reading a field of the result throws a `TypeError`. See xref:go-deeper/platform-checks.adoc[Platform checks].
 
 [#csrf-storage]
 == csrfStorage

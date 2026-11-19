@@ -1,0 +1,325 @@
+= Calendar view
+
+These slots add content to the calendar screen, the toolbar menu and the sidebar. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] listens to what users do with events or lists calendars that the Modern UI does not show. Use them also to add an action for calendars as a whole. To hide the item that recovers deleted events, or *Print*, use the slots of xref:reference/slots/hide-built-in-ui.adoc#menus[Hide built-in UI]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#more-options-menu]
+=== More Options menu
+
+The Calendar toolbar has a three dot button, titled *More Options*, to the right of the buttons that switch the view. It shows in a window at least 1025 px wide. Its menu has these entries, from top to bottom:
+
+. *Print*. The slot xref:reference/slots/hide-built-in-ui.adoc#print-link[`print-link`] hides it, and also hides *Print* in the menus of a message.
+. *Create New Calendar*.
+. The slot `calendar-context-add-holiday`.
+
+.The *More Options* menu of the Calendar toolbar
+image::slots-calendar-view-more-options-menu.png["The Calendar screen in the week view with the More Options menu of the toolbar open. Outlined in red: the menu with the items Print and Create New Calendar."]
+
+The outlined menu has the built-in entries *Print* and *Create New Calendar*. A Zimlet adds an item at the end with `calendar-context-add-holiday`.
+
+[#calendar-sidebar]
+=== Calendar sidebar
+
+The sidebar of the Calendar draws these parts, from top to bottom:
+
+. The slot `folder-list-middle`. See xref:reference/slots/app-shell/folder-list.adoc[Folder list].
+. The group *My Calendars*, with the calendars of the user, then the slot `calendar-subscription-list`.
+. The group *Trash*, then the slot `calendar-subscription-list`.
+. The group *Others*, with the calendars that other users shared, then the slot `calendar-subscription-list`.
+. The slot `folder-group`.
+. The other groups of the folder list, then the slot `folder-list-end`. See xref:reference/slots/app-shell/folder-list.adoc[Folder list].
+. The slot `calendar-folder-list-end`.
+. The *Tasks* item. It shows only in a window narrower than 1025 px, when the account has tasks.
+
+In a window at least 1024 px wide, each group has a heading and opens and closes. Only *My Calendars* is open when the sidebar first draws. In a narrower window the headings are gone, and the calendars of the groups follow one another. The *Print calendar* dialog draws the same list without the menus.
+
+.The sidebar of the Calendar
+image::slots-calendar-view-sidebar.png["The Calendar screen with the sidebar at the left. Outlined in red: the open group My Calendars with one calendar, and the closed groups Trash and Others. The group Tags is below."]
+
+The outlined groups are *My Calendars*, *Trash* and *Others*. Only *My Calendars* is open.
+
+[#sidebar-menus]
+=== Sidebar menus
+
+*Folder Setting* button of the group *Others*::
+Opens a menu that holds only the slot `calendar-subscription-menu`. The button shows in a window at least 1024 px wide.
+
+*Folder Setting* button of the group *Trash*::
+Opens a menu with *Empty trash*, then *Deleted Items*. The slot xref:reference/slots/hide-built-in-ui.adoc#recover-discarded-appointments-option[`recover-discarded-appointments-option`] hides *Deleted Items*. The item shows only when the account can recover deleted items. The button shows in a window at least 1024 px wide.
+
+Heading *Calendar* of the sidebar::
+In a window narrower than 1025 px, the heading has a three dot button while Calendar is the open vertical. Its menu has *Create New Calendar*, then the slot `calendar-subscription-menu`.
+
+.The *Folder Setting* menu of the group *Trash*
+image::slots-calendar-view-sidebar-menu.png["The Calendar sidebar with the menu of the Folder Setting button of the group Trash open. Outlined in red: the menu with the items Empty trash and Deleted Items."]
+
+The outlined menu is the one of the group *Trash*, with the items *Empty trash* and *Deleted Items*.
+
+[#subscription-slots]
+=== Subscription slots
+
+The Modern UI has no calendar subscription of its own. A Zimlet that adds one, such as a way to subscribe to a calendar, fills three slots. Each slot has one job.
+
+<<calendar-subscription-menu,`calendar-subscription-menu`>>::
+The item that starts the flow. It is in the menu of the group *Others*, and in the menu of the *Calendar* heading in a narrow window.
+
+<<calendar-subscription-modal-flow,`calendar-subscription-modal-flow`>>::
+The dialog of the flow. The Calendar draws this slot whenever it is open, so the handler needs a flag that says when to show the dialog.
+
+<<calendar-subscription-list,`calendar-subscription-list`>>::
+The subscribed calendars, in the group *Others*.
+
+The item and the dialog work together through the flag:
+
+. The user chooses the item. The item dispatches `addSlot({ id: 'calendar-subscription-modal-flow', flag: true })`. See xref:reference/context/store/zimlet-redux/actions.adoc#add-slot[addSlot].
+. The Calendar passes the flag to the handlers of the dialog slot as `isActive`. A handler draws its dialog while `isActive` is `true`, and returns `null` otherwise.
+. When the dialog closes, the handler dispatches `removeSlot({ id: 'calendar-subscription-modal-flow' })`. See xref:reference/context/store/zimlet-redux/actions.adoc#remove-slot[removeSlot]. `isActive` is `undefined` again.
+
+The Calendar reads only the id `calendar-subscription-modal-flow`. A flag stored under another id has no effect.
+
+[#members]
+== Members
+
+<<calendar-body-end,`calendar-body-end`>>::
+Content at the end of the calendar screen, and a way to listen to saved and deleted events.
+
+<<calendar-context-add-holiday,`calendar-context-add-holiday`>>::
+An item in the *More Options* menu of the toolbar.
+
+<<calendar-folder-list-end,`calendar-folder-list-end`>>::
+Content below the folder list of the sidebar, with the holiday calendars of the user.
+
+<<calendar-subscription-list,`calendar-subscription-list`>>::
+Calendars in a group of the sidebar.
+
+<<calendar-subscription-menu,`calendar-subscription-menu`>>::
+An item in the menus that manage the calendars of other users.
+
+<<calendar-subscription-modal-flow,`calendar-subscription-modal-flow`>>::
+A dialog that opens from a flag of the Calendar.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-calendar-subscription.adoc[Subscribe to a calendar]::
+A recipe that lets the user subscribe to a calendar from its address. It adds an item to the menu of the group *Others* with <<calendar-subscription-menu,`calendar-subscription-menu`>>. It draws the dialog with <<calendar-subscription-modal-flow,`calendar-subscription-modal-flow`>> and lists the calendars in the group with <<calendar-subscription-list,`calendar-subscription-list`>>. You learn to open a dialog with a flag and to close it by removing the flag. You also learn to list calendars with the row that the Modern UI draws.
+
+[#calendar-body-end]
+== calendar-body-end
+
+Adds content at the end of the calendar screen, after the calendar and its side panels. Use it for a component that has no place in the layout, such as one that listens to the saving and deleting of events.
+
+[#calendar-body-end-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-body-end', handler)
+
+// handler: ({ appointmentMonitor, handleEditAppointment }) => element | null
+----
+
+A handler that only listens returns `null`.
+
+[#calendar-body-end-props]
+=== Props
+
+[[calendar-body-end-appointment-monitor]]pass:[<a class="anchor" href="#calendar-body-end-appointment-monitor"></a>]`appointmentMonitor` (object)::
+Tells a Zimlet when the user saves or deletes an event. `listen(eventName, listener)` adds a listener and `ignore(eventName, listener)` removes it. `eventName` is a string, and `listener` is a function `(data: object) => any`. Both methods return nothing. A listener can return a promise. The event names are:
++
+* `beforeCreate`, `beforeChange` and `beforeExcept`: the user saves a new event, saves changes to an event, or saves changes to one instance of a repeating event. `data` has `appointment` (object), the event as the editor sends it to the server. It also has `folderIdShared` (string), `accountName` (string), `destinationCalId` (string or boolean) and `allInviteesRemoved` (boolean). The first three identify a shared calendar and are empty for the events in the calendars of the user. `allInviteesRemoved` is `true` when the user removed the last valid attendee.
+* `afterCreate`, `afterChange` and `afterExcept`: the same three cases, with the same `data`.
+* `beforeDelete` and `afterDelete`: the user deletes an event. `data` has `event` (object), `editInstance` (boolean) and `notifyOrganizer` (boolean). `editInstance` is `true` when the user deletes only one instance of a repeating event. `notifyOrganizer` is `true` when the Modern UI also declines the invitation for the organizer.
+
+[[calendar-body-end-handle-edit-appointment]]pass:[<a class="anchor" href="#calendar-body-end-handle-edit-appointment"></a>]`handleEditAppointment` (function `(appointment: object, folderIdShared: string, accountName: string, destinationCalId: string | boolean, allInviteesRemoved: boolean) => void`)::
+Saves changes to an existing event as the Modern UI does after the user saves it. It sends the change to the server, moves the event when `destinationCalId` names another calendar, and shows a notification. The arguments are the same as the fields of `data` above. It does not call the listeners of `appointmentMonitor`.
++
+WARNING: Do not call it from a listener of a `before` event. The Modern UI saves the event itself afterwards, so the event would be saved twice.
+
+[#calendar-body-end-usage-notes]
+=== Usage notes
+
+* The slot draws whenever the Calendar screen is open, in every view.
+* The events fire when the user saves an event in the editor or in the quick add form. They also fire when the user drops an event on a new time. `beforeChange` and `afterChange` fire only when the user changed the form or the event was never sent.
+* The Modern UI saves the event after the promises of the `before` listeners have settled, and it saves it even when one of them rejects. A listener can change `appointment` first, for example its `location` and `locations`.
+* The Modern UI calls the `after` listeners as soon as the save or the delete starts. It does not wait for the server. It does not wait for the `beforeDelete` listeners either.
+* `listen` does not check whether a listener is already added, so a listener that you add twice runs twice. Remove each listener with `ignore` when your component unmounts.
+
+[#calendar-context-add-holiday]
+== calendar-context-add-holiday
+
+Adds an item to the *More Options* menu of the Calendar toolbar, below *Create New Calendar*. Use it for an action on calendars as a whole. The name mentions holidays, but the slot takes any item. Use <<calendar-subscription-menu,`calendar-subscription-menu`>> for an item in the menus of the sidebar.
+
+[#calendar-context-add-holiday-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-context-add-holiday', handler)
+
+// handler: ({ calendarsData, folderAction, matchesScreenMd }) => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#calendar-context-add-holiday-props]
+=== Props
+
+[[calendar-context-add-holiday-calendars-data]]pass:[<a class="anchor" href="#calendar-context-add-holiday-calendars-data"></a>]`calendarsData` (object)::
+The calendars of the user. It has `calendars` (array of object), the calendars of the user followed by the calendars that others shared. It also has `refetch` (function `() => promise`), which loads them again. See xref:reference/shims/hooks/calendar-and-metadata.adoc#use-calendars-data[useCalendarsData] for the fields of a calendar.
+
+[[calendar-context-add-holiday-folder-action]]pass:[<a class="anchor" href="#calendar-context-add-holiday-folder-action"></a>]`folderAction` (function `(action: object) => promise`)::
+Applies one action to a calendar, such as renaming it or changing its colour, and then loads the calendars again. `action` has the fields of the `action` object of xref:reference/shims/hooks/folders.adoc#use-folder-action-mutation[useFolderActionMutation], such as `id` and `op`. The promise settles when the calendars are loaded.
+
+[[calendar-context-add-holiday-matches-screen-md]]pass:[<a class="anchor" href="#calendar-context-add-holiday-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+Always `true`, because the menu shows only in a window at least 1025 px wide.
+
+[#calendar-context-add-holiday-usage-notes]
+=== Usage notes
+
+* The menu shows in a window at least 1025 px wide only.
+* The menu draws the handler in its own group, below *Create New Calendar*. See <<more-options-menu>>.
+
+[#calendar-folder-list-end]
+== calendar-folder-list-end
+
+Adds content below the folder list in the sidebar of the Calendar. Use it to list calendars that the Modern UI does not show itself, such as the holiday calendars of the user. Use xref:reference/slots/app-shell/folder-list.adoc#folder-list-end[`folder-list-end`] for content that belongs at the bottom of the folder list of every vertical.
+
+[#calendar-folder-list-end-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-folder-list-end', handler)
+
+// handler: ({ items, renderItem, folderAction, calendarsData, matchesScreenMd }) => element | null
+----
+
+[#calendar-folder-list-end-props]
+=== Props
+
+[[calendar-folder-list-end-items]]pass:[<a class="anchor" href="#calendar-folder-list-end-items"></a>]`items` (array of object)::
+The holiday calendars of the user: the calendars that no other user owns and whose address contains the word `holiday`. The Modern UI draws no group for them, so a handler draws them.
+
+[[calendar-folder-list-end-render-item]]pass:[<a class="anchor" href="#calendar-folder-list-end-render-item"></a>]`renderItem` (function `(calendar: object) => element`)::
+Returns the row of one calendar, with a check box, its name and, in the sidebar, its menu. Call it for each item. Draw the rows in a xref:reference/shims/components/navigation.adoc#folder-list-group[`FolderListGroup`] to match the groups above.
+
+[[calendar-folder-list-end-folder-action]]pass:[<a class="anchor" href="#calendar-folder-list-end-folder-action"></a>]`folderAction` (function `(action: object) => promise`)::
+As in <<calendar-context-add-holiday-folder-action,`calendar-context-add-holiday`>>. It is `undefined` in the *Print calendar* dialog.
+
+[[calendar-folder-list-end-calendars-data]]pass:[<a class="anchor" href="#calendar-folder-list-end-calendars-data"></a>]`calendarsData` (object)::
+The same as in <<calendar-context-add-holiday-calendars-data,`calendar-context-add-holiday`>>.
+
+[[calendar-folder-list-end-matches-screen-md]]pass:[<a class="anchor" href="#calendar-folder-list-end-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+`true` in a window at least 1025 px wide.
+
+[#calendar-folder-list-end-usage-notes]
+=== Usage notes
+
+* The slot shows in the sidebar of the Calendar and in the *Print calendar* dialog, below the calendars. See <<calendar-sidebar>>.
+* The slot is outside the folder list. It follows the group *Others* and the slot `folder-list-end`.
+
+[#calendar-subscription-list]
+== calendar-subscription-list
+
+Adds calendars to a group of the sidebar. Use it to list calendars of your own in the group *Others*, such as calendars that the user subscribed to. The Modern UI draws the slot at the end of each of its three groups.
+
+[#calendar-subscription-list-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-subscription-list', handler)
+
+// handler: ({ isActive, type, renderItem }) => element | null
+----
+
+[#calendar-subscription-list-props]
+=== Props
+
+[[calendar-subscription-list-is-active]]pass:[<a class="anchor" href="#calendar-subscription-list-is-active"></a>]`isActive` (boolean)::
+`true` in the group *Others*, and `false` in the other two. Return `null` when it is `false`.
++
+WARNING: A handler that ignores `isActive` draws its calendars in all three groups. Check `isActive` first.
+
+[[calendar-subscription-list-type]]pass:[<a class="anchor" href="#calendar-subscription-list-type"></a>]`type` (string)::
+The group that draws the slot: `own` for *My Calendars*, `trash` for *Trash* or `other` for *Others*.
+
+[[calendar-subscription-list-render-item]]pass:[<a class="anchor" href="#calendar-subscription-list-render-item"></a>]`renderItem` (function `(calendar: object) => element`)::
+Returns the row of one calendar, with a check box, its name and its menu. Call it for each calendar that you list.
+
+[#calendar-subscription-list-usage-notes]
+=== Usage notes
+
+* The handler draws only while its group is open. In a window at least 1024 px wide, the group *Others* starts closed. In a narrower window the groups have no headings, and the content follows the calendars of each group.
+* The slot belongs to the subscription slots. See <<subscription-slots>>.
+* For a complete example, see xref:build-by-goal/recipe-calendar-subscription.adoc[Subscribe to a calendar].
+
+[#calendar-subscription-menu]
+== calendar-subscription-menu
+
+Adds an item to the two menus that manage the calendars of other users. They are the menu of the group *Others* and the menu of the *Calendar* heading in a narrow window. Use it to start a flow, such as subscribing to a calendar.
+
+[#calendar-subscription-menu-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-subscription-menu', handler)
+
+// handler: () => element | null
+----
+
+Return an xref:reference/shims/components/menus.adoc#action-menu-item[`ActionMenuItem`] from `@zimbra-client/components`, so that the item looks like the others in the menu.
+
+[#calendar-subscription-menu-props]
+=== Props
+
+None.
+
+[#calendar-subscription-menu-usage-notes]
+=== Usage notes
+
+* The slot shows in two menus, and a handler cannot tell which one opened. See <<sidebar-menus>>.
+* The item opens the dialog of the flow through a flag. See <<subscription-slots>>.
+* For a complete example, see xref:build-by-goal/recipe-calendar-subscription.adoc[Subscribe to a calendar].
+
+[#calendar-subscription-modal-flow]
+== calendar-subscription-modal-flow
+
+Draws the dialog of a flow that the user starts from the sidebar, such as subscribing to a calendar. The Calendar passes a flag to the slot, and the dialog shows while the flag is set. For a dialog that needs none of the props, use xref:reference/context/store/zimlet-redux/actions.adoc#add-modal[`addModal`] instead.
+
+[#calendar-subscription-modal-flow-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::calendar-subscription-modal-flow', handler)
+
+// handler: ({ isActive, refetchCalendars }) => element | null
+----
+
+[#calendar-subscription-modal-flow-props]
+=== Props
+
+[[calendar-subscription-modal-flow-is-active]]pass:[<a class="anchor" href="#calendar-subscription-modal-flow-is-active"></a>]`isActive` (boolean or undefined)::
+The flag that `addSlot` stored under the id `calendar-subscription-modal-flow`. It is `undefined` before a flag is stored and after `removeSlot` removed it.
+
+[[calendar-subscription-modal-flow-refetch-calendars]]pass:[<a class="anchor" href="#calendar-subscription-modal-flow-refetch-calendars"></a>]`refetchCalendars` (function `() => promise`)::
+Loads the calendars again. Call it after the dialog created a calendar, so that the sidebar shows it.
+
+[#calendar-subscription-modal-flow-usage-notes]
+=== Usage notes
+
+* The slot draws whenever the Calendar screen is open, so the handler must return `null` while `isActive` is not `true`. A handler that ignores it draws its dialog all the time.
+* The Modern UI never sets the flag. A Zimlet sets it with `addSlot` and clears it with `removeSlot`. See <<subscription-slots>>.
+* For a complete example, see xref:build-by-goal/recipe-calendar-subscription.adoc[Subscribe to a calendar].
+
+[#next-step]
+== Next step
+
+Continue with the menus, the details and the form of an event in xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments].

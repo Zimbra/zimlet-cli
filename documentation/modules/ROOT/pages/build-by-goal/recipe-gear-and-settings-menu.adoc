@@ -33,7 +33,7 @@ The *Settings and more* menu, in the last group, below *About*. The example uses
 `slot::header-menu-item`::
 The account menu, in the last group, above *Logout*. The example uses it for *Manage account*, because the item is about the user's account.
 
-NOTE: The `gear-menu` slot is in the same group as *About*. A Zimlet that replaces *About* through the `about-link` slot also hides the items of `gear-menu`.
+NOTE: The `gear-menu` slot is in the same group as *About*. A Zimlet that replaces *About* through the xref:reference/slots/hide-built-in-ui.adoc#about-link[`about-link`] slot also hides the items of `gear-menu`.
 
 [#other-slots]
 === Other slots

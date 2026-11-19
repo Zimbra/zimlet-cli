@@ -1,0 +1,225 @@
+= Mark senders
+
+This recipe marks mail from partner organizations in the xref:reference/glossary.adoc#modern-ui[Modern UI]. A *Partner* badge appears beside the sender in the message list, and a *Partners* group in the folder list gives one link to each partner. Use the same pattern when a team must tell one kind of sender from the rest at a glance. The group keeps shortcuts for them within reach. A xref:reference/glossary.adoc#zimlet[Zimlet] adds both parts by registering one handler for each of two xref:fundamentals/extending-the-ui.adoc[slots].
+
+[#what-you-will-learn]
+== What you will learn
+
+You learn how to:
+
+* Choose the slots for a mark in the message list and a group in the folder list.
+* Replace the sender names of a row for some messages only, and keep the standard names for all others.
+* Draw a group that opens and closes like the groups of the folder list, with `FolderListGroup`.
+* Keep the list of partners in one place, so that both parts use it.
+
+[#before-you-start]
+== Before you start
+
+* Follow xref:build-by-goal.adoc#before-every-recipe[Required reading before every recipe].
+* Knowledge of xref:fundamentals/extending-the-ui.adoc#render-prop-slots[render-prop slots], because the slot of the message list uses its results in place of the standard content.
+
+[#choose-the-slots]
+== Choose the slots
+
+The badge must sit beside the sender in the row, and the shortcuts belong with the folders of the user. The example therefore fills the slot of the sender names and the slot for a group of the folder list.
+
+[#the-slots]
+=== The slots
+
+`slot::mail-sender`::
+The sender names in every row of the message list, on every window width and in search results. The slot shows what the handlers return in place of the names, and shows the names when no handler returns a value. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+`slot::folder-group`::
+The folder list of Mail, Calendar, Contacts and Briefcase. In Mail it sits below the *Folders* group and before the shared folders, the saved searches and the tags. The slot passes nothing to the handler. Look up the slot in the xref:reference/slots.adoc[slot index].
+
+[#other-slots]
+=== Other slots
+
+`slot::folder-list-end`::
+The bottom of the folder list, below the tags. Choose it for a tip or a note, and not for a group that belongs with the folders.
+
+`slot::mail-sidebar-footer`::
+Below the folder list in Mail only. Choose it when the content is of no use in Calendar, Contacts or Briefcase.
+
+To add an item to the menus of a message, see xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item].
+
+[#set-up-the-project]
+== Set up the project
+
+Follow xref:build-by-goal.adoc#set-up-the-project[Set up the project], with these details:
+
+. Add the files of the example to `src/`. Each file has one job:
+** `index.js` registers the two handlers in `init()`. It replaces the generated file.
+** `constants/index.js` holds the list of partners. It replaces the generated file.
+** `utils/find-partner.js` finds the partner of a message.
+** `components/partner-sender/` is the sender names with the badge.
+** `components/partner-folder-group/` is the group of shortcuts.
+. Merge the texts into `src/intl/en_US.json`: keep the `zimlet` block, set its `description`, and replace the keys of the `my-zimlet` object with these. The partner names come from `PARTNERS` and are not translated, because they are data of your deployment.
++
+.intl/en_US.json
+[source,json]
+----
+include::example$partner-mail/intl/en_US.json[]
+----
+
+[#list-the-partners]
+== List the partners
+
+Both parts read one list. Each partner has a name, the domain of its addresses and the address of its page. The domain decides which messages are marked. The name and the address feed the shortcuts.
+
+.constants/index.js
+[source,js]
+----
+include::example$partner-mail/constants/index.js[]
+----
+
+The function reads the senders of a message or a conversation. A sender is an entry of `emailAddresses` whose `type` is `f`, and its `address` is the address. The function compares the domain of each sender with the list and returns the first partner that matches, or nothing.
+
+.utils/find-partner.js
+[source,js]
+----
+include::example$partner-mail/utils/find-partner.js[]
+----
+
+[#mark-the-sender]
+== Mark the sender
+
+The slot passes three props. The example reads two of them. The slot also passes `viewType`, which the example does not use.
+
+`emailAddresses`::
+The names that the row shows by default, as an array of strings. Draw them again beside the badge.
+
+`mailItem`::
+The message or the conversation of the row. The example reads its senders to find the partner.
+
+The slot replaces the names with what a handler returns. A component that adds a badge must therefore draw the names too. The handler returns the component only for a partner and returns `null` for every other row, so those rows keep the standard names. The slot calls the handler for every row of the list on every render. The handler therefore only calls the finder and holds no state.
+
+.components/partner-sender/index.js
+[source,js]
+----
+include::example$partner-mail/components/partner-sender/index.js[]
+----
+
+.components/partner-sender/style.less
+[source,less]
+----
+include::example$partner-mail/components/partner-sender/style.less[]
+----
+
+The names shorten with an ellipsis when the row is narrow, and the badge keeps its size. Wrap the component with `withIntl` to load the texts of your Zimlet, as xref:go-deeper/localization.adoc[Localization] describes. The spaces and colours use the CSS variables of the Modern UI, as xref:go-deeper/styling.adoc[Styling] describes.
+
+[#add-the-group]
+== Add the group
+
+The `PartnerFolderGroup` component draws the *Partners* heading and one link for each partner. It holds one fact of its own: whether the group is closed. The links open the page of the partner in a new tab.
+
+.components/partner-folder-group/index.js
+[source,js]
+----
+include::example$partner-mail/components/partner-folder-group/index.js[]
+----
+
+.components/partner-folder-group/style.less
+[source,less]
+----
+include::example$partner-mail/components/partner-folder-group/style.less[]
+----
+
+[#folder-list-group]
+=== The FolderListGroup component
+
+`FolderListGroup` draws the heading of a group of the folder list, with an arrow, and shows its content below. It comes from `@zimbra-client/components`. Choose it for a group that must look and act like the groups of the folder tree.
+
+*Without it:* a heading of your own is a `div` with a click handler. You draw the arrow, the keyboard support and the spacing yourself, and the group does not match the groups next to it.
+
+*With it:* pass the key of the heading, the state and the content.
+
+[source,js]
+----
+<FolderListGroup name="my-zimlet.partners" collapsed={collapsed} onToggle={handleToggle}>
+	{links}
+</FolderListGroup>
+----
+
+The example uses these props:
+
+`name`::
+The key of the heading text in your `en_US.json`, and not the text itself. The heading is empty when the dictionary has no such key.
+
+`collapsed`::
+Set it to `true` to hide the content and show the arrow in its closed state.
+
+`onToggle`::
+Called when the user chooses the heading or its arrow, or presses *Enter* on it. The group does not open or close by itself. Change `collapsed` in this function, as the example does.
+
+The content is the `children` of the group, drawn below the heading while the group is open. See xref:reference/shims/components/navigation.adoc#folder-list-group[Navigation] for the other props.
+
+The `Icon` component draws the arrow beside each link. xref:build-by-goal/recipe-message-banner.adoc#icon[Show a message banner] explains it.
+
+[#register-the-handlers]
+== Register the handlers
+
+Register one handler for each slot in `init()` with `plugins.register`, as xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle] describes. The handler of `mail-sender` checks the message first and returns a component only for a partner. The handler of `folder-group` always returns the group.
+
+.index.js
+[source,js]
+----
+include::example$partner-mail/index.js[]
+----
+
+[#limits]
+== Know the limits
+
+* The domains are compared as text. A message from a subdomain of a partner, such as `mail.insurance-partner.com`, is not marked.
+* The badge follows the senders of the message or the conversation. In the *Sent* folder, the row lists the recipients. The badge shows there only when a partner wrote a message of the conversation.
+* The standard row shortens a list of more than three names and gives the row a label for screen readers. The component of the example does not, so it shows every name.
+* The slot of the folder list passes nothing, so the group shows in Mail, Calendar, Contacts and Briefcase. To show it in one vertical only, read the address of the page, as xref:build-by-goal/recipe-tab-and-route.adoc#read-the-vertical-name[Read the vertical name] describes.
+* The folder list draws nothing while it has no folders to show, and so no group either.
+* The slots show the content of every handler. The badge or the group of another Zimlet shows beside yours.
+* The domains and the addresses in `constants/index.js` are placeholders. Replace them with your partners.
+
+[#verify]
+== Verify the result
+
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Wait for the status *Running*, and reload the Modern UI page if the Zimlet was loaded before.
+. Make sure that your mailbox holds a message from an address at `insurance-partner.com` or `hiring-partner.com`, and one from another domain. Open *Mail*. The row of the partner message shows the sender name followed by a *Partner* badge. The other row looks as before.
+. Look at the folder list. The *Partners* group is below the *Folders* group, with the links *Insurance Partner* and *Hiring Partner*.
++
+.Mail with a Partner badge in two rows and the Partners group in the folder list
+image::partner-mail-badge-and-group.png["The Mail view of the Modern UI. A red outline surrounds the Partner badge beside the sender names Dave Williams and John Harry in the message list. A third red outline surrounds the Partners group in the folder list, below the Folders group, with the links Insurance Partner and Hiring Partner."]
++
+The outlined badges are in the two rows from partner domains. The row of James Mitchell has none. The outlined group is the one that the Zimlet adds.
+. Choose the heading *Partners*. The links disappear. Choose it again. They return.
+. Choose *Insurance Partner*. A new browser tab opens with the address of the constant, and the Modern UI stays open.
+. Open *Calendar*, *Contacts* and *Briefcase*. The same group shows in their folder lists.
+
+[#expected-result]
+== Expected result
+
+* Rows from a partner domain show a *Partner* badge beside the sender names, and no other row changes.
+* The folder list has a *Partners* group that opens and closes, with one link for each partner.
+* A link opens the page of the partner in a new tab.
+
+[#if-it-did-not-work]
+== If it didn't work
+
+No badge shows.::
+* Cause: The Zimlet is not loaded, the handler is registered under another key, or the sender is not on the list. The Modern UI does not check keys, so a misspelled key adds nothing and shows no error.
+* Fix: Check that the sideloader shows *Running*. Check that the key is `slot::mail-sender` and that you register in `init()`. Check the domain in `constants/index.js` against the address of the sender.
+
+The names of every row are gone.::
+* Cause: The handler returns the component for every message and not only for partners, or it returns a component that draws no names.
+* Fix: Return `null` when `findPartner` finds nothing, and draw `emailAddresses` in the component.
+
+No *Partners* group shows.::
+* Cause: The key is not `slot::folder-group`, or the folder list has no folders to show yet.
+* Fix: Check the key and that you register in `init()`. Reload the page and open a screen that has folders.
+
+The heading of the group is empty.::
+* Cause: The `name` prop holds a key that the dictionary does not have, or the component is not wrapped with `withIntl`.
+* Fix: Use the key `my-zimlet.partners`, merge the texts as the set up describes, and keep `withIntl()` around the component.
+
+[#next-step]
+== Next step
+
+Add an action to the menus of a message in xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item]. Mark an address in a message and in the composer in xref:build-by-goal/recipe-contact-hover-card.adoc[Enhance contact cards]. To choose a different place for your content, go back to xref:build-by-goal.adoc#choose-a-slot[Choose a slot].

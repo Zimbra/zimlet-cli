@@ -464,7 +464,7 @@ Nothing is drawn without <<folder-list-folders,`folders`>>.
 * The folder rows and menus read the router, the Redux state and the data client. Draw the tree only inside a component that the Modern UI renders.
 * A folder opens through its address, `/<urlSlug>/<folder path>`. No prop is called when the user opens a folder, except <<folder-list-refresh,`refresh`>> for the folder that is already open. Read the address to follow the choice. For a choice without a route, use <<folder-list-light,`FolderListLight`>>.
 * A group with more than 200 rows draws only the rows in view.
-* The slots `folder-list-middle`, `folder-group` and `folder-list-end` take no props. See xref:reference/slots/mail/mail-list-and-sidebar.adoc[Mail list and sidebar slots].
+* The slots `folder-list-middle`, `folder-group` and `folder-list-end` take no props. See xref:reference/slots/app-shell/folder-list.adoc[Folder list slots].
 
 [#folder-list-light]
 == FolderListLight

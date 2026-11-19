@@ -1,0 +1,163 @@
+= App frame
+
+The frame of the xref:reference/glossary.adoc#modern-ui[Modern UI] has parts that no single screen owns. Use these slots to run a feature for the whole application and to add screens with routes. They also fill the strip and the panel at the right edge of the window. Choose them when your xref:reference/glossary.adoc#zimlet[Zimlet] adds something to the application as a whole and not to one screen. To hide the *Show details* button of the error dialog, use xref:reference/slots/hide-built-in-ui.adoc#show-details-notification-button[`show-details-notification-button`]. xref:fundamentals/extending-the-ui.adoc[Slots and handlers] explains how a handler fills a slot.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#right-edge-of-the-screen]
+=== Right edge of the screen
+
+The slots `rightbar-50px` and `rightside-zimlet-slot` draw at the right edge of the screens of Mail, Calendar, Contacts and Briefcase. The search screens of Mail and Calendar have them too. They appear only in a window at least 1025 px wide. In Mail, the strip is left of the panel, and the panel is at the right edge of the window.
+
+.The Mail screen with the strip and the panel filled by a Zimlet
+image::slots-app-frame-right-edge.png["The Mail screen in a wide window. Outlined in red at the right edge: a narrow strip with the text Bar, and to its right the text Panel of a Zimlet, which is the content of the panel. A Zimlet fills both."]
+
+A Zimlet fills the outlined strip and the outlined text in the panel. The strip has its own background and borders. The panel starts at the strip and reaches the right edge of the window.
+
+[#members]
+== Members
+
+<<app,`app`>>::
+A component that runs while the application is open and has no place of its own.
+
+<<routes,`routes`>>::
+A screen that opens at an address of your own.
+
+<<rightbar-50px,`rightbar-50px`>>::
+A strip of up to 50 px at the right edge of the screens.
+
+<<rightside-zimlet-slot,`rightside-zimlet-slot`>>::
+A panel of up to 250 px at the right edge of the screens.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-app-content.adoc[Run an app-wide feature]::
+A recipe that blurs the whole screen when the user leaves the Modern UI, with a component for <<app,`app`>>. You learn to register a component for the slot and to display content conditionally. You also learn to listen to events of the page and to add a keyboard shortcut. <<rightbar-50px,`rightbar-50px`>> and <<rightside-zimlet-slot,`rightside-zimlet-slot`>> take a component in the same way.
+
+xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget]::
+A recipe that shows a second time zone clock in the panel with <<rightside-zimlet-slot,`rightside-zimlet-slot`>>. You learn to choose a slot that stays in view and to register a component for the panel. You also learn to show a value that changes with time and to add more widgets to the same slot. <<rightbar-50px,`rightbar-50px`>> is registered the same way.
+
+xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen]::
+A recipe that adds a screen to the Video vertical with <<routes,`routes`>>, and a tab that opens it. You learn to add a screen and to open it with a route. You also learn to share one address and to make the screen work on a narrow window.
+
+[#app]
+== app
+
+Adds a component that runs while the Modern UI is open and has no place of its own. Use it for a feature that belongs to no screen, such as a dialog, an overlay or a listener. Use the slot of a screen for content that has a place on that screen.
+
+[#app-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::app', handler)
+
+// handler: ({ matchesScreenMd }) => element | null
+----
+
+[#app-props]
+=== Props
+
+[[app-matches-screen-md]]pass:[<a class="anchor" href="#app-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+`true` when the window is at least 1025 px wide.
+
+[#app-usage-notes]
+=== Usage notes
+
+* The component stays in the page while the user moves between screens.
+* The slot does not render on the print screens, which have no header.
+* The slot draws nothing of its own. With `?zimletSlots=show`, a label shows where it is. See xref:run-package-deploy/run-and-debug.adoc#debug-slots[Show every slot in the page].
+* For a complete example, see xref:build-by-goal/recipe-app-content.adoc[Run an app-wide feature].
+
+[#routes]
+== routes
+
+Adds a screen at an address of your own. The Modern UI shows the element that the handler returns when the address of the page matches its `path`. Use it with a tab slot that links to the address, so that users can open the screen. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs].
+
+[#routes-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::routes', handler)
+
+// handler: ({ slugs }) => element | null
+----
+
+Return an element with a `path` prop, which is the address that opens the screen.
+
+[#routes-props]
+=== Props
+
+[[routes-slugs]]pass:[<a class="anchor" href="#routes-slugs"></a>]`slugs` (object)::
+The names that the Modern UI uses in addresses, as set in its client configuration. Each key is a name such as `videoapps` and each value is a string. Use it to build the `path`.
+
+[#routes-usage-notes]
+=== Usage notes
+
+* The Modern UI checks your route after its own routes and before its error page.
+* The slot adds only the screen. Add the tab or the link that opens it with a slot such as xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`<vertical>-tab-item`].
+* The slot draws nothing of its own. With `?zimletSlots=show` it writes `non-visible ZimletSlot name=routes` to the console and shows no label.
+* For a complete example, see xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen].
+
+[#rightbar-50px]
+== rightbar-50px
+
+Adds a narrow strip at the right edge of the screens of Mail, Calendar, Contacts and Briefcase. Use it for a column of small controls, such as icons that open your feature. Use <<rightside-zimlet-slot,`rightside-zimlet-slot`>> for a panel with more room.
+
+[#rightbar-50px-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::rightbar-50px', handler)
+
+// handler: () => element | null
+----
+
+[#rightbar-50px-props]
+=== Props
+
+None.
+
+[#rightbar-50px-usage-notes]
+=== Usage notes
+
+* See <<right-edge-of-the-screen>> for the screens and the window width where the strip shows.
+* The strip is up to 50 px wide. It has a background and borders only while a handler returns content. A handler that returns `null` draws no strip.
+
+[#rightside-zimlet-slot]
+== rightside-zimlet-slot
+
+Adds a panel at the right edge of the screens of Mail, Calendar, Contacts and Briefcase. Use it for a block that stays in view while the user moves between screens, such as a clock or a status note. Use <<rightbar-50px,`rightbar-50px`>> for a strip of small controls.
+
+[#rightside-zimlet-slot-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('slot::rightside-zimlet-slot', handler)
+
+// handler: () => element | null
+----
+
+[#rightside-zimlet-slot-props]
+=== Props
+
+None.
+
+[#rightside-zimlet-slot-usage-notes]
+=== Usage notes
+
+* See <<right-edge-of-the-screen>> for the screens and the window width where the panel shows.
+* The panel is up to 250 px wide and as high as the screen. Other Zimlets can fill it too, so give your block its own border or spacing.
+* For a complete example, see xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget].
+
+[#next-step]
+== Next step
+
+Continue with the menus of the header in xref:reference/slots/app-shell/header-menus.adoc[Header menus].

@@ -1,0 +1,287 @@
+= Content processors
+
+A content processor changes or supplies the content that the xref:reference/glossary.adoc#modern-ui[Modern UI] is about to show. That content is the body of a message, the text of a calendar event, the quoted message in a reply, or a printed message. Use a processor when your xref:reference/glossary.adoc#zimlet[Zimlet] must rewrite that content, for example to add links, mark text or remove it. To add a block or a control beside the content, fill a slot instead, as xref:build-by-goal.adoc#choose-a-slot[Choose a slot] describes.
+
+[#before-you-register-a-handler]
+== Before you register a handler
+
+[#registration]
+=== Registration
+
+You register a handler under a key that starts with `messageProcessors:`. The key has no `slot::` prefix, because the Modern UI does not draw what the handler returns. It uses the result as a processor, as a component or as the new content. See xref:fundamentals/extending-the-ui.adoc#handlers-that-return-data[Handlers that return data] for how the Modern UI uses these handlers. Each key changes one place, and a processor of one key does not run for another.
+
+[#members]
+== Members
+
+<<email-processor,`messageProcessors:emailProcessor`>>::
+The body of a message in the message viewer.
+
+<<composer-processor,`messageProcessors:composerProcessor`>>::
+The quoted original message that the composer adds to a reply or a forwarded message.
+
+<<mail-print-processor,`messageProcessors:mailPrintProcessor`>>::
+A message in its printed form.
+
+<<event-excerpt-processor,`messageProcessors:eventExcerptProcessor`>>::
+The excerpt of the description in the details of a calendar event.
+
+<<event-location-processor,`messageProcessors:eventLocationProcessor`>>::
+The location of an event, in the event details and in the invitation that a message contains.
+
+<<event-notes-processor,`messageProcessors:eventNotesProcessor`>>::
+The notes of an event in the invitation that a message contains.
+
+<<attach-popover,`messageProcessors:attachPopover`>>::
+The finished HTML of a message, to add popovers to dates.
+
+<<date-info-popover,`messageProcessors:dateInfoPopover`>>::
+The component that draws the popovers of dates.
+
+[#learn-from-an-example.examples]
+== Learn from an example
+
+Each entry is an example that fills slots of this category. Follow one and use it as a model for the other slots.
+
+xref:build-by-goal/recipe-message-processing.adoc[Transform messages]::
+A recipe that turns ticket numbers such as `SUP-1042` in a message into links, with <<email-processor,`messageProcessors:emailProcessor`>>. You learn to register a processor under a `messageProcessors:` key and to change the message as a `Document`. Every other key in this category uses the same processor shape, except <<attach-popover,`messageProcessors:attachPopover`>> and <<date-info-popover,`messageProcessors:dateInfoPopover`>>.
+
+[#email-processor]
+== messageProcessors:emailProcessor
+
+Changes the body of a message in the message viewer, for example to turn ticket numbers into links. Register the same processor under <<composer-processor,`messageProcessors:composerProcessor`>> and <<mail-print-processor,`messageProcessors:mailPrintProcessor`>> to change the quoted message and the printout too.
+
+[#email-processor-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:emailProcessor', handler)
+
+// handler: () => (doc: Document) => void
+----
+
+Return the processor. It is a function that takes the message as a https://developer.mozilla.org/en-US/docs/Web/API/Document[`Document`^] and changes it.
+
+[#email-processor-arguments]
+=== Arguments
+
+None.
+
+[#email-processor-usage-notes]
+=== Usage notes
+
+* The Modern UI runs its own processors for links and quoted text first. It then runs the processors of the Zimlets in the order in which the Zimlets registered. Each processor sees the result of the one before.
+* After each processor, the Modern UI cleans the `Document` again and removes markup that is not safe.
+* A processor can return a function. The Modern UI calls it after it has checked the addresses and removed the `class` and `id` attributes.
+* The handler must return a function. Anything else makes the viewer fail when it runs the result.
+* The Modern UI keeps the result for each message body, up to 300 bodies, and does not run the processors again for the same body. A changed processor applies after the user reloads the page.
+* For a complete example, see xref:build-by-goal/recipe-message-processing.adoc[Transform messages].
+
+[#composer-processor]
+== messageProcessors:composerProcessor
+
+Changes the quoted original message that the composer adds when the user replies to a message or forwards it. Use it when a change must also apply to the text that the user sends back.
+
+[#composer-processor-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:composerProcessor', handler)
+
+// handler: () => (doc: Document) => void
+----
+
+Return the processor. It is a function that takes the quoted message as a `Document` and changes it.
+
+[#composer-processor-arguments]
+=== Arguments
+
+None.
+
+[#composer-processor-usage-notes]
+=== Usage notes
+
+* The processors run only when the reply or forwarded message is in HTML format. In plain text format, the Modern UI adds the previous text as it is.
+* The processors do not run for a draft that the user opens again.
+* The Modern UI ignores what a processor returns. The rules for the viewer, such as cleaning the `Document` after each processor, are those of <<email-processor,`messageProcessors:emailProcessor`>> and do not apply here.
+
+[#mail-print-processor]
+== messageProcessors:mailPrintProcessor
+
+Changes a message in its printed form. Use it when a change that you make in the viewer must appear in the printout too.
+
+[#mail-print-processor-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:mailPrintProcessor', handler)
+
+// handler: () => (doc: Document) => void
+----
+
+Return the processor. It is a function that takes the message as a `Document` and changes it.
+
+[#mail-print-processor-arguments]
+=== Arguments
+
+None.
+
+[#mail-print-processor-usage-notes]
+=== Usage notes
+
+* The Modern UI collects the processors once, when the Zimlets have loaded, and not for each message.
+* The Modern UI ignores what a processor returns, as for <<composer-processor,`messageProcessors:composerProcessor`>>.
+
+[#event-excerpt-processor]
+== messageProcessors:eventExcerptProcessor
+
+Changes the excerpt of the description in the details of a calendar event.
+
+[#event-excerpt-processor-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:eventExcerptProcessor', handler)
+
+// handler: () => (doc: Document) => void
+----
+
+Return the processor. It is a function that takes the excerpt as a `Document` and changes it.
+
+[#event-excerpt-processor-arguments]
+=== Arguments
+
+None.
+
+[#event-excerpt-processor-usage-notes]
+=== Usage notes
+
+* The Modern UI runs the processors as it does for <<email-processor,`messageProcessors:emailProcessor`>>, with the same rules.
+
+[#event-location-processor]
+== messageProcessors:eventLocationProcessor
+
+Changes the location of an event. It applies to the event details and to the invitation that a message contains.
+
+[#event-location-processor-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:eventLocationProcessor', handler)
+
+// handler: () => (doc: Document) => void
+----
+
+Return the processor. It is a function that takes the location as a `Document` and changes it.
+
+[#event-location-processor-arguments]
+=== Arguments
+
+None.
+
+[#event-location-processor-usage-notes]
+=== Usage notes
+
+* The Modern UI runs the processors as it does for <<email-processor,`messageProcessors:emailProcessor`>>, with the same rules.
+* The document holds the location as HTML encoded text, so a character such as an ampersand is already encoded.
+
+[#event-notes-processor]
+== messageProcessors:eventNotesProcessor
+
+Changes the notes of an event in the invitation that a message contains.
+
+[#event-notes-processor-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:eventNotesProcessor', handler)
+
+// handler: () => (doc: Document) => void
+----
+
+Return the processor. It is a function that takes the notes as a `Document` and changes them.
+
+[#event-notes-processor-arguments]
+=== Arguments
+
+None.
+
+[#event-notes-processor-usage-notes]
+=== Usage notes
+
+* The Modern UI runs the processors as it does for <<email-processor,`messageProcessors:emailProcessor`>>, with the same rules.
+
+[#attach-popover]
+== messageProcessors:attachPopover
+
+Changes the finished HTML of a message, so that a Zimlet can wrap dates in popovers. Use it with <<date-info-popover,`messageProcessors:dateInfoPopover`>>, which supplies the component that draws a popover.
+
+WARNING: A handler that returns nothing empties the message body. Return the HTML even when you change nothing.
+
+[#attach-popover-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:attachPopover', handler)
+
+// handler: (urlPrefix: string, isMobileView: boolean, html: string) => string
+----
+
+Return the HTML of the message, changed or not.
+
+[#attach-popover-arguments]
+=== Arguments
+
+`urlPrefix` (string)::
+The start of the address of the day view of the calendar, such as `/calendar/day`. Use it to build a link to the calendar.
+
+`isMobileView` (boolean)::
+`true` in a narrow window.
+
+`html` (string)::
+The HTML of the message, after all processors of <<email-processor,`messageProcessors:emailProcessor`>> have run.
+
+[#attach-popover-usage-notes]
+=== Usage notes
+
+* The Modern UI calls the handler only when the account has the calendar feature and at least one Zimlet has registered a handler for <<email-processor,`messageProcessors:emailProcessor`>>.
+* The Modern UI uses only the first result. When several Zimlets register a handler, only the first one changes the message.
+
+[#date-info-popover]
+== messageProcessors:dateInfoPopover
+
+Supplies the component that draws the popover for the `dateinfopopover` elements of a message. Use it with <<attach-popover,`messageProcessors:attachPopover`>>, which adds those elements to the HTML.
+
+[#date-info-popover-register-a-handler]
+=== Register a handler
+
+[source,js]
+----
+plugins.register('messageProcessors:dateInfoPopover', handler)
+
+// handler: () => Component
+----
+
+Return a component, not an element. The component receives the attributes of the `dateinfopopover` element as props, and the content of the element as `children`.
+
+[#date-info-popover-arguments]
+=== Arguments
+
+None.
+
+[#date-info-popover-usage-notes]
+=== Usage notes
+
+* The Modern UI asks for the component under the same conditions as for <<attach-popover,`messageProcessors:attachPopover`>>.
+* The Modern UI uses only the first result.
+
+[#next-step]
+== Next step
+
+Build a complete example in xref:build-by-goal/recipe-message-processing.adoc[Transform messages], or return to the xref:reference/slots.adoc[slot index].

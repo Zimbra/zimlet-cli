@@ -1,0 +1,19 @@
+.list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.link {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-sm);
+	padding: var(--spacing-xs) var(--spacing-md) var(--spacing-xs) var(--spacing-lg);
+	color: var(--text-color);
+	text-decoration: none;
+
+	&:hover {
+		background-color: var(--list-hover-bg);
+	}
+}
