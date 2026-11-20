@@ -1,0 +1,145 @@
+= Account and preferences
+
+Three hooks that read what the Modern UI knows about the signed-in user: the preferences, the account and the languages to choose from. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] must follow a setting, show a value of the account or read its own configuration. `usePreferences` and `useAccountInfo` come from `@zimbra-client/hooks`, and `useAvailableLocalesQuery` from `@zimbra-client/hooks/graphql`. A value that the Modern UI has already loaded needs no new request.
+
+[#members]
+== Members
+
+<<use-preferences,`usePreferences`>>::
+Reads the preferences of the user.
+
+<<use-account-info,`useAccountInfo`>>::
+Reads the account, its features and the configuration of the Zimlets.
+
+<<use-available-locales-query,`useAvailableLocalesQuery`>>::
+Reads the languages that the user can choose.
+
+[#use-preferences]
+== usePreferences
+
+Reads the preferences of the signed-in user, such as the compose format, the time zone and the language. Use it when a Zimlet must follow a setting that the user chose. It comes from `@zimbra-client/hooks`, not from `@zimbra-client/hooks/graphql`.
+
+=== Signature
+
+[source,js]
+----
+import { usePreferences } from '@zimbra-client/hooks';
+
+const { data, loading, error, refetch } = usePreferences(query, options);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`query`
+|object
+|Optional. A custom query that selects other fields. Leave it out, or pass `undefined` when you need `options`. The hook then loads the standard preferences.
+
+|`options`
+|object
+|Optional. How to load the data.
+
+`fetchPolicy` (string, default `cache-first`) says where the data comes from. `cache-first` takes it from the cache of the Modern UI when it is there, and sends a request when it is not. `cache-only` never sends a request. `network-only` always sends one. `cache-and-network` returns the cached data and refreshes it.
+
+`skip` (boolean) set to `true` sends no request until it is `false`.
+
+|===
+
+=== Returns
+
+An object with these properties:
+
+* `data`: `undefined` until the preferences have loaded, and after a failure. Then `data.getPreferences` holds one property for each preference, named as Zimbra names it, for example `zimbraPrefComposeFormat`, `zimbraPrefLocale` and `zimbraPrefTimeZoneId`.
+* `loading` (boolean): `true` while the request runs.
+* `error`: the error when the request failed.
+* `refetch` (function `() => promise`): sends the request again and returns a promise.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Read from `data` with optional chaining, because it is `undefined` at first. See xref:go-deeper/server-data/data-hooks.adoc#loading[Handle loading and missing data].
+* The hook sends `GetPrefsRequest` when the data is not in the cache.
+
+[#use-account-info]
+== useAccountInfo
+
+Reads the signed-in account: its name, the features that are enabled for it, the Zimlets with their configuration and the properties that Zimlets saved. Use it to show a value of the account or to hide a control for a missing feature. Use it also to read the configuration of your Zimlet. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration]. It comes from `@zimbra-client/hooks/graphql`.
+
+=== Signature
+
+[source,js]
+----
+import { useAccountInfo } from '@zimbra-client/hooks/graphql';
+
+const { data, loading, error, refetch } = useAccountInfo(query, options);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`query`
+|object
+|Optional. A custom query that selects other fields. Leave it out, or pass `undefined` when you need `options`. The hook then loads the standard account data.
+
+|`options`
+|object
+|Optional. The same options as the `options` of <<use-preferences,`usePreferences`>>. `fetchPolicy` defaults to `cache-first`.
+
+|===
+
+=== Returns
+
+An object with the same properties as the result of <<use-preferences,`usePreferences`>>. `data.accountInfo` holds, among others:
+
+* `id` and `name`: the identifier and the name of the account.
+* `attrs`: the settings and the feature switches of the account, such as `zimbraMailQuota` and `zimbraFeatureCalendarEnabled`.
+* `zimlets`: the Zimlets that are enabled for the account, each with its configuration.
+* `props`: the properties that Zimlets saved for the user. Each has `zimlet`, `name` and `_content`.
+* `used`: the storage that the account uses, in bytes.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Read from `data` with optional chaining, because it is `undefined` at first. See xref:go-deeper/server-data/data-hooks.adoc#loading[Handle loading and missing data].
+* Use this hook instead of the deprecated account members of the context. See xref:reference/context/deprecated.adoc[Deprecated].
+* The hook sends `GetInfoRequest` when the data is not in the cache.
+
+[#use-available-locales-query]
+== useAvailableLocalesQuery
+
+Reads the languages that the user can choose for the Modern UI. Use it to show the name of the current language or to offer a list of languages in your own settings. It comes from `@zimbra-client/hooks/graphql`.
+
+=== Signature
+
+[source,js]
+----
+import { useAvailableLocalesQuery } from '@zimbra-client/hooks/graphql';
+
+const { data, loading, error } = useAvailableLocalesQuery();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An object with the properties `data`, `loading` and `error`, as for <<use-preferences,`usePreferences`>>. `data.getAvailableLocales` is a list of objects. Each has an `id` such as `en_US`. It also has `name` and `localName`, the two names that the language list of the Modern UI shows. The `id` of the language that the user chose equals the value of the `zimbraPrefLocale` preference.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Read from `data` with optional chaining, because it is `undefined` at first. See xref:go-deeper/server-data/data-hooks.adoc#loading[Handle loading and missing data].
+* The hook takes no arguments. It cannot be skipped or given a fetch policy.
+* The hook sends `GetAvailableLocalesRequest`.
+
+[#next-step]
+== Next step
+
+Send and read mail in xref:reference/shims/hooks/mail.adoc[Mail].

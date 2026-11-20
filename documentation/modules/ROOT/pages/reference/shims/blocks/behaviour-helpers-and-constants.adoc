@@ -1,0 +1,276 @@
+= Behaviour helpers and constants
+
+Two wrappers that react to clicks and keys, a wrapper that measures its parent, and two sets of constants: key codes and colours. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] draws its own layer or panel. They close it on an outside click or on *Escape*, and they size content to its parent. The constants match the key codes and colours of the xref:reference/glossary.adoc#modern-ui[Modern UI]. `Dialog` and `Popover` already use these helpers, so reach for them only for a layer that you build yourself.
+
+[#members]
+== Members
+
+<<click-outside-detector,`ClickOutsideDetector`>>::
+Calls a function when the user clicks outside an element.
+
+<<close-on-click-or-keydown,`CloseOnClickOrKeydown`>>::
+Calls a function on an outside click and on *Escape*.
+
+<<container-size,`ContainerSize`>>::
+Passes the width and the height of its parent to its children.
+
+<<key-codes,`KeyCodes`>>::
+Numeric key codes with names.
+
+<<colors,`COLORS`>>::
+The names of the colour variables of the Modern UI, grouped in three palettes.
+
+[#click-outside-detector]
+== ClickOutsideDetector
+
+A wrapper that reports a click outside its child. Use it to close something that you draw yourself, such as a menu, when the user clicks elsewhere. Use <<close-on-click-or-keydown,`CloseOnClickOrKeydown`>> when *Escape* must close it too.
+
+=== Signature
+
+[source,js]
+----
+import { ClickOutsideDetector } from '@zimbra-client/blocks';
+
+<ClickOutsideDetector onClickOutside={handleClose}>
+	<div>{content}</div>
+</ClickOutsideDetector>
+----
+
+=== Props
+
+[[click-outside-detector-on-click-outside]]pass:[<a class="anchor" href="#click-outside-detector-on-click-outside"></a>]`onClickOutside` (function `(event: Event) => void`)::
+Called with the event when the user clicks or right-clicks outside the child, or moves the focus into an iframe outside it. Its return value is ignored.
+
+[[click-outside-detector-disable-outside-click]]pass:[<a class="anchor" href="#click-outside-detector-disable-outside-click"></a>]`disableOutsideClick` (boolean, default `false`)::
+Stops the calls.
+
+[[click-outside-detector-modal-id]]pass:[<a class="anchor" href="#click-outside-detector-modal-id"></a>]`modalId` (number)::
+An id from the stack of dialogs and popovers of the Modern UI. With it, the function runs only while that id is the most recent. `Dialog` and `Popover` set it. Leave it out.
+
+[[click-outside-detector-children]]pass:[<a class="anchor" href="#click-outside-detector-children"></a>]`children` (xref:reference/glossary.adoc#element[element])::
+The element to watch. Pass one element that draws an HTML element.
+
+=== Returns
+
+Its `children`. The component adds no element of its own.
+
+=== Usage notes
+
+* A click counts as inside when its target is in the child, or when its position is inside the box of the child. A click on another element that is drawn over the child is inside.
+* The component listens on the window while it is mounted, before the elements that it watches, and removes the listeners when it unmounts.
+* The component does nothing when its child draws nothing.
+
+[#close-on-click-or-keydown]
+== CloseOnClickOrKeydown
+
+A wrapper that closes a layer on a click outside its child and on *Escape*. Use it around a panel that you draw yourself and that you remove in the handler. `Dialog` and `Popover` are built from it.
+
+=== Signature
+
+[source,js]
+----
+import { CloseOnClickOrKeydown } from '@zimbra-client/blocks';
+
+<CloseOnClickOrKeydown onClickOutside={handleClose}>
+	<div>{content}</div>
+</CloseOnClickOrKeydown>
+----
+
+=== Props
+
+[[close-on-click-or-keydown-on-click-outside]]pass:[<a class="anchor" href="#close-on-click-or-keydown-on-click-outside"></a>]`onClickOutside` (function `(event: Event) => void`)::
+Called with the event on a click outside the child. It is also called on *Escape* when you do not set <<close-on-click-or-keydown-on-esc-keydown,`onEscKeydown`>>. Its return value is ignored. See <<click-outside-detector,`ClickOutsideDetector`>> for what counts as outside.
+
+[[close-on-click-or-keydown-on-esc-keydown]]pass:[<a class="anchor" href="#close-on-click-or-keydown-on-esc-keydown"></a>]`onEscKeydown` (function `(event: KeyboardEvent) => void`)::
+Called with the event when the user presses *Escape*. Set it to use another function than <<close-on-click-or-keydown-on-click-outside,`onClickOutside`>> for the key. Its return value is ignored.
+
+[[close-on-click-or-keydown-disable-escape]]pass:[<a class="anchor" href="#close-on-click-or-keydown-disable-escape"></a>]`disableEscape` (boolean, default `false`)::
+Ignores the *Escape* key.
+
+[[close-on-click-or-keydown-disable-outside-click]]pass:[<a class="anchor" href="#close-on-click-or-keydown-disable-outside-click"></a>]`disableOutsideClick` (boolean, default `false`)::
+Ignores clicks outside the child. *Escape* still calls the function.
+
+[[close-on-click-or-keydown-children]]pass:[<a class="anchor" href="#close-on-click-or-keydown-children"></a>]`children` (xref:reference/glossary.adoc#element[element])::
+The element to watch. Pass one element that draws an HTML element.
+
+=== Returns
+
+Its `children`. The component adds no element of its own.
+
+=== Usage notes
+
+* Only the layer that opened last reacts. The layers of `Dialog`, `Popover` and every `CloseOnClickOrKeydown` share one order. A click or a key press does nothing in a layer that is under another one.
+* While the component is mounted with a handler, no *Escape* key press reaches the page elements, so their own key handlers do not run. This holds also when its layer is not the last one.
+* With no handler, `disableEscape` and `disableOutsideClick` both set, the component adds no listener.
+* The function that you pass must remove the layer. The component does not close anything.
+
+[#container-size]
+== ContainerSize
+
+A wrapper that measures its parent and gives the width and the height to its children. Use it to size a chart, a canvas or a list to the room that the layout gives it.
+
+=== Signature
+
+[source,js]
+----
+import { ContainerSize } from '@zimbra-client/blocks';
+
+<ContainerSize>
+	{({ width, height }) => <Chart width={width} height={height} />}
+</ContainerSize>
+----
+
+=== Props
+
+[[container-size-target]]pass:[<a class="anchor" href="#container-size-target"></a>]`target` (string)::
+What to measure. `self` measures the element that the component draws. Any other value, or none, measures its parent.
+
+[[container-size-width]]pass:[<a class="anchor" href="#container-size-width"></a>]`width` (number or boolean)::
+The width to use before the first measurement. Set `false` to leave the width out of what the children receive.
+
+[[container-size-height]]pass:[<a class="anchor" href="#container-size-height"></a>]`height` (number or boolean)::
+The height to use before the first measurement. Set `false` to leave the height out of what the children receive.
+
+[[container-size-dimensions]]pass:[<a class="anchor" href="#container-size-dimensions"></a>]`dimensions` (boolean)::
+Set `false` to pass neither the width nor the height.
+
+[[container-size-defer]]pass:[<a class="anchor" href="#container-size-defer"></a>]`defer` (boolean, default `false`)::
+Skips the measurement when the component mounts. The first size then comes with the first resize of the window.
+
+[[container-size-exclude-padding]]pass:[<a class="anchor" href="#container-size-exclude-padding"></a>]`excludePadding` (boolean)::
+Removes the padding of the measured element from the size. Setting `padding` to `false` does the same.
+
+[[container-size-on-before-resize]]pass:[<a class="anchor" href="#container-size-on-before-resize"></a>]`onBeforeResize` (function `(size: { width: number, height: number }) => boolean | void`)::
+Called with the new size before the children are drawn again. Return `false` to keep the old size. You can change the values in `size`, and the children then receive the changed values.
+
+[[container-size-component]]pass:[<a class="anchor" href="#container-size-component"></a>]`component` (string or component, default `div`)::
+The element type of the wrapper.
+
+[[container-size-class]]pass:[<a class="anchor" href="#container-size-class"></a>]`class` (string)::
+A class name added to the wrapper.
+
+[[container-size-children]]pass:[<a class="anchor" href="#container-size-children"></a>]`children` (xref:reference/glossary.adoc#element[element] or function `(size: { width?: number, height?: number }) => node`)::
+What receives the size. An element gets `width` and `height` as props. A function is called with an object that holds them, and returns what to draw. Text children are drawn as they are.
+
+[[container-size-other-props]]pass:[<a class="anchor" href="#container-size-other-props"></a>]Any other prop (any)::
+Set on the wrapper element.
+
+=== Returns
+
+The wrapper element, with the children drawn inside it.
+
+=== Usage notes
+
+* The first render has no `width` and no `height`, unless you set them, because the measurement happens after the component mounts. Handle `undefined` in your component.
+* The size is measured when the component mounts, when the page has finished loading and when the window is resized. A change of the size of the parent that has no window resize is not seen.
+* The size is the inner size of the element, with its padding and without its border.
+* A child that is a DOM element, such as a `div`, also gets `width` and `height` as attributes. Pass a component or use a function child instead.
+
+[#key-codes]
+== KeyCodes
+
+A set of named key codes. Use it to compare the `keyCode` of a keyboard event with a name, for example when you handle the arrow keys in a list.
+
+=== Signature
+
+[source,js]
+----
+import { KeyCodes } from '@zimbra-client/blocks';
+
+if (event.keyCode === KeyCodes.ESCAPE) {
+	handleClose();
+}
+----
+
+=== Type
+
+An object that maps each name to a number. These are the values of `event.keyCode`.
+
+[options="header"]
+|===
+| Name | Value | Key
+
+| `SPACE_BAR` | 32 | *Space*
+| `CARRIAGE_RETURN` | 13 | *Enter*
+| `ESCAPE` | 27 | *Escape*
+| `TAB` | 9 | *Tab*
+| `BACKSPACE` | 8 | *Backspace*
+| `DELETE` | 46 | *Delete*
+| `LEFT_ARROW` | 37 | Left arrow
+| `UP_ARROW` | 38 | Up arrow
+| `RIGHT_ARROW` | 39 | Right arrow
+| `DOWN_ARROW` | 40 | Down arrow
+| `PAGE_UP` | 33 | *Page Up*
+| `PAGE_DOWN` | 34 | *Page Down*
+| `END` | 35 | *End*
+| `HOME` | 3 | None. The value is wrong. See the usage notes.
+| `SHIFT` | 16 | *Shift*
+| `CTRL` | 17 | *Ctrl*
+| `META_KEY` | 91 | The left *Meta* key
+| `KEY_F10` | 121 | *F10*
+| `KEY_SELECT` | 93 | The context menu key
+| `KEY_SEMICOLON` | 186 | *;* (most browsers)
+| `KEY_SEMICOLON_FIREFOX` | 59 | *;* (Firefox)
+| `KEY_COMMA` | 188 | *,*
+| `KEY_A` | 65 | *A*
+| `KEY_C` | 67 | *C*
+| `KEY_X` | 88 | *X*
+| `KEY_V` | 86 | *V*
+|===
+
+=== Usage notes
+
+* Compare the names with `event.keyCode`. `event.key` is a text such as `Enter`, so a comparison with these numbers is never true.
+* Do not use `HOME`. Its value is `3`, but the *Home* key reports `36`.
+
+[#colors]
+== COLORS
+
+The names of the colour variables of the Modern UI, in three palettes. Use it to colour your own elements with the same colours as calendars, tags and avatars, or to pass a colour to xref:reference/shims/blocks/form-inputs-and-choices.adoc#styled-choice-input[`StyledChoiceInput`].
+
+=== Signature
+
+[source,js]
+----
+import { COLORS } from '@zimbra-client/blocks';
+
+const calendarColor = `var(${COLORS.DEFAULT[calendar.color || 0]})`;
+----
+
+=== Type
+
+An object with three palettes: `DEFAULT`, `TAGS` and `AVATARS`. Each palette maps a number to the name of a CSS custom property of the Modern UI, such as `--calendar-color-blue`. Use the name as `var(--calendar-color-blue)` in a style.
+
+* `DEFAULT` holds the colours of calendars. The number is the colour number of a calendar, and `0` is the default colour.
+* `TAGS` holds darker shades for tag icons that stay clear in the light and the dark theme.
+* `AVATARS` holds the colours of avatars.
+
+[options="header"]
+|===
+| Number | `DEFAULT` | `TAGS` | `AVATARS`
+
+| 0 | `--calendar-color-blue` | `--tag-color-blue` | `--avatar-color-navy`
+| 1 | `--calendar-color-blue` | `--tag-color-blue` | `--avatar-color-violet`
+| 2 | `--calendar-color-cyan` | `--tag-color-cyan` | `--avatar-color-teal`
+| 3 | `--calendar-color-green` | `--tag-color-green` | `--avatar-color-forest`
+| 4 | `--calendar-color-purple` | `--tag-color-purple` | `--avatar-color-emerald`
+| 5 | `--calendar-color-red` | `--tag-color-red` | `--avatar-color-rust`
+| 6 | `--calendar-color-yellow` | `--tag-color-yellow` | `--avatar-color-amber`
+| 7 | `--calendar-color-pink` | `--tag-color-pink` | `--avatar-color-crimson`
+| 8 | `--calendar-color-gray` | `--tag-color-gray` | `--avatar-color-rose`
+| 9 | `--calendar-color-orange` | `--tag-color-orange` | `--avatar-color-indigo`
+| 10 | None | `--tag-color-navy` | `--avatar-color-coffee`
+| 11 | None | `--tag-color-amber` | `--avatar-color-slate`
+| 12 | None | `--tag-color-teal` | None
+|===
+
+=== Usage notes
+
+* A number that a palette does not have gives `undefined`. Check the number before you build a style from it.
+* To read the colour itself, call `getComputedStyle(document.documentElement).getPropertyValue(name)` with the name.
+* xref:reference/shims/blocks/form-inputs-and-choices.adoc#color-picker[`ColorPicker`] draws the swatches of these palettes.
+
+[#next-step]
+== Next step
+
+Return to the list of areas in xref:reference/shims/blocks.adoc[Blocks UI kit].

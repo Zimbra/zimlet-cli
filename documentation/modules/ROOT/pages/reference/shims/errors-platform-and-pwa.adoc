@@ -1,0 +1,327 @@
+= Errors, platform and PWA
+
+Eight exports for jobs that many Zimlets share. They read the reason of a failed request and tell where the xref:reference/glossary.adoc#modern-ui[Modern UI] runs. They also open an address outside it, give the display name of a contact and offer to install the Modern UI as an app. Use them to show a useful message when a request fails, to register a feature on one platform only, or to add an install action. The Modern UI shares them with every xref:reference/glossary.adoc#zimlet[Zimlet], so the build does not copy them into yours. See xref:reference/shims.adoc[Shared modules] for the other modules.
+
+[#members]
+== Members
+
+<<error-message,`errorMessage`>>::
+Gets the text to show for an error. From `@zimbra-client/errors`.
+
+<<fault-code,`faultCode`>>::
+Gets the error code that the server reported. From `@zimbra-client/errors`.
+
+<<get-platform-type,`getPlatformType`>>::
+Tells whether the Modern UI runs in a browser, the desktop app or a mobile app. From `@zimbra-client/platform`.
+
+<<platform-types,`PLATFORM_TYPES`>>::
+The values that `getPlatformType` returns. From `@zimbra-client/platform`.
+
+<<open-external-browser,`openExternalBrowser`>>::
+Opens an address outside the Modern UI. From `@zimbra-client/browser`.
+
+<<get-name,`getName`>>::
+Gives the display name of a contact. From `@zimbra-client/util/contacts`.
+
+<<is-standalone,`isStandalone`>>::
+Tells whether the Modern UI runs as an installed app. From `@zimbra-client/pwa-utils`.
+
+<<await-install-prompt,`awaitInstallPrompt`>>::
+Waits for the browser to offer the installation of the Modern UI. From `@zimbra-client/pwa-utils`.
+
+[#error-message]
+== errorMessage
+
+Gets the text to show for an error. Use it in the `catch` of a request that a hook of the Modern UI sends. It reads the message that the server reported and falls back to the message of the error. Use <<fault-code,`faultCode`>> when your Zimlet must act on a known failure.
+
+=== Signature
+
+[source,js]
+----
+import { errorMessage } from '@zimbra-client/errors';
+
+const message = errorMessage(error);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`error`
+|any
+|The value that a request rejected with.
+
+|===
+
+=== Returns
+
+The message as a string. When the error holds no message, it returns `error` itself, so a value that is not a string can come back, such as `undefined`.
+
+=== Usage notes
+
+* Show the text with xref:reference/context/store/zimlet-redux/actions.adoc#notify[`notify`].
+* For an error that the hooks and mutations of the Modern UI reject with, it reads the first error that the server reported. For any other error, such as one from `zimbraBatchClient`, it returns the `message` of the error.
+
+[#fault-code]
+== faultCode
+
+Gets the error code that the server reported, such as `account.NO_SUCH_ACCOUNT` or `mail.GRANT_EXISTS`. Use it when your Zimlet shows its own text or takes another step for a known failure. Use <<error-message,`errorMessage`>> when you only need the text.
+
+=== Signature
+
+[source,js]
+----
+import { faultCode } from '@zimbra-client/errors';
+
+const code = faultCode(error);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`error`
+|any
+|The value that a request rejected with.
+
+|===
+
+=== Returns
+
+The code as a string, or `undefined` when the error holds no code.
+
+=== Usage notes
+
+* It reads the errors that the hooks and mutations of the Modern UI reject with.
+* An error from `zimbraBatchClient` keeps its faults in `error.faults`, and `faultCode` returns `undefined` for it. Read `error.faults[0].Detail.Error.Code` instead.
+* It never throws. It returns `undefined` for `undefined`, `null` and a value without a code.
+
+[#get-platform-type]
+== getPlatformType
+
+Tells where the Modern UI runs: in a browser, in the desktop app or in a mobile app. Use it when a feature works on one platform only, for example to register a handler only in a browser. Compare the result with <<platform-types,`PLATFORM_TYPES`>>. See xref:go-deeper/platform-checks.adoc[Platform checks] for how to choose a code path.
+
+=== Signature
+
+[source,js]
+----
+import { getPlatformType } from '@zimbra-client/platform';
+
+const platform = getPlatformType();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+A string: one of the values of <<platform-types,`PLATFORM_TYPES`>>.
+
+=== Usage notes
+
+* It checks the desktop app first, then Android, then iOS, and returns the web value when none matches.
+* The mobile apps add objects of their own to the window, and the result depends on them. A mobile app that has not added them yet gives the web value.
+* Call it in `init()` to decide what to register. See xref:fundamentals/factory-and-lifecycle.adoc#register-conditionally[Register and unregister conditionally].
+
+[#platform-types]
+== PLATFORM_TYPES
+
+The values that <<get-platform-type,`getPlatformType`>> returns. Use it to compare the result, so that your code does not depend on the text of a value.
+
+=== Signature
+
+[source,js]
+----
+import { PLATFORM_TYPES } from '@zimbra-client/platform';
+
+const { WEB, ELECTRON, ANDROID, IOS } = PLATFORM_TYPES;
+----
+
+=== Type
+
+An object with four string properties:
+
+`WEB`::
+`web`. A browser.
+
+`ELECTRON`::
+`electron`. The desktop app.
+
+`ANDROID`::
+`android`. The Android app.
+
+`IOS`::
+`ios`. The iOS app.
+
+=== Usage notes
+
+* Do not change the object.
+
+[#open-external-browser]
+== openExternalBrowser
+
+Opens an address outside the Modern UI. In a browser it opens a new window. In the desktop app and the iOS app it passes the address to the app. Use it for a link that must leave the Modern UI, such as the sign-in page of a service that your Zimlet connects to. Use a normal link when the address can open in a tab of the same browser.
+
+=== Signature
+
+[source,js]
+----
+import { openExternalBrowser } from '@zimbra-client/browser';
+
+const childWindow = openExternalBrowser(URL, name, windowOptions);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`URL`
+a|string
+a|The address to open.
+
+WARNING: In the desktop app, the operating system opens the address in its default manner for the scheme. A `mailto:` address, for example, opens the mail program of the user. See the https://www.electronjs.org/docs/latest/api/shell#shellopenexternalurl-options[Electron documentation^] for `shell.openExternal`. Pass only `https` addresses that your Zimlet builds. Never pass an address that comes from a message or from user input.
+
+|`name`
+|string
+|Optional. The name of the window, as the second argument of `window.open`. The desktop app and the iOS app ignore it.
+
+|`windowOptions`
+|string
+|Optional. The window features, as the third argument of `window.open`, for example `width=600,height=700`. The desktop app and the iOS app ignore it.
+
+|===
+
+=== Returns
+
+In a browser, the value that `window.open` returns. See the https://developer.mozilla.org/en-US/docs/Web/API/Window/open[window.open documentation^] for when it is not a window. In the desktop app and the iOS app, `undefined`.
+
+=== Usage notes
+
+* Call it from a click handler. A browser opens a window only in direct response to user input.
+* In the desktop app and the iOS app the call returns nothing, so you cannot watch or close the window. A flow that needs the window, such as a sign-in that closes it at the end, must work without it.
+* Active Zimlets pass it as the `openExternalBrowser` option of the OAuth client that they use to sign in to a service.
+
+[#get-name]
+== getName
+
+Gives the display name of a contact, in the order that the Modern UI uses. It takes the full name, then the first, middle and last name together, then the company. Next it takes the part of the email address before the `@`, and last the phone number. Use it to label a contact in your Zimlet the way the Modern UI does. No active Zimlet uses `getName`, so this entry documents what the code reads.
+
+=== Signature
+
+[source,js]
+----
+import { getName } from '@zimbra-client/util/contacts';
+
+const name = getName(attributes, sanitize);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`attributes`
+|object
+a|The `attributes` of a contact. It needs no field. The function reads these:
+
+* `fullName`, `firstName`, `middleName`, `lastName` and `company` (string): the name fields.
+* `email`, `workEmail` and `homeEmail` (string), each also with a number from 1 to 9 (`email2`): the email addresses.
+* `phone`, `mobilePhone`, `homePhone`, `workPhone` and other phone fields (string): the phone numbers.
+
+|`sanitize`
+|boolean
+|Optional. Set it to `true` to HTML-encode the result: `<` becomes `&lt;`.
+
+|===
+
+=== Returns
+
+A string, or `undefined` when the contact has none of these values. With `sanitize`, an empty string instead of `undefined`.
+
+=== Usage notes
+
+* It takes the attributes, not the contact. Pass `contact.attributes`. Passing the contact gives `undefined`, because the name fields are in its `attributes`.
+* For the email address, it uses the first field that exists in this order: `email`, `workEmail`, `homeEmail`, each followed by its numbered fields. It uses the part before the `@`. A field that exists with an empty value still counts as the first. The function does not look at later email fields and goes on to the phone number.
+* Do not set `sanitize` for text that you render as a child in JSX. Preact escapes text itself, so the encoded name shows as `&lt;`. Set it only when you put the name into an HTML string.
+* Calling it without an argument throws a `TypeError`.
+
+[#is-standalone]
+== isStandalone
+
+Tells whether the Modern UI runs as an installed app, in a window of its own, and not in a browser tab. Use it to hide an install action once the Modern UI is installed. Call it before <<await-install-prompt,`awaitInstallPrompt`>>, which returns `null` for an installed app.
+
+=== Signature
+
+[source,js]
+----
+import { isStandalone } from '@zimbra-client/pwa-utils';
+
+const installed = isStandalone();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+A boolean. `true` when the display mode of the window is `standalone`, or on iOS when the Modern UI was started from the home screen. Otherwise `false`.
+
+=== Usage notes
+
+* It reads the state when you call it. Call it once, when the component starts, and keep the result in a state.
+* It returns `false` in a browser that has no display mode query.
+
+[#await-install-prompt]
+== awaitInstallPrompt
+
+Waits for the browser to offer the installation of the Modern UI as an app, and hands your function a function that shows the offer. Use it to add an install action to a menu, shown only when the browser makes the offer. See the https://developer.mozilla.org/en-US/docs/Web/API/BeforeInstallPromptEvent[BeforeInstallPromptEvent documentation^] for the browser side.
+
+=== Signature
+
+[source,js]
+----
+import { awaitInstallPrompt } from '@zimbra-client/pwa-utils';
+
+const stop = awaitInstallPrompt(onPrompt);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`onPrompt`
+a|function `(prompt: (() => Promise<boolean>) \| null) => void`
+a|Called with a function when the browser offers the installation. Call that function to show the offer. It returns a promise of boolean: `true` when the user installs the app, and `false` otherwise. `onPrompt` is called again with `null` after the user installs the app. It is called at once when an offer already waits.
+
+WARNING: Always pass `onPrompt`. Without it, the call returns a function that, when you call it, removes every listener, including those of the Modern UI and of other Zimlets. An offer that the browser already sent is then lost.
+
+|===
+
+=== Returns
+
+A function `() => void`. Call it to stop listening, for example when the component unmounts. It returns `null`, and adds no listener, when the Modern UI runs as an installed app.
+
+=== Usage notes
+
+* In a component, call it in an effect and return its result, so that the listener goes when the component unmounts. Check the installed state first with <<is-standalone,`isStandalone`>>.
+* A state setter calls a function that you pass to it. Keep the offer in a state with `setPrompt(() => prompt)`.
+* Call the function that `onPrompt` receives from a click. The https://developer.mozilla.org/en-US/docs/Web/API/BeforeInstallPromptEvent/prompt[prompt() documentation^] requires a user action such as a button click.
+* An offer works once. After the user answers, `onPrompt` gets no new function until the browser sends another offer. The same documentation says that `prompt()` may be called once for each offer.
+* A browser that does not offer the installation never calls `onPrompt`. Show the action only when it has been called.
+* The Modern UI starts to listen when it loads, so an offer that came before your call still reaches `onPrompt`.
+
+[#next-step]
+== Next step
+
+See how to choose a code path for each platform in xref:go-deeper/platform-checks.adoc[Platform checks].

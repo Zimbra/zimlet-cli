@@ -1,0 +1,22 @@
+= Utilities
+
+The `@zimbra-client/util` module holds the helper functions that the xref:reference/glossary.adoc#modern-ui[Modern UI] shares with every xref:reference/glossary.adoc#zimlet[Zimlet]. Use it when your Zimlet needs a small job done the way the Modern UI does it. Examples are removing empty values from an object, reading the session token and choosing a layout by screen width. Its helpers are in three areas.
+
+The Modern UI shares the module with every Zimlet, so the build does not copy it into your Zimlet. Import a name as in `import { debounce } from '@zimbra-client/util';`. The module also exports the higher-order components `withProps` and `branch`, which are in xref:reference/shims/hocs/composition.adoc[Composition]. See xref:fundamentals/shared-libraries.adoc[Shared libraries] for how shared modules work.
+
+[#areas]
+== Areas
+
+[[data-text-and-functions]]pass:[<a class="anchor" href="#data-text-and-functions"></a>]xref:reference/shims/utilities/data-text-and-functions.adoc[Data, text and functions]::
+Use these to wrap a value in an array, to test for or remove empty values and to convert text between HTML and plain text. They also carry data in a drag and drop. Two more return a callback that stays the same between renders, or that runs only after a pause. Exports: `array`, `isEmpty`, `pruneEmpty`, `htmlEncode`, `htmlToText`, `getDataTransferJSON`, `setDataTransferJSON`, `callWith` and `debounce`.
+
+[[browser-and-app]]pass:[<a class="anchor" href="#browser-and-app"></a>]xref:reference/shims/utilities/browser-and-app.adoc[Browser and app]::
+Use these to read the state of the browser tab and the session, copy to the clipboard, download a file and close a notification. Others give you the screen size breakpoints and pass values from the xref:fundamentals/host-context.adoc[context] to a component. One lets you listen to xref:go-deeper/app-events.adoc[app events]. Exports: `PageVisibility`, `clipboard`, `getElectron`, `csrfStorage`, `closeNotification`, `getContext`, `startAttachmentDownloadProcess`, `breakpoints` and `zimletEventEmitter`.
+
+[[smime-and-calendar]]pass:[<a class="anchor" href="#smime-and-calendar"></a>]xref:reference/shims/utilities/smime-and-calendar.adoc[S/MIME and calendar]::
+S/MIME signs and encrypts email. Use these to check whether it is available and to hand a request to the desktop app. They also list the calendars where the user can add events and close the tab of a calendar event. Exports: `smimeHandler`, `isServerSMIMEFeatureAvailable`, `filterNonInsertableCalendars` and `closeEventTabThunk`.
+
+[#next-step]
+== Next step
+
+Start with the helpers for data and text in xref:reference/shims/utilities/data-text-and-functions.adoc[Data, text and functions].

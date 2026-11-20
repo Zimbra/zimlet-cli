@@ -1,0 +1,391 @@
+= Constants
+
+Seven constants of `@zimbra-client/constants` that name values of the xref:reference/glossary.adoc#modern-ui[Modern UI]. They cover the role and answer of a calendar attendee, the names of app events, the ids of system folders and message flags. Two more give the icon of a file type and the id of the line that splits a reply from the quoted message. Use them instead of typing the text or the number, so that your code reads the same values as the Modern UI. The Modern UI shares them with every xref:reference/glossary.adoc#zimlet[Zimlet], so the build does not copy them into yours. See xref:reference/shims.adoc[Shared modules] for the other modules.
+
+[#members]
+== Members
+
+<<attendee-role,`ATTENDEE_ROLE`>>::
+The role of an attendee of a calendar event: required or optional.
+
+<<participation-status,`PARTICIPATION_STATUS`>>::
+The answer of an attendee to an invitation.
+
+<<supported-mimes,`supportedMimes`>>::
+The icon and the style group of a file type, by file extension.
+
+<<zimbra-zimlet-events,`ZIMBRA_ZIMLET_EVENTS`>>::
+The names of the app events.
+
+<<email-separator-tag-id,`EMAIL_SEPARATOR_TAG_ID`>>::
+The `id` of the line that splits the new text of a message from the quoted message.
+
+<<user-folder-ids,`USER_FOLDER_IDS`>>::
+The ids of the system folders of a mailbox.
+
+<<flags,`FLAGS`>>::
+The letters that mark the state of a message.
+
+[#attendee-role]
+== ATTENDEE_ROLE
+
+The values for the role of an attendee of a calendar event: whether the attendee is required or optional. Use it when your Zimlet reads or sets the `role` of an attendee, for example to add a guest as optional. No active Zimlet uses `ATTENDEE_ROLE`, so this entry documents what the code reads.
+
+=== Signature
+
+[source,js]
+----
+import { ATTENDEE_ROLE } from '@zimbra-client/constants';
+
+const { optional, required } = ATTENDEE_ROLE;
+----
+
+=== Type
+
+An object with two string properties:
+
+`optional`::
+`OPT`. The attendee is optional.
+
+`required`::
+`REQ`. The attendee is required.
+
+=== Usage notes
+
+* The server knows two more roles: `CHA` for the chair and `NON` for an attendee who takes part for information only. The object has no property for them. Compare with the text.
+* Do not change the object.
+
+[#participation-status]
+== PARTICIPATION_STATUS
+
+The values for the answer of an attendee to an invitation. Use it when your Zimlet reads or sets the `participationStatus` of an attendee, for example to count who accepted. No active Zimlet uses `PARTICIPATION_STATUS`, so this entry documents what the code reads.
+
+=== Signature
+
+[source,js]
+----
+import { PARTICIPATION_STATUS } from '@zimbra-client/constants';
+
+const { needsAction, tentative, accept, declined } = PARTICIPATION_STATUS;
+----
+
+=== Type
+
+An object with four string properties:
+
+`needsAction`::
+`NE`. The attendee has not answered.
+
+`tentative`::
+`TE`. The attendee answered tentatively.
+
+`accept`::
+`AC`. The attendee accepted.
+
+`declined`::
+`DE`. The attendee declined.
+
+=== Usage notes
+
+* The server can report more values: `DG` for delegated, and `CO`, `IN`, `WA` and `DF` for tasks. The object has no property for them. Compare with the text.
+* Do not change the object.
+
+[#supported-mimes]
+== supportedMimes
+
+The icon and the style group of a file type, found by the file extension. Use it to draw the icon that the Modern UI draws for a file type, such as in a list of files. An active Zimlet uses it to put an icon before each file name in a list of files.
+
+=== Signature
+
+[source,js]
+----
+import { supportedMimes } from '@zimbra-client/constants';
+
+const fileType = supportedMimes[extension];
+----
+
+=== Type
+
+An object with one property for each of 73 file extensions. The name of a property is the extension in lowercase, without the dot, such as `docx`. Its value is an object:
+
+`icon` (component)::
+An icon component of https://lucide.dev/guide/packages/lucide-preact[lucide-preact^]. Pass it as `name` to `Icon` of xref:reference/shims/blocks/display-and-layout.adoc#icon[Display and layout].
+
+`customIcon` (array of array)::
+An icon node, in place of `icon`. Only the PDF types have it. Pass it as `customIcon` to `Icon`.
+
+`className` (string)::
+The name of the style group: `doc`, `ppt`, `xls`, `pdf`, `zip`, `media`, `code` or `default`.
+
+The extensions and their kinds:
+
+[cols="2,2,6",options="header"]
+|===
+|Kind |`className` |Extensions
+
+|Document
+|`doc`
+|`txt`, `doc`, `docx`, `odt`, `rtf`, `wps`, `wpd`
+
+|Presentation
+|`ppt`
+|`ppt`, `pptx`, `odp`, `pps`, `pot`, `pptm`, `potx`, `potm`
+
+|Spreadsheet
+|`xls`
+|`xls`, `xlsx`, `ods`, `csv`, `tsv`, `xlsm`, `xltx`, `xltm`
+
+|PDF
+|`pdf`
+|`pdf`, `ps`, `eps`, `prn`, `xps`, `ai`
+
+|Archive
+|`zip`
+|`rar`, `zip`, `tar`, `gz`, `7z`
+
+|Image
+|`media`
+|`svg`, `icns`, `tiff`, `tif`, `jpf`, `jp2`, `j2k`, `j2c`, `jpc`, `jpm`, `mj2`, `jpeg`, `jpg`, `jpe`, `png`, `gif`, `ico`, `bmp`
+
+|Video
+|`media`
+|`mov`, `mp4`, `qt`, `wmv`, `swf`, `3gp`, `3g2`
+
+|Audio
+|`media`
+|`mpga`, `mp3`, `aif`, `aiff`, `wav`, `wma`
+
+|Email
+|`default`
+|`eml`, `p7m`
+
+|Web page
+|`code`
+|`htm`, `html`
+
+|Code
+|`code`
+|`js`, `css`, `xml`
+
+|Contact card
+|`default`
+|`vcf`
+
+|===
+
+=== Usage notes
+
+* The name says MIME types, but the keys are file extensions. A MIME type such as `application/pdf` finds nothing.
+* An extension that is not in the object gives `undefined`. Choose a default icon of your own for it.
+* A PDF entry has `customIcon` and no `icon`. Read `customIcon` when it is there, and `icon` otherwise. Code that reads only `icon` passes `undefined` to `Icon` for a PDF, and the page shows the text `[object Object]` in place of the icon.
+* `className` is a group name, not a style that your Zimlet has. Map it to a style of your own.
+* Do not change the object.
+
+[#zimbra-zimlet-events]
+== ZIMBRA_ZIMLET_EVENTS
+
+The names of the app events that the Modern UI announces, such as sending a message or logging out. Use it for the first argument of `on` and `off` of `zimletEventEmitter`, so that your code does not depend on the text of a name. See xref:go-deeper/app-events.adoc[App events] for when each event is sent, its data and how to add and remove a listener.
+
+=== Signature
+
+[source,js]
+----
+import { ZIMBRA_ZIMLET_EVENTS } from '@zimbra-client/constants';
+
+zimletEventEmitter.on(ZIMBRA_ZIMLET_EVENTS.LOGOUT, listener);
+----
+
+=== Type
+
+An object with six string properties. The value of each is its name.
+
+`ONBEFORESEND`, `ONSEND`, `AFTERONSEND`, `ONSENDINVITEREPLY` and `LOGOUT`::
+Events of `zimletEventEmitter`. See xref:go-deeper/app-events.adoc#events[App events] for each one.
+
+`USER_ACTIVITY`::
+Not an event of `zimletEventEmitter`. A Zimlet that draws a frame of its own uses it to tell the Modern UI that the user is active. The Modern UI cannot see input inside such a frame. The Modern UI then restarts the timer for the idle logout and removes its warning.
+
+=== Usage notes
+
+* Read the name from the object. A misspelled property is `undefined`. `on` accepts it without an error, and the listener never runs.
+* Active Zimlets use `ONBEFORESEND`, `ONSEND`, `LOGOUT` and `USER_ACTIVITY`.
+* Do not change the object.
+
+[#email-separator-tag-id]
+== EMAIL_SEPARATOR_TAG_ID
+
+The `id` of the line that splits the new text from the quoted message, in the body of a reply or a forward. Use it to cut the new text from the HTML of a message, for example to check only what the user wrote. An active Zimlet uses it to look for a missing attachment in the new text.
+
+=== Signature
+
+[source,js]
+----
+import { EMAIL_SEPARATOR_TAG_ID } from '@zimbra-client/constants';
+
+const [newText] = html.split(new RegExp(`<[^>]*id="${EMAIL_SEPARATOR_TAG_ID}"[^>]*>`));
+----
+
+=== Type
+
+A string: `MESSAGE_DATA_MARKER`.
+
+=== Usage notes
+
+* In the HTML of a reply or a forward, the quoted message follows an `hr` element with this `id`. Take the part before the element as the new text.
+* A message with no quoted message has no such element. The split then returns all of the HTML.
+* The plain text of a message has no element. It has a line of text instead. See xref:reference/shims/hooks/mail.adoc#use-original-msg-header[`useOriginalMsgHeader`].
+
+[#user-folder-ids]
+== USER_FOLDER_IDS
+
+The ids of the system folders that every mailbox has, such as the Inbox, the Sent folder and the Trash. Use it to tell which folder a message or a folder belongs to, for example to show an action only in the Sent folder. An active Zimlet uses it to check where a message is.
+
+WARNING: The values are numbers, but the ids in the data of the Modern UI, such as the `folderId` of a message, are strings. A comparison with `===` is always `false`. Convert the value first, as in `USER_FOLDER_IDS.INBOX.toString()`.
+
+=== Signature
+
+[source,js]
+----
+import { USER_FOLDER_IDS } from '@zimbra-client/constants';
+
+const isInSent = message.folderId === USER_FOLDER_IDS.SENT.toString();
+----
+
+=== Type
+
+An object with 13 number properties:
+
+[cols="3,1,6",options="header"]
+|===
+|Name |Value |Folder
+
+|`ROOT`
+|`1`
+|The root of the folder tree.
+
+|`INBOX`
+|`2`
+|The Inbox.
+
+|`TRASH`
+|`3`
+|The Trash.
+
+|`JUNK`
+|`4`
+|The Junk folder.
+
+|`SENT`
+|`5`
+|The Sent folder.
+
+|`DRAFTS`
+|`6`
+|The Drafts folder.
+
+|`CONTACTS`
+|`7`
+|The Contacts folder.
+
+|`CALENDAR`
+|`10`
+|The Calendar folder.
+
+|`EMAILED_CONTACTS`
+|`13`
+|The Emailed Contacts folder.
+
+|`CHAT`
+|`14`
+|The Chats folder.
+
+|`TASKS`
+|`15`
+|The Tasks folder.
+
+|`BRIEFCASE`
+|`16`
+|The Briefcase folder.
+
+|`FILES_SHARED_WITH_ME`
+|`20`
+|The folder of the files that others shared with the user.
+
+|===
+
+=== Usage notes
+
+* Only the system folders have a fixed id. The id of any other folder is assigned by the server.
+* The id of a folder that another user shared with the user has the form `<owner id>:<folder id>`. It never equals a value of this object. Take the part after the colon first.
+* Do not change the object.
+
+[#flags]
+== FLAGS
+
+The letters that mark the state of a message, such as unread, flagged or a draft. Use it to test the `flags` of a message, for example to show an action only for a draft. The `flags` of a message is a string that holds the letters of the flags that are set. An active Zimlet uses `draft` to hide an action for a draft.
+
+=== Signature
+
+[source,js]
+----
+import { FLAGS } from '@zimbra-client/constants';
+
+const isDraft = message.flags?.includes(FLAGS.draft);
+----
+
+=== Type
+
+An object with 14 string properties. The value of each is one character.
+
+`unread`::
+`u`. The message is unread.
+
+`flagged`::
+`f`. The user flagged the message.
+
+`replied`::
+`r`. The user replied to the message.
+
+`sentByMe`::
+`s`. The user sent the message.
+
+`forwarded`::
+`w`. The user forwarded the message.
+
+`calendarInvite`::
+`v`. The message holds a calendar invitation.
+
+`draft`::
+`d`. The message is a draft.
+
+`deleted`::
+`x`. The message is marked as deleted.
+
+`notificationSent`::
+`n`. A notification was sent for the message.
+
+`attachment`::
+`a`. The message has an attachment.
+
+`urgent`::
+`!`. The message has a high priority.
+
+`lowPriority`::
+`?`. The message has a low priority.
+
+`priority`::
+`+`. The message is marked as a priority.
+
+`mute`::
+`(`. The user muted the message.
+
+=== Usage notes
+
+* Test one letter with `includes`, because the `flags` holds all the letters of a message in one string. It can be empty or missing, so use `flags?.includes(...)`.
+* The object holds message flags only. Flags of a folder, such as `y` for a synced folder, are not in it.
+* Do not change the object.
+
+[#next-step]
+== Next step
+
+See the app events that `ZIMBRA_ZIMLET_EVENTS` names in xref:go-deeper/app-events.adoc[App events].

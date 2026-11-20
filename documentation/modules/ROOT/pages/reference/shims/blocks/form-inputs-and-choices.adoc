@@ -1,0 +1,511 @@
+= Form inputs and choices
+
+The parts of `@zimbra-client/blocks` that let the user pick a value: a dropdown list, tabs, checkboxes, radio buttons, a colour picker and a small label. Use them in a dialog, a settings section or a panel of your xref:reference/glossary.adoc#zimlet[Zimlet]. The controls then look and behave like the rest of the xref:reference/glossary.adoc#modern-ui[Modern UI]. Pick the member by what the user chooses. `Select` picks one value from a list, `Tabs` switch between panels, `ChoiceInput` is a checkbox or a radio button, and `ColorPicker` picks a colour.
+
+`@zimbra-client/components` also has a `Select`. It is a different component with its own props. See xref:reference/shims/components/form-fields.adoc#select[Form fields].
+
+[#members]
+== Members
+
+<<select,`Select`>>::
+A dropdown list of options with one selected value.
+
+<<option,`Option`>>::
+One entry of a `Select`.
+
+<<tabs,`Tabs`>>::
+A row of tabs that switch between panels.
+
+<<tab,`Tab`>>::
+One tab and its panel inside `Tabs`.
+
+<<choice-input,`ChoiceInput`>>::
+A checkbox or a radio button.
+
+<<styled-choice-input,`StyledChoiceInput`>>::
+A `ChoiceInput` whose shape is filled with a colour.
+
+<<color-picker,`ColorPicker`>>::
+A set of colour swatches, with an optional custom colour.
+
+<<label,`Label`>>::
+A small grey label, optionally a link or a button.
+
+[#select]
+== Select
+
+A dropdown list of options. The closed list shows the selected option, and a click opens the list. Use it for a short list of values in a form or a setting, where the user picks exactly one. Use <<choice-input,`ChoiceInput`>> with `type="radio"` when all choices must stay visible.
+
+=== Signature
+
+[source,js]
+----
+import { Select, Option } from '@zimbra-client/blocks';
+
+<Select value={current} onChange={handleChange}>
+	{items.map(item => (
+		<Option key={item.id} value={item.id}>{item.label}</Option>
+	))}
+</Select>
+----
+
+=== Props
+
+[[select-value]]pass:[<a class="anchor" href="#select-value"></a>]`value` (any)::
+The value of the selected option. The list compares it with the `value` of each <<option,`Option`>> by strict equality. A later change of the prop selects the matching option. A falsy value, such as `0` or an empty string, selects the first option.
+
+[[select-on-change]]pass:[<a class="anchor" href="#select-on-change"></a>]`onChange` (function `(option: { value: any, title: any }) => void`)::
+Called when the user picks an option that is not the selected one. `value` is the `value` of the option, and `title` is its `title`, or its `value` when it has none. It is not called when you change <<select-value,`value`>>. Its return value is ignored. The list keeps the user's choice even if you do not update `value`.
+
+[[select-display-value]]pass:[<a class="anchor" href="#select-display-value"></a>]`displayValue` (xref:reference/glossary.adoc#node[node])::
+The content of the closed list, in place of the label of the selected option. Without it, the label is the <<option-select-text,`selectText`>>, the title or the value of the selected option.
+
+[[select-title]]pass:[<a class="anchor" href="#select-title"></a>]`title` (string)::
+The hover text of the closed list. Without it, the hover text is the label that the closed list shows.
+
+[[select-show-tooltip]]pass:[<a class="anchor" href="#select-show-tooltip"></a>]`showTooltip` (boolean, default `true`)::
+Set it to `false` to show no hover text on the closed list. This also removes <<select-title,`title`>>.
+
+[[select-disabled]]pass:[<a class="anchor" href="#select-disabled"></a>]`disabled` (boolean)::
+Disables the closed list. It leaves the tab order and does not open.
+
+[[select-force-open]]pass:[<a class="anchor" href="#select-force-open"></a>]`forceOpen` (boolean)::
+Keeps the list open, whatever the user does.
+
+[[select-full-width]]pass:[<a class="anchor" href="#select-full-width"></a>]`fullWidth` (boolean)::
+Stretches the closed list to the width of its parent. The open list is then not limited to 250 px.
+
+[[select-no-border]]pass:[<a class="anchor" href="#select-no-border"></a>]`noBorder` (boolean)::
+Removes the border of the closed list.
+
+[[select-icon]]pass:[<a class="anchor" href="#select-icon"></a>]`icon` (component, default `ChevronDownIcon`)::
+An icon component from the https://lucide.dev/guide/preact[lucide-preact^] library, drawn in the closed list. Pass the component, not a name.
+
+[[select-icon-position]]pass:[<a class="anchor" href="#select-icon-position"></a>]`iconPosition` (string, default `right`)::
+The side of the label that holds the icon: `left` or `right`.
+
+[[select-icon-size]]pass:[<a class="anchor" href="#select-icon-size"></a>]`iconSize` (string, default `sm`)::
+The size of the icon: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+
+[[select-button-icon-class]]pass:[<a class="anchor" href="#select-button-icon-class"></a>]`buttonIconClass` (string)::
+A class name added to the icon.
+
+[[select-toggle-button-class]]pass:[<a class="anchor" href="#select-toggle-button-class"></a>]`toggleButtonClass` (string)::
+A class name added to the closed list.
+
+[[select-class]]pass:[<a class="anchor" href="#select-class"></a>]`class` (string)::
+A class name added to the element around the closed list.
+
+[[select-typeahead]]pass:[<a class="anchor" href="#select-typeahead"></a>]`typeahead` (boolean, default `true`)::
+Lets the user type the first letters of an option. On the closed list, the matching option is selected at once and <<select-on-change,`onChange`>> is called. On the open list, the matching option is highlighted.
+
+[[select-render-label]]pass:[<a class="anchor" href="#select-render-label"></a>]`renderLabel` (function `(state: { toggle: () => boolean }) => node`)::
+Draws your own element in place of the closed list. It receives an object with `toggle`, a function that opens and closes the list, and returns the element to draw. A click on that element already opens and closes the list, so you rarely need `toggle`. The role and the keyboard handling of the closed list are then yours to add.
+
+[[select-data-skip-link-item]]pass:[<a class="anchor" href="#select-data-skip-link-item"></a>]`dataSkipLinkItem` (boolean)::
+Makes the closed list a target of the skip link. The skip link moves the keyboard focus to the first visible element that has this mark.
+
+[[select-aria-label]]pass:[<a class="anchor" href="#select-aria-label"></a>]`aria-label` (string)::
+The accessible name of the closed list.
+
+[[select-children]]pass:[<a class="anchor" href="#select-children"></a>]`children` (array of xref:reference/glossary.adoc#element[element])::
+The options, as `Option` elements. See the usage notes.
+
+[[select-other-props]]pass:[<a class="anchor" href="#select-other-props"></a>]Any other prop (any)::
+Passed to the xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover[`Popover`] that holds the list, such as `placement`, `anchor` and `into`.
+
+=== Returns
+
+The container of a `Popover`. Its trigger is the closed list, a `div` with `role="combobox"`. The open list is a `ul` with `role="listbox"`, at most 300 px high and 250 px wide, in the page body.
+
+=== Usage notes
+
+* Pass the options as an array of `Option` elements, as the signature shows. A single `Option` that is not in an array makes the list fail. So does an entry that is `null` or `false`. The list reads its children as an array of elements.
+* The list keeps its own selection. It shows the choice of the user at once, and follows <<select-value,`value`>> when you change it.
+* The closed list is a tab stop. *Down arrow*, *Space* and *Enter* open it. The arrow keys move the highlight, and *Enter* or *Space* selects the highlighted option and closes the list.
+* The list sets its own `a11yId`. A value that you pass for it has no effect.
+* Choosing an option closes the list.
+
+[#option]
+== Option
+
+One entry of a <<select,`Select`>>. Use it as a child of `Select` only. The `Select` gives each option its position, its selected state and its click handler.
+
+=== Signature
+
+[source,js]
+----
+import { Option } from '@zimbra-client/blocks';
+
+<Option value={id} title={label} />
+----
+
+=== Props
+
+[[option-value]]pass:[<a class="anchor" href="#option-value"></a>]`value` (any)::
+The value that the option stands for. <<select-on-change,`onChange`>> of the `Select` receives it, and <<select-value,`value`>> of the `Select` is compared with it.
+
+[[option-title]]pass:[<a class="anchor" href="#option-title"></a>]`title` (xref:reference/glossary.adoc#node[node])::
+The content of the option. Without it, the option shows its `children`, and then its `value`.
+
+[[option-children]]pass:[<a class="anchor" href="#option-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the option, when you leave out `title`.
+
+[[option-select-text]]pass:[<a class="anchor" href="#option-select-text"></a>]`selectText` (string)::
+The label that the closed list shows while this option is selected. Without it, the closed list shows the title of the option, or its value.
+
+[[option-tooltip]]pass:[<a class="anchor" href="#option-tooltip"></a>]`tooltip` (string)::
+The hover text of the option. Without it, the option shows its `title` as hover text when the text is cut off.
+
+[[option-icon]]pass:[<a class="anchor" href="#option-icon"></a>]`icon` (component, default `CheckIcon`)::
+An icon component from `lucide-preact`, drawn on the selected option.
+
+[[option-icon-position]]pass:[<a class="anchor" href="#option-icon-position"></a>]`iconPosition` (string, default `left`)::
+The side of the text that holds the icon: `left` or `right`. With `right`, the text is also aligned to the right.
+
+[[option-layered]]pass:[<a class="anchor" href="#option-layered"></a>]`layered` (boolean)::
+Adds a transparent layer over the option. Set it when the content of the option has several levels of elements and a click on them does not select the option.
+
+[[option-highlight-class]]pass:[<a class="anchor" href="#option-highlight-class"></a>]`highlightClass` (string)::
+A class name added to the option while it is highlighted.
+
+[[option-class]]pass:[<a class="anchor" href="#option-class"></a>]`class` (string)::
+A class name added to the option.
+
+[[option-other-props]]pass:[<a class="anchor" href="#option-other-props"></a>]Any other prop (any)::
+Set on the `li` element as it is, such as `id`.
+
+=== Returns
+
+An `li` element with `role="option"`. It has `aria-selected="true"` while it is selected.
+
+=== Usage notes
+
+* Do not set `selected`, `focused`, `index`, `a11yId`, `onChange` or `onMouseOver`. The `Select` sets them on each option.
+* Give each option in a list a `key`, so that the list keeps the right option selected when the items change.
+
+[#tabs]
+== Tabs
+
+A row of tabs and the panels that they switch. Use it to split a dialog or a panel into a few parts that the user opens one at a time. Each part is a <<tab,`Tab`>> that holds its own content.
+
+=== Signature
+
+[source,js]
+----
+import { Tabs, Tab } from '@zimbra-client/blocks';
+
+<Tabs active={activeIndex} onChangeActive={setActiveIndex}>
+	<Tab title={firstTitle}>{firstContent}</Tab>
+	<Tab title={secondTitle}>{secondContent}</Tab>
+</Tabs>
+----
+
+=== Props
+
+[[tabs-active]]pass:[<a class="anchor" href="#tabs-active"></a>]`active` (number)::
+The position of the open tab, counted from `0`. Always set it: without it, no tab is open. A change of the prop opens the tab with that position. A click on a tab opens it without changing the prop.
+
+[[tabs-on-change-active]]pass:[<a class="anchor" href="#tabs-on-change-active"></a>]`onChangeActive` (function `(index: number) => void`)::
+Called with the position of the tab when the user opens a tab with a click, or with an arrow key when <<tabs-auto-activation,`autoActivation`>> is set. A change of <<tabs-active,`active`>> does not call it. Its return value is ignored.
+
+[[tabs-auto-activation]]pass:[<a class="anchor" href="#tabs-auto-activation"></a>]`autoActivation` (boolean, default `false`)::
+Opens a tab as soon as an arrow key moves the focus to it. Without it, an arrow key only moves the focus, and the user opens the tab with a click, *Enter* or *Space*.
+
+[[tabs-vertical-orientation]]pass:[<a class="anchor" href="#tabs-vertical-orientation"></a>]`verticalOrientation` (boolean, default `false`)::
+Lays the tabs out in a column and moves between them with the up and down arrow keys. Without it, the tabs sit in a row and the left and right arrow keys move between them.
+
+[[tabs-aria-labelled-by]]pass:[<a class="anchor" href="#tabs-aria-labelled-by"></a>]`ariaLabelledBy` (string)::
+The `id` of an element that names the group of tabs.
+
+[[tabs-matches-screen-md]]pass:[<a class="anchor" href="#tabs-matches-screen-md"></a>]`matchesScreenMd` (boolean)::
+Set it to `true` so that the *Tab* key reaches only the open tab, and the arrow keys reach the others. Without it, every tab is a tab stop.
+
+[[tabs-tabs-wrapper-class]]pass:[<a class="anchor" href="#tabs-tabs-wrapper-class"></a>]`tabsWrapperClass` (string)::
+A class name added to the element around the tabs and the panels.
+
+[[tabs-tab-list-class]]pass:[<a class="anchor" href="#tabs-tab-list-class"></a>]`tabListClass` (string)::
+A class name added to the list of tabs.
+
+[[tabs-tab-item-class]]pass:[<a class="anchor" href="#tabs-tab-item-class"></a>]`tabItemClass` (string)::
+A class name added to each tab.
+
+[[tabs-tab-item-active-class]]pass:[<a class="anchor" href="#tabs-tab-item-active-class"></a>]`tabItemActiveClass` (string)::
+A class name added to the open tab.
+
+[[tabs-tab-panel-class]]pass:[<a class="anchor" href="#tabs-tab-panel-class"></a>]`tabPanelClass` (string)::
+A class name added to each panel.
+
+[[tabs-tab-panel-active-class]]pass:[<a class="anchor" href="#tabs-tab-panel-active-class"></a>]`tabPanelActiveClass` (string)::
+A class name added to the open panel.
+
+[[tabs-refvalue]]pass:[<a class="anchor" href="#tabs-refvalue"></a>]`refvalue` (function `(element: HTMLElement) => void` or object)::
+A Preact ref, a function or an object with `current`, that receives the element of the list of tabs.
+
+[[tabs-children]]pass:[<a class="anchor" href="#tabs-children"></a>]`children` (array of xref:reference/glossary.adoc#element[element])::
+The tabs, as `Tab` elements. An entry that is `null` or `false` is skipped.
+
+=== Returns
+
+A `div` that holds the list of tabs (a `ul` with `role="tablist"`) and the panels. Each tab is a `button` with `role="tab"`.
+
+=== Usage notes
+
+* All panels are in the page at once. The panels that are not open have `aria-hidden="true"` and are hidden by the default style.
+* Moving past the last tab with the arrow keys goes back to the first tab, and the other way round.
+* The default style gives the tabs a border and makes the open tab bold. Set the class props to change it.
+
+[#tab]
+== Tab
+
+One tab of a <<tabs,`Tabs`>>: a title in the row of tabs and the content of its panel. Use it as a direct child of `Tabs`.
+
+=== Signature
+
+[source,js]
+----
+import { Tab } from '@zimbra-client/blocks';
+
+<Tab title={label}>{content}</Tab>
+----
+
+=== Props
+
+[[tab-title]]pass:[<a class="anchor" href="#tab-title"></a>]`title` (xref:reference/glossary.adoc#node[node])::
+The text of the tab in the row of tabs. `Tabs` reads it from the `Tab`.
+
+[[tab-children]]pass:[<a class="anchor" href="#tab-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The content of the panel.
+
+=== Returns
+
+A `div` with `role="tabpanel"` that holds the content. Nothing, when the tab has no `children`.
+
+=== Usage notes
+
+* A tab without `children` still shows its title and can be opened, but it has no panel.
+* `Tabs` sets the other props of a `Tab`, such as `isActive` and `tabPanelId`. Do not set them.
+
+[#choice-input]
+== ChoiceInput
+
+A checkbox or a radio button in the style of the Modern UI. Use it for a yes or no setting, or for one choice among a few. The component draws no text. Put it and its text in a `label` element.
+
+=== Signature
+
+[source,js]
+----
+import { ChoiceInput } from '@zimbra-client/blocks';
+
+<label>
+	<ChoiceInput checked={enabled} onChange={handleChange} />
+	{text}
+</label>
+----
+
+=== Props
+
+[[choice-input-type]]pass:[<a class="anchor" href="#choice-input-type"></a>]`type` (string, default `checkbox`)::
+`checkbox` or `radio`.
+
+[[choice-input-checked]]pass:[<a class="anchor" href="#choice-input-checked"></a>]`checked` (boolean)::
+Whether the input is on.
+
+[[choice-input-indeterminate]]pass:[<a class="anchor" href="#choice-input-indeterminate"></a>]`indeterminate` (boolean)::
+Shows a dash instead of a check mark on a checkbox. It does not change `checked`.
+
+[[choice-input-on-change]]pass:[<a class="anchor" href="#choice-input-on-change"></a>]`onChange` (function `(event: Event) => void`)::
+Called with the change event of the input when the user changes it. Its return value is ignored.
+
+[[choice-input-size]]pass:[<a class="anchor" href="#choice-input-size"></a>]`size` (string, default `smd`)::
+The size of the input: `xs` (12 px), `sm` (16 px), `smd` (20 px), `md` (24 px), `lg` (32 px) or `xl` (40 px).
+
+[[choice-input-custom-size]]pass:[<a class="anchor" href="#choice-input-custom-size"></a>]`customSize` (number)::
+A size in pixels. It replaces <<choice-input-size,`size`>>.
+
+[[choice-input-class]]pass:[<a class="anchor" href="#choice-input-class"></a>]`class` (string)::
+A class name added to the element around the input.
+
+[[choice-input-element-class]]pass:[<a class="anchor" href="#choice-input-element-class"></a>]`elementClass` (string)::
+A class name added to the `input` element.
+
+[[choice-input-is-custom]]pass:[<a class="anchor" href="#choice-input-is-custom"></a>]`isCustom` (boolean, default `false`)::
+Draws <<choice-input-icon,`icon`>> as the shape of the input, in place of the box or the circle. Use it for a coloured shape, or use <<styled-choice-input,`StyledChoiceInput`>>.
+
+[[choice-input-icon]]pass:[<a class="anchor" href="#choice-input-icon"></a>]`icon` (component)::
+The shape of the input, from `lucide-preact`. It counts only with <<choice-input-is-custom,`isCustom`>>.
+
+[[choice-input-custom-icon]]pass:[<a class="anchor" href="#choice-input-custom-icon"></a>]`customIcon` (array of array)::
+An icon node for a shape that `lucide-preact` does not have. See xref:reference/shims/blocks/buttons-and-progress.adoc#button-custom-icon[`customIcon` of `Button`]. It replaces the default shape.
+
+[[choice-input-css-color-value]]pass:[<a class="anchor" href="#choice-input-css-color-value"></a>]`cssColorValue` (string)::
+A CSS colour that fills the shape. Without it, the shape has no fill.
+
+[[choice-input-is-dark]]pass:[<a class="anchor" href="#choice-input-is-dark"></a>]`isDark` (boolean)::
+Draws the check mark in white. Set it for a dark fill.
+
+[[choice-input-is-light-color]]pass:[<a class="anchor" href="#choice-input-is-light-color"></a>]`isLightColor` (boolean)::
+Draws the check mark in black. Set it for a light fill.
+
+[[choice-input-no-check-border]]pass:[<a class="anchor" href="#choice-input-no-check-border"></a>]`noCheckBorder` (boolean)::
+Removes the outline of a custom shape. It counts only with <<choice-input-is-custom,`isCustom`>>.
+
+[[choice-input-stroke-width]]pass:[<a class="anchor" href="#choice-input-stroke-width"></a>]`strokeWidth` (number, default `1`)::
+The line width of the shape.
+
+[[choice-input-clear-focus-after-change]]pass:[<a class="anchor" href="#choice-input-clear-focus-after-change"></a>]`clearFocusAfterChange` (boolean)::
+Removes the focus from the input after each change.
++
+WARNING: Set it on one input only. All inputs share a single reference. With more than one such input on the screen, the focus is removed from the input that rendered last. That is not always the one the user changed.
+
+[[choice-input-custom-component]]pass:[<a class="anchor" href="#choice-input-custom-component"></a>]`customComponent` (any)::
+Accepted and ignored.
+
+[[choice-input-other-props]]pass:[<a class="anchor" href="#choice-input-other-props"></a>]Any other prop (any)::
+Set on the `input` element, such as `name`, `value`, `disabled`, `id` and `aria-label`.
+
+=== Returns
+
+A `span` that holds an `input` element and two icons. The `input` is invisible and covers the icons. The icons draw the shape and the check mark.
+
+=== Usage notes
+
+* Without a `label` element or an `aria-label`, the input has no name for a screen reader.
+* A disabled input is faded and ignores the pointer.
+* A radio button needs the same `name` as the other buttons of its group.
+* The dash of `indeterminate` shows only on a checkbox that is not custom.
+
+[#styled-choice-input]
+== StyledChoiceInput
+
+A <<choice-input,`ChoiceInput`>> with a coloured shape. Use it for a choice that is a colour, such as a swatch in a list of colours. <<color-picker,`ColorPicker`>> is built from it.
+
+=== Signature
+
+[source,js]
+----
+import { StyledChoiceInput } from '@zimbra-client/blocks';
+import { SquareIcon } from 'lucide-preact';
+
+<StyledChoiceInput type="radio" icon={SquareIcon} color="#1a73e8" checked={isSelected} onChange={handleChange} />
+----
+
+=== Props
+
+[[styled-choice-input-color]]pass:[<a class="anchor" href="#styled-choice-input-color"></a>]`color` (string)::
+The fill colour of the shape. Pass a hex value such as `#1a73e8`, a `var(...)` expression, or the name of a CSS custom property such as `--calendar-color-blue`. A name is wrapped in `var()` for you. See xref:reference/shims/blocks/behaviour-helpers-and-constants.adoc[`COLORS`] for the names of the palettes of the Modern UI. The check mark is black on a light hex colour, and the default colour otherwise.
+
+[[styled-choice-input-icon]]pass:[<a class="anchor" href="#styled-choice-input-icon"></a>]`icon` (component)::
+The shape that the colour fills, from `lucide-preact`, such as `SquareIcon`. Always pass it.
+
+[[styled-choice-input-stroke-width]]pass:[<a class="anchor" href="#styled-choice-input-stroke-width"></a>]`strokeWidth` (number, default `0.7`)::
+The line width of the shape.
+
+[[styled-choice-input-other-props]]pass:[<a class="anchor" href="#styled-choice-input-other-props"></a>]Any other prop (any)::
+Passed to <<choice-input,`ChoiceInput`>>, such as `type`, `checked`, `onChange`, `size` and `class`. See its props.
+
+=== Returns
+
+The `ChoiceInput` element, drawn with a custom shape.
+
+=== Usage notes
+
+* The component checks only a hex value for lightness. For a dark fill, pass `isDark`, so that the check mark is white.
+
+[#color-picker]
+== ColorPicker
+
+A set of colour swatches. The user picks one, and, when you allow it, opens a picker for any colour. Use it where the user colours a calendar, a tag or a folder. It follows the palettes of the Modern UI, so the colours match the ones that the Modern UI draws.
+
+=== Signature
+
+[source,js]
+----
+import { ColorPicker } from '@zimbra-client/blocks';
+
+<ColorPicker value={color} onChange={handleChange} showCustomPicker />
+----
+
+=== Props
+
+[[color-picker-value]]pass:[<a class="anchor" href="#color-picker-value"></a>]`value` (number or string)::
+The selected colour. A number is the number of a swatch, from `1`. A hex string, such as `#1a73e8`, selects the swatch that has this colour, or counts as a custom colour when none has it. Without it, no swatch is selected.
+
+[[color-picker-on-change]]pass:[<a class="anchor" href="#color-picker-on-change"></a>]`onChange` (function `(value: number | string, event?: Event) => void`)::
+Called when the user picks a colour. `value` is the number of the swatch, from `1` to `9`, for a standard colour. It is a hex string for a colour of the tag palette from number `10`, and for a custom colour. It is `0` for the swatch of <<color-picker-show-no-color,`showNoColor`>>. A swatch also passes its event as a second argument. The custom picker passes only the colour. Its return value is ignored.
+
+[[color-picker-size]]pass:[<a class="anchor" href="#color-picker-size"></a>]`size` (string, default `lg`)::
+The size of a swatch: `xs`, `sm`, `smd`, `md`, `lg` or `xl`.
+
+[[color-picker-use-tag-colors]]pass:[<a class="anchor" href="#color-picker-use-tag-colors"></a>]`useTagColors` (boolean)::
+Uses the darker palette of tags, with twelve swatches, in place of the nine swatches of calendars.
+
+[[color-picker-use-folder-colors]]pass:[<a class="anchor" href="#color-picker-use-folder-colors"></a>]`useFolderColors` (boolean)::
+Uses the palette of tags without its last colour, which is eleven swatches. It wins over <<color-picker-use-tag-colors,`useTagColors`>> for the list of swatches.
+
+[[color-picker-show-custom-picker]]pass:[<a class="anchor" href="#color-picker-show-custom-picker"></a>]`showCustomPicker` (boolean)::
+Adds a *More…* swatch that opens a picker for any colour. A button there returns to the swatches.
+
+[[color-picker-show-no-color]]pass:[<a class="anchor" href="#color-picker-show-no-color"></a>]`showNoColor` (boolean, default `false`)::
+Adds a swatch for no colour, which gives the value `0`.
+
+[[color-picker-show-label]]pass:[<a class="anchor" href="#color-picker-show-label"></a>]`showLabel` (boolean, default `false`)::
+Shows a heading above the swatches, with the selected colour.
+
+[[color-picker-label-text-id]]pass:[<a class="anchor" href="#color-picker-label-text-id"></a>]`labelTextId` (string)::
+The translation id of the heading. It counts only with <<color-picker-show-label,`showLabel`>>.
+
+[[color-picker-is-context-menu]]pass:[<a class="anchor" href="#color-picker-is-context-menu"></a>]`isContextMenu` (boolean)::
+Calls <<color-picker-on-change,`onChange`>> on each click, also on the selected swatch, and not only on a change. Use it when the picker sits in a menu.
+
+[[color-picker-wrapper-class]]pass:[<a class="anchor" href="#color-picker-wrapper-class"></a>]`wrapperClass` (string)::
+A class name added to the element that holds the swatches.
+
+=== Returns
+
+A fragment: the optional heading and an element with the swatches, as radio buttons. Nothing else is drawn around them. While the custom picker is open, it draws the picker with a back button instead.
+
+=== Usage notes
+
+* Pass `value` back as you receive it. A number and a hex string are both valid.
+* The standard colours are the numbers `1` to `9` because the server accepts only these numbers for a calendar. A colour from number `10` is therefore given as a hex string.
+
+[#label]
+== Label
+
+A small grey label that can be a link or a button. Use it for a short tag-like text, such as a category beside an item.
+
+=== Signature
+
+[source,js]
+----
+import { Label } from '@zimbra-client/blocks';
+
+<Label>{text}</Label>
+----
+
+=== Props
+
+[[label-children]]pass:[<a class="anchor" href="#label-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
+The text of the label.
+
+[[label-href]]pass:[<a class="anchor" href="#label-href"></a>]`href` (string)::
+Makes the label a link.
+
+[[label-on-click]]pass:[<a class="anchor" href="#label-on-click"></a>]`onClick` (function `(event: MouseEvent) => void`)::
+Makes the label a button, when you do not set <<label-href,`href`>>. Called with the click event. Its return value is ignored.
+
+=== Returns
+
+An `a` element with `href`, a `button` element with `onClick`, and a `span` element otherwise.
+
+=== Usage notes
+
+* The label ignores every other prop, such as `class`, `title` and `aria-label`.
+* With both `href` and `onClick`, the label is a link, and `onClick` still runs on a click.
+* A `button` that is inside a form submits the form on a click, because the label sets no `type`.
+
+[#next-step]
+== Next step
+
+Learn how to show information in a card or with an icon in xref:reference/shims/blocks/display-and-layout.adoc[Display and layout].

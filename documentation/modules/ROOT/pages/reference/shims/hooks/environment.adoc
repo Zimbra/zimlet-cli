@@ -1,0 +1,180 @@
+= Environment
+
+Four hooks that tell a component where and how it runs. They cover the client configuration, the analytics tracker, the size of the window and the shared context of the xref:reference/glossary.adoc#modern-ui[Modern UI]. Use them when your xref:reference/glossary.adoc#zimlet[Zimlet] must follow a value that a deployment defines. Use them also to report an action, to adapt to a narrow window, or to reach `zimbraBatchClient` from a component. All four come from `@zimbra-client/hooks`. They send no request.
+
+[#members]
+== Members
+
+<<use-client-config,`useClientConfig`>>::
+Reads values from the client configuration.
+
+<<use-tracking,`useTracking`>>::
+Returns the tracker that reports page views and user actions.
+
+<<use-media-query,`useMediaQuery`>>::
+Tells whether the window matches a media query.
+
+<<use-zimbra-context,`useZimbraContext`>>::
+Returns the shared context of the Modern UI.
+
+[#use-client-config]
+== useClientConfig
+
+Reads values from the client configuration of the Modern UI, such as the product name or the names that it uses in addresses. Use it when your Zimlet needs a value that a deployment can change, so that you do not type it. For the settings of your own Zimlet, use xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration].
+
+=== Signature
+
+[source,js]
+----
+import { useClientConfig } from '@zimbra-client/hooks';
+
+const values = useClientConfig(paths);
+----
+
+=== Parameters
+
+[cols="2,3,6",options="header"]
+|===
+|Name |Type |Description
+
+|`paths`
+|string, array or object
+|The values to read. A string holds dotted paths separated by commas, such as `'routes.slugs, clientName'`. An array holds dotted paths. An object maps a name of your choice to a dotted path, such as `{ slugs: 'routes.slugs' }`.
+
+|===
+
+=== Returns
+
+An object with one property for each path. For a string or an array, the property is named after the last part of the path: `slugs` for `routes.slugs`. For an object, it is named after your key. A path that does not exist gives `undefined`. Without an argument, the object is empty.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Check each value for `undefined`. A deployment can leave a value out.
+* Use the object form when two paths end with the same name. The string and array forms would give both values one property name.
+* A class component cannot call a hook. Use the `clientConfiguration` wrapper from xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour], which takes the same argument.
+
+[#use-tracking]
+== useTracking
+
+Returns the tracker that sends page views and user actions to the analytics service of the deployment. Use it when your Zimlet adds a screen or an action that the administrator wants to count. Report only what the administrator expects, and never personal data.
+
+=== Signature
+
+[source,js]
+----
+import { useTracking } from '@zimbra-client/hooks';
+
+const { tracker } = useTracking();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An object with the property `tracker`. The tracker has these methods:
+
+`tracker.setPageView(path)`::
+Reports a view of the address `path` (string), such as `/my-zimlet/home`.
+
+`tracker.setVirtualPageView({ path })`::
+Reports a view of something that has no address of its own, such as a dialog. `path` (string) names it.
+
+`tracker.setUserAction(data)`::
+Reports an action. `data` (object) describes it, for example `{ action: 'my-zimlet-export' }`.
+
+`tracker.setAccountData(data)`::
+Reports the signed-in account. The Modern UI calls it. Do not call it from a Zimlet.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* The methods do nothing when the administrator has not set up an analytics service.
+* A class component cannot call a hook. Use the `withTracking` wrapper from xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour]. It passes the same `tracker` as a prop.
+
+[#use-media-query]
+== useMediaQuery
+
+Tells whether the window matches a media query, and updates when the answer changes. Use it when a component must render different content on a narrow window, for example a shorter label or a different control. Use a CSS media query instead when only the style changes. See xref:go-deeper/styling.adoc[Styling].
+
+=== Signature
+
+[source,js]
+----
+import { useMediaQuery } from '@zimbra-client/hooks';
+
+const { matchesMediaQuery } = useMediaQuery(query, propName);
+----
+
+=== Parameters
+
+[cols="2,2,6",options="header"]
+|===
+|Name |Type |Description
+
+|`query`
+|string
+|The media query, such as `(max-width: 768px)`.
+
+|`propName`
+|string
+|The name of the property in the result. The default is `matchesMediaQuery`.
+
+|===
+
+=== Returns
+
+An object with one property, named by `propName`. Its value is `true` while the window matches the query, and `false` otherwise.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Pass the same query on every render. The hook reads the answer when the component first shows, and then updates it when the browser reports a change. A different query later keeps the old answer until the next change.
+* The `breakpoints` utility builds queries for the sizes of the Modern UI. `maxWidth(px)` and `minWidth(px)` return the query string. See xref:reference/shims/utilities/browser-and-app.adoc[Browser and app].
+* A class component cannot call a hook. Use the `withMediaQuery` wrapper from xref:reference/shims/hocs/environment-and-ui-behaviour.adoc[Environment and UI behaviour].
+
+[#use-zimbra-context]
+== useZimbraContext
+
+Returns the shared context of the Modern UI inside a component. Use it when a component needs `zimbraBatchClient` and you do not want to pass it down from the factory. It is not the `context` that the factory receives. It holds a different set of fields.
+
+=== Signature
+
+[source,js]
+----
+import { useZimbraContext } from '@zimbra-client/hooks';
+
+const { zimbraBatchClient } = useZimbraContext();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+An object, or `null` when no context is above the component. Use these fields:
+
+`zimbraBatchClient`::
+The same client as the field of the factory context. See xref:reference/context/batch-client.adoc[Batch client].
+
+`zimlets`::
+The same Zimlet manager as the field of the factory context. See xref:reference/context/zimlets.adoc[Zimlet manager].
+
+`keyBindings` and `shortcutCommandHandler`::
+The same objects as the fields of the factory context. See xref:reference/context/keyboard-shortcuts.adoc[Keyboard shortcuts].
+
+The object has more fields for the Modern UI itself. Do not rely on them.
+
+=== Usage notes
+
+* Call it while a component renders, not in the factory, in `init()` or in an event handler. See xref:go-deeper/server-data/data-hooks.adoc#rules[Rules for hooks].
+* Take what you need from the result and pass only that to a child component. Do not pass the whole object down.
+* Read the fields of the factory context from `context` in `init()`. See xref:fundamentals/host-context.adoc[The context object].
+
+[#next-step]
+== Next step
+
+Read the account and the preferences of the user in xref:reference/shims/hooks/account-and-preferences.adoc[Account and preferences].

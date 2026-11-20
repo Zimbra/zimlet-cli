@@ -5,7 +5,7 @@ import { UsersIcon } from 'lucide-preact';
 import { withIntl } from '../../enhancers';
 import usePartnersPath from '../../hooks/use-partners-path';
 
-// The tab in the Contacts area that opens the partners screen.
+// The tab in the Contacts vertical that opens the partners screen.
 const PartnersTabItem = () => {
 	const path = usePartnersPath();
 

@@ -1,0 +1,53 @@
+= config_template.xml
+
+The `config_template.xml` file declares the default settings of a xref:reference/glossary.adoc#zimlet[Zimlet], which an administrator can change on the server without a new build. Look up here the elements and attributes that the file accepts, and the values that the server requires. A wrong `name` or `version`, or an invalid character, leaves the settings out or stops the deployment. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration] to declare settings and read them in your code, and xref:run-package-deploy/deploy.adoc#configure[Configure the Zimlet] to change them on a server.
+
+[#config-file]
+== The file
+
+[[file]]pass:[<a class="anchor" href="#file"></a>]`config_template.xml`::
+The optional file with the default settings. Put it in the root of the project, next to `package.json`. The name is fixed. `zimlet build` copies the file unchanged into the `build` folder. `zimlet package` lists it as a `resource` in the xref:reference/files/descriptor.adoc#resource[descriptor] and adds it to the zip file. A project without the file has no administrator settings. The commands do not read the file, so they do not check that it is valid XML or that `name` and `version` fit the Zimlet. The server reads it when it deploys the zip file.
+
+[#config-root]
+== The zimletConfig element
+
+The root element carries the identity of the settings in two attributes. Both are required.
+
+[[zimlet-config]]pass:[<a class="anchor" href="#zimlet-config"></a>]`<zimletConfig>`::
+The root element, and the only one that the server accepts. Its children are the `global` and `host` elements of the <<config-settings,next section>>. The server logs a warning for any other child and does nothing with it.
+
+[[name]]pass:[<a class="anchor" href="#name"></a>]`name` (string)::
+The name of the Zimlet that the settings belong to. Use the `name` of the xref:reference/files/descriptor.adoc#name[descriptor], which is the `--name` of `zimlet package`. The server stores the settings with the Zimlet of this name. A name that no deployed Zimlet has makes the installation of the settings fail.
+
+[[version]]pass:[<a class="anchor" href="#version"></a>]`version` (string)::
+The version of the settings, which is independent of the version of the Zimlet. Write whole numbers separated by dots, such as `1.0.1`. A value such as `1.0.0-beta` or `v1`, or a missing value, makes the server fail when it reads the file. The server compares the numbers one by one, so `1.10` is higher than `1.2`, and `1.0.1` is higher than `1.0`. A first deployment installs the settings of the file. A later deployment installs them only when this version is higher than the installed one. See xref:run-package-deploy/deploy.adoc#update[Update a Zimlet] for what that replaces.
+
+[#config-settings]
+== The setting elements
+
+[[global]]pass:[<a class="anchor" href="#global"></a>]`<global>`::
+Settings for every server. It holds `property` elements. A file can hold more than one `global` element. The server keeps all of them, and your code receives each one as a separate entry, so read the properties of every entry. See xref:go-deeper/server-data/zimlet-configuration.adoc#read[Read both values] for the code.
+
+[[host]]pass:[<a class="anchor" href="#host"></a>]`<host name="<server-host-name>">`::
+Settings for one server. The `name` attribute is the host name of that server. The server that reads the file keeps only the `host` element whose name equals its own host name, ignoring case, and removes the others. Your code receives the kept element as `host`, next to `global`. It holds `property` elements like `global`.
+
+[[property]]pass:[<a class="anchor" href="#property"></a>]`<property name="<setting-name>">`::
+One setting. The `name` attribute is the key that your code looks up, and the text of the element is the value. A value is always text, so write a number or a switch as text and convert it in your code. The server keeps spaces and line breaks inside the element, so write the value on one line.
++
+WARNING: The file must be valid XML. Write `&` as `&amp;` and `<` as `&lt;` in a value, or put the value in a `<![CDATA[ ... ]]>` section. The server cannot read a file with a bare `&` or `<`, and the deployment fails.
+
+[[allowed-domains]]pass:[<a class="anchor" href="#allowed-domains"></a>]`allowedDomains`::
+A property name that the server reads itself. The value is a list of domain names separated by commas, with no spaces. The server adds each domain, in lower case, to the allowed domains of the proxy servlet of a xref:reference/glossary.adoc#cos[class of service]. It does so when it installs the settings, with the `default` class of service. It does so again when it makes the Zimlet available in a class of service. When the Zimlet is removed from a class of service, the server removes the domains that no other Zimlet there lists. A value in a `host` element takes precedence over the one in `global`.
+
+[#config-server]
+== What the server does with the file
+
+* The server reads the file with an XML parser. It stops the deployment when the file is not valid XML or has a `DOCTYPE` declaration.
+* The server stores the settings with the Zimlet and sends them to the Modern UI with the account data, as the `zimletConfig` of the Zimlet.
+* The server does not store XML comments. `zmzimletctl getConfigTemplate` prints the original file from the zip file, so an administrator still sees them. See xref:reference/glossary.adoc#zmzimletctl[zmzimletctl] for the command.
+* The stored settings are limited to 10240 characters. The server rejects longer settings, so keep the file short and move large texts elsewhere.
+
+[#next-step]
+== Next step
+
+Declare a setting and read it in your code with the steps in xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration].

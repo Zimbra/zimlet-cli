@@ -1,0 +1,160 @@
+= Dates and calendars
+
+The components of `@zimbra-client/components` that let the user enter a date or a time, and that show a calendar by its name and colour. A date field takes a typed or picked day. A time field takes a time from a list. A small item shows one calendar in a list. Use them in a dialog or settings section of your xref:reference/glossary.adoc#zimlet[Zimlet], as the email reminder Zimlet does. They follow the date and time format that the user chose in the settings of the xref:reference/glossary.adoc#modern-ui[Modern UI]. For recipients and formatted text, see xref:reference/shims/components/recipients-and-rich-text.adoc[Recipients and rich text].
+
+[#members]
+== Members
+
+<<date-input,`DateInput`>>::
+A date field with a calendar that the user opens to pick a day.
+
+<<custom-time-picker,`CustomTimePicker`>>::
+A time field with a list of hours and minutes.
+
+<<calendar-option-item,`CalendarOptionItem`>>::
+A calendar name with its colour, for a list of calendars.
+
+[#date-input]
+== DateInput
+
+A date field in which the user types a date or picks a day in a small calendar. Use it when your Zimlet needs one date, such as a due date or a reminder day. It reports a `Date` and keeps no date of its own: you hold the date in your state and pass it back as `dateValue`. It has no time field, so pair it with <<custom-time-picker,`CustomTimePicker`>> when you need one.
+
+=== Signature
+
+[source,js]
+----
+import { DateInput } from '@zimbra-client/components';
+
+<DateInput dateValue={date} onDateChange={handleDateChange} />
+----
+
+=== Props
+
+[[date-input-date-value]]pass:[<a class="anchor" href="#date-input-date-value"></a>]`dateValue` (object)::
+The date to show. A `Date`, or a xref:reference/shims/libraries.adoc#moment[moment] object. The field is empty when you leave it out. The field shows the date in the date format that the user chose in the settings.
+[[date-input-on-date-change]]pass:[<a class="anchor" href="#date-input-on-date-change"></a>]`onDateChange` (function `(date: Date, isValid?: boolean) => void`)::
+Called when the user types a date or picks a day. Its return value is ignored. Set it: the text field calls it without a check, so typing throws an error when it is missing.
++
+`date` is a `Date`. The text field passes `isValid` when the user types. It is `true` for a complete valid date and `false` for text that is not one yet. For such text, `date` is an invalid `Date`, so check `isNaN(date)` before you use it. A day picked in the calendar calls the function with the date only.
++
+Text that the user types gives midnight of the day. A day picked in the calendar keeps the time of <<date-input-date-value,`dateValue`>> when you set one.
+[[date-input-disabled]]pass:[<a class="anchor" href="#date-input-disabled"></a>]`disabled` (boolean)::
+Disables the field and the calendar.
+[[date-input-name]]pass:[<a class="anchor" href="#date-input-name"></a>]`name` (string)::
+The `name` of the `input` element.
+[[date-input-class]]pass:[<a class="anchor" href="#date-input-class"></a>]`class` (string)::
+A class name added to the field. It goes on the container of the text field and the icon, or on the `input` element of the browser's own date field (see <<date-input-use-native-date-input,`useNativeDateInput`>>).
+[[date-input-use-native-date-input]]pass:[<a class="anchor" href="#date-input-use-native-date-input"></a>]`useNativeDateInput` (boolean)::
+Draws the date field of the browser (`input` with `type="date"`) when the browser supports it. It replaces the text field with the calendar of the Modern UI. On a touch device that supports the date field, the browser's field is always used. In Safari on a device without touch, this prop has no effect: Safari gets the text field without a calendar.
++
+The browser's field ignores <<date-input-enable-clear,`enableClear`>>, <<date-input-handle-invalid-date,`handleInvalidDate`>>, <<date-input-invalid,`invalid`>>, <<date-input-full-width,`fullWidth`>>, <<date-input-hide-icon,`hideIcon`>> and the placeholder. It calls <<date-input-on-date-change,`onDateChange`>> with the date only, and not at all when the user clears the field. The Safari text field has no calendar, so it ignores <<date-input-enable-clear,`enableClear`>> and <<date-input-full-width,`fullWidth`>> too.
+[[date-input-prevent-future-dates]]pass:[<a class="anchor" href="#date-input-prevent-future-dates"></a>]`preventFutureDates` (boolean)::
+Does not accept a day after today. The browser's field sets its latest day to today. In the text field, <<date-input-on-date-change,`onDateChange`>> is called with a typed date after today and `false`, and the field is marked invalid unless you set <<date-input-handle-invalid-date,`handleInvalidDate`>>.
++
+WARNING: In the text field, the calendar still lets the user pick a day after today, and <<date-input-on-date-change,`onDateChange`>> receives it. Check the date in your handler when a later day must not be saved.
+[[date-input-enable-clear]]pass:[<a class="anchor" href="#date-input-enable-clear"></a>]`enableClear` (boolean)::
+Shows a *Clear* button in the calendar while <<date-input-date-value,`dateValue`>> is set. The button closes the calendar and calls <<date-input-on-clear,`onClear`>>.
+[[date-input-on-clear]]pass:[<a class="anchor" href="#date-input-on-clear"></a>]`onClear` (function `() => void`)::
+Called when the user clicks *Clear*. Its return value is ignored. Remove the date from your state in it. It is used with <<date-input-enable-clear,`enableClear`>>.
+[[date-input-handle-invalid-date]]pass:[<a class="anchor" href="#date-input-handle-invalid-date"></a>]`handleInvalidDate` (function `(isInvalid: boolean, value?: string) => void`)::
+Called when the text field loses the focus and the calendar is closed. Its return value is ignored. `isInvalid` is `true` when the user left text that is not a valid date, and `value` is that text. `value` is missing when the field holds a valid date or the user typed nothing.
++
+With this prop, the field does not mark the text as invalid while the user types. It marks it when the focus leaves.
+[[date-input-invalid]]pass:[<a class="anchor" href="#date-input-invalid"></a>]`invalid` (boolean)::
+Draws the text field in the invalid look. The field also does this by itself for text that is not a date.
+[[date-input-full-width]]pass:[<a class="anchor" href="#date-input-full-width"></a>]`fullWidth` (boolean)::
+Makes the field fill the width of its parent, and not only the width of its content.
+[[date-input-hide-icon]]pass:[<a class="anchor" href="#date-input-hide-icon"></a>]`hideIcon` (boolean)::
+Hides the calendar icon next to the text field.
+[[date-input-other-props]]pass:[<a class="anchor" href="#date-input-other-props"></a>]Any other prop (any)::
+Set on the `input` element of the text field, such as `id` and `aria-label`. The placeholder and the input, blur and key handlers are the field's own and replace yours.
+
+=== Returns
+
+A `div` that holds the text field, the calendar in a popover and the calendar icon. With the browser's date field, a `div` with an `input` of `type="date"` and the icon.
+
+=== Usage notes
+
+* The user types the date in exactly the date format of the settings, and the placeholder shows that format. A date in another form, such as `3/5/2026` for `MM/DD/YYYY`, is not accepted.
+* The text field accepts only digits and `/`. For a format with another separator, such as `DD.MM.YYYY`, the user picks the day in the calendar.
+* The calendar opens when the user clicks the field, and on *Enter*, *Space* or *Alt+Down arrow*. It closes on *Escape* or *Alt+Up arrow*.
+
+[#custom-time-picker]
+== CustomTimePicker
+
+A time field with a drop-down list of hours and minutes. Use it with <<date-input,`DateInput`>> when your Zimlet needs a date and a time, as the email reminder does. It changes only the hour and the minute of the date that you pass, and reports the new `Date`. The list offers every 15 minutes. The user can type any other minute in the field.
+
+The component loads when it is first drawn, so it shows an empty space for a moment.
+
+=== Signature
+
+[source,js]
+----
+import { CustomTimePicker } from '@zimbra-client/components';
+
+<CustomTimePicker value={date} onDateChange={handleDateChange} />
+----
+
+=== Props
+
+[[custom-time-picker-value]]pass:[<a class="anchor" href="#custom-time-picker-value"></a>]`value` (object)::
+The date and time to show. A `Date`, or a xref:reference/shims/libraries.adoc#moment[moment] object. Always set it. Without it the field shows the current time, and picking a time throws an error when <<custom-time-picker-on-date-change,`onDateChange`>> is set.
+[[custom-time-picker-on-date-change]]pass:[<a class="anchor" href="#custom-time-picker-on-date-change"></a>]`onDateChange` (function `(date: Date) => void`)::
+Called when the user picks a time in the list or types a valid time. Its return value is ignored. `date` is a copy of <<custom-time-picker-value,`value`>> with the new hour and minute. Its day, seconds and milliseconds stay as they were.
+[[custom-time-picker-disabled]]pass:[<a class="anchor" href="#custom-time-picker-disabled"></a>]`disabled` (boolean)::
+Disables the field.
+[[custom-time-picker-format]]pass:[<a class="anchor" href="#custom-time-picker-format"></a>]`format` (string)::
+A xref:reference/shims/libraries.adoc#moment[moment] format for the time in the field, such as `HH:mm`. The default is the time format that the user chose in the settings. The placeholder shows this value, or `HH:mm` when you set none. The user types a time in the same format.
+[[custom-time-picker-class]]pass:[<a class="anchor" href="#custom-time-picker-class"></a>]`class` (string)::
+A class name added to the container of the field.
+[[custom-time-picker-full-width]]pass:[<a class="anchor" href="#custom-time-picker-full-width"></a>]`fullWidth` (boolean)::
+Makes the field fill the width of its parent, and not only the width of its content.
+[[custom-time-picker-ignore-target-click-as-outside]]pass:[<a class="anchor" href="#custom-time-picker-ignore-target-click-as-outside"></a>]`ignoreTargetClickAsOutside` (boolean)::
+Lets a click on the field close the list while it is open. Without it, the click closes the list as a click outside and then opens it again.
+
+=== Returns
+
+A `div` that holds the time field and its list.
+
+=== Usage notes
+
+* Hours are listed with *AM* and *PM*, or as 24 hours, as the time format preference of the user says. The component reads the preference once, when it is first drawn.
+* The list has no seconds. The seconds of <<custom-time-picker-value,`value`>> are kept.
+* Keep one date in your state for <<date-input,`DateInput`>> and this component. A day typed in `DateInput` gives midnight, so the time is lost when you store that date.
+
+[#calendar-option-item]
+== CalendarOptionItem
+
+A calendar name with a small square in the colour of the calendar. Use it to draw a calendar in a list or as a selected value. An example is the `Option` children of a `Select` from xref:reference/shims/blocks/form-inputs-and-choices.adoc#select[Form inputs and choices]. It draws one calendar and is not interactive.
+
+=== Signature
+
+[source,js]
+----
+import { CalendarOptionItem } from '@zimbra-client/components';
+
+<CalendarOptionItem calendar={calendar} />
+----
+
+=== Props
+
+[[calendar-option-item-calendar]]pass:[<a class="anchor" href="#calendar-option-item-calendar"></a>]`calendar` (object)::
+The calendar to draw, an item of the list that xref:reference/shims/hooks/calendar-and-metadata.adoc#use-calendars-data[`useCalendarsData`] returns. Set it, with a `name`: the component reads `calendar.name` and throws an error without it. It uses two fields.
++
+* `name` (string): the text to show. When the translations hold `folders.<name>` (the first space in the name becomes an underscore), the component shows that text. This is how the names of the default calendars are translated.
+* `color` (number): the colour, from 1 to 9. A missing value, 0 and 1 give blue. Another value gives a square with no colour.
+[[calendar-option-item-class-name]]pass:[<a class="anchor" href="#calendar-option-item-class-name"></a>]`className` (string)::
+A class name added to the container. The component has no `class` prop.
+
+=== Returns
+
+A `div` that holds the colour square and the name. The name is cut with an ellipsis when it does not fit.
+
+=== Usage notes
+
+* The name is not a link or a button. Put it inside the `Option` or the `displayValue` of a list so that it can be chosen.
+
+[#next-step]
+== Next step
+
+Continue with the components for recipients and formatted text, in xref:reference/shims/components/recipients-and-rich-text.adoc[Recipients and rich text].
