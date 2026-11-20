@@ -1,6 +1,11 @@
 = Deprecated
 
-Do not use these fields in new Zimlets. Each entry names what to use instead, or says that there is no replacement yet. Take a field from the context first, as in `const { cache } = context;`.
+[WARNING]
+====
+*Do not use these fields in new Zimlets.* A future release will remove them.
+====
+
+Each entry names what to use instead, or says that there is no replacement yet. Take a field from the context first, as in `const { cache } = context;`.
 
 [[cache]]pass:[<a class="anchor" href="#cache"></a>]`cache`::
 An object with `get(key)` and `set(key, value)` that keeps values in the browser across a page reload. Do not use it. Zimlets that load from the server share one cache entry, and a value that one Zimlet saves can be lost when another saves. Use `localStorage` with a key that starts with your Zimlet name instead. For values that follow the user, use the `useCustomMetaData` hook. See xref:reference/shims/hooks.adoc[Hooks].

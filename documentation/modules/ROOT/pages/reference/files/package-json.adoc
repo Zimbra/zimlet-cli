@@ -82,18 +82,6 @@ Small helper functions for arrays, objects and functions, such as `sortBy` and `
 [[immutability-helper]]pass:[<a class="anchor" href="#immutability-helper"></a>]`immutability-helper`::
 Returns an updated copy of an object or array with `update`. Use it in reducers. The source is in the https://github.com/kolodny/immutability-helper[`immutability-helper` repository on GitHub^].
 
-[#bundled-integrations]
-==== Service integrations
-
-[[dropbox]]pass:[<a class="anchor" href="#dropbox"></a>]`dropbox`::
-The client library of the Dropbox service, for a Zimlet that connects to a Dropbox account. The source is in the https://github.com/dropbox/dropbox-sdk-js[`dropbox` repository on GitHub^].
-
-[[zimbra-oauth-client]]pass:[<a class="anchor" href="#zimbra-oauth-client"></a>]`@zimbra/oauth-client`::
-Connects the reader's account to a third-party service with OAuth, with `OAuthClient`, `AuthorizeRoute` and `AuthorizeWindowOpener`. It is not on the public npm registry, so you cannot install it for your own Zimlet.
-
-[[zimbra-cloud-common]]pass:[<a class="anchor" href="#zimbra-cloud-common"></a>]`@zimbra/cloud-common`::
-Components and helpers that the cloud integration Zimlets share. It is not on the public npm registry, so you cannot install it for your own Zimlet.
-
 [#devdependencies]
 === Tools in `devDependencies`
 

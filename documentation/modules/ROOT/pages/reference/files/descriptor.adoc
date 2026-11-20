@@ -1,6 +1,11 @@
 = Descriptor XML
 
-The descriptor is the XML file that tells the Zimbra server what a xref:reference/glossary.adoc#zimlet[Zimlet] is. It holds the name, version, label and description, the files that belong to the Zimlet, and the Modern UI versions it supports. `zimlet package` writes it for you, so you never edit it. Look up here what each attribute and element means, where its value comes from, and what to check when the server rejects a package. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files] to produce one, and xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] for what the server does with it.
+[NOTE]
+====
+*`zimlet package` writes this file for you, so you never edit it.* Read this reference only to look up an attribute. Read it also if the server rejected a package.
+====
+
+The descriptor is the XML file that tells the Zimbra server what a xref:reference/glossary.adoc#zimlet[Zimlet] is. It holds the name, version, label and description, the files that belong to the Zimlet, and the Modern UI versions it supports. Look up here what each attribute and element means, where its value comes from, and what to check when the server rejects a package. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files] to produce one, and xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] for what the server does with it.
 
 [#descriptor-file]
 == The file
