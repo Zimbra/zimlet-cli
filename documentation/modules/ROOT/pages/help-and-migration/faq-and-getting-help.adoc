@@ -1,0 +1,119 @@
+= FAQ and getting help
+
+Zimlet authors ask the same few questions when they set up, build, run and deploy a xref:reference/glossary.adoc#zimlet[Zimlet]. Each answer is short and points to the page that covers the topic. If you cannot find an answer, or you find a mistake, report it in the issue tracker. Include the details that let someone reproduce the problem.
+
+[#set-up]
+== Set up
+
+[#need-a-server]
+=== Do I need my own Zimbra server?
+
+Yes. The `zimlet` tool only builds your Zimlet and serves it from your machine. A Zimbra server that runs the xref:reference/glossary.adoc#modern-ui[Modern UI] loads and runs it. See xref:getting-started/prerequisites.adoc#zimbra-server[Get a Zimbra server].
+
+[#node-version]
+=== Which Node.js version do I need?
+
+Node.js 24.18.0 or a later 24 version, and npm 11. See xref:getting-started/setup-environment.adoc#install-node[Install Node 24].
+
+[#find-version]
+=== How do I find the Modern UI version of my server?
+
+The *About* dialog of the Modern UI shows it. See xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version].
+
+[#build]
+== Build a Zimlet
+
+[#which-libraries]
+=== Which libraries can I import?
+
+Import Preact, its hooks and the components of the Modern UI by name. The build uses the Modern UI's copy of each. The build adds every other package that your code imports to your Zimlet bundle. A package that you install but never import stays out. See xref:fundamentals/shared-libraries.adoc[Shared libraries] and the list in xref:reference/shims.adoc[Shared modules].
+
+[#use-react]
+=== Can I use React?
+
+Imports of `react` and `react-dom` resolve to `preact/compat`, so write the component with Preact. Not every React API builds. See xref:help-and-migration/known-limitations-and-gaps.adoc#react-dom-client[Known limitations and gaps] for `react-dom/client`.
+
+[#languages]
+=== How do I show text in more than one language?
+
+Keep each language in a locale file and show the text with the localization components. See xref:go-deeper/localization.adoc[Localization].
+
+[#call-services]
+=== How do I call the Zimbra server or another service?
+
+Use a data hook or the batch client for Zimbra data. Send a request to another service through the server proxy. See xref:go-deeper/server-data.adoc[Server data] and xref:go-deeper/advanced.adoc#call-through-the-proxy[Call an external service through the proxy].
+
+[#keep-secrets]
+=== Where do I keep an API key or a password?
+
+Not in the Zimlet. The browser downloads the code of a Zimlet, so every user of the Zimlet can read it. See xref:go-deeper/security-and-best-practices.adoc#secrets-and-tokens[Keep secrets and tokens out of the Zimlet].
+
+[#run-and-deploy]
+== Run, package and deploy
+
+[#reload]
+=== Why does my change not show after I save?
+
+`zimlet watch` rebuilds the Zimlet when you save, but the open Modern UI page keeps the old code. Reload the page. See xref:run-package-deploy/run-and-debug.adoc#see-a-change[See a change].
+
+[#version-range]
+=== Which Modern UI versions will my Zimlet support?
+
+The xref:reference/glossary.adoc#semver-range[semver range] that you pass to `zimlet package` with `--zimbraXVersion`. Without the option, the range is `>=1.0.0`, which accepts every version, so set it to the versions that you tested. See xref:run-package-deploy/build-and-package.adoc#choose-range[Choose the Modern UI versions your Zimlet supports].
+
+[#who-deploys]
+=== Who deploys my Zimlet?
+
+An administrator of the Zimbra server deploys the zip file that `zimlet package` creates. You can deploy it yourself if you have access to the Admin Console or a shell on the server. See xref:run-package-deploy/deploy.adoc[Deploy a Zimlet].
+
+[#users-do-not-see-it]
+=== Why do users not see my deployed Zimlet?
+
+Start with the ordered checks in xref:help-and-migration/troubleshooting.adoc#if-nothing-appears[If nothing appears].
+
+[#update-or-roll-back]
+=== How do I update a Zimlet or go back to an earlier version?
+
+Deploy the zip file of the version that you want, in the same way as the first deployment. See xref:run-package-deploy/deploy.adoc#update[Update a Zimlet] and xref:run-package-deploy/deploy.adoc#roll-back[Roll back to an earlier version].
+
+[#get-help]
+== Get help
+
+[#check-first]
+=== Check these pages first
+
+Your problem may already have an answer:
+
+* xref:help-and-migration/troubleshooting.adoc[Troubleshooting] lists symptoms, causes and fixes.
+* xref:help-and-migration/known-limitations-and-gaps.adoc[Known limitations and gaps] lists defects and what to do about them today.
+* The browser console shows what the sideloader and your Zimlet report. See xref:run-package-deploy/run-and-debug.adoc#browser-console[Read the browser console].
+
+[#report]
+=== Ask a question or report a problem
+
+Open an issue in the https://github.com/Zimbra/zimlet-cli/issues[Zimlet CLI issue tracker^]. Use it for a question you cannot answer from these pages and for a page that is unclear, wrong or missing a step. Use it also for a problem with the default template or the `zimlet` tool. Open one issue for each question or problem.
+
+[#what-to-include]
+=== What to include
+
+Give enough detail that someone else can reproduce the problem:
+
+* What you did, what you expected and what happened. For a problem in the guide, name the page and the section.
+* The full text of each error, from the terminal or the browser console, and the command or step that caused it.
+* The versions of the tools. Run these commands and paste the output:
++
+[source,sh]
+----
+zimlet --version
+node --version
+npm --version
+----
+* The version of your Modern UI, as xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version] describes, and the range that you passed with `--zimbraXVersion`.
+* A small project that shows the problem, when you can make one.
+
+WARNING: The issue tracker is public. Remove credentials, tokens, internal host names, customer data and message content from everything that you paste or attach. Do not paste the `context` object or request headers.
+
+[#next-step]
+== Next step
+
+Before you open an issue, check xref:help-and-migration/known-limitations-and-gaps.adoc[Known limitations and gaps] for your problem.

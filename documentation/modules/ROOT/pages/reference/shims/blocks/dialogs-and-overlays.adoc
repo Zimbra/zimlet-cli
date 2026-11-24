@@ -192,6 +192,8 @@ A `div` element, with an opacity of 30 percent black and small rounded corners.
 
 Content that opens beside a trigger and closes on an outside click. Use it for a small card of details or a short list of actions that belongs to one control. Use <<dialog,`Dialog`>> when the user must act on the content before going on, and <<tooltip,`Tooltip`>> for a short hint that you show and hide yourself.
 
+WARNING: The popover does not move the focus back to the trigger when *Escape* closes it. A keyboard user who was inside the content can lose their place. Move the focus to your trigger yourself when the popover closes.
+
 === Signature
 
 [source,js]

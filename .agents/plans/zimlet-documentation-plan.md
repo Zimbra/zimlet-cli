@@ -661,25 +661,33 @@ _Purpose: complete facts for lookup, no tutorial text. Every API, property, opti
 
 _Purpose: help a reader who is stuck, has a question, or is moving from Classic Zimlets. Start from the symptom or question, not from the feature._
 
-- **P36 `help-and-migration/troubleshooting.adoc` – Troubleshooting** (Not started)
-  - If nothing appears – a checklist of causes, in the order to check (moved from Run and debug).
-  - Symptom, cause, fix table – symptoms as the reader sees them.
-  - Brief: seed rows: Zimlet silently absent (the server leaves out Zimlets whose version range does not match the Modern UI or that are not enabled for the user), certificate not accepted, `createElement` missing, import not shimmed, missing `zimlet.label`, asset 404 (`publicPath`), disabled for the COS, `off` throws. Source: [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md).
-- **P37 `help-and-migration/faq-and-getting-help.adoc` – FAQ and getting help** (Not started)
-  - FAQ – answers to the questions authors ask most.
-  - Report a documentation or template problem.
-  - Where to ask for help and what to include.
-  - Brief: built from the guide's facts and the Support and Engineering question review.
-- **P38 `help-and-migration/known-limitations-and-gaps.adoc` – Known limitations and gaps** (Not started)
-  - Missing information – what is not yet available and who can supply it.
-  - Known defects and workarounds.
-  - Brief: user-facing form of the [known issues](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md); each gap with what is missing, impact, workaround, owner or next action.
+- **P36 `help-and-migration/troubleshooting.adoc` – Troubleshooting** (Drafted)
+  - If nothing appears – an ordered checklist of five causes: the Zimlet did not load, the server left it out, the user turned it off, the slot or its key is wrong, and the handler throws an error that the Modern UI does not log.
+  - The Zimlet does not load in development – a screenshot of the sideloader table after a failed load, then the symptoms: `Failed to fetch` (server, certificate, Chrome access, Persist on Reload), `Failed to construct handlerObject`, another error in the status, `EADDRINUSE`, and old code after a save.
+  - After you deploy a Zimlet – no user sees it (version range), some users miss it (class of service, user setting), a change does not show (cache), an image or font returns `403`, and other Zimlets stop.
+  - An error appears when the Zimlet runs – `Export … was not found`, and the error of `zimletEventEmitter.off`.
+  - The build or package step fails – an import that cannot be resolved, a missing `build` folder, a missing label and description (no zip, exit code 0), and `label = undefined` in a `.properties` file.
+  - Brief: each symptom is a description list item with an inline anchor, a Cause and a Fix, and links to the page that owns the steps. The entries were checked against the CLI, host and server code, and the build, package, watch and handler cases were run in a scratch project. The user confirmed the certificate and Chrome access (*Apps on device*) causes of `Failed to fetch`, and said that a stale cache after a deployment can happen but is not guaranteed, so the page advises a flush. The screenshot has the dev tools open, which the user accepted. Source: [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md). Keep the anchor `if-nothing-appears`: the FAQ links to it.
+- **P37 `help-and-migration/faq-and-getting-help.adoc` – FAQ and getting help** (Drafted)
+  - Set up – whether you need your own server, the Node.js version and how to find the Modern UI version.
+  - Build a Zimlet – which libraries to import, React, languages, calling the server or another service, and where not to keep secrets.
+  - Run, package and deploy – why a saved change needs a page reload, the version range, who deploys, a Zimlet users do not see, and update or roll back.
+  - Get help – the pages to check first, asking a question or reporting a guide, template or `zimlet` tool problem in the Zimlet CLI issue tracker (`https://github.com/Zimbra/zimlet-cli/issues`), and what to include (steps, errors, tool and Modern UI versions, a small project, nothing secret).
+  - Brief: each answer is one or two sentences and links to the page that owns the topic (one home per topic). The user chose the Zimlet CLI issue tracker for questions and for every kind of report. The Support and Engineering question review that the earlier brief named is not in the checked out repositories, so the questions come from the guide's own pages and the known issues. Add a question when that review is available.
+- **P38 `help-and-migration/known-limitations-and-gaps.adoc` – Known limitations and gaps** (Drafted)
+  - Create and package – seven defects of `zimlet create` and `zimlet package`, each with a suggestion.
+  - Run and build – the `zimlet watch` address and port, and the `react-dom/client` import.
+  - Shared libraries – an import of a name that the Modern UI does not export: the build accepts it in both cases, and the run time failure differs (a thrown `Export … was not found` for a name that the build knows, `undefined` for a name it does not); no list of names. Also `preact/jsx-runtime`.
+  - Deploy – images and fonts of a deployed Zimlet that the server refuses (403 with `--publicpath`, 404 without), with the `zimlet.config.js` workaround that adds the version parameter to the address of built images, and the inline option.
+  - Modern UI behaviour – one Zimlet that fails to start stopping the others, `unload()` and `destroy()`, the shared name of deployed Zimlets, `removeModal`, a failing message processor, a new tag that is not listed.
+  - Brief: user-facing form of the [known issues](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md), limited to the author-facing High and Medium issues (the user chose this scope because all 78 entries would make the page very long). Each entry is a description list item with an inline anchor, written for the Zimlet author: the symptom, the cause in plain words and a separate "Suggestion" bullet (a workaround or a solution), with a link to the page that owns the topic. Do not write who must fix it or when: the reader cannot act on that, and the page promises no fix. The known issues file keeps owners and fixes. Entries are checked against Modern UI 4.50 and `zimlet` 19.0.0. Left out: the shared component defects KI-76, KI-79 and KI-81 (each is a warning on the reference page of `TinyMceComposer`, `ContactEditor` and `AppointmentEdit`: one home per topic), Low issues, KI-62 (no rule for numbering a Zimlet's own version: the descriptor range alone decides whether the server offers the Zimlet, and the build and package page already says so), KI-14 and KI-42 (covered on the deprecated context page), KI-15 and KI-60 (slot catalog classification, not author-facing), KI-29 (OAuth flows) and KI-63 (the Classic to Modern list, kept on P39). Re-check the entries when the known issues file changes.
 - **P39 `help-and-migration/classic-vs-modern.adoc` – Classic and Modern Zimlets** (Drafted)
-  - Differences table – what differs between Classic and Modern UI Zimlets, and how the server keeps them apart.
-  - Use cases that the Modern UI covers – Classic use cases, grouped from the Classic hooks, with the Modern feature for each.
-  - Use cases that only a Classic Zimlet can do – each with its Classic hooks and a workaround, an alternative or "none found".
-  - Not confirmed – capabilities with no evidence (Admin Console Zimlets).
-  - Brief: the list is built from the hooks that the Classic client calls on a Zimlet and the descriptor elements it reads, compared with the Modern slot catalog and app events; it is still not an authoritative inventory (gap KI-63). Mark entries with no evidence as not confirmed. Engineering reviews this page last, after all pages are drafted. Sources: `runtime.md` (compat disabled), `context-and-shims.md` (`isCompat`, deprecated `zimbra`), `packaging-deployment.md` §3 (semver filter). The only page where Classic is discussed (rule in `write-doc.md` section 2).
+  - Introduction – the outcome first, with a short list that points to the three groups of use cases.
+  - Use cases that the Modern UI covers – Classic use cases grouped by area (app, menus and dialogs; messages and contacts; composing and sending; calendar; options and data), as description lists with the main Classic hook or call and the Modern feature for each. The hooks and calls are cross-checked against the Classic Zimlets of the product (which hooks, descriptor elements and calls they use), so common ones, such as `menuItemSelected`, the Zimbra request calls and the proxy calls, are listed.
+  - Use cases with a workaround – each with a workaround or a close alternative and the part it does not cover, grouped by area, with all its Classic hooks.
+  - Use cases with no alternative – each with its Classic hooks, for use cases that the Modern UI cannot cover in any way.
+  - Differences in how the two kinds are built – a table of what differs between Classic and Modern UI Zimlets, and how the server keeps them apart. Placed last because it supports planning and is not the first question of a reader.
+  - Brief: the list is built from the hooks that the Classic client calls on a Zimlet and the descriptor elements it reads, compared with the Modern slot catalog and app events; it is still not an authoritative inventory (gap KI-63). Engineering reviews this page last, after all pages are drafted. Sources: `runtime.md` (compat disabled), `context-and-shims.md` (`isCompat`, deprecated `zimbra`), `packaging-deployment.md` §3 (semver filter). The only page where Classic is discussed (rule in `write-doc.md` section 2).
 - **P44 `help-and-migration/breaking-changes.adoc` – Breaking changes in the latest release** (Not started)
   - Who is affected – the Zimlet authors, build machines and administrators that move to the latest release, and what stays the same.
   - Summary table – one row for each breaking change: area, what changed, who is affected, and a link to its section.

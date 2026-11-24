@@ -136,8 +136,8 @@ The `package` script in `package.json` packages the Zimlet for Modern UI version
 * Fix: Run the command in the folder where the project goes, and give only the name: `zimlet create default my-zimlet`.
 
 `npm start` stops with `Error: listen EADDRINUSE`.::
-* Cause: Another program, such as a second development server, uses port 8081.
-* Fix: Stop that program, or start your Zimlet on another port with `npm start -- --port 8082`. Use the same port in the sideloader address and when you accept the certificate.
+* Cause: Another program, such as a second development server, uses port 8081. The tool normally moves to the next free port, but it can miss a program that listens only on `localhost`.
+* Fix: Stop that program, or start your Zimlet on another port with `npm start -- --port 8082`. Use the port that the terminal prints in the sideloader address and when you accept the certificate.
 
 The sideloader table shows `undefined` as the name.::
 * Cause: You loaded the Zimlet without a name.

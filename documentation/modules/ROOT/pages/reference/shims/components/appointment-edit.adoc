@@ -2,7 +2,7 @@
 
 The form of the xref:reference/glossary.adoc#modern-ui[Modern UI] calendar in which the user creates, edits, copies or forwards an event, or proposes a new time for it. It draws the fields, the availability of the attendees and the buttons, and it asks the user before it sends invitations or discards changes. Use it when your xref:reference/glossary.adoc#zimlet[Zimlet] must show the same form as the calendar. To add a control to the form, register one of its xref:fundamentals/extending-the-ui.adoc[slots] instead.
 
-WARNING: The shared modules export the form alone. The calendar screen of the Modern UI builds most of its props. It keeps the values of the form in the Redux store of the application, in an entry for the event tab. No shared module exports the actions that fill that entry. Without the entry, the form throws an error when it draws. See xref:go-deeper/redux.adoc[Shared state with Redux].
+WARNING: The shared modules export the form alone. The calendar screen of the Modern UI builds most of its props. It keeps the values of the form in the Redux store of the application, in an entry for the event tab. No shared module exports the actions that fill that entry. Without the entry, the form throws an error when it draws. Do not draw it in a screen of your own. To collect event details there, build a form from the xref:reference/shims/components/form-fields.adoc[form field components]. See xref:go-deeper/redux.adoc[Shared state with Redux].
 
 [#signature]
 == Signature

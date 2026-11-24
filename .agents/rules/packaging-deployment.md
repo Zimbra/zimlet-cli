@@ -17,7 +17,7 @@ Follow these when running `zimlet package`, writing `config_template.xml`, deplo
 ## Bundle content
 
 - Ship the Zimlet as a single `index.js` (plus `index.css`). The server concatenates only the `<include>`d scripts.
-- Do not rely on `--publicpath "/service/zimlet/<name>/"` to load images or fonts of a deployed Zimlet: the server answers 403 (known issue [KI-47](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md)).
+- Do not rely on `--publicpath "/service/zimlet/<name>/"` alone to load images or fonts of a deployed Zimlet: the server answers 403 without the Modern UI version in the address (known issue [KI-47](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md)). Add `?zimbraXZimletCompatibleWith=<version in the --zimbraXVersion range>` to the built address in `zimlet.config.js`, or inline the image.
 
 ## `config_template.xml`
 

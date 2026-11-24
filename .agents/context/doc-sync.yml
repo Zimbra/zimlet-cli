@@ -1,0 +1,20 @@
+# Documentation sync baseline.
+# For each source repository, the last master commit whose changes the Zimlet
+# documentation (documentation/ and the .agents/reference files) has been
+# checked against. Changes after these commits are not yet reflected in the docs.
+#
+# Rules:
+# - Record full commit SHAs from a shared branch (master), never from a feature branch.
+# - Advance a SHA only after the changes up to it have been reviewed and the docs updated.
+# - Do not add commit messages or commit dates here; some repositories are private.
+# - Review new changes with `git -C <repo> log <commit>..HEAD`.
+# - If a commit is missing locally or is not an ancestor of HEAD, warn and stop.
+#   Do not guess a range and do not advance the baseline.
+updated: 2026-11-25
+repos:
+  zimlet-cli: 04e3e2c52c6928e4d1c60f01b14d9aa3dfbd6359
+  zm-x-web: 2675eeee4e798a2c944f8e65241aa07ced7843d9
+  zm-modern-zimlets: 073eaf94ace578fe30a06c3e4d218a0e9e364297
+  zm-cloudsuite-zimlets: 0819fb22b3917a48f125f6d9cd05cebfb46ddf9d
+  zm-x-ui: 5bdd884b0542d2fe3ead8b27772f255b30b96a44
+  zm-x-zimlet-template-default: 2e5df65b9b10b5af8198484e51d1c4069e4406da

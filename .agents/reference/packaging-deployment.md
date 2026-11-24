@@ -64,7 +64,7 @@ The server side lives in [zm-mailbox](../../../zm-mailbox). Check each row below
 | Per-COS / per-user | Presence is `mandatory`, `enabled` or `disabled` per COS; users can toggle non-mandatory ones. The client receives it as `zimletContext[0].presence`. |
 | JS minify | For Modern UI requests (`zimbraXZimletCompatibleWith` set) the bundle is processed by `compile(...)`, otherwise by the YUI compressor. |
 | Labels | `GET /service/res/<n1,n2>.js?locid=<locale>` serves generated label/description snippets from the `.properties` files; the client parses them (`App.localizeZimlets`). |
-| Static assets | `/service/zimlet/<name>/…` serves files from the deployed zip, but a request without `zimbraXZimletCompatibleWith=<version>` gets 403 for a Modern UI Zimlet, so a Zimlet cannot load its own images or fonts from there. See [KI-47](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md). |
+| Static assets | `/service/zimlet/<name>/…` serves files from the deployed zip, but a request without `zimbraXZimletCompatibleWith=<version>` gets 403 for a Modern UI Zimlet, so a Zimlet cannot load its own images or fonts from there by default. Adding the parameter to the built address in `zimlet.config.js` works for images and fonts (checked on 4.50.0), and inlining works for images. See [KI-47](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md). |
 
 Consequences for authors:
 

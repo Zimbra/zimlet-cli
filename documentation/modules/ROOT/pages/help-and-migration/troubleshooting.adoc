@@ -1,0 +1,103 @@
+= Troubleshooting
+
+A xref:reference/glossary.adoc#zimlet[Zimlet] that builds without errors can still be missing, fail to load or fail when it runs. Several of these failures print nothing. Find the cause from what you see, in development or after you deploy, then follow the link to the page that owns the fix. Start here when a Zimlet does not appear in the xref:reference/glossary.adoc#modern-ui[Modern UI] or an error stops your work, and before you ask for help.
+
+[#if-nothing-appears]
+== If nothing appears
+
+Check these causes in order, and stop at the first one that fits.
+
+. **The Zimlet did not load.** While you develop, the *Status* column of the xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[sideloader] table must read *Running*. Any other status means that the load did not finish. See <<does-not-load-in-development,The Zimlet does not load in development>>.
+. **The server left the Zimlet out.** A deployed Zimlet reaches the Modern UI only when three things are true. It is available to the user, it is enabled on the server, and its xref:reference/glossary.adoc#semver-range[version range] includes the Modern UI version. The server gives no error when one of them fails. Check them as xref:run-package-deploy/deploy.adoc#verify[Check that the deployment worked] describes.
+. **The user turned the Zimlet off.** A user can turn off a Zimlet that is not mandatory. An administrator can also set a Zimlet to disabled by default. The Modern UI then loads the Zimlet but does not call its xref:fundamentals/factory-and-lifecycle.adoc#init[`init()`] function, so nothing that it registers appears. See xref:run-package-deploy/deploy.adoc#user-settings[Let users turn a Zimlet on or off].
+. **The slot or its key is wrong.** Add `?zimletSlots=show` to the address of the Modern UI. Find the label of the xref:fundamentals/extending-the-ui.adoc[slot] that you want, and compare its name with your key `slot::<slot-name>`. See xref:run-package-deploy/run-and-debug.adoc#debug-slots[Show every slot in the page].
+. **The handler shows nothing.** The Modern UI catches an error that a xref:fundamentals/extending-the-ui.adoc#register-a-handler[handler] throws and does not log it, so the slot stays empty. A frequent cause is a file with JSX that does not import `createElement`, because the build still succeeds. Wrap the body of the handler in `try` and `catch`, and write the error to the console. See xref:fundamentals/extending-the-ui.adoc#error-isolation[Error isolation] and xref:fundamentals/shared-libraries.adoc#jsx-and-createelement[JSX and createElement].
+
+If none of these fits, look for your message or symptom in the sections below.
+
+[#does-not-load-in-development]
+== The Zimlet does not load in development
+
+The sideloader shows each load that fails in the *Status* column and prints the same error in the browser console.
+
+.The sideloader table after a failed load, with the Status column outlined
+image::troubleshooting-sideloader-error.png["The Zimlets Sideloader tab of the Modern UI. The table lists the Zimlet my-zimlet with the address https://localhost:8081/index.js. Its Status column, outlined in red, reads Error: TypeError: Failed to fetch. The browser console below the page prints the same error."]
+
+[[failed-to-fetch]]pass:[<a class="anchor" href="#failed-to-fetch"></a>]The *Status* column shows `Error: TypeError: Failed to fetch`::
+* Cause: The sideloader cannot reach the development server. The server is not running, the browser has not accepted its self-signed certificate, or Chrome blocked the request.
+* Fix: Start the server and accept its certificate, as xref:run-package-deploy/run-and-debug.adoc#start-the-development-server[Start the development server] describes. For Chrome, see xref:getting-started/setup-environment.adoc#allow-chrome-access[Allow Chrome to reach your development server].
+* If you stopped the server on purpose, clear *Persist on Reload* for the row. The sideloader loads every ticked Zimlet again each time the page loads. See xref:run-package-deploy/run-and-debug.adoc#persist[Keep the Zimlet loaded with Persist on Reload].
+
+[[construct-handler-object]]pass:[<a class="anchor" href="#construct-handler-object"></a>]The *Status* column or the console contains `Failed to construct handlerObject`::
+* Cause: The xref:fundamentals/factory-and-lifecycle.adoc[factory] of your Zimlet threw an error when the Modern UI called it. The text after the colon is that error.
+* Fix: Read the error and correct the factory.
+
+[[other-load-error]]pass:[<a class="anchor" href="#other-load-error"></a>]The *Status* column shows another error::
+* Cause: An error from the address, such as a wrong path, shows its HTTP status text or code. An error that `init()` throws shows its own message.
+* Fix: Open the address in your browser. It must show the JavaScript of your Zimlet. If it does, read the error in the console and correct `init()`.
+
+[[port-in-use]]pass:[<a class="anchor" href="#port-in-use"></a>]The terminal prints `Error: listen EADDRINUSE`::
+* Cause: Another program already uses the port, for example a second `zimlet watch`. The tool normally moves to the next free port, but it can miss a program that listens only on `localhost`.
+* Fix: Choose a free port with the `--port` option. Use the port that the terminal prints in the sideloader address. See xref:run-package-deploy/run-and-debug.adoc#watch-options[Options of zimlet watch].
+
+[[old-code-after-save]]pass:[<a class="anchor" href="#old-code-after-save"></a>]The Modern UI still shows the old code after you save a file::
+* Cause: The development server does not push changes to a page that is already open.
+* Fix: Wait for `Compiled successfully!` in the terminal, then reload the Modern UI page. If the terminal prints `Build failed!` instead, correct the error that follows it, as <<build-and-package-fails,The build or package step fails>> describes. See xref:run-package-deploy/run-and-debug.adoc#see-a-change[See a change].
+
+[#after-you-deploy]
+== After you deploy a Zimlet
+
+[[no-user-sees-it]]pass:[<a class="anchor" href="#no-user-sees-it"></a>]No user sees the Zimlet, for example after the Modern UI was upgraded::
+* Cause: The version range of the Zimlet does not include the Modern UI version. The server leaves such a Zimlet out and shows no error.
+* Fix: Find the Modern UI version, test the Zimlet on it, and then widen the range. See xref:run-package-deploy/build-and-package.adoc#keep-compatible[Keep the Zimlet compatible after an upgrade].
+
+[[some-users-miss-it]]pass:[<a class="anchor" href="#some-users-miss-it"></a>]Some users see the Zimlet and others do not::
+* Cause: The Zimlet is available to some xref:reference/glossary.adoc#cos[classes of service] or accounts only, or the user turned it off. A Zimlet that is set to disabled stays off until the user turns it on.
+* Fix: Check the state of the Zimlet in the class of service of that user. Ask the user to check *Add-ons (Zimlets)* in the settings. See xref:run-package-deploy/deploy.adoc#make-available[Make the Zimlet available to users] and xref:run-package-deploy/deploy.adoc#user-settings[Let users turn a Zimlet on or off].
+
+[[change-not-showing]]pass:[<a class="anchor" href="#change-not-showing"></a>]A change does not show after you deploy it::
+* Cause: The server caches Zimlets, so it can keep serving the old state until the cache is flushed.
+* Fix: Flush the cache after each deployment or change, then reload the Modern UI. See xref:run-package-deploy/deploy.adoc#flush-cache[Flush the cache after a change].
+
+[[assets-refused]]pass:[<a class="anchor" href="#assets-refused"></a>]An image or font of the Zimlet does not load, and the network tab shows `403`::
+* Cause: The server refuses a request for a file of a Zimlet when the request does not carry the Modern UI version.
+* Fix: See xref:help-and-migration/known-limitations-and-gaps.adoc#public-path-assets[A deployed Zimlet cannot load its own images and fonts] for what to do instead.
+
+[[other-zimlets-stop]]pass:[<a class="anchor" href="#other-zimlets-stop"></a>]Other Zimlets stop working after you deploy a Zimlet::
+* Cause: The server sends all Zimlets in one bundle. When the factory of one Zimlet throws an error, the Modern UI starts none of them. When `init()` of one Zimlet throws, the Zimlets after it do not start. The only sign is a warning in the console.
+* Fix: Find the warning in the browser console, and correct the Zimlet that causes it, or turn that Zimlet off for everyone. See xref:help-and-migration/known-limitations-and-gaps.adoc#one-zimlet-fails-to-start[One Zimlet that fails to start stops other Zimlets] and xref:run-package-deploy/deploy.adoc#make-available[Make the Zimlet available to users].
+
+[#run-time-errors]
+== An error appears when the Zimlet runs
+
+[[export-not-found]]pass:[<a class="anchor" href="#export-not-found"></a>]A call fails with `[ZimletCli]: Export <module>.<name> was not found`::
+* Cause: The build accepts a named import of a shared module without checking it. The Modern UI does not provide every name that the build knows, so the call fails when it runs.
+* Fix: Import only the names that xref:reference/shims.adoc[Shared modules] lists. See xref:fundamentals/shared-libraries.adoc#export-not-found[The Export … was not found error]. If the call fails with a `TypeError` instead, see xref:help-and-migration/known-limitations-and-gaps.adoc#names-missing-at-run-time[An import of a name that the Modern UI does not export].
+
+[[remove-listener-throws]]pass:[<a class="anchor" href="#remove-listener-throws"></a>]`Can't remove a listener. Event "<name>" doesn't exits.`::
+* Cause: xref:go-deeper/app-events.adoc[`zimletEventEmitter.off`] found no listener for that event name. The name is wrong, you never added the listener, or you removed the last one twice.
+* Fix: Call `off` once for each listener, with the same event name and the same function that you gave to `on`. Search for the message exactly as shown. See xref:go-deeper/app-events.adoc#remove-a-listener[Remove a listener].
+
+[#build-and-package-fails]
+== The build or package step fails
+
+[[cannot-resolve]]pass:[<a class="anchor" href="#cannot-resolve"></a>]`Build failed!` followed by `Module not found: Error: Can't resolve '<package>'`::
+* Cause: Your code imports a package that the Modern UI does not provide and that is not installed in the project.
+* Fix: Install the package with `npm install <package>`, or correct the name. See xref:fundamentals/shared-libraries.adoc#what-gets-bundled[What gets bundled]. For `react-dom/client`, see xref:help-and-migration/known-limitations-and-gaps.adoc#react-dom-client[`react-dom/client` does not build].
+
+[[build-folder-missing]]pass:[<a class="anchor" href="#build-folder-missing"></a>]`zimlet package` prints `Failed to read <path>/build`::
+* Cause: The `build` folder does not exist, because the Zimlet was not built.
+* Fix: Build the Zimlet, then package it again. See xref:run-package-deploy/build-and-package.adoc#if-it-did-not-work[If it didn't work] on the build and package page.
+
+[[label-missing]]pass:[<a class="anchor" href="#label-missing"></a>]`zimlet package` prints `label and description string are not provided as argument`::
+* Cause: `src/intl/en_US.json` has no `zimlet.label` or no `zimlet.description`. The command writes no zip file, but it still exits with code 0.
+* Fix: Add both values. See xref:fundamentals/project-structure.adoc#strings-label[Label and description] and xref:help-and-migration/known-limitations-and-gaps.adoc#package-exit-code[`zimlet package` reports success when it finds no label and description].
+
+[[properties-undefined]]pass:[<a class="anchor" href="#properties-undefined"></a>]A `.properties` file in the package contains `label = undefined`::
+* Cause: The language file for that locale has no `zimlet.label` or no `zimlet.description`. `zimlet package` still succeeds.
+* Fix: Add both values to every language file. See xref:go-deeper/localization.adoc#label-description[Label and description].
+
+[#next-step]
+== Next step
+
+If your symptom is not listed, see xref:help-and-migration/known-limitations-and-gaps.adoc[Known limitations and gaps]. To ask a question or report a problem, see xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help].

@@ -25,6 +25,8 @@ Before relying on a fact marked unverified, check
 
 **Every edit under `documentation/`, from a new page to one sentence or a typo, must follow [write-doc.prompt.md](.agents/prompts/write-doc.prompt.md).** Read it first and follow its steps. Nothing in `.agents/` is loaded for you. Use [review-doc.prompt.md](.agents/prompts/review-doc.prompt.md) for reviewing documentation.
 
+The [documentation sync baseline](.agents/context/doc-sync.yml) records, for `zimlet-cli`, `zm-x-web`, `zm-modern-zimlets`, `zm-cloudsuite-zimlets`, `zm-x-ui` and `zm-x-zimlet-template-default`, the last commit the documentation has been checked against. Use it to find the changes that still need documenting. Advance a commit only after reviewing the changes up to it and updating the documentation.
+
 The Zimlet [registration patterns context](../zm-modern-zimlets/.agents/context/zimlet-patterns.yml) is kept in `zm-modern-zimlets`, with its [update prompt](../zm-modern-zimlets/.agents/prompts/update-reg-patterns.prompt.md) and scanner. The documentation site is in `documentation/` (Antora). Build it with `npm run build:docs` and preview it with `npm run preview:docs`. It is published at `https://zimbra.github.io/zimlet-cli`.
 
 ## Sibling repositories

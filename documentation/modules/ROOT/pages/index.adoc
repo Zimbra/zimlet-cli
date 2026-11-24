@@ -19,7 +19,7 @@ See xref:getting-started/concepts.adoc[How Zimlets work] for the short mental mo
 [#who-this-guide-is-for]
 == Who this guide is for
 
-This guide is for anyone who wants to extend the Modern UI with a new feature. You can be a Zimbra developer or come from outside Zimbra. You need working knowledge of JavaScript and Node.js. Use Preact and JSX for the user interface. The Modern UI is built with Preact, and the Zimlets that Zimbra provides use it. Other frameworks may have limitations. See xref:getting-started/prerequisites.adoc[Prerequisites] for the full list.
+This guide is for anyone who wants to extend the Modern UI with a new feature. You can be a Zimbra developer or come from outside Zimbra. You need working knowledge of JavaScript and Node.js. Use Preact and JSX for the user interface, which Zimbra recommends. The Modern UI is built with Preact, and the Zimlets that Zimbra provides use it. See xref:getting-started/prerequisites.adoc[Prerequisites] for what the guide expects you to know.
 
 If you only deploy a Zimlet that someone else built, you are an administrator. Start with xref:run-package-deploy/deploy.adoc[Deploy].
 

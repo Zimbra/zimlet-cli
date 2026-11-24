@@ -1,11 +1,339 @@
 = Classic and Modern Zimlets
 
-A Classic Zimlet extends the Classic UI, the older Zimbra web client. A Modern Zimlet is a xref:reference/glossary.adoc#zimlet[Zimlet] that extends the xref:reference/glossary.adoc#modern-ui[Modern UI] and is built in a different way. Compare how each kind runs and is packaged. See which Classic use cases the Modern UI covers, and which only a Classic Zimlet can do, with a workaround or alternative for each. Use it when you maintain Classic Zimlets and plan Modern versions, or to check whether a Modern Zimlet can do what a Classic Zimlet does. The two kinds share no code and no package, so you write a new Modern Zimlet for each Classic Zimlet that you want to offer.
+A Classic Zimlet extends the Classic UI, the older Zimbra web client. A Modern Zimlet is a xref:reference/glossary.adoc#zimlet[Zimlet] that extends the xref:reference/glossary.adoc#modern-ui[Modern UI]. The two kinds share no code and no package. The Modern UI does not run Classic Zimlet code or offer Classic objects such as `appCtxt` or `ZmZimletBase`. You write a new Modern Zimlet for each Classic Zimlet that you want to offer. Check below whether the Modern UI can do what your Classic Zimlet does.
+
+Most Classic use cases have a Modern equivalent. Find yours in one of three groups:
+
+* <<covered,Use cases that the Modern UI covers>>: a slot, an event, a hook or a file does the same job.
+* <<not-supported,Use cases with a workaround>>: the Modern UI has a close alternative that does not cover everything.
+* <<no-alternative,Use cases with no alternative>>: only a Classic Zimlet can do them.
+
+[#covered]
+== Use cases that the Modern UI covers
+
+The Classic UI calls a Zimlet through more than a hundred named hooks, and a Modern Zimlet reaches the same results in a different way. The main Classic hook or call of each use case is in brackets.
+
+[#covered-app]
+=== App, menus and dialogs
+
+Run code when the Zimlet loads (`init`)::
+A Classic Zimlet sets itself up in its `init` method, which the Classic UI calls once when it loads the Zimlet.
++
+In the Modern UI, the `init()` method of the xref:fundamentals/factory-and-lifecycle.adoc[factory] does this.
+
+Add toolbar buttons and menu items (`initializeToolbar`, `menuItemSelected`)::
+A Classic Zimlet adds a button to a toolbar, or an item to a menu, when the Classic UI builds it. A menu item that the descriptor names calls `menuItemSelected` when the user chooses it.
++
+In the Modern UI, menu slots such as `action-menu-mail-more` hold the buttons and items. See xref:reference/slots/mail/mail-menus-and-actions.adoc[Mail menus and actions], xref:reference/slots/contacts.adoc[Contacts] and xref:reference/slots/briefcase.adoc[Briefcase].
+
+Show a status or error message, or a dialog (`displayStatusMessage`)::
+A Classic Zimlet shows a short status message, an error message or a dialog window of its own.
++
+In the Modern UI, the `notify` action shows a message and the dialogs of the Blocks UI kit show a dialog. See xref:reference/context/store/zimlet-redux/actions.adoc#notify[`notify`] and xref:reference/shims/blocks/dialogs-and-overlays.adoc[Dialogs and overlays].
+
+Add an application screen (`createApp`, `appLaunch`, `appActive`)::
+A Classic Zimlet adds its own tab with its own screen. `appLaunch` runs when the user opens the tab for the first time, and `appActive` each time the tab opens or closes.
++
+In the Modern UI, a tab and a route add a screen. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs].
+
+Add a button to the search bar (`addSearchDomainItem`)::
+A Classic Zimlet adds a button with its own label, icon and click listener to the search toolbar.
++
+In the Modern UI, the `web-search-toggle` slot holds the button. See xref:reference/slots/app-shell/search.adoc[Search].
+
+Open a link from a menu item, or from matched text, with only the descriptor (`menuItem`, `actionUrl`)::
+A Classic Zimlet needs no JavaScript for this. Its descriptor names a menu item, or a pattern to match in messages, and an address in `actionUrl`. The Classic UI opens the address when the user chooses the item or clicks the matched text.
++
+In the Modern UI, a menu slot item or a content processor opens the link. The descriptor of a Modern Zimlet only lists files, so register the item or the processor in the factory. See xref:reference/slots/content-processors.adoc[Content processors] and xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
+
+[#covered-reading]
+=== Messages and contacts
+
+Show content when a message or a contact opens (`onMsgView`, `onContactView`)::
+A Classic Zimlet adds its own content to a message or a contact when the Classic UI shows it. `onMsgView` and `onContactView` run at that moment.
++
+In the Modern UI, slots such as `message-body-top` and `contact-card-item` show the content. See xref:reference/slots/mail/message-viewer.adoc[Message viewer] and xref:reference/slots/contacts.adoc[Contacts].
+
+Find text in a message and make it clickable (`onFindMsgObjects`, `contentObject`, `match`, `clicked`)::
+A Classic Zimlet looks for a pattern in the text of a message, such as a phone number, and turns each match into a link. `match` finds the text, and `clicked` runs when the user clicks it.
++
+In the Modern UI, content processors such as `messageProcessors:emailProcessor` change the message before it shows, for example to turn matched text into links. The code that finds the text is your own. See xref:reference/slots/content-processors.adoc[Content processors].
+
+Show a card when the user points at an address (`onEmailHover`)::
+A Classic Zimlet shows its own tooltip or card when the user holds the pointer over an email address in a message. `onEmailHover` receives the address and the position of the pointer.
++
+In the Modern UI, the `contact-hover-card-details` slot shows the card. See xref:reference/slots/contacts.adoc[Contacts].
+
+[#covered-composing]
+=== Composing and sending
+
+Add controls to the composer (`initializeAttachPopup`)::
+A Classic Zimlet adds an item to the attach menu of the composer, or another control to the composer. `initializeAttachPopup` runs when the Classic UI builds that menu.
++
+In the Modern UI, slots such as `composer-toolbar-end`, `compose-attachment-action-menu` and `from-options` hold the controls. See xref:reference/slots/composer/mail-composer.adoc[Mail composer].
+
+Check a message before it is sent (`emailErrorCheck`, `onSendButtonClicked`)::
+A Classic Zimlet checks a message when the user chooses Send, and can report an error that stops the send. `emailErrorCheck` receives the message and a list for the errors. Zimlets that warn about a missing attachment or about listed words use it.
++
+In the Modern UI, the `ONBEFORESEND` event does this. Reject the promise of your listener to stop the send. See xref:go-deeper/app-events.adoc[App events].
+
+Know that a message was sent (`onSendMsgSuccess`)::
+A Classic Zimlet learns that the server accepted a message. `onSendMsgSuccess` runs after the send.
++
+In the Modern UI, the `AFTERONSEND` event does this. See xref:go-deeper/app-events.adoc[App events].
+
+[#covered-calendar]
+=== Calendar
+
+Add an action or a field to an event (`onZmApptController_createToolBar`)::
+A Classic Zimlet adds a button to the toolbar of the event form. `onZmApptController_createToolBar` receives the lists of buttons when the toolbar is built.
++
+In the Modern UI, slots such as `action-menu-event-context-menu` and `calendar-appointment-edit-location` hold the action or the field. See xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments].
+
+Know when an event is saved, deleted or dropped on a new time (`onSaveApptSuccess`, `onAppointmentDelete`)::
+A Classic Zimlet learns that the user saved an event, deleted one, or dropped one on a new time.
++
+In the Modern UI, the `appointmentMonitor` prop of the `calendar-body-end` slot reports these changes. See xref:reference/slots/calendar/calendar-view.adoc[Calendar view].
+
+Subscribe to an external calendar (`onZmExternalCalendarDialog_popup`)::
+A Classic Zimlet changes the dialog where the user subscribes to an external calendar. `onZmExternalCalendarDialog_popup` runs when the dialog opens.
++
+In the Modern UI, the calendar subscription slots do this. See xref:reference/slots/calendar/calendar-view.adoc[Calendar view].
+
+[#covered-data]
+=== Options and data
+
+Let users change options and save them (`userProperties`, `createPropertyEditor`)::
+A Classic Zimlet declares user properties in its descriptor and can build its own screen to edit them. The Classic UI saves the values for the user.
++
+In the Modern UI, the `settings` key adds a section to the Settings dialog. See xref:reference/slots/settings.adoc[Settings].
+
+Add a preference to a built-in page, or save a preference (`onZmPreferencesApp_registerPrefs`)::
+A Classic Zimlet registers preferences of its own when the Classic UI registers its preferences. `onZmPreferencesApp_registerPrefs` runs at that moment.
++
+In the Modern UI, add a control to a built-in settings page with a page slot. Save its value with the `settings` key and a field of type `userPref`. See xref:reference/slots/settings.adoc#saving-a-value[Saving a value] and xref:build-by-goal/recipe-settings/existing-section.adoc[Add a control to a built-in settings page].
+
+Read values that an administrator sets (`getConfig`)::
+A Classic Zimlet reads a value by name from the configuration that an administrator set for the Zimlet. `getConfig` returns it.
++
+In the Modern UI, the `config_template.xml` file holds the values, and `useAccountInfo` reads them. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration].
+
+Call a Zimbra server request (`AjxSoapDoc`, `sendRequest`)::
+A Classic Zimlet builds a Zimbra request with `AjxSoapDoc`, sends it with `sendRequest` and reads the response, for example to work with mail or contacts.
++
+In the Modern UI, use a data hook when one covers the data, and `zimbraBatchClient` when none does. See xref:go-deeper/server-data.adoc#when-to-use-which[When to use which method] and xref:go-deeper/server-data/batch-client.adoc[Batch client].
+
+Read the folders of the user (`appCtxt.getFolderTree`)::
+A Classic Zimlet reads the folder tree of the user, for example to let the user pick a folder. `appCtxt.getFolderTree` returns it.
++
+In the Modern UI, the `useFoldersQuery` hook reads the folders. To list the messages that match a search in your own component, use `useMessageSearchQuery`. To change a folder or an item, use `useFolderActionMutation` or `useItemActionMutation`. See xref:reference/shims/hooks/folders.adoc[Folders] and xref:reference/shims/hooks/mail.adoc[Mail].
+
+Store data in the mailbox (`ZmMetaData`)::
+A Classic Zimlet keeps its own data on the server, in the mailbox of the user, with `ZmMetaData`.
++
+In the Modern UI, xref:go-deeper/server-data/metadata.adoc[mailbox metadata] does this.
+
+Read account settings (`appCtxt.get`)::
+A Classic Zimlet reads a setting of the account or a preference of the user with `appCtxt.get`.
++
+In the Modern UI, hooks such as `useAccountInfo` read them. See xref:reference/shims/hooks/account-and-preferences.adoc[Account and preferences].
+
+[#not-supported]
+== Use cases with a workaround
+
+A Classic Zimlet can implement each use case below, but the Modern UI offers no extension point for it. Use the workaround or the close alternative, and note which part of the use case it does not cover.
+
+[#workaround-mail]
+=== Mail
+
+Run code when a search runs, or add results::
+A Classic Zimlet reacts when the user searches, or adds its own entries to the list of people that shows while the user types. `onSearch` receives the query.
++
+In the Modern UI, build your own search field in the `web-search` slot, and read the query from it. The slot replaces the search field for every user of the Zimlet. See xref:reference/slots/app-shell/search.adoc[Search] and xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar].
++
+Classic hooks: `onSearch`, `onSearchButtonClick`, `onKeyPressSearchField`, `onPeopleSearchData`, `onPeopleSearchShow`, `onZmSearchResultsController_displayResults1`.
+
+Change the content of a row in the message list::
+A Classic Zimlet changes what a row of the message or conversation list shows, such as the sender names. The `getAbridgedContent` hooks receive the row and the HTML that draws it.
++
+In the Modern UI, replace the sender names of a row with the `mail-sender` slot. For the rest of the row, no alternative exists. See xref:reference/slots/mail/mail-list-and-sidebar.adoc[Mail list and sidebar].
++
+Classic hooks: `onZmConvListView_getAbridgedContent`, `onZmMailMsgListView_getAbridgedContent`, `onZmMailMsg_addFrom1`.
+
+Add an item to the menu of an address::
+A Classic Zimlet adds an item to the menu of an email address, in a message or in an address field of the composer.
++
+In the Modern UI, add a link or a fact to the card that opens from the address with `contact-hover-card-details`. See xref:reference/slots/contacts.adoc[Contacts].
++
+Classic hooks: `onParticipantActionMenuInitialized`, `onBubbleActionMenu`, `onBubbleActionMenuOps`.
+
+Show a tooltip or a menu on matched text in a message::
+A Classic Zimlet shows its own tooltip, or its own menu, for text that it matched in a message. `toolTipPoppedUp` fills the tooltip.
++
+In the Modern UI, turn the matched text into a link with a content processor. For a tooltip or a menu, no alternative exists. See xref:reference/slots/content-processors.adoc[Content processors].
++
+Classic hooks: `toolTipPoppedUp`, `hoverOver`, `contentObject` with `contextMenu`.
+
+Add a button to an invitation in a message::
+A Classic Zimlet adds a button to the toolbar that a message shows for a calendar invitation. `onZmInviteMsgView_createInviteToolbar` receives the lists of buttons.
++
+In the Modern UI, show your button in the message viewer with `message-header-additional-buttons` or `message-body-top`, and check `emailData.invitations` to show it only for invitations. The button cannot sit among the reply buttons of the invitation. To react to the answer of the user, use the `ONSENDINVITEREPLY` event. See xref:reference/slots/mail/message-viewer.adoc[Message viewer] and xref:go-deeper/app-events.adoc[App events].
++
+Classic hooks: `onZmInviteMsgView_createInviteToolbar`, `onZmInviteMsgView_enableToolbarButtons`.
+
+[#workaround-composer]
+=== Composer
+
+Change the outgoing message while it is sent::
+A Classic Zimlet changes a message as the Classic UI sends it, for example by adding text to the signature, extra parts or custom headers.
++
+In the Modern UI, send the message yourself from an `ONSEND` listener, as a Zimlet that signs or encrypts does. The `useSendMessageMutation` hook sends it. See xref:go-deeper/app-events.adoc[App events] and xref:reference/shims/hooks/mail.adoc#use-send-message-mutation[`useSendMessageMutation`].
++
+Classic hooks: `appendExtraSignature`, `addExtraMsgParts`, `addCustomMimeHeaders`, `onZmComposeController_sendMsg`.
+
+Change how the composer builds its form::
+A Classic Zimlet replaces the form of the composer with its own, or reacts when the composer is set up for a message.
++
+In the Modern UI, add content with the composer slots, or hide a control with the xref:reference/slots/hide-built-in-ui.adoc[hide slots]. See xref:reference/slots/composer/mail-composer.adoc[Mail composer].
++
+Classic hooks: `onZmComposeView_createHtmlFromTemplate`, `onZmComposeView_set`, `onZmComposeView_getIdentity`.
+
+[#workaround-calendar]
+=== Calendar
+
+React when the user edits an event, or when saving fails::
+A Classic Zimlet reacts when the user changes the attendees or the time in the event form, or when saving an event fails.
++
+In the Modern UI, use the `attendees-chooser-attendees` slot for code that reacts when the user changes the event. The `before` events of `appointmentMonitor` run before the save. For a failed save, no alternative exists. See xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments].
++
+Classic hooks: `onEditAppt_updateAttendees`, `onEditAppt_updateTime`, `onZmApptEditView_show`, `onSaveApptFailure`.
+
+[#workaround-settings]
+=== Settings, dialogs and built-in items
+
+Check or change a built-in preference when the user saves it::
+A Classic Zimlet checks or changes a built-in preference when the user edits or saves it, for example to validate an email address.
++
+In the Modern UI, the `afterSave` function of the `settings` key runs when the user chooses *Save*. It receives the state of the dialog, so you can read the built-in values, but it cannot stop or change the save. `handleValidityOfTabs` can disable *Save* for the values of your own section. To change how a built-in control checks its value, no alternative exists. See xref:reference/slots/settings.adoc#settings-object[Settings object].
++
+Classic hooks: `onZmPref_validateEmail`, `onZmPrefController_saveListener`, `onZmPreferencesPage_setupCheckbox`, `onZmSignaturesPage_resetUsageSelects`, `onZmSettings_setUserSettings`.
+
+Change a built-in dialog, such as folder properties, the folder chooser, import and export, or the filter rules::
+A Classic Zimlet changes a built-in dialog, for example the tabs of the folder properties or the name field of a filter rule.
++
+In the Modern UI, only some dialogs have slots: `filter-options` and `additional-filter-settings` for the filters, and `change-password-description` for text in the *Change Password* dialog. For the other dialogs, no alternative exists. See xref:reference/slots/settings.adoc[Settings] and xref:reference/slots/app-shell/header-menus.adoc[Header menus].
++
+Classic hooks: `onZmFolderPropsDialog_handleFolderChange`, `onZmAppCtxt_getChooseFolderDialog1`, `onZmImportExportBaseView_folderButton_onclick`, `onZmFilterRuleDialog_popup`.
+
+Enable, disable or reorder the built-in toolbar and menu items::
+A Classic Zimlet enables, disables or reorders the built-in operations of a toolbar or a menu, for example when the Classic UI registers them.
++
+In the Modern UI, hide an item with the xref:reference/slots/hide-built-in-ui.adoc[hide slots], and add your own items with the menu slots. For enabling, disabling or reordering, no alternative exists.
++
+Classic hooks: `resetToolbarOperations`, `onMailActionMenuResetOperations`, `onZmOperation_initialize`, `onZmMailApp_registerOperations`.
+
+[#workaround-app]
+=== Zimlets panel and portlets
+
+Add an item to the Zimlets panel, with a click, a double click, a menu and a tooltip::
+A Classic Zimlet puts an item in the Zimlets panel of the Classic UI. The user clicks it, double clicks it or opens its menu, and `singleClicked` and `doubleClicked` run.
++
+The Modern UI has no Zimlets panel. Put the control in the app instead. Use a header menu, the strip or the panel at the right edge, or the area below the folder list. See xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget] and xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
++
+Classic hooks: `zimletPanelItem`, `singleClicked`, `doubleClicked`, `getActionMenu`, `menuItemSelected`.
+
+Show a portlet::
+A portlet is an area of content that a Classic Zimlet sets and refreshes at an interval, for example a web page. `portletCreated` and `portletRefreshed` set the content.
++
+In the Modern UI, the closest alternative is a panel that stays in view, from the `rightside-zimlet-slot` slot. See xref:reference/slots/app-shell/app-frame.adoc[App frame].
++
+Classic hooks: `portlet`, `portletCreated`, `portletRefreshed`.
+
+[#workaround-server]
+=== Server and platform
+
+Call an outside service through the Zimbra proxy::
+A Classic Zimlet calls a web service on another server. The call goes through the proxy of the Zimbra server.
++
+In the Modern UI, call the proxy of the server with `fetch`, as xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch] describes, at `/service/proxy?target=<outside-address>`. An administrator must list the domain of the service in the `zimbraProxyAllowedDomains` attribute of the class of service.
++
+Classic hooks: `sendRequest`, and `AjxRpc.invoke` with an address that starts with `ZmZimletBase.PROXY`.
+
+Run code on the server with the Zimlet::
+A Classic Zimlet bundles JSP files, and sometimes a JAR file with Java classes, and requests a JSP file from its own code.
++
+In the Modern UI, write a Zimbra server extension and deploy it on the server on its own. Call an HTTP endpoint of the extension with `fetch`, and a Zimbra request that the extension registers with `zimbraBatchClient`. See xref:go-deeper/server-data/fetch.adoc#other-endpoints[Other endpoints] and xref:go-deeper/server-data/batch-client.adoc[Batch client].
++
+Classic hooks: JSP files that the Zimlet loads with `getResource`.
+
+Match text in messages on the server (`serverExtension`)::
+A Classic Zimlet names a `serverExtension` in its descriptor, with a keyword, a pattern or a Java class. The server then finds the text, for example a phone number, in messages.
++
+In the Modern UI, the descriptor that `zimlet package` writes has no element for it. Find the text in the browser with a content processor. See xref:reference/slots/content-processors.adoc[Content processors].
++
+Classic hook: `serverExtension` with `hasKeyword`, `regex` or `extensionClass`.
+
+Use Classic UI classes and globals::
+A Classic Zimlet calls the classes and global objects of the Classic UI directly, for example to build a dialog or to read application state.
++
+The Modern UI does not offer them. Use the xref:fundamentals/host-context.adoc[context] and the xref:reference/shims/blocks.adoc[Blocks UI kit] instead.
++
+Classic objects: `appCtxt`, `Dwt`, `Zm` and `Ajx` classes.
+
+[#no-alternative]
+== Use cases with no alternative
+
+A Classic Zimlet can implement each use case below. The Modern UI has no extension point, workaround or close alternative for it.
+
+Know when a mail item is flagged or tagged::
+A Classic Zimlet learns that the user flagged messages or tagged them. `onMailFlagClick` and `onTagAction` receive the items.
++
+The Modern UI sends only the xref:go-deeper/app-events.adoc[app events].
++
+Classic hooks: `onMailFlagClick`, `onTagAction`.
+
+Know that a message failed to send, or that the composer closed::
+A Classic Zimlet learns that a send failed, or that the user closed the composer. An undo send Zimlet uses `onSendMsgFailure` to bring the message back.
++
+`AFTERONSEND` runs only after a message was sent.
++
+Classic hooks: `onSendMsgFailure`, `onDisposeComposeController`.
+
+Change the form where the user edits a contact::
+A Classic Zimlet changes the form where the user edits a contact, for example to add a field. `onContactEdit` runs when the Classic UI builds the form.
++
+The contact edit form has no extension point. The `contact-card-item` slot shows data in the contact details, as <<covered-reading,Messages and contacts>> describes, but it does not change the form.
++
+Classic hooks: `onContactEdit`, `onZmContactSplitView_showContactListItem`.
+
+Change how the calendar draws its days, titles and lists::
+A Classic Zimlet changes how the calendar draws the hours of a day view, a list title or the cells of a list.
++
+The `calendar-body-end` slot adds content after the calendar and does not change it.
++
+Classic hooks: `onZmCalColView_createHoursHtml`, `onZmCalListView_updateTitle`, `onZmApptListView_getCellId`.
+
+React when the user changes the app or the screen, or choose the start app::
+A Classic Zimlet learns that the user switched to another app or opened a screen, or chooses which app opens first.
++
+This applies to the built-in screens.
++
+Classic hooks: `onSelectApp`, `onAction`, `runAppFunction`, `onShowView`, `onZmZimbraMail_getDefaultStartAppName`.
+
+Change the text of the desktop alert option in the preferences::
+A Classic Zimlet supplies the text that the preferences show next to the checkbox that turns on desktop alerts. The Classic UI asks Zimlets for it only when it has no text of its own.
++
+Classic hook: `onZmDesktopAlert_getDisplayText`.
+
+Drag items onto a Zimlet, or drag from it::
+A Classic Zimlet accepts items that the user drops on its Zimlets panel item, such as a message or a contact. `dragSource` in the descriptor names the kinds of item it accepts.
++
+Classic hooks: `dragSource`, `doDrag`, `doDrop`, `onApptDrag`.
 
 [#differences]
-== Differences
+== Differences in how the two kinds are built
 
-The table compares how each kind of Zimlet runs, extends the UI and is packaged.
+Knowing the differences helps you plan the move. The server keeps the two kinds apart, so a package of one kind is never loaded by the other client.
 
 [cols="1,2,2",options="header"]
 |===
@@ -28,8 +356,8 @@ The table compares how each kind of Zimlet runs, extends the UI and is packaged.
 | Preact components, including the xref:reference/shims/blocks.adoc[Blocks UI kit].
 
 | Descriptor
-| Written by hand. It names the handler and the files. It can also describe a panel item, a content object, user properties and a server extension.
-| Generated by `zimlet package`. It lists the files, the label, the version and the version range. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files].
+| Written by hand. It names the handler and the files. It can also describe a panel item, menu items, a content object that opens a link, user properties and a server extension. Some Classic Zimlets have no JavaScript at all.
+| Generated by `zimlet package`. It lists the files, the label, the version and the version range, and nothing else. You register menu items and other extensions in code. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files].
 
 | Texts
 | `.properties` files that the handler reads with `getMessage`.
@@ -39,184 +367,6 @@ The table compares how each kind of Zimlet runs, extends the UI and is packaged.
 | No version range. The server gives the Zimlet to the Classic UI only.
 | A version range in `zimbraXZimletCompatibleSemVer`. The server gives the Zimlet to the Modern UI only when the range includes its version.
 |===
-
-The server keeps the two kinds apart. A request from the Classic UI gets only the Zimlets that have no version range. A request from the Modern UI gets only the Zimlets whose range includes its version. A package of one kind is therefore never loaded by the other client.
-
-The Modern UI does not run Classic Zimlet code, and it has no Classic objects such as `appCtxt` or `ZmZimletBase`.
-
-[#covered]
-== Use cases that the Modern UI covers
-
-The Classic UI calls a Zimlet through named hooks, and it has more than a hundred. The tables group them by use case and name the main hook of each. A Modern Zimlet reaches the same result in a different way.
-
-[cols="2,3",options="header"]
-|===
-| Classic use case | Modern UI
-
-| Run code when the Zimlet loads (`init`)
-| The `init()` method of the xref:fundamentals/factory-and-lifecycle.adoc[factory].
-
-| Add toolbar buttons and menu items (`initializeToolbar`, `onActionMenuInitialized`, `onDraftsActionMenuInitialized`, `onBriefcaseActionMenuInitialized`)
-| Menu slots such as `action-menu-mail-more`. See xref:reference/slots/mail/mail-menus-and-actions.adoc[Mail menus and actions], xref:reference/slots/contacts.adoc[Contacts] and xref:reference/slots/briefcase.adoc[Briefcase].
-
-| Show content when a message or a contact opens (`onMsgView`, `onMsgExpansion`, `onContactView`)
-| Slots such as `message-body-top` and `contact-card-item`. See xref:reference/slots/mail/message-viewer.adoc[Message viewer] and xref:reference/slots/contacts.adoc[Contacts].
-
-| Find text in a message and make it clickable (`onFindMsgObjects`, `contentObject`, `match`, `clicked`)
-| Content processors such as `messageProcessors:emailProcessor` change the message before it shows, for example to turn matched text into links. The code that finds the text is your own. See xref:reference/slots/content-processors.adoc[Content processors].
-
-| Show a card when the user points at an address (`onEmailHover`, `onHoverOverEmailInList`)
-| The `contact-hover-card-details` slot. See xref:reference/slots/contacts.adoc[Contacts].
-
-| Check a message before it is sent (`emailErrorCheck`, `onSendButtonClicked`)
-| The `ONBEFORESEND` event. Reject the promise of your listener to stop the send. See xref:go-deeper/app-events.adoc[App events].
-
-| Know that a message was sent (`onSendMsgSuccess`)
-| The `AFTERONSEND` event. See xref:go-deeper/app-events.adoc[App events].
-
-| Add controls to the composer (`initializeAttachPopup`, `onZmComposeView_getIdentityOptions`)
-| Slots such as `composer-toolbar-end`, `compose-attachment-action-menu` and `from-options`. See xref:reference/slots/composer/mail-composer.adoc[Mail composer].
-
-| Add an action or a field to an event (`onZmApptController_createToolBar`, `onZmCalViewController_getActionMenuOps`)
-| Slots such as `action-menu-event-context-menu` and `calendar-appointment-edit-location`. See xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments].
-
-| Know when an event is saved, deleted or dropped on a new time (`onSaveApptSuccess`, `onAppointmentDelete`, `onApptDrop`)
-| The `appointmentMonitor` prop of the `calendar-body-end` slot. See xref:reference/slots/calendar/calendar-view.adoc[Calendar view].
-
-| Subscribe to an external calendar (`onZmExternalCalendarDialog_popup`)
-| The calendar subscription slots. See xref:reference/slots/calendar/calendar-view.adoc[Calendar view].
-
-| Let users change options and save them (`userProperties`, `createPropertyEditor`, `onZmPreferencesApp_registerPrefs`, `saveUserProperties`)
-| The `settings` key adds a section to the Settings dialog. See xref:reference/slots/settings.adoc[Settings].
-
-| Read values that an administrator sets (`getConfig`)
-| The `config_template.xml` file, read with `useAccountInfo`. See xref:go-deeper/server-data/zimlet-configuration.adoc[Zimlet configuration].
-
-| Store data in the mailbox (`ZmMetaData`)
-| xref:go-deeper/server-data/metadata.adoc[Mailbox metadata].
-
-| Read account settings (`appCtxt.get`)
-| Hooks such as `useAccountInfo`. See xref:reference/shims/hooks/account-and-preferences.adoc[Account and preferences].
-
-| Show a status or error message, or a dialog (`displayStatusMessage`, `displayErrorMessage`, `makeCanvas`)
-| The `notify` action and the dialogs of the Blocks UI kit. See xref:reference/context/store/zimlet-redux/actions.adoc#notify[`notify`] and xref:reference/shims/blocks/dialogs-and-overlays.adoc[Dialogs and overlays].
-
-| Add an application screen (`createApp`)
-| A tab and a route. See xref:reference/slots/app-shell/navigation-and-tabs.adoc[Navigation and tabs].
-
-| Add a button to the search bar (`addSearchDomainItem`)
-| The `web-search-toggle` slot. See xref:reference/slots/app-shell/search.adoc[Search].
-|===
-
-[#not-supported]
-== Use cases that only a Classic Zimlet can do
-
-A Classic Zimlet can implement each use case below, and the Modern UI offers no extension point for it. The last column gives a workaround or the closest alternative. *None found* means that the Modern UI offers neither.
-
-[cols="2,2,3",options="header"]
-|===
-| Use case | Classic hooks | Workaround or alternative
-
-| Know when a mail item is flagged or tagged
-| `onMailFlagClick`, `onTagAction`
-| None found. The Modern UI sends only the xref:go-deeper/app-events.adoc[app events].
-
-| Run code when a search runs, or add results
-| `onSearch`, `onPeopleSearchData`, `onPeopleSearchShow`, `onZmSearchResultsController_displayResults1`
-| Build your own search field in the `web-search` slot, and read the query from it. The slot replaces the search field for every user of the Zimlet. See xref:reference/slots/app-shell/search.adoc[Search] and xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar].
-
-| Change the content of a row in the message list
-| `onZmConvListView_getAbridgedContent`, `onZmMailMsgListView_getAbridgedContent`, `onZmMailMsg_addFrom1`
-| Replace the sender names of a row with the `mail-sender` slot. For the rest of the row, none found. See xref:reference/slots/mail/mail-list-and-sidebar.adoc[Mail list and sidebar].
-
-| Add an item to the menu of an address
-| `onParticipantActionMenuInitialized`, `onBubbleActionMenu`
-| Add a link or a fact to the card that opens from the address with `contact-hover-card-details`. See xref:reference/slots/contacts.adoc[Contacts].
-
-| Change the outgoing message while it is sent
-| `appendExtraSignature`, `addExtraMsgParts`, `addCustomMimeHeaders`, `onZmComposeController_sendMsg`
-| Send the message yourself from an `ONSEND` listener, as a Zimlet that signs or encrypts does. See xref:go-deeper/app-events.adoc[App events].
-
-| Know that a message failed to send, or that the composer closed
-| `onSendMsgFailure`, `onDisposeComposeController`
-| None found. `AFTERONSEND` runs only after a message was sent.
-
-| Change how the composer builds its form
-| `onZmComposeView_createHtmlFromTemplate`, `onZmComposeView_set`, `onZmComposeView_getIdentity`
-| Add content with the composer slots, or hide a control with the xref:reference/slots/hide-built-in-ui.adoc[hide slots]. See xref:reference/slots/composer/mail-composer.adoc[Mail composer].
-
-| Edit a contact in the contact form
-| `onContactEdit`, `onZmContactSplitView_showContactListItem`
-| Show your own data in the contact details with `contact-card-item`. The edit form has no extension point.
-
-| Add a button to an invitation in a message
-| `onZmInviteMsgView_createInviteToolbar`, `onZmInviteMsgView_enableToolbarButtons`
-| React to the answer of the user with the `ONSENDINVITEREPLY` event. See xref:go-deeper/app-events.adoc[App events].
-
-| React when the user edits an event, or when saving fails
-| `onEditAppt_updateAttendees`, `onEditAppt_updateTime`, `onZmApptEditView_show`, `onSaveApptFailure`
-| Use the `attendees-chooser-attendees` slot for code that reacts when the user changes the event. The `before` events of `appointmentMonitor` run before the save. For a failed save, none found. See xref:reference/slots/calendar/events-and-appointments.adoc[Events and appointments].
-
-| Change how the calendar draws its days, titles and lists
-| `onZmCalColView_createHoursHtml`, `onZmCalListView_updateTitle`, `onZmApptListView_getCellId`
-| None found. The `calendar-body-end` slot adds content after the calendar and does not change it.
-
-| Check or change the built-in preferences when the user saves them
-| `onZmPref_validateEmail`, `onZmPrefController_saveListener`, `onZmPreferencesPage_setupCheckbox`, `onZmSignaturesPage_resetUsageSelects`, `onZmSettings_setUserSettings`
-| Add your own section with the `settings` key, add a control to a built-in page with a page slot, or hide a built-in control. To check a built-in value, none found. See xref:reference/slots/settings.adoc[Settings].
-
-| Change a built-in dialog, such as folder properties, the folder chooser, import and export, or the filter rules
-| `onZmFolderPropsDialog_handleFolderChange`, `onZmAppCtxt_getChooseFolderDialog1`, `onZmImportExportBaseView_folderButton_onclick`, `onZmFilterRuleDialog_popup`
-| Only some dialogs have slots: `filter-options` and `additional-filter-settings` for the filters, and `change-password-description` for text in the *Change Password* dialog. For the other dialogs, none found. See xref:reference/slots/settings.adoc[Settings] and xref:reference/slots/app-shell/header-menus.adoc[Header menus].
-
-| Enable, disable or reorder the built-in toolbar and menu items
-| `resetToolbarOperations`, `onMailActionMenuResetOperations`, `onZmOperation_initialize`, `onZmMailApp_registerOperations`
-| Hide an item with the xref:reference/slots/hide-built-in-ui.adoc[hide slots], and add your own items with the menu slots. Enabling, disabling or reordering: none found.
-
-| React when the user changes the app or the screen, or choose the start app
-| `onSelectApp`, `onAction`, `runAppFunction`, `onShowView`, `onZmZimbraMail_getDefaultStartAppName`
-| None found for the built-in screens.
-
-| Change the text of a desktop notification
-| `onZmDesktopAlert_getDisplayText`
-| None found.
-
-| Add an item to the Zimlets panel, with a click, a double click, a menu and a tooltip
-| `zimletPanelItem`, `singleClicked`, `doubleClicked`, `getActionMenu`
-| The Modern UI has no Zimlets panel. Put the control in the app instead. Use a header menu, the strip or the panel at the right edge, or the area below the folder list. See xref:build-by-goal/recipe-sidebar-widget.adoc[Add a sidebar widget] and xref:build-by-goal/recipe-gear-and-settings-menu.adoc[Add menu items to the app].
-
-| Drag items onto a Zimlet, or drag from it
-| `dragSource`, `doDrag`, `doDrop`, `onApptDrag`
-| None found.
-
-| Show a portlet
-| `portlet`, `portletCreated`, `portletRefreshed`
-| The closest alternative is a panel that stays in view, from the `rightside-zimlet-slot` slot. See xref:reference/slots/app-shell/app-frame.adoc[App frame].
-
-| Show a tooltip or a menu on matched text in a message
-| `toolTipPoppedUp`, `hoverOver`, `contentObject` with `contextMenu`
-| Turn the matched text into a link with a content processor. For a tooltip or a menu, none found. See xref:reference/slots/content-processors.adoc[Content processors].
-
-| Call an outside service through the Zimbra proxy
-| `sendRequest`
-| Call the proxy of the server with `fetch`, as xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch] describes, at `/service/proxy?target=<outside-address>`. An administrator must list the domain of the service in the `zimbraProxyAllowedDomains` attribute of the class of service.
-
-| Ship a Java server extension with the Zimlet
-| `serverExtension`
-| The descriptor that `zimlet package` writes has no element for it. Provide the extension on its own and call its endpoint with `fetch`. See xref:go-deeper/server-data/fetch.adoc#other-endpoints[Other endpoints].
-
-| Use Classic UI classes and globals
-| `appCtxt`, `Dwt`, `Zm` and `Ajx` classes
-| Not supported. Use the xref:fundamentals/host-context.adoc[context] and the xref:reference/shims/blocks.adoc[Blocks UI kit] instead.
-|===
-
-[#not-confirmed]
-== Not confirmed
-
-Admin Console Zimlets::
-Zimlets that extend the Admin Console, such as the admin chat and mail recall Zimlets, use Admin Console classes. The Modern UI has no extension point for the Admin Console. Whether another way exists is not confirmed.
-
-Before you plan a Modern Zimlet around a use case that is not covered above, ask in xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help].
 
 [#next-step]
 == Next step
