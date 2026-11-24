@@ -169,3 +169,8 @@
 *** xref:reference/slots/content-processors.adoc[Content processors]
 *** xref:reference/slots/all-slots.adoc[All slots A to Z]
 ** xref:reference/glossary.adoc[Glossary]
+* Help and migration
+** xref:help-and-migration/troubleshooting.adoc[Troubleshooting]
+** xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help]
+** xref:help-and-migration/known-limitations-and-gaps.adoc[Known limitations and gaps]
+** xref:help-and-migration/classic-vs-modern.adoc[Classic and Modern Zimlets]

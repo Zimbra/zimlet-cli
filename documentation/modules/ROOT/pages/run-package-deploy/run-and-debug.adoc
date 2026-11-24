@@ -29,7 +29,7 @@ To pass an option, add it after `--`, for example `npm start -- --port 8082`. Se
 === Options of zimlet watch
 
 `--port <number>`::
-The port of the server. The default is `8081`. Use another port when a program already uses 8081 or when you run two Zimlets at the same time. Use the same port in the sideloader address. If the port is taken, the server can stop with `Error: listen EADDRINUSE`, so choose a free port yourself.
+The port of the server. The default is `8081`. Use another port when a program already uses 8081 or when you run two Zimlets at the same time. If the port is taken, the tool tries the next ports and prints the one it uses. Use that port in the sideloader address. A program that listens only on `localhost` can go unnoticed, and the server then stops with `Error: listen EADDRINUSE`. Choose a free port yourself in that case.
 
 `--https <true|false>`::
 The protocol of the server. The default is `true`, which serves the Zimlet over HTTPS with a self-signed certificate. `--https false` serves it over plain HTTP only, and the sideloader address must then start with `http://`.

@@ -55,6 +55,8 @@ image::slots-landing-page-default.png["The Video landing page. Outlined in red: 
 
 A Zimlet adds the outlined list item and the outlined text in the second column. The Modern UI draws the heading, the introduction and the icon.
 
+WARNING: A Zimlet that fills only <<vertical-landing-page-description,`<vertical>-landing-page-description`>> or <<vertical-landing-page-videos,`<vertical>-landing-page-videos`>> does not add the vertical to the Modern UI. The page title in the tab bar and the faded icon then show `[object Object]`. Also fill <<vertical-tab-item,`<vertical>-tab-item`>> or <<vertical-landing-page,`<vertical>-landing-page`>>.
+
 [#members]
 == Members
 

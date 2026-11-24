@@ -62,7 +62,7 @@ The Zimlet development server uses HTTPS with a self-signed certificate. Your br
 The guide assumes these, and you can work without them.
 
 Preact and JSX::
-You build the user interface of a Zimlet with Preact components written in JSX. Aim for working knowledge of components, props and hooks. Read the https://preactjs.com/guide/v10/getting-started[Preact guide^].
+You build the user interface of a Zimlet with Preact components written in JSX. Aim for working knowledge of components, props and hooks. Read the https://preactjs.com/guide/v10/getting-started[Preact guide^]. The components and hooks that the Modern UI gives you are written for Preact. Another framework can cause problems that Zimbra has not tested, so check it carefully before you ship it.
 
 Semver ranges::
 You package a Zimlet with a range of Modern UI versions, such as `^4.42.0`. Aim for reading a range. Read the https://semver.org/[Semantic Versioning^] and the https://github.com/npm/node-semver#ranges[range syntax of node-semver^].

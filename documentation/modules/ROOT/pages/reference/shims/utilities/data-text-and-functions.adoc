@@ -113,6 +113,8 @@ It is `false` for every other value.
 
 Returns a copy of an object or an array without its `null` values and without every object or array that ends up empty. Use it to clean up an object before you send it to a server or compare it. The original is not changed. No active Zimlet uses it.
 
+WARNING: A `null` item in an array is not removed. It leaves an empty slot, and the array keeps its length. Filter the array yourself to close the gaps.
+
 === Signature
 
 [source,js]
@@ -142,7 +144,6 @@ A deep copy of `value` without the removed entries. The top level is never remov
 
 * A property is removed when it is `null`, or when it holds an object or an array that is empty once it is cleaned. The check goes through all levels.
 * It keeps `undefined`, `0`, `''` and `false`.
-* A `null` item in an array leaves an empty slot, and the array keeps its length. Filter the array yourself to close the gaps.
 * An object that holds a function, such as a callback, cannot be copied, and `pruneEmpty` throws a `DataCloneError`. Remove the function first.
 
 [#html-encode]

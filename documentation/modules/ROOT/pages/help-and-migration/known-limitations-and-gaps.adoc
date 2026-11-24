@@ -1,0 +1,145 @@
+= Known limitations and gaps
+
+Some commands and parts of the Modern UI have limits or defects. You can meet them while you build, package, deploy and run a Zimlet. Each entry gives the symptom and what to do today. Check the entries when something fails and your code looks correct, or before you plan a feature around one of these areas.
+
+The entries describe Modern UI 4.50 and `zimlet` 19.0.0. A later release can change them.
+
+[#create-and-package]
+== Create and package
+
+[[create-folder-name]]pass:[<a class="anchor" href="#create-folder-name"></a>]`zimlet create` rejects a folder path as the name::
+`zimlet create default ./my-zimlet` stops with `Invalid package name: ./my-zimlet`, because the command uses the whole folder argument as the package name.
++
+* Suggestion: Pass a plain folder name, or add `--name my-zimlet`.
+* See xref:reference/cli.adoc#create[zimlet create].
+
+[[create-prompts]]pass:[<a class="anchor" href="#create-prompts"></a>]`zimlet create` ignores the answers to its own questions::
+When you leave out the template or the folder, the command asks for them and then ignores the answers. It stops with `Refusing to overwrite current directory!`.
++
+* Suggestion: Pass the template and the folder on the command line.
+
+[[create-force]]pass:[<a class="anchor" href="#create-force"></a>]`zimlet create --force` cannot be cancelled::
+Answering `n` to the confirmation does not stop the command. It writes the template into the existing folder and keeps the files that the template does not contain.
++
+* Suggestion: Use `--force` only on a folder whose content you can lose.
+
+[[package-exit-code]]pass:[<a class="anchor" href="#package-exit-code"></a>]`zimlet package` reports success when it finds no label and description::
+The command prints `ERROR label and description string are not provided as argument`, writes no zip and exits with code `0`. A script or a build job then treats the run as a success.
++
+* Suggestion: Keep `zimlet.label` and `zimlet.description` in `src/intl/en_US.json`, and have the script check that the zip exists.
+* See xref:reference/cli.adoc#package[zimlet package].
+
+[[package-without-intl]]pass:[<a class="anchor" href="#package-without-intl"></a>]`zimlet package` crashes in a project without `src/intl`::
+When the project has no `src/intl` folder and you pass `--label` and `--description`, the command ends with `TypeError: Cannot read properties of undefined (reading 'filter')` and writes no zip.
++
+* Suggestion: Keep the `src/intl` folder with `en_US.json`.
+* See xref:fundamentals/project-structure.adoc[Project structure].
+
+[[package-missing-strings]]pass:[<a class="anchor" href="#package-missing-strings"></a>]`zimlet package` writes `undefined` for a missing translation of the label::
+When the file of another language has no `zimlet.label` or `zimlet.description`, the properties file of that language contains `label = undefined` and `description = undefined`.
++
+* Suggestion: Add both keys to every language file.
+* See xref:go-deeper/localization.adoc[Localization].
+
+[[package-xml-escaping]]pass:[<a class="anchor" href="#package-xml-escaping"></a>]`zimlet package` does not escape the label and description in the descriptor::
+A label such as `A & B`, a description with `<`, or a value with `"` is written as it is. The descriptor is then no longer valid XML.
++
+* Suggestion: Leave `&`, `<` and `"` out of the label and the description.
+
+[#run-and-build]
+== Run and build
+
+[[watch-url]]pass:[<a class="anchor" href="#watch-url"></a>]`zimlet watch` prints an `http://` address for an HTTPS server::
+With the default `--https true`, the printed address starts with `http://`, and the server answers only over HTTPS.
++
+* Suggestion: Use the `https://` address in the browser and in the sideloader.
+* See xref:run-package-deploy/run-and-debug.adoc#start-the-development-server[Start the development server].
+
+[[watch-port]]pass:[<a class="anchor" href="#watch-port"></a>]`zimlet watch` can miss a port that is in use::
+The tool moves to the next free port and prints it. It does not detect a program that listens only on `localhost`, such as a second `zimlet watch`. The command then stops with `EADDRINUSE`.
++
+* Suggestion: Choose a free port with `--port`. Use the port that the terminal prints in the sideloader address.
+* See xref:reference/cli.adoc#watch[zimlet watch].
+
+[[react-dom-client]]pass:[<a class="anchor" href="#react-dom-client"></a>]`react-dom/client` does not build::
+The build points imports of `react` and `react-dom` to Preact, but not the subpaths of `react-dom`. `import { createRoot } from 'react-dom/client'`, which React 18 code uses, fails with `Can't resolve 'react-dom/client'`.
++
+* Suggestion: Use Preact components and hooks.
+* See xref:fundamentals/shared-libraries.adoc[Shared libraries].
+
+[#shared-libraries]
+== Shared libraries
+
+[[names-missing-at-run-time]]pass:[<a class="anchor" href="#names-missing-at-run-time"></a>]An import of a name that the Modern UI does not export builds without a warning::
+The build does not check a named import against what the Modern UI exports, and it prints no warning. The failure comes when the Zimlet runs. If the build knows the name, calling it throws `Export <module>.<name> was not found`. An example is `useStore` from `react-redux`. If the build does not know the name, the import is `undefined`, and calling it throws a `TypeError`.
++
+* Suggestion: Import only the names that the reference pages list.
+* See xref:reference/shims/libraries.adoc[Shared libraries] and xref:reference/shims.adoc[Shared modules].
+
+[[jsx-runtime]]pass:[<a class="anchor" href="#jsx-runtime"></a>]`preact/jsx-runtime` is not provided::
+The Modern UI provides no copy of `preact/jsx-runtime`. A file that relies on the automatic JSX runtime fails when it renders.
++
+* Suggestion: Import `createElement` in every file with JSX.
+* See xref:fundamentals/shared-libraries.adoc#jsx-and-createelement[JSX and createElement].
+
+[#deploy]
+== Deploy
+
+[[public-path-assets]]pass:[<a class="anchor" href="#public-path-assets"></a>]A deployed Zimlet cannot load its own images and fonts::
+The server refuses a request for a file of a Modern UI Zimlet unless the address carries the Modern UI version. The version is the `zimbraXZimletCompatibleWith` parameter. The build writes the address of an image or font without it. With `--publicpath "/service/zimlet/<name>/"`, the server answers `403`. Without `--publicpath`, the Zimlet asks the root of the Modern UI for the file and gets `404`.
++
+* Suggestion: Add the parameter to the address of every built image and font in `zimlet.config.js`, and build with `--publicpath "/service/zimlet/<name>/"`. This is the preferred fix. It covers every image and font of the Zimlet, including those that a stylesheet loads with `url()`, and your code stays unchanged. Use a version inside the `--zimbraXVersion` range of your package, because the server compares the value with that range only.
++
+.zimlet.config.js
+[source,js]
+----
+include::example$known-limitations-and-gaps/zimlet.config.js[]
+----
++
+For only one or two images, there are two simpler options. You can inline each image, so that it is part of `index.js` and needs no request. In `zimlet.config.js`, set the `type` of the image rule to `asset/inline` and delete its `generator`. Or you can add `?zimbraXZimletCompatibleWith=<version>` to the address of that image in your code, with the version from xref:reference/context/values/meta.adoc[`meta`], and still build with `--publicpath "/service/zimlet/<name>/"`.
++
+* See xref:reference/files/zimlet-config.adoc#module-rules[`module.rules`], xref:run-package-deploy/build-and-package.adoc#choose-range[Choose the Modern UI versions your Zimlet supports] and xref:reference/files/zimlet-config.adoc#env-dest[`env.dest` and `env.publicpath`].
+
+[#modern-ui-behaviour]
+== Modern UI behaviour
+
+[[one-zimlet-fails-to-start]]pass:[<a class="anchor" href="#one-zimlet-fails-to-start"></a>]One Zimlet that fails to start stops other Zimlets from starting::
+The server sends all deployed Zimlets in one bundle, and the Modern UI starts them together. When the factory of one Zimlet throws, no Zimlet of the bundle starts. When `init()` of one Zimlet throws, the Zimlets after it do not start. The only sign is a warning in the browser console.
++
+* Suggestion: Wrap the body of your factory and of `init()` in `try` and `catch`. Your Zimlet then never throws into the Modern UI.
+* See xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle].
+
+[[unload-and-destroy]]pass:[<a class="anchor" href="#unload-and-destroy"></a>]`unload()` and `destroy()` are not called::
+Cleanup code in these methods does not run when a Zimlet restarts.
++
+* Suggestion: Release timers and listeners where you create them.
+* See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle].
+
+[[shared-zimlet-name]]pass:[<a class="anchor" href="#shared-zimlet-name"></a>]Zimlets deployed on the server share the `cache`, the `resourceUrl` and `unregisterAll()`::
+By design, the server sends every deployed Zimlet in one bundle, and the Modern UI loads them under one name, `serverConsolidatedZimlets`. The `cache` and the `resourceUrl` of the context are therefore shared by all of them, and `plugins.unregisterAll()` removes the handlers of all of them.
++
+* Suggestion: Do not use `cache` or `resourceUrl`, and unregister one handler at a time with `plugins.unregister()`.
+* See xref:reference/context/deprecated.adoc[Deprecated context fields] and xref:reference/context/plugins/unregister.adoc[unregister].
+
+[[remove-modal]]pass:[<a class="anchor" href="#remove-modal"></a>]`removeModal({ id })` closes every dialog that Zimlets added::
+Whatever `id` you pass, the call removes all the dialogs that Zimlets added.
++
+* Suggestion: Do not keep a second Zimlet dialog open while you close the first.
+* See xref:reference/context/store/zimlet-redux/actions.adoc#remove-modal[removeModal].
+
+[[email-processor-error]]pass:[<a class="anchor" href="#email-processor-error"></a>]One failing message processor breaks the message view::
+When a handler for `messageProcessors:emailProcessor` throws, or returns something that is not a function, the viewer fails. The browser console shows a `TypeError` that ends with `is not a function`. The names before that text depend on the build of the Modern UI, so a production build shows short names such as `t[e]`. The same applies to the other processor keys that go through the message sanitizer.
++
+* Suggestion: Wrap the body of your handler in `try` and `catch`, and always return a function.
+* See xref:reference/slots/content-processors.adoc#email-processor[messageProcessors:emailProcessor].
+
+[[new-tag-not-listed]]pass:[<a class="anchor" href="#new-tag-not-listed"></a>]A tag that a Zimlet creates is not listed until the page reloads::
+The Modern UI does not read new tags from the server notifications. A tag that you create with the batch client does not show in the tag list.
++
+* Suggestion: Show a notification that asks the user to reload the page, with a button that reloads it.
+* See xref:build-by-goal/recipe-mail-action-menu.adoc[the mail action menu recipe], which does this.
+
+[#next-step]
+== Next step
+
+Open xref:help-and-migration/troubleshooting.adoc[Troubleshooting] when a Zimlet does not appear or fails at run time. Use xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help] to report a problem that is not listed here.

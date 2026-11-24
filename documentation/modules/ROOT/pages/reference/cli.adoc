@@ -36,55 +36,31 @@ zimlet create [template] [dest] [options]
 
 === Arguments
 
-[options="header",cols="1,1,3"]
-|===
-|Name |Type |Description
+[[create-template]]pass:[<a class="anchor" href="#create-template"></a>]`template` (string)::
+The template to copy. `default` is the default Zimlet template. A name without a slash, such as `foo`, is a repository of the `zimbra` organization on GitHub. `<owner>/<repository>` names a repository of any owner, and `<owner>/<repository>#<tag>` names a tag or branch of it. Only the `template` folder of the repository is copied.
 
-|`template`
-|string
-|The template to copy. `default` is the default Zimlet template. A name without a slash, such as `foo`, is a repository of the `zimbra` organization on GitHub. `<owner>/<repository>` names a repository of any owner, and `<owner>/<repository>#<tag>` names a tag or branch of it. Only the `template` folder of the repository is copied.
-
-|`dest`
-|string
-|The folder to create, relative to the current folder. It must not exist. It is also the name of the Zimlet when you leave out `--name`.
-|===
+[[create-dest]]pass:[<a class="anchor" href="#create-dest"></a>]`dest` (string)::
+The folder to create, relative to the current folder. It must not exist. It is also the name of the Zimlet when you leave out `--name`.
 
 === Options
 
-[options="header",cols="2,1,1,3"]
-|===
-|Name |Type |Default |Description
+[[create-name]]pass:[<a class="anchor" href="#create-name"></a>]`--name` (string, default the value of `dest`)::
+The name of the Zimlet. The command writes it as the `name` in `package.json` and in every text file of the template that has `+{{name}}+`. It must be a valid npm package name.
 
-|`--name`
-|string
-|The value of `dest`
-|The name of the Zimlet. The command writes it as the `name` in `package.json` and in every text file of the template that has `+{{name}}+`. It must be a valid npm package name.
+[[create-force]]pass:[<a class="anchor" href="#create-force"></a>]`--force`, `-f` (boolean, default `false`)::
+Create the Zimlet in a folder that already exists. The files of the template overwrite files with the same name, and other files stay.
 
-|`--force`, `-f`
-|boolean
-|`false`
-|Create the Zimlet in a folder that already exists. The files of the template overwrite files with the same name, and other files stay.
+[[create-install]]pass:[<a class="anchor" href="#create-install"></a>]`--install`, `-i` (boolean, default `true`)::
+Install the dependencies with `npm install` after the files are created. Pass `--install false` to skip it.
 
-|`--install`, `-i`
-|boolean
-|`true`
-|Install the dependencies with `npm install` after the files are created. Pass `--install false` to skip it.
+[[create-yarn]]pass:[<a class="anchor" href="#create-yarn"></a>]`--yarn` (boolean, default `false`)::
+Install with `yarn` instead of `npm`. It has an effect only when `yarn` is installed.
 
-|`--yarn`
-|boolean
-|`false`
-|Install with `yarn` instead of `npm`. It has an effect only when `yarn` is installed.
+[[create-git]]pass:[<a class="anchor" href="#create-git"></a>]`--git` (boolean, default `false`)::
+Run `git init` in the new folder, stage the files and make the commit `initial commit from zimlet-cli`.
 
-|`--git`
-|boolean
-|`false`
-|Run `git init` in the new folder, stage the files and make the commit `initial commit from zimlet-cli`.
-
-|`--cwd`
-|string
-|`.`
-|The folder that `dest` is relative to, instead of the current folder.
-|===
+[[create-cwd]]pass:[<a class="anchor" href="#create-cwd"></a>]`--cwd` (string, default `.`)::
+The folder that `dest` is relative to, instead of the current folder.
 
 === Output
 
@@ -129,25 +105,14 @@ None.
 
 === Options
 
-[options="header",cols="2,1,1,3"]
-|===
-|Name |Type |Default |Description
+[[watch-port]]pass:[<a class="anchor" href="#watch-port"></a>]`--port` (number, default `8081`)::
+The port of the server. The `PORT` environment variable takes precedence over this option.
 
-|`--port`
-|number
-|`8081`
-|The port of the server. The `PORT` environment variable takes precedence over this option.
+[[watch-https]]pass:[<a class="anchor" href="#watch-https"></a>]`--https` (boolean, default `true`)::
+Serve over HTTPS with a self-signed certificate. `--https false` serves over plain HTTP.
 
-|`--https`
-|boolean
-|`true`
-|Serve over HTTPS with a self-signed certificate. `--https false` serves over plain HTTP.
-
-|`--config`
-|string
-|`./zimlet.config.js`
-|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[zimlet.config.js]. A path that does not exist prints a warning, and the command goes on without it.
-|===
+[[watch-config]]pass:[<a class="anchor" href="#watch-config"></a>]`--config` (string, default `./zimlet.config.js`)::
+The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[zimlet.config.js]. A path that does not exist prints a warning, and the command goes on without it.
 
 === Output
 
@@ -163,14 +128,14 @@ Local:            http://localhost:8081/index.js
 On Your Network:  http://<your-ip-address>:8081/index.js
 ----
 
-When a build has an error, the command prints `Build failed!` and the error, and keeps running. If the port is in use, the command stops with `Error: listen EADDRINUSE` and exit code `1`.
+When a build has an error, the command prints `Build failed!` and the error, and keeps running. If the port is in use, the command moves to the next free port and prints it. When it cannot detect the conflict, it stops with `Error: listen EADDRINUSE` and exit code `1`.
 
 === Usage notes
 
 * The printed address starts with `http://`, but with the default `--https true` the server answers only over HTTPS. Use `https://localhost:<port>/index.js`. Open it once in your browser and accept the certificate. See xref:getting-started/setup-environment.adoc#accept-certificate[Accept the development HTTPS certificate].
 * The server allows requests from any origin, so the Modern UI can load the file.
 * The command serves an unminified build with inline source maps, which makes debugging in the browser easier.
-* The server does not look for another port. Choose a free port with `--port` when 8081 is in use, and use the same port in the sideloader.
+* The server tries the next free port when the port is in use, and prints the one it uses. Use that port in the sideloader address. A program that listens only on `localhost` can go unnoticed. Choose a free port with `--port` in that case.
 * A Modern UI page that is already open does not update when you save. Reload it. See xref:run-package-deploy/run-and-debug.adoc#see-a-change[See a change].
 
 === Example
@@ -200,15 +165,13 @@ None.
 
 === Options
 
-[options="header",cols="2,1,1,3"]
-|===
-|Name |Type |Default |Description
+[[build-config]]pass:[<a class="anchor" href="#build-config"></a>]`--config` (string, default `./zimlet.config.js`)::
+The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[zimlet.config.js]. A path that does not exist prints a warning, and the command goes on without it.
 
-|`--config`
-|string
-|`./zimlet.config.js`
-|The path of a file that changes the build. See xref:reference/files/zimlet-config.adoc[zimlet.config.js]. A path that does not exist prints a warning, and the command goes on without it.
-|===
+[[build-publicpath]]pass:[<a class="anchor" href="#build-publicpath"></a>]`--publicpath` (string, default `/`)::
+The address that the build puts in front of every image and font that your code imports. For a deployed Zimlet, pass `"/service/zimlet/<name>/"`, where `<name>` is the `--name` that you give to `zimlet package`.
++
+WARNING: A deployed Zimlet cannot load its images and fonts with this option alone. The server answers `403` when the address has no Modern UI version, and `404` for the default `/`. Add the version to the address in `zimlet.config.js`. See xref:help-and-migration/known-limitations-and-gaps.adoc#public-path-assets[A deployed Zimlet cannot load its own images and fonts].
 
 === Output
 
@@ -254,40 +217,23 @@ None.
 
 === Options
 
-[options="header",cols="2,1,1,3"]
-|===
-|Name |Type |Default |Description
+[[package-name]]pass:[<a class="anchor" href="#package-name"></a>]`--name`, `-n` (string, required)::
+The name of the Zimlet. It must be unique on the server. It becomes the name of the zip file and of the descriptor.
 
-|`--name`, `-n`
-|string
-|Required
-|The name of the Zimlet. It must be unique on the server. It becomes the name of the zip file and of the descriptor.
+[[package-pkg-version]]pass:[<a class="anchor" href="#package-pkg-version"></a>]`--pkg-version`, `-v` (string, required)::
+The version of the Zimlet, for example `1.0.1`.
 
-|`--pkg-version`, `-v`
-|string
-|Required
-|The version of the Zimlet, for example `1.0.1`.
+[[package-zimbra-x-version]]pass:[<a class="anchor" href="#package-zimbra-x-version"></a>]`--zimbraXVersion` (string, default `>=1.0.0`)::
+The xref:reference/glossary.adoc#semver-range[semver range] of Modern UI versions that the Zimlet supports. Put the range in single quotes. See xref:run-package-deploy/build-and-package.adoc#choose-range[Choose the Modern UI versions your Zimlet supports].
 
-|`--zimbraXVersion`
-|string
-|`>=1.0.0`
-|The xref:reference/glossary.adoc#semver-range[semver range] of Modern UI versions that the Zimlet supports. Put the range in single quotes. See xref:run-package-deploy/build-and-package.adoc#choose-range[Choose the Modern UI versions your Zimlet supports].
+[[package-label]]pass:[<a class="anchor" href="#package-label"></a>]`--label`, `-l` (string)::
+The display name of the Zimlet. It is used only when `src/intl/en_US.json` has no `zimlet.label` and `zimlet.description`.
 
-|`--label`, `-l`
-|string
-|None
-|The display name of the Zimlet. It is used only when `src/intl/en_US.json` has no `zimlet.label` and `zimlet.description`.
+[[package-description]]pass:[<a class="anchor" href="#package-description"></a>]`--description`, `--desc` (string)::
+The description of the Zimlet. It is used under the same condition as `--label`.
 
-|`--description`, `--desc`
-|string
-|None
-|The description of the Zimlet. It is used under the same condition as `--label`.
-
-|`--dest`, `-d`
-|string
-|`./pkg`
-|The folder for the zip file.
-|===
+[[package-dest]]pass:[<a class="anchor" href="#package-dest"></a>]`--dest`, `-d` (string, default `./pkg`)::
+The folder for the zip file.
 
 === Output
 
