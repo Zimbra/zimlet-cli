@@ -1,0 +1,10 @@
+    <meta name="theme-color" content="#ffffff">
+    <meta property="og:site_name" content="{{site.title}}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{#if page.title}}{{{detag page.title attribute=true}}}{{else}}{{site.title}}{{/if}}">
+    {{#with page.description}}
+    <meta property="og:description" content="{{{detag this attribute=true}}}">
+    {{/with}}
+    {{#if site.url}}
+    <meta property="og:image" content="{{{site.url}}}/_/img/zimbra-logo.png">
+    {{/if}}

@@ -52,3 +52,564 @@
 .doc .sect1.examples > h2 {
 	margin-top: 0;
 }
+
+/* Brand palette. Orange is for accents and borders only: white text on it fails the contrast minimum. */
+:root {
+	--zm-orange: #f58220;
+	--zm-blue: #1565c0;
+	--zm-blue-dark: #104d92;
+	--zm-surface: #fafafa;
+	--zm-surface-tint: #f1f6fb;
+	--zm-border: #e1e1e1;
+	--zm-code-comment: #5e6a75;
+	--zm-code-string: #b5173c;
+}
+
+/* Header: a light bar so the logo keeps its colours, with a brand accent line. */
+.navbar {
+	display: flex;
+	background: #fff;
+	color: #222;
+	border-bottom: 1px solid var(--zm-border);
+	box-shadow: 0 3px 0 var(--zm-orange);
+}
+
+.navbar-brand .navbar-item,
+.navbar-brand .navbar-item:first-child {
+	color: #222;
+}
+
+.navbar-brand .navbar-item:first-child {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	font-size: 1.05rem;
+	font-weight: 500;
+}
+
+.navbar-brand .navbar-item:first-child :not(:last-child) {
+	padding-right: 0;
+}
+
+.navbar-logo {
+	display: block;
+	height: 2rem;
+	width: auto;
+}
+
+.navbar-title {
+	padding-left: 0.75rem;
+	border-left: 1px solid var(--zm-border);
+	line-height: 2rem;
+}
+
+.navbar-end .navbar-link,
+.navbar-end > .navbar-item {
+	color: #222;
+}
+
+.navbar-end .navbar-item.has-dropdown:hover .navbar-link,
+.navbar-end .navbar-link:hover,
+.navbar-end > a.navbar-item:hover {
+	background: transparent;
+	color: var(--zm-blue);
+	text-decoration: underline;
+}
+
+.navbar a:focus-visible,
+.nav a:focus-visible,
+.toolbar a:focus-visible,
+.toc a:focus-visible,
+.doc a:focus-visible,
+.source-toolbox .copy-button:focus-visible,
+.theme-toggle:focus-visible,
+.navbar #search-input:focus-visible {
+	outline: 2px solid var(--zm-blue);
+	outline-offset: 2px;
+}
+
+.navbar #search-input {
+	width: 220px;
+	padding: 0.25rem 0.75rem 0.25rem 1rem;
+	border: 1px solid #8e8e8e;
+	border-radius: 1rem;
+	background: #fff;
+}
+
+@media screen and (max-width: 768.5px) {
+	.navbar-brand {
+		align-items: center;
+		flex-wrap: nowrap;
+		padding-right: 0.5rem;
+	}
+
+	.navbar-brand .navbar-item:first-child {
+		flex: none;
+	}
+
+	.navbar-logo {
+		height: 1.75rem;
+	}
+
+	.navbar-title {
+		display: none;
+	}
+
+	.navbar-brand .navbar-item.search {
+		flex: 1 1 auto;
+		min-width: 0;
+		padding-left: 0.75rem;
+	}
+
+	.navbar #search-input {
+		width: 100%;
+		min-width: 0;
+	}
+}
+
+/* Theme toggle: shows the moon in the light theme and the sun in the dark theme. */
+.theme-toggle {
+	display: flex;
+	flex: none;
+	align-self: center;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	margin: 0 0.75rem 0 0.25rem;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 50%;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+}
+
+.theme-toggle:hover {
+	background: var(--zm-surface);
+	border-color: var(--zm-border);
+}
+
+.theme-toggle svg {
+	width: 1.25rem;
+	height: 1.25rem;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.theme-toggle .icon-sun,
+html[data-theme='dark'] .theme-toggle .icon-moon {
+	display: none;
+}
+
+html[data-theme='dark'] .theme-toggle .icon-sun {
+	display: block;
+}
+
+/* Footer */
+footer.footer {
+	background: var(--zm-surface);
+	border-top: 1px solid var(--zm-border);
+	box-shadow: inset 0 3px 0 var(--zm-orange);
+	color: #5d5d5d;
+	padding: 1.5rem 1rem;
+}
+
+.footer-links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.5rem 1.5rem;
+}
+
+.footer a {
+	color: var(--zm-blue-dark);
+	text-underline-offset: 0.15em;
+}
+
+.footer a:focus-visible {
+	outline: 2px solid var(--zm-blue);
+	outline-offset: 2px;
+}
+
+/* Typography */
+.doc {
+	line-height: 1.65;
+	max-width: 44rem;
+}
+
+.doc h1 {
+	font-weight: 500;
+}
+
+.doc h2:not(.discrete) {
+	font-weight: 500;
+	margin-top: 2rem;
+}
+
+.doc h3,
+.doc h4 {
+	font-weight: 500;
+	margin-top: 1.5rem;
+}
+
+.doc a {
+	text-underline-offset: 0.15em;
+}
+
+.doc p code,
+.doc thead code,
+.doc .colist > table code {
+	border: 1px solid var(--zm-border);
+}
+
+/* Navigation: a clear active item and section headings. */
+.nav {
+	border-right: 1px solid var(--zm-border);
+}
+
+.nav-menu h3.title {
+	font-size: 0.8rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.nav-item.is-current-page > .nav-link {
+	color: var(--zm-blue);
+	font-weight: 600;
+}
+
+.toc .toc-menu a.is-active {
+	border-left-color: var(--zm-orange);
+}
+
+/* Tables */
+.doc table.tableblock thead th {
+	background: var(--zm-surface-tint);
+	text-align: left;
+}
+
+.doc table.tableblock > tbody > tr:hover {
+	background: var(--zm-surface);
+}
+
+/* Code blocks: a rounded panel, and a copy button that stays reachable by keyboard. */
+.doc .listingblock pre:not(.highlight),
+.doc .literalblock pre,
+.doc pre.highlight > code {
+	border-radius: 6px;
+	border-left: 3px solid var(--zm-orange);
+}
+
+.source-toolbox {
+	visibility: visible;
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+
+.doc .listingblock:hover .source-toolbox,
+.source-toolbox:focus-within {
+	opacity: 1;
+}
+
+@media (hover: none) {
+	.source-toolbox {
+		opacity: 1;
+	}
+}
+
+.source-toolbox {
+	color: #5d5d5d;
+}
+
+.hljs-comment,
+.hljs-quote {
+	color: var(--zm-code-comment);
+}
+
+.hljs-doctag,
+.hljs-string {
+	color: var(--zm-code-string);
+}
+
+.hljs-meta {
+	color: var(--zm-code-comment);
+}
+
+/* Admonitions: a coloured left rule per type, in the style of the example pointer panel. */
+.doc .admonitionblock > table {
+	border-left: 4px solid var(--zm-border);
+	border-radius: 0 4px 4px 0;
+	overflow: visible;
+}
+
+.doc .admonitionblock.note > table {
+	border-left-color: #217ee7;
+}
+
+.doc .admonitionblock.tip > table {
+	border-left-color: #41af46;
+}
+
+.doc .admonitionblock.important > table {
+	border-left-color: #d32f2f;
+}
+
+.doc .admonitionblock.warning > table {
+	border-left-color: #e18114;
+}
+
+.doc .admonitionblock.caution > table {
+	border-left-color: #a0439c;
+}
+
+.doc .admonitionblock td.icon {
+	transform: translate(-0.75rem, -50%);
+}
+
+/* Darker label backgrounds, so the white label text meets the contrast minimum. */
+.doc .admonitionblock td.icon i.icon-note {
+	background-color: #1565c0;
+}
+
+.doc .admonitionblock td.icon i.icon-tip {
+	background-color: #2e7d32;
+}
+
+.doc .admonitionblock td.icon i.icon-important {
+	background-color: #c62828;
+}
+
+.doc .admonitionblock td.icon i.icon-warning {
+	background-color: #a85b00;
+}
+
+.doc .admonitionblock td.icon i.icon-caution {
+	background-color: #8e3a8a;
+}
+
+/* Dark theme. The theme script sets data-theme on the html element from the saved choice or the system setting. */
+html[data-theme='dark'] {
+	--zm-blue: #8ec5ff;
+	--zm-blue-dark: #b3d8ff;
+	--zm-surface: #1b2027;
+	--zm-surface-tint: #1f2a38;
+	--zm-border: #333b46;
+	--zm-code-comment: #8b98a5;
+	--zm-code-string: #ff9db1;
+	color-scheme: dark;
+}
+
+html[data-theme='dark']::-webkit-scrollbar {
+	background-color: var(--zm-surface);
+}
+
+html[data-theme='dark'] body {
+	background: #14171c;
+	color: #d8dee6;
+}
+
+html[data-theme='dark'] .navbar,
+html[data-theme='dark'] .navbar-brand .navbar-item,
+html[data-theme='dark'] .navbar-brand .navbar-item:first-child,
+html[data-theme='dark'] .navbar-end .navbar-link,
+html[data-theme='dark'] .navbar-end > .navbar-item {
+	background: #14171c;
+	color: #d8dee6;
+}
+
+html[data-theme='dark'] .navbar-menu {
+	background: #14171c;
+}
+
+html[data-theme='dark'] .navbar #search-input {
+	background: var(--zm-surface);
+	border-color: #6b7785;
+	color: #d8dee6;
+}
+
+html[data-theme='dark'] .navbar #search-input::placeholder {
+	color: #9aa5b1;
+}
+
+html[data-theme='dark'] .nav,
+html[data-theme='dark'] .nav-panel-explore,
+html[data-theme='dark'] .toolbar {
+	background: var(--zm-surface);
+	color: #b4bec9;
+}
+
+html[data-theme='dark'] .nav-menu h3.title {
+	color: #b4bec9;
+}
+
+html[data-theme='dark'] .toolbar {
+	box-shadow: 0 1px 0 var(--zm-border);
+}
+
+html[data-theme='dark'] .toc-menu,
+html[data-theme='dark'] .toc .toc-menu h3,
+html[data-theme='dark'] .toc .toc-menu a.is-active {
+	color: #b4bec9;
+}
+
+html[data-theme='dark'] .toc .toc-menu a {
+	border-left-color: var(--zm-border);
+}
+
+html[data-theme='dark'] .doc,
+html[data-theme='dark'] .doc h1,
+html[data-theme='dark'] .doc h2,
+html[data-theme='dark'] .doc h3,
+html[data-theme='dark'] .doc h4,
+html[data-theme='dark'] .doc h5,
+html[data-theme='dark'] .doc h6 {
+	color: #e6ebf0;
+}
+
+html[data-theme='dark'] .doc {
+	color: #d8dee6;
+}
+
+html[data-theme='dark'] .doc a {
+	color: var(--zm-blue);
+}
+
+html[data-theme='dark'] .doc a:hover {
+	color: var(--zm-blue-dark);
+}
+
+html[data-theme='dark'] .doc a.unresolved {
+	color: #ff8a80;
+}
+
+html[data-theme='dark'] .doc h2:not(.discrete),
+html[data-theme='dark'] .doc hr,
+html[data-theme='dark'] nav.pagination {
+	border-color: var(--zm-border);
+}
+
+html[data-theme='dark'] .doc h1.sect0 {
+	background: var(--zm-surface);
+}
+
+html[data-theme='dark'] .doc p code,
+html[data-theme='dark'] .doc thead code,
+html[data-theme='dark'] .doc .colist > table code,
+html[data-theme='dark'] .doc kbd {
+	background: var(--zm-surface);
+	border-color: var(--zm-border);
+	color: #e6ebf0;
+}
+
+html[data-theme='dark'] .doc .listingblock pre:not(.highlight),
+html[data-theme='dark'] .doc .literalblock pre,
+html[data-theme='dark'] .doc pre.highlight > code {
+	background: var(--zm-surface);
+	box-shadow: none;
+	color: #d8dee6;
+}
+
+html[data-theme='dark'] .hljs-keyword,
+html[data-theme='dark'] .hljs-selector-tag,
+html[data-theme='dark'] .hljs-subst {
+	color: #e6ebf0;
+}
+
+html[data-theme='dark'] .hljs-literal,
+html[data-theme='dark'] .hljs-number,
+html[data-theme='dark'] .hljs-tag .hljs-attr,
+html[data-theme='dark'] .hljs-template-variable,
+html[data-theme='dark'] .hljs-variable,
+html[data-theme='dark'] .hljs-built_in,
+html[data-theme='dark'] .hljs-builtin-name {
+	color: #6bd3d3;
+}
+
+html[data-theme='dark'] .hljs-section,
+html[data-theme='dark'] .hljs-selector-id,
+html[data-theme='dark'] .hljs-title {
+	color: #ff9d8c;
+}
+
+html[data-theme='dark'] .hljs-class .hljs-title,
+html[data-theme='dark'] .hljs-type,
+html[data-theme='dark'] .hljs-attribute,
+html[data-theme='dark'] .hljs-name,
+html[data-theme='dark'] .hljs-tag {
+	color: #9ec5ff;
+}
+
+html[data-theme='dark'] .hljs-link,
+html[data-theme='dark'] .hljs-regexp {
+	color: #6fdc8c;
+}
+
+html[data-theme='dark'] .hljs-bullet,
+html[data-theme='dark'] .hljs-symbol {
+	color: #f59bd6;
+}
+
+html[data-theme='dark'] .source-toolbox {
+	color: #b4bec9;
+}
+
+html[data-theme='dark'] .doc table.tableblock,
+html[data-theme='dark'] .doc table.tableblock > * > tr > * {
+	border-color: var(--zm-border);
+}
+
+html[data-theme='dark'] .doc table.tableblock > tbody > tr:hover,
+html[data-theme='dark'] .doc table.stripes-all > tbody > tr,
+html[data-theme='dark'] .doc table.stripes-even > tbody > tr:nth-of-type(2n),
+html[data-theme='dark'] .doc table.stripes-hover > tbody > tr:hover,
+html[data-theme='dark'] .doc table.stripes-odd > tbody > tr:nth-of-type(odd) {
+	background: var(--zm-surface);
+}
+
+html[data-theme='dark'] .doc table.tableblock > tfoot {
+	background: var(--zm-surface);
+}
+
+html[data-theme='dark'] .doc .admonitionblock td.content,
+html[data-theme='dark'] .doc .quoteblock,
+html[data-theme='dark'] .doc .verseblock,
+html[data-theme='dark'] .doc .exampleblock > .content,
+html[data-theme='dark'] #preamble .abstract blockquote {
+	background: var(--zm-surface);
+	color: #d8dee6;
+}
+
+html[data-theme='dark'] .doc .sidebarblock {
+	background: var(--zm-surface-tint);
+}
+
+html[data-theme='dark'] .admonitionblock .title,
+html[data-theme='dark'] .doc .exampleblock .title,
+html[data-theme='dark'] .doc .imageblock .title,
+html[data-theme='dark'] .doc .listingblock .title,
+html[data-theme='dark'] .doc table.tableblock caption {
+	color: #b4bec9;
+}
+
+html[data-theme='dark'] .doc .sect1.examples {
+	background-color: var(--zm-surface-tint);
+	border-left-color: #8ec5ff;
+}
+
+html[data-theme='dark'] .doc .imageblock img {
+	background: #fff;
+}
+
+html[data-theme='dark'] .home-link,
+html[data-theme='dark'] .nav-toggle,
+html[data-theme='dark'] .nav-menu-toggle {
+	filter: invert(1);
+}
+
+html[data-theme='dark'] footer.footer {
+	color: #b4bec9;
+}
