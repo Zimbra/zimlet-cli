@@ -5,7 +5,7 @@ The entry file of a xref:reference/glossary.adoc#zimlet[Zimlet] default-exports 
 [#lifecycle]
 == The lifecycle at a glance
 
-The diagram shows what the Modern UI does with your Zimlet, from loading it to the point where your handlers work.
+The diagram shows what the Modern UI does with your Zimlet, from loading it to the point where your xref:fundamentals/extending-the-ui.adoc[handlers] work.
 
 .From loading a Zimlet to running its handlers
 image::diagrams/factory-lifecycle.svg["The Modern UI calls the factory. If the Zimlet is enabled for the account, the Modern UI calls init(), which registers handlers, and the handlers then run until your code removes them. If the Zimlet is not enabled, init() is not called. An error in the factory logs a warning, and init() is not called for any Zimlet loaded together with it. An error in init() logs a warning, and init() is not called for the Zimlets after it."]
@@ -31,7 +31,7 @@ The Modern UI calls the factory once, when it loads your Zimlet, and passes it t
 include::example$factory-and-lifecycle/factory.js[]
 ----
 
-`init()` registers a xref:fundamentals/extending-the-ui.adoc[plugin handler] for the `message-body-top` xref:fundamentals/extending-the-ui.adoc[slot], which is the area above the text of an open message. The handler returns an element that the slot shows. The `createElement` import is required in every file that contains JSX. See xref:fundamentals/shared-libraries.adoc#jsx-and-createelement[JSX and createElement].
+`init()` registers a xref:fundamentals/extending-the-ui.adoc[plugin handler] for the xref:reference/slots/mail/message-viewer.adoc#message-body-top[`message-body-top`] xref:fundamentals/extending-the-ui.adoc[slot], which is the area above the text of an open message. The handler returns an element that the slot shows. The `createElement` import is required in every file that contains JSX. See xref:fundamentals/shared-libraries.adoc#jsx-and-createelement[JSX and createElement].
 
 Follow these rules for the factory:
 
@@ -61,7 +61,7 @@ An error that `init()` throws is logged as a warning in the browser console. The
 
 `init()` does not need to finish its work before it returns. Start the asynchronous work, and register your handlers when it finishes. A slot shows a handler that you register later as soon as you register it.
 
-The example asks the server for the account information with xref:reference/context/batch-client/json-request.adoc[`jsonRequest`], and registers a handler for the `mail-sidebar-footer` xref:fundamentals/extending-the-ui.adoc[slot], which is the area at the bottom of the sidebar. The handler shows a welcome message with the account `name`. If the request fails, it logs the error, and the Zimlet adds nothing.
+The example asks the server for the account information with xref:reference/context/batch-client/json-request.adoc[`jsonRequest`], and registers a handler for the xref:reference/slots/mail/mail-list-and-sidebar.adoc#mail-sidebar-footer[`mail-sidebar-footer`] xref:fundamentals/extending-the-ui.adoc[slot], which is the area at the bottom of the sidebar. The handler shows a welcome message with the account `name`. If the request fails, it logs the error, and the Zimlet adds nothing.
 
 .src/index.js
 [source,js]
@@ -76,7 +76,7 @@ Always handle a rejected promise with `.catch`. The Modern UI does not do it for
 
 Register a handler only when a condition holds. Remove it later with `plugins.unregister`. Pass the same function that you registered, because `unregister` matches the function itself and not its code. Keep that function in a variable.
 
-The example shows a tip about dragging messages below the folder list (the `folder-list-end` slot). Dragging needs a mouse, so the example compares the result of `getPlatformType()` with `PLATFORM_TYPES.WEB` and registers the tip only in the web client. It does nothing on other platforms, such as the desktop and mobile apps. The tip has a button that removes it with `plugins.unregister` when the user dismisses it.
+The example shows a tip about dragging messages below the folder list (the xref:reference/slots/app-shell/folder-list.adoc#folder-list-end[`folder-list-end`] slot). Dragging needs a mouse, so the example compares the result of `getPlatformType()` with `PLATFORM_TYPES.WEB` and registers the tip only in the web client. It does nothing on other platforms, such as the desktop and mobile apps. The tip has a button that removes it with `plugins.unregister` when the user dismisses it.
 
 .src/index.js
 [source,js]

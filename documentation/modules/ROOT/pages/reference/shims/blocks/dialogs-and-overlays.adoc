@@ -274,7 +274,7 @@ WARNING: With this prop, the keyboard cannot open the popover. A key press on a 
 [[popover-on-dropdown-click]]pass:[<a class="anchor" href="#popover-on-dropdown-click"></a>]`onDropdownClick` (function `(event: MouseEvent) => void`)::
 Called with the click event on each click inside the content. Its return value is ignored.
 
-[[popover-into]]pass:[<a class="anchor" href="#popover-into"></a>]`into` (https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^], default `document.body`)::
+[[popover-into]]pass:[<a class="anchor" href="#popover-into"></a>]`into` (https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements[HTML element^], default `document.body`)::
 The element that holds the popover. Pass an element, not a selector. This differs from <<dialog,`Dialog`>> and its relatives, whose `into` is a selector. Pass `null` to draw the popover next to the trigger, inside the container.
 
 [[popover-full-width]]pass:[<a class="anchor" href="#popover-full-width"></a>]`fullWidth` (boolean)::

@@ -20,7 +20,7 @@ The slot works like this:
 [#register-a-handler]
 == Register a handler
 
-Register a handler with `plugins.register` from the xref:fundamentals/host-context.adoc[context], in `init()`. The key is the slot name with the prefix `slot::`. The slot `mail-sidebar-footer` has the key `slot::mail-sidebar-footer`.
+Register a handler with `plugins.register` from the xref:fundamentals/host-context.adoc[context], in `init()`. The key is the slot name with the prefix `slot::`. The slot xref:reference/slots/mail/mail-list-and-sidebar.adoc#mail-sidebar-footer[`mail-sidebar-footer`] has the key `slot::mail-sidebar-footer`.
 
 The example adds a link to a help desk at the bottom of the mail sidebar. The handler is a function that returns an element, and the slot shows the element.
 
@@ -117,7 +117,7 @@ The xref:reference/slots.adoc[slot index] lists every slot and extension point w
 Every handler is registered with `plugins.register` under a key. When the Modern UI needs the handlers of a key, it collects the results of all of them with xref:reference/context/zimlets/invoke-plugin.adoc[`invokePlugin`]. What happens to the results depends on the key:
 
 * **A slot key** starts with `slot::`, such as `slot::mail-sidebar-footer`. The slot calls the handlers and renders what they return.
-* **A data key** has no prefix, such as `settings` or `messageProcessors:emailProcessor`. The Modern UI code calls the handlers itself and uses the results as data, for example to add a section to the Settings dialog or to change message text. Nothing is drawn, so such a handler returns the data that the Modern UI expects and not an element.
+* **A data key** has no prefix, such as xref:reference/slots/settings.adoc#settings[`settings`] or xref:reference/slots/content-processors.adoc#email-processor[`messageProcessors:emailProcessor`]. The Modern UI code calls the handlers itself and uses the results as data, for example to add a section to the Settings dialog or to change message text. Nothing is drawn, so such a handler returns the data that the Modern UI expects and not an element.
 
 The xref:reference/slots.adoc[slot index] lists both kinds of keys. The keys that your Zimlet is most likely to use are in <<other-registration-keys>>.
 
@@ -128,7 +128,7 @@ Your Zimlet can also define a data key of its own. Register your handlers under 
 
 Some screens pass a function to the slot instead of letting the slot render the results. This pattern is called a render prop. The slot calls all handlers, collects their results in a list and gives the list to that function. The screen shows what the function returns. Your handler provides data, and the screen decides how to use it.
 
-The `searchInputPlaceholder` slot is an example. The search box asks it for the word that completes its hint, `Search your <word>`. The slot passes `pathType`, the vertical that is open, such as `email` or `briefcase`. Your handler returns the word as text, or nothing to keep the default word.
+The xref:reference/slots/app-shell/search.adoc#search-input-placeholder[`searchInputPlaceholder`] slot is an example. The search box asks it for the word that completes its hint, `Search your <word>`. The slot passes `pathType`, the xref:reference/glossary.adoc#vertical[vertical] that is open, such as `email` or `briefcase`. Your handler returns the word as text, or nothing to keep the default word.
 
 The example makes the search box in the Briefcase read `Search your team documents`. In every other vertical the handler returns `null`, so the search box keeps its own word.
 
@@ -145,7 +145,7 @@ Keep to these rules for a render-prop slot:
 * The slot has no label with `?zimletSlots=show`. It writes `non-visible ZimletSlot name=<slot-name>` to the browser console instead.
 * A handler that throws still puts an error object in the list, in its place.
 
-The slot `web-search` is a render-prop slot that replaces the search field itself. xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar] shows it.
+The slot xref:reference/slots/app-shell/search.adoc#web-search[`web-search`] is a render-prop slot that replaces the search field itself. xref:build-by-goal/recipe-search-bar.adoc[Extend the search bar] shows it.
 [#other-registration-keys]
 == Other registration keys
 

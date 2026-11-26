@@ -7,7 +7,7 @@ This page gives the short mental model of how a Zimlet works. It opens the guide
 [#from-source-to-modern-ui]
 == From source to Modern UI
 
-You write your Zimlet as source files. The `zimlet` tool builds them into one file and packages it. An administrator deploys the package. Then the Modern UI downloads your Zimlet and runs its code, and shows the result. The code registers what the Zimlet adds, such as a handler for a place in the screen or for an event. Most often that is new UI in existing screens, but a Zimlet can also add behaviour only and show nothing.
+You write your Zimlet as source files. The `zimlet` tool builds them into one file and packages it. An administrator deploys the package. Then the Modern UI downloads your Zimlet and runs its code, and shows the result. The code registers handlers for what the Zimlet adds. A xref:fundamentals/extending-the-ui.adoc[handler] is a function that the Modern UI calls for a xref:fundamentals/extending-the-ui.adoc[slot], a named place in a screen, or for an event. Most often that is new UI in existing screens, but a Zimlet can also add behaviour only and show nothing.
 
 .From source files to the Modern UI
 image::diagrams/zimlet-lifecycle.svg["A Zimlet is written, built and packaged on your machine, deployed to the Zimbra server, then downloaded by the Modern UI, which runs the Zimlet code and shows the result"]
@@ -32,7 +32,7 @@ A Zimlet and the Modern UI work together in a few ways:
 [#try-it-while-you-develop]
 == Try it while you develop
 
-`zimlet watch` serves your Zimlet from your machine. A helper Zimlet called the xref:run-package-deploy/run-and-debug.adoc[*sideloader*] loads it into the Modern UI. When you save a file, `zimlet watch` rebuilds the Zimlet and serves the new version. The open Modern UI page keeps the old version, so reload the page to see the change. Keep *Persist on Reload* ticked in the sideloader so the Zimlet loads again after the reload. See xref:run-package-deploy/run-and-debug.adoc[Run and debug].
+`zimlet watch` serves your Zimlet from your machine. A helper Zimlet called the xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[sideloader] loads it into the Modern UI. When you save a file, `zimlet watch` rebuilds the Zimlet and serves the new version. The open Modern UI page keeps the old version, so reload the page to see the change. Keep *Persist on Reload* ticked in the sideloader so the Zimlet loads again after the reload. See xref:run-package-deploy/run-and-debug.adoc[Run and debug].
 
 == Next step
 

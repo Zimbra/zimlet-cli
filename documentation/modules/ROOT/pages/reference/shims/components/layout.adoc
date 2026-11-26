@@ -206,6 +206,10 @@ Passed to `renderItem` and `ListItem` as they are. The list does not use them.
 [[smart-list-is-search-innner-list]]pass:[<a class="anchor" href="#smart-list-is-search-innner-list"></a>]`isSearchInnnerList` (boolean)::
 Sets the space above the rows, below the header, to 28 px, as in the search lists of the Modern UI. It applies to a list that has a header. The name is spelled with three `n`.
 
+[[smart-list-is-mail-list]]pass:[<a class="anchor" href="#smart-list-is-mail-list"></a>]`isMailList` (boolean)::
+Set it for the list of mail items. The list then ignores the *Up arrow* and *Down arrow* keys and does not move the selection with them. The Modern UI moves it with its own keyboard shortcuts. No other key changes. *Home* and *Command* with *Up arrow* still select the first row.
+[[smart-list-save-displayed-list-items]]pass:[<a class="anchor" href="#smart-list-save-displayed-list-items"></a>]`saveDisplayedListItems` (function `(items: array of object) => void`)::
+Called with the new <<smart-list-items,`items`>> each time the list gets a different array. It is not called for the first array, or when the same array comes again. Its return value is ignored.
 [[smart-list-vanilla]]pass:[<a class="anchor" href="#smart-list-vanilla"></a>]`vanilla` (boolean)::
 Leaves out the default look of the list and of its empty state. Use it when you style the list yourself.
 
@@ -224,7 +228,7 @@ A `div` with the header and the list. The list is a `ul` with the role `listbox`
 * The selection belongs to you. Keep `selected` in your state and set it from `onSelectionChange`. Without that, a click does not change what `SmartList` shows.
 * A click on a row selects it. The row must call the `onClick` that it receives, with the event (`onClick(event)`) or with an object (`onClick({ event, action })`). Use the action `selectItem` or `toggleItemSelected`. The list adds *Ctrl* or *Command* click (toggle) and *Shift* click (range) for you.
 * A *Shift* click finds the row by the `id` property of its item, also when you set `getId`. Keep an `id` on every item.
-* The list is a tab stop. *Up arrow* and *Down arrow* move the selection, and *Shift* with an arrow extends it. *End*, or *Command* with *Down arrow*, selects the last row. *Command* with *Up arrow* selects the first row. The *Home* key does nothing, because the Modern UI compares it with a wrong key code.
+* The list is a tab stop. *Up arrow* and *Down arrow* move the selection, and *Shift* with an arrow extends it. *End*, or *Command* with *Down arrow*, selects the last row. *Home*, or *Command* with *Up arrow*, selects the first row.
 * For keyboard navigation in a list that is not virtualized, give every row `role="option"` and a unique `id`. `SmartList` reads them to find the next row and to scroll it into view.
 * The list fills the height of its parent, so give the parent a height. A virtualized list needs it to know how many rows to draw.
 * A list with `renderItem` draws the xref:reference/slots/app-shell/ad-slots.adoc[`top-mail-ad-item` slot] above its first row and in its empty state. A Zimlet that fills this slot adds content there.

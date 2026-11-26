@@ -35,7 +35,7 @@ Run `zimlet watch`. It starts the development server that serves your Zimlet to 
 Runs `zimlet build`. It writes the minified Zimlet to the `build` folder. See xref:run-package-deploy/build-and-package.adoc[Build and package].
 
 [[package]]pass:[<a class="anchor" href="#package"></a>]`package`::
-Runs `zimlet package` with the name and version from `package.json` and the Modern UI versions your Zimlet supports, the xref:reference/glossary.adoc#semver-range[semver range] `--zimbraXVersion '^4.0.0'`. Run `npm run build` first. Change the range to match your server, as xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version] describes. The zip is written to `pkg/`. See xref:run-package-deploy/build-and-package.adoc[Build and package].
+Runs `zimlet package` with the name and version from `package.json` and the Modern UI versions your Zimlet supports, the xref:reference/glossary.adoc#semver-range[semver range] `--zimbraXVersion '^{modern-ui-version}'`. Run `npm run build` first. Change the range to match your server, as xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version] describes. The zip is written to `pkg/`. See xref:run-package-deploy/build-and-package.adoc[Build and package].
 
 [[lint]]pass:[<a class="anchor" href="#lint"></a>]`lint` and `lint:fix`::
 Check the code in `src/` with ESLint, and fix what ESLint can fix. See xref:run-package-deploy/lint-your-code.adoc[Lint].
@@ -65,7 +65,7 @@ The libraries that your code imports, which end up in your bundle. Do not add li
 Style variables and mixins that match the Modern UI, with its fonts. Import them in a `.less` file, as the template does. See xref:go-deeper/styling/shared-styles.adoc[Style library]. The source is in the https://github.com/Zimbra/zm-x-ui[`@zimbra/x-ui` repository on GitHub^].
 
 [[lucide-preact]]pass:[<a class="anchor" href="#lucide-preact"></a>]`lucide-preact`::
-Icons as components, such as `XIcon`, imported by name. The template imports it. See the https://lucide.dev/guide/packages/lucide-preact[Lucide guide for Preact^].
+Icons as components, such as `XIcon`, imported by name. The template imports it. See the https://lucide.dev/guide/preact[Lucide guide for Preact^].
 
 [[zimbra-lucide-lab]]pass:[<a class="anchor" href="#zimbra-lucide-lab"></a>]`@zimbra/lucide-lab`::
 Custom icons that Zimbra designed for the Lucide set, such as `windowMinimize`. See the https://www.npmjs.com/package/@zimbra/lucide-lab[`@zimbra/lucide-lab` package on npm^]. 

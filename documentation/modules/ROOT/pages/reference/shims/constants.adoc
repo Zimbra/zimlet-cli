@@ -109,7 +109,7 @@ const fileType = supportedMimes[extension];
 An object with one property for each of 73 file extensions. The name of a property is the extension in lowercase, without the dot, such as `docx`. Its value is an object:
 
 `icon` (component)::
-An icon component of https://lucide.dev/guide/packages/lucide-preact[lucide-preact^]. Pass it as `name` to `Icon` of xref:reference/shims/blocks/display-and-layout.adoc#icon[Display and layout].
+An icon component of https://lucide.dev/guide/preact[lucide-preact^]. Pass it as `name` to `Icon` of xref:reference/shims/blocks/display-and-layout.adoc#icon[Display and layout].
 
 `customIcon` (array of array)::
 An icon node, in place of `icon`. Only the PDF types have it. Pass it as `customIcon` to `Icon`.

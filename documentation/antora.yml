@@ -1,5 +1,9 @@
 name: documentation
 title: Zimlet Documentation
-version: ~
+version: '5.0.0'
 nav:
   - modules/ROOT/nav.adoc
+asciidoc:
+  attributes:
+    modern-ui-version: 5.0.0
+    zimlet-cli-version: 20.0.0

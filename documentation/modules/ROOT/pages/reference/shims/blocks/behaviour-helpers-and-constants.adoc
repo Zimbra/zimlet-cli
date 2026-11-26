@@ -203,7 +203,7 @@ An object that maps each name to a number. These are the values of `event.keyCod
 | `PAGE_UP` | 33 | *Page Up*
 | `PAGE_DOWN` | 34 | *Page Down*
 | `END` | 35 | *End*
-| `HOME` | 3 | None. The value is wrong. See the usage notes.
+| `HOME` | 36 | *Home*
 | `SHIFT` | 16 | *Shift*
 | `CTRL` | 17 | *Ctrl*
 | `META_KEY` | 91 | The left *Meta* key
@@ -221,7 +221,6 @@ An object that maps each name to a number. These are the values of `event.keyCod
 === Usage notes
 
 * Compare the names with `event.keyCode`. `event.key` is a text such as `Enter`, so a comparison with these numbers is never true.
-* Do not use `HOME`. Its value is `3`, but the *Home* key reports `36`.
 
 [#colors]
 == COLORS

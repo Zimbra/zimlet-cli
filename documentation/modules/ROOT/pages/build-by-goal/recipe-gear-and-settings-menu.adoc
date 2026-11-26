@@ -135,7 +135,7 @@ include::example$help-desk-menu/index.js[]
 [#verify]
 == Verify the result
 
-. Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Reload the Modern UI page.
 . Open the gear menu (*Settings and more*). The *Help desk* item follows *Help*, and *Report a problem* is below *About*.
 +
 .The Settings and more menu with the two new items

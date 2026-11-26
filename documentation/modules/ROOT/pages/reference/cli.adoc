@@ -202,7 +202,7 @@ zimlet build
 [#package]
 == zimlet package
 
-Adds the descriptor and the `.properties` files to the `build` folder and zips the folder. The zip is the file that an administrator deploys. See xref:run-package-deploy/build-and-package.adoc#package[Package the Zimlet] for the steps and xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] for what happens next.
+Adds the descriptor and the `.properties` files to the `build` folder and zips the folder. It can also copy a folder of your own files into the build first. The zip is the file that an administrator deploys. See xref:run-package-deploy/build-and-package.adoc#package[Package the Zimlet] for the steps and xref:run-package-deploy/deploy.adoc[Deploy a Zimlet] for what happens next.
 
 === Signature
 
@@ -232,6 +232,9 @@ The display name of the Zimlet. It is used only when `src/intl/en_US.json` has n
 [[package-description]]pass:[<a class="anchor" href="#package-description"></a>]`--description`, `--desc` (string)::
 The description of the Zimlet. It is used under the same condition as `--label`.
 
+[[package-resourcedir]]pass:[<a class="anchor" href="#package-resourcedir"></a>]`--resourcedir`, `-r` (string)::
+The folder of extra files to put in the zip, such as data files. The command copies the folder, with its subfolders, into the build folder before it writes the descriptor. There is no default, so without the option nothing is copied. The path is relative to the folder where you run the command, or absolute.
+
 [[package-dest]]pass:[<a class="anchor" href="#package-dest"></a>]`--dest`, `-d` (string, default `./pkg`)::
 The folder for the zip file.
 
@@ -244,12 +247,15 @@ On success the command prints the path of the zip and exits with code `0`:
 Successfully packaged zimlet to: <your-project-path>/pkg/my-zimlet.zip
 ----
 
+With `--resourcedir`, it first prints `<folder> copied successfully!`, where `<folder>` is the name of the copied folder.
+
 It writes `<name>.xml` and `<name>.properties` to the build folder, and a `<name>_<locale>.properties` file for each other language in `src/intl`. The zip holds the whole build folder. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files] and xref:reference/files/descriptor.adoc[Descriptor XML] for their content.
 
 These messages show a problem:
 
 * `Missing required arguments: name, pkg-version`: the command prints its usage and exits with code `1`.
 * `Failed to read <path>/build`: the build folder does not exist. Exit code `1`. Run the build first.
+* `Resource directory does not exist: <path>`: the folder of `--resourcedir` does not exist. Exit code `1`. The command writes no descriptor and no zip.
 * `label and description string are not provided as argument`: no label and description were found. The command exits with code `0` and writes no zip, so check that the zip exists.
 
 === Usage notes
@@ -258,16 +264,26 @@ These messages show a problem:
 * The label and the description come from `zimlet.label` and `zimlet.description` in `src/intl/en_US.json`. They win over `--label` and `--description`. If the file lacks them, the command prints a deprecation warning and uses the options. See xref:fundamentals/project-structure.adoc#strings-label[Label and description].
 * The command needs the `src/intl` folder, even when you pass `--label` and `--description`. Without it, it stops with `TypeError: Cannot read properties of undefined (reading 'filter')` and exit code `1`.
 * The command writes the label, the description and the name to the descriptor as they are. A `&`, `<` or `"` in one of them makes the descriptor invalid XML.
+* The folder of `--resourcedir` is copied to the build folder under its own name, so `./src/dictionary` becomes `build/dictionary`. A trailing slash makes no difference.
+* The descriptor lists the copied files like every other file of the build folder. A `.js` file becomes an `include` and a `.css` file an `includeCSS`, not a `resource`.
+* The copy overwrites files of the same name, and it does not remove files you deleted from the source folder. Delete the `build` folder and run `zimlet build` again to get a clean package.
 * `-v` is the short form of `--pkg-version`. `--version` prints the version of the tool.
-* The `package` script of the default template passes the name and version of `package.json` and `--zimbraXVersion '^4.0.0'`.
+* The `package` script of the default template passes the name and version of `package.json` and `--zimbraXVersion '^{modern-ui-version}'`.
 
 === Example
 
-Package version 1.0.0 of `my-zimlet` for Modern UI versions 4.50 and later in version 4:
+Package version 1.0.0 of `my-zimlet` for Modern UI versions 5.0 and later in version 5:
 
-[source,sh]
+[source,sh,subs="attributes+"]
 ----
-zimlet package --name my-zimlet --pkg-version 1.0.0 --zimbraXVersion '^4.50.0'
+zimlet package --name my-zimlet --pkg-version 1.0.0 --zimbraXVersion '^{modern-ui-version}'
+----
+
+Include the files of `src/dictionary` in the zip:
+
+[source,sh,subs="attributes+"]
+----
+zimlet package --name my-zimlet --pkg-version 1.0.0 --zimbraXVersion '^{modern-ui-version}' --resourcedir ./src/dictionary
 ----
 
 [#next-step]

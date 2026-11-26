@@ -1,0 +1,23 @@
+= Run, package, deploy
+
+These tasks take a xref:reference/glossary.adoc#zimlet[Zimlet] from your machine to a Zimbra server. You run it in the xref:reference/glossary.adoc#modern-ui[Modern UI], check the code, package it and deploy it. Use them while you develop, and again whenever you hand over a new version. An administrator who only deploys a Zimlet that someone else built can go straight to Deploy.
+
+[#tasks]
+== Tasks
+
+xref:run-package-deploy/run-and-debug.adoc[Run and debug]::
+Serve your Zimlet from your machine, load it into the Modern UI, see a change and read the browser console.
+
+xref:run-package-deploy/lint-your-code.adoc[Lint]::
+Check your code with ESLint, fix what it reports and change a rule when you need to.
+
+xref:run-package-deploy/build-and-package.adoc[Build and package]::
+Turn your source files into a zip file for deployment, and keep it compatible with the Modern UI version of your server.
+
+xref:run-package-deploy/deploy.adoc[Deploy a Zimlet]::
+Upload the zip file, make the Zimlet available to the right users and check that the Modern UI loads it.
+
+[#next-step]
+== Next step
+
+Look up the exact commands, files and names that these tasks use in the xref:reference.adoc[Reference].

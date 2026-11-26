@@ -183,7 +183,7 @@ import { AffixBottom } from '@zimbra-client/blocks';
 
 === Props
 
-[[affix-bottom-container]]pass:[<a class="anchor" href="#affix-bottom-container"></a>]`container` (https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^] or function `() => HTMLElement`)::
+[[affix-bottom-container]]pass:[<a class="anchor" href="#affix-bottom-container"></a>]`container` (https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements[HTML element^] or function `() => HTMLElement`)::
 The element that holds the content. The helper reads its position and size. Pass a function to read the element when it is needed. Without a container, the helper does nothing.
 
 [[affix-bottom-offset-top]]pass:[<a class="anchor" href="#affix-bottom-offset-top"></a>]`offsetTop` (number, default `0`)::

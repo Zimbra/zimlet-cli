@@ -1,16 +1,16 @@
 * xref:index.adoc[Home]
-* Getting started
+* xref:getting-started.adoc[Getting started]
 ** xref:getting-started/concepts.adoc[How Zimlets work]
 ** xref:getting-started/prerequisites.adoc[Prerequisites]
 ** xref:getting-started/setup-environment.adoc[Set up your machine]
 ** xref:getting-started/quickstart.adoc[Your first Zimlet]
-* Fundamentals
+* xref:fundamentals.adoc[Fundamentals]
 ** xref:fundamentals/project-structure.adoc[Project structure]
 ** xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle]
 ** xref:fundamentals/host-context.adoc[The context object]
 ** xref:fundamentals/extending-the-ui.adoc[Slots and handlers]
 ** xref:fundamentals/shared-libraries.adoc[Shared libraries]
-* Go deeper
+* xref:go-deeper.adoc[Go deeper]
 ** xref:go-deeper/server-data.adoc[Server data]
 *** xref:go-deeper/server-data/data-hooks.adoc[Data hooks]
 *** xref:go-deeper/server-data/batch-client.adoc[Batch client]
@@ -49,12 +49,12 @@
 ** xref:build-by-goal/recipe-message-processing.adoc[Transform messages]
 ** xref:build-by-goal/recipe-server-data.adoc[Manage server data]
 ** xref:build-by-goal/recipe-app-events.adoc[React to app events]
-* Run, package, deploy
+* xref:run-package-deploy.adoc[Run, package, deploy]
 ** xref:run-package-deploy/run-and-debug.adoc[Run and debug]
 ** xref:run-package-deploy/lint-your-code.adoc[Lint]
 ** xref:run-package-deploy/build-and-package.adoc[Build and package]
 ** xref:run-package-deploy/deploy.adoc[Deploy a Zimlet]
-* Reference
+* xref:reference.adoc[Reference]
 ** xref:reference/cli.adoc[CLI reference]
 ** xref:reference/files.adoc[Files]
 *** xref:reference/files/package-json.adoc[The package.json file]
@@ -169,7 +169,7 @@
 *** xref:reference/slots/content-processors.adoc[Content processors]
 *** xref:reference/slots/all-slots.adoc[All slots A to Z]
 ** xref:reference/glossary.adoc[Glossary]
-* Help and migration
+* xref:help-and-migration.adoc[Help and migration]
 ** xref:help-and-migration/troubleshooting.adoc[Troubleshooting]
 ** xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help]
 ** xref:help-and-migration/known-limitations-and-gaps.adoc[Known limitations and gaps]

@@ -1,7 +1,7 @@
 import { createElement } from 'preact';
 
-const SLOT = 'slot::email-landing-page-description';
-const TIP = 'Press / to search your mail';
+const SLOT = 'slot::videoapps-landing-page-description';
+const TIP = 'Invite guests with a meeting link';
 
 const Tip = () => <li>{TIP}</li>;
 

@@ -1,0 +1,35 @@
+= Go deeper
+
+Go deeper covers the options and details of one feature area on each page. Use it once you have built a first xref:reference/glossary.adoc#zimlet[Zimlet]. It fits when a recipe or a fundamentals page does not go far enough. Examples are a feature that needs server data, styles that fit the xref:reference/glossary.adoc#modern-ui[Modern UI] or texts in several languages.
+
+[#feature-areas]
+== Feature areas
+
+xref:go-deeper/server-data.adoc[Server data]::
+Read the data that Zimbra stores, or keep values of your own on the server. It covers data hooks, the batch client, `fetch`, the Zimlet configuration and mailbox metadata.
+
+xref:go-deeper/redux.adoc[Shared state with Redux]::
+Add state of your own to the Redux store, so that handlers can share a value.
+
+xref:go-deeper/platform-checks.adoc[Platform checks]::
+Find out whether your code runs in the browser, the desktop app or a mobile app, and take the path that works.
+
+xref:go-deeper/app-events.adoc[App events]::
+Run code when the user does something, such as sending a message or logging out, and delay or stop the action.
+
+xref:go-deeper/styling.adoc[Styling]::
+Write and scope styles, and use the style library of the Modern UI so that your Zimlet fits its look.
+
+xref:go-deeper/localization.adoc[Localization]::
+Show the texts of your Zimlet in the language that the user chose.
+
+xref:go-deeper/security-and-best-practices.adoc[Security and best practices]::
+Keep users and their data safe when your Zimlet shows content, handles a secret or calls another service.
+
+xref:go-deeper/advanced.adoc[Advanced topics]::
+Change how the build assembles your Zimlet, or read data from a service outside Zimbra.
+
+[#next-step]
+== Next step
+
+Run, check, package and hand over your Zimlet in xref:run-package-deploy.adoc[Run, package, deploy].

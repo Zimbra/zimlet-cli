@@ -1,0 +1,23 @@
+= Help and migration
+
+This part helps when a xref:reference/glossary.adoc#zimlet[Zimlet] does not work, when you have a question, or when you move from an older kind of Zimlet. Each page starts from a symptom or a question, not from a feature, and points to the page that owns the fix. Use it when you are stuck, and before you ask for help.
+
+[#find-help]
+== Find help
+
+xref:help-and-migration/troubleshooting.adoc[Troubleshooting]::
+Find the cause of a Zimlet that is missing, fails to load or fails when it runs, from what you see.
+
+xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help]::
+Read short answers to common questions, and learn how to report a problem.
+
+xref:help-and-migration/known-limitations-and-gaps.adoc[Known limitations and gaps]::
+Check the limits and defects of commands and of the xref:reference/glossary.adoc#modern-ui[Modern UI], and what to do today.
+
+xref:help-and-migration/classic-vs-modern.adoc[Classic and Modern Zimlets]::
+Check how the two kinds of Zimlet differ and whether the Modern UI can do what an existing Zimlet does.
+
+[#next-step]
+== Next step
+
+Report a problem or a mistake in the guide as described in xref:help-and-migration/faq-and-getting-help.adoc[FAQ and getting help].

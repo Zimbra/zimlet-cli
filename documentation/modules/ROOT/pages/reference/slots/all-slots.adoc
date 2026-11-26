@@ -1,6 +1,6 @@
 = All slots A to Z
 
-Every extension point of the xref:reference/glossary.adoc#modern-ui[Modern UI] in one alphabetical list: 146 slots and 9 data keys, each with a link to its entry. Use it when you already know a name, such as one from a Zimlet you read or from the browser console. To browse by screen instead, start from xref:reference/slots.adoc[Slots and extension points].
+Every extension point of the xref:reference/glossary.adoc#modern-ui[Modern UI] in one alphabetical list: 134 slots and 9 data keys, each with a link to its entry. Use it when you already know a name, such as one from a Zimlet you read or from the browser console. To browse by screen instead, start from xref:reference/slots.adoc[Slots and extension points].
 
 You register a slot as `slot::<name>`, and the names here have no prefix. A data key has no prefix, so it appears as you register it. The names that repeat for each xref:reference/glossary.adoc#vertical[vertical] share one entry, such as `<vertical>-tab-item`. See xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how handlers work.
 
@@ -97,15 +97,6 @@ Slot. Briefcase.
 [[briefcase-document-header-action]]pass:[<a class="anchor" href="#briefcase-document-header-action"></a>]xref:reference/slots/briefcase.adoc#briefcase-document-header-action[`briefcase-document-header-action`]::
 Slot. Briefcase.
 
-[[briefcase-landing-page]]pass:[<a class="anchor" href="#briefcase-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`briefcase-landing-page`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
-
-[[briefcase-landing-page-description]]pass:[<a class="anchor" href="#briefcase-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`briefcase-landing-page-description`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
-
-[[briefcase-landing-page-videos]]pass:[<a class="anchor" href="#briefcase-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`briefcase-landing-page-videos`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
-
 [[briefcase-tab-item]]pass:[<a class="anchor" href="#briefcase-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`briefcase-tab-item`]::
 Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
 
@@ -138,15 +129,6 @@ Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab
 
 [[calendar-folder-list-end]]pass:[<a class="anchor" href="#calendar-folder-list-end"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-folder-list-end[`calendar-folder-list-end`]::
 Slot. Calendar, Calendar view.
-
-[[calendar-landing-page]]pass:[<a class="anchor" href="#calendar-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`calendar-landing-page`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
-
-[[calendar-landing-page-description]]pass:[<a class="anchor" href="#calendar-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`calendar-landing-page-description`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
-
-[[calendar-landing-page-videos]]pass:[<a class="anchor" href="#calendar-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`calendar-landing-page-videos`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
 
 [[calendar-subscription-list]]pass:[<a class="anchor" href="#calendar-subscription-list"></a>]xref:reference/slots/calendar/calendar-view.adoc#calendar-subscription-list[`calendar-subscription-list`]::
 Slot. Calendar, Calendar view.
@@ -226,15 +208,6 @@ Slot. Composer and editor, Editor and address fields.
 [[contacts-default-tab]]pass:[<a class="anchor" href="#contacts-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`contacts-default-tab`]::
 Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
 
-[[contacts-landing-page]]pass:[<a class="anchor" href="#contacts-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`contacts-landing-page`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
-
-[[contacts-landing-page-description]]pass:[<a class="anchor" href="#contacts-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`contacts-landing-page-description`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
-
-[[contacts-landing-page-videos]]pass:[<a class="anchor" href="#contacts-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`contacts-landing-page-videos`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
-
 [[contacts-tab-item]]pass:[<a class="anchor" href="#contacts-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`contacts-tab-item`]::
 Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.
 
@@ -267,15 +240,6 @@ Slot. Mail, Attachments.
 
 [[email-default-tab]]pass:[<a class="anchor" href="#email-default-tab"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-default-tab[`email-default-tab`]::
 Slot. App shell, Navigation and tabs. Documented once as `<vertical>-default-tab`.
-
-[[email-landing-page]]pass:[<a class="anchor" href="#email-landing-page"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page[`email-landing-page`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page`.
-
-[[email-landing-page-description]]pass:[<a class="anchor" href="#email-landing-page-description"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-description[`email-landing-page-description`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-description`.
-
-[[email-landing-page-videos]]pass:[<a class="anchor" href="#email-landing-page-videos"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-landing-page-videos[`email-landing-page-videos`]::
-Slot. App shell, Navigation and tabs. Documented once as `<vertical>-landing-page-videos`.
 
 [[email-tab-item]]pass:[<a class="anchor" href="#email-tab-item"></a>]xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`email-tab-item`]::
 Slot. App shell, Navigation and tabs. Documented once as `<vertical>-tab-item`.

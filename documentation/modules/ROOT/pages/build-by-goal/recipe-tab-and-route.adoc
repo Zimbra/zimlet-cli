@@ -255,7 +255,7 @@ Registering the tab handler is what makes the Video vertical appear. After the Z
 [#verify]
 == Verify the result
 
-. Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Reload the Modern UI page.
 . Check the top navigation. A *Video* vertical is there.
 . Choose *Video*. The vertical shows its default page. The list under the introduction has a line that points to the tab. The *Meeting rooms* tab, with a video icon, sits beside the default *Video* tab.
 +

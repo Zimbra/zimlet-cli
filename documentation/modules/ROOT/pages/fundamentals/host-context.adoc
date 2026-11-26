@@ -5,7 +5,7 @@ The context is the object that the Modern UI passes to your Zimlet when it loads
 [#what-the-modern-ui-passes]
 == What the Modern UI passes to your Zimlet
 
-The xref:reference/glossary.adoc#modern-ui[Modern UI] creates one context for each Zimlet and passes it to the xref:fundamentals/factory-and-lifecycle.adoc[factory] when the Zimlet loads. Take the fields you need with destructuring, and use them in `init()` and in your handlers.
+The xref:reference/glossary.adoc#modern-ui[Modern UI] creates one context for each Zimlet and passes it to the xref:fundamentals/factory-and-lifecycle.adoc[factory] when the Zimlet loads. Take the fields you need with destructuring, and use them in `init()` and in your xref:fundamentals/extending-the-ui.adoc[handlers].
 
 [source,js]
 ----

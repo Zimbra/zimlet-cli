@@ -1,6 +1,6 @@
 = Set up your machine
 
-This page gets your machine and your Zimbra server ready for development. The `zimlet` tool builds and serves your Zimlet on your machine, and the xref:run-package-deploy/run-and-debug.adoc[sideloader] loads it into the Modern UI on your server, so both sides must be ready. You do it once. It follows the prerequisites and leads into the quickstart, and a ready check at the end confirms that your machine and server are ready.
+This page gets your machine and your Zimbra server ready for development. The `zimlet` tool builds and serves your Zimlet on your machine, and the xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[sideloader] loads it into the Modern UI on your server, so both sides must be ready. You do it once. It follows the prerequisites and leads into the quickstart, and a ready check at the end confirms that your machine and server are ready.
 
 == Before you start
 
@@ -40,7 +40,7 @@ The `zimlet` tool creates, runs, builds and packages a Zimlet. Install it once o
 
 [source,sh]
 ----
-npm install --global @zimbra/zimlet-cli
+npm install --global @zimbra/zimlet-cli@20
 ----
 
 Check that it runs:
@@ -50,7 +50,7 @@ Check that it runs:
 zimlet --version
 ----
 
-The command prints the installed version, for example `19.0.0`. Run `zimlet --help` to list the commands `create`, `watch`, `build` and `package`.
+The command prints the installed version, for example `{zimlet-cli-version}`. The guide describes `zimlet` {zimlet-cli-version}, the version for Modern UI {modern-ui-version}. Run `zimlet --help` to list the commands `create`, `watch`, `build` and `package`.
 
 [#note-modern-ui-version]
 == Note your Modern UI version
@@ -60,7 +60,7 @@ Find the Modern UI version of your server and write it down. Follow xref:getting
 [#sideloader]
 == Install and enable the sideloader
 
-The xref:run-package-deploy/run-and-debug.adoc[sideloader] is a Zimlet that loads the Zimlet running on your machine into the Modern UI. Check whether it is already available to your account:
+The xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[sideloader] is a Zimlet that loads the Zimlet running on your machine into the Modern UI. Check whether it is already available to your account:
 
 . Sign in to the Modern UI with the account you develop with.
 . In the main navigation, choose *Integrations*.

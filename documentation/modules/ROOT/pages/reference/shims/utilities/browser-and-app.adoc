@@ -1,6 +1,6 @@
 = Browser and app
 
-Nine exports of `@zimbra-client/util` that connect a xref:reference/glossary.adoc#zimlet[Zimlet] to the browser and to the running xref:reference/glossary.adoc#modern-ui[Modern UI]. They tell whether the tab is in the background, copy text, download a file, read the session token and close a notification. Others give the screen size breakpoints, pass shared values to a component and let your Zimlet listen to app events. Use them when a feature depends on the page and the session. Examples are covering the screen after the user has been away and saving a file from a menu item. The Modern UI shares them with every Zimlet, so the build does not copy them into yours. See xref:reference/shims/utilities.adoc[Utilities] for the other areas.
+Ten exports of `@zimbra-client/util` that connect a xref:reference/glossary.adoc#zimlet[Zimlet] to the browser and to the running xref:reference/glossary.adoc#modern-ui[Modern UI]. They tell whether the tab is in the background, copy text and download a file. They also read the session token and the Content Security Policy nonce, and close a notification. Others give the screen size breakpoints, pass shared values to a component and let your Zimlet listen to app events. Use them when a feature depends on the page and the session. Examples are covering the screen after the user has been away and saving a file from a menu item. The Modern UI shares them with every Zimlet, so the build does not copy them into yours. See xref:reference/shims/utilities.adoc[Utilities] for the other areas.
 
 [#members]
 == Members
@@ -16,6 +16,9 @@ Returns the object that the desktop app adds to the window.
 
 <<csrf-storage,`csrfStorage`>>::
 Gives the CSRF token of the session.
+
+<<get-csp-nonce,`getCspNonce`>>::
+Returns the nonce that the server gave the page for its Content Security Policy.
 
 <<close-notification,`closeNotification`>>::
 Closes a notification that is on the screen.
@@ -147,6 +150,37 @@ Removes the stored token and sets the token of the clients in `context` to `null
 * Call `get()` each time you send a request, so that you send the current token. The token changes when the user signs in again.
 * `get()` returns `null` when the Modern UI does not use a token. Add the header only when the value is set. See xref:go-deeper/server-data/fetch.adoc[Fetch].
 * The `csrfToken` field of the context keeps the value from when the Zimlet loaded. Use `get()` instead. See xref:reference/context/deprecated.adoc#csrf-token[Deprecated].
+
+[#get-csp-nonce]
+== getCspNonce
+
+Returns the nonce of the page, or `null` when the server gave none. A xref:reference/glossary.adoc#nonce[nonce] is a value that the server puts in the page and in its policy. The server can send a xref:reference/glossary.adoc#csp[Content Security Policy] (CSP). A policy can allow a script only when its `nonce` attribute holds this value. Use `getCspNonce` when your Zimlet adds a `script` element to the page itself and must set that attribute.
+
+=== Signature
+
+[source,js]
+----
+import { getCspNonce } from '@zimbra-client/util';
+
+const nonce = getCspNonce();
+----
+
+=== Parameters
+
+None.
+
+=== Returns
+
+A string, or `null` when the server did not fill in a nonce. The page then holds only a placeholder, which the function does not return.
+
+=== Usage notes
+
+* Set the value only when it is not `null`, as in `if (nonce) script.setAttribute('nonce', nonce);`.
+* A script without the nonce is blocked when the policy allows only scripts with it. See xref:go-deeper/server-data/fetch.adoc#blocked-requests[When the browser blocks a request].
+* The Modern UI already sets the nonce on the script that runs your Zimlet. It does the same for the `style` element with your styles. Set it only on elements that your own code creates.
+* Set the nonce before you add the element to the page. To load the script of a vendor library, create the `script` element, set `src` and the nonce, and then append it.
+* The Modern UI reads the nonce once, when the page loads, and keeps it in memory. Every call returns that same value.
+* Use the value only to set the attribute. Do not log it and do not send it to a server.
 
 [#close-notification]
 == closeNotification

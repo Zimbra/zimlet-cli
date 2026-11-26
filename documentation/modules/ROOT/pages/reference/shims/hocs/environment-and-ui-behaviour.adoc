@@ -141,7 +141,7 @@ The wrapper passes more props for its own use. Do not rely on them. They replace
 
 |`icon`
 |component
-|The icon of the tab: an icon component of https://lucide.dev/guide/packages/lucide-preact[lucide-preact^]. The default is the mail icon.
+|The icon of the tab: an icon component of https://lucide.dev/guide/preact[lucide-preact^]. The default is the mail icon.
 
 |`tabItem`
 |object

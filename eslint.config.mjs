@@ -1,7 +1,14 @@
-import { coreJsConfig, customConfig } from '@zimbra/eslint-config';
+import { coreJsConfig, customConfig, reactConfig } from '@zimbra/eslint-config';
 
 // Ignore directory patterns
-const globalIgnores = ['**/node_modules/**', 'build/**', 'dist/**', 'package-lock.json', 'package.json'];
+const globalIgnores = [
+	'**/node_modules/**',
+	'build/**',
+	'documentation/build/**',
+	'dist/**',
+	'package-lock.json',
+	'package.json'
+];
 
 const overrides = {
 	rules: {
@@ -29,10 +36,19 @@ const finalConfig = {
 	settings: mergeConfigKey(jsConfigs, 'settings')
 };
 
+// The documentation examples are Zimlet code that uses JSX with `createElement`, as the default template does
+const exampleConfig = {
+	files: ['documentation/modules/ROOT/examples/**/*.js'],
+	plugins: reactConfig.plugins,
+	rules: reactConfig.rules,
+	settings: reactConfig.settings
+};
+
 export default [
 	{
 		ignores: globalIgnores
 	},
-	finalConfig
+	finalConfig,
+	exampleConfig
 ];
 

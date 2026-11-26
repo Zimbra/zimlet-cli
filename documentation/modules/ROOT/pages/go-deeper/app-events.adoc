@@ -5,7 +5,7 @@ The Modern UI announces what the user does, such as sending a message or logging
 [#get-the-emitter]
 == Get the emitter and the event names
 
-Import `zimletEventEmitter` from `@zimbra-client/util` and `ZIMBRA_ZIMLET_EVENTS` from `@zimbra-client/constants`. Use the constant for the event name, not the text. See xref:reference/shims/constants.adoc#zimbra-zimlet-events[`ZIMBRA_ZIMLET_EVENTS`] for its members.
+Import xref:reference/shims/utilities/browser-and-app.adoc#zimlet-event-emitter[`zimletEventEmitter`] from `@zimbra-client/util` and `ZIMBRA_ZIMLET_EVENTS` from `@zimbra-client/constants`. Use the constant for the event name, not the text. See xref:reference/shims/constants.adoc#zimbra-zimlet-events[`ZIMBRA_ZIMLET_EVENTS`] for its members.
 
 [source,js]
 ----

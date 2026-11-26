@@ -14,7 +14,7 @@ The session::
 Set `credentials: 'include'`, so that the browser sends the cookies of the signed-in user.
 
 The token::
-Send the token in the `X-Zimbra-Csrf-Token` header. CSRF stands for cross-site request forgery. The token shows the server that the request comes from the Modern UI and not from another site. Import `csrfStorage` from `@zimbra-client/util` and call `csrfStorage.get()` each time you send a request, so that you always send the current token. It returns `null` when the Modern UI does not use a token. Add the header only when the value is set.
+Send the token in the `X-Zimbra-Csrf-Token` header. CSRF stands for cross-site request forgery. The token shows the server that the request comes from the Modern UI and not from another site. Import xref:reference/shims/utilities/browser-and-app.adoc#csrf-storage[`csrfStorage`] from `@zimbra-client/util` and call `csrfStorage.get()` each time you send a request, so that you always send the current token. It returns `null` when the Modern UI does not use a token. Add the header only when the value is set.
 
 NOTE: The `csrfToken` field of the context is deprecated. It keeps the value from the time the Zimlet loaded and is not updated. See xref:reference/context/deprecated.adoc#csrf-token[Deprecated].
 
@@ -43,6 +43,21 @@ Pass the request name without `Request`, the namespace and the content. Account 
 == Handle errors
 
 `fetch` rejects only when the request cannot be sent. When the server answers with an error status, `response.ok` is `false`, and the helper throws. Always add `.catch` to a call, as the example does.
+
+[#blocked-requests]
+== When the browser blocks a request
+
+The server can send the Modern UI with a xref:reference/glossary.adoc#csp[Content Security Policy]. A default policy applies until an administrator changes it. It limits what your Zimlet may load, and a request that breaks it never leaves the browser.
+
+Under the default policy:
+
+* `fetch` reaches only the address of the Modern UI itself. A request to another address is rejected with `TypeError: Failed to fetch`. Chrome also prints `Connecting to '<address>' violates the following Content Security Policy directive: "connect-src 'self'"` in the console.
+* A script that your code adds runs only when its `nonce` attribute holds the nonce of the page. Read it with xref:reference/shims/utilities/browser-and-app.adoc#get-csp-nonce[`getCspNonce`]. With the nonce, the script can also load from another address.
+* An image comes only from the Modern UI, an `https` address or a `data` address. A frame comes only from the Modern UI.
+
+The policy belongs to the server, so your Zimlet cannot change it. Ask the administrator to add the address that your Zimlet calls to the `connect-src` directive of the attribute `zimbraReverseProxyModernCSPPolicy`. Give the origin, `<service-origin>`, to allow every path of it. A full file address allows only that file.
+
+To find every violation first, the administrator can set the attribute `zimbraReverseProxyModernCSP` to `report-only`. The browser then logs each violation and blocks nothing. The value `off` turns the policy off. See xref:help-and-migration/troubleshooting.adoc#csp-violation[The console reports a Content Security Policy violation] for the messages.
 
 [#other-endpoints]
 == Other endpoints

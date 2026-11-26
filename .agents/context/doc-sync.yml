@@ -10,11 +10,19 @@
 # - Review new changes with `git -C <repo> log <commit>..HEAD`.
 # - If a commit is missing locally or is not an ancestor of HEAD, warn and stop.
 #   Do not guess a range and do not advance the baseline.
-updated: 2026-11-25
+updated: 2026-11-26
 repos:
-  zimlet-cli: 04e3e2c52c6928e4d1c60f01b14d9aa3dfbd6359
-  zm-x-web: 2675eeee4e798a2c944f8e65241aa07ced7843d9
-  zm-modern-zimlets: 073eaf94ace578fe30a06c3e4d218a0e9e364297
-  zm-cloudsuite-zimlets: 0819fb22b3917a48f125f6d9cd05cebfb46ddf9d
+  zimlet-cli: ea4446731286f56431e7d556d42f04367c2dd3b6
+  zm-x-web: ee79d54ac2b4b1f8671f86db31064bceebbd2043
+  zm-modern-zimlets: 8debfc1cdbc76b16e68c683c3be6414a590f3742
+  zm-cloudsuite-zimlets: 55d02c4caf7072a56eeebe27262d59a626724def
   zm-x-ui: 5bdd884b0542d2fe3ead8b27772f255b30b96a44
   zm-x-zimlet-template-default: 2e5df65b9b10b5af8198484e51d1c4069e4406da
+  # TODO zm-x-zimlet-template-default: the documentation already describes commit
+  # 801d539e69d4f0c5144fdb12345fbae55aaec0c5, which is only on the branch PREAPPS-9914
+  # (Modern UI 5.0.0 range, zimlet-cli 20, lockfile, README requirement). The rule above
+  # allows master commits only, so the baseline stays on the master commit. Once that
+  # branch is merged, set the baseline to the merge commit on master, check that
+  # `git -C zm-x-zimlet-template-default log <old baseline>..<new baseline>` holds nothing
+  # else that the documentation needs, and remove this note. Until then, `zimlet create
+  # default` fetches the old version (KI-100 in zimlet-known-issues.md).

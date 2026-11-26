@@ -1,0 +1,29 @@
+= Reference
+
+The reference holds the complete facts about the `zimlet` commands and the files of a xref:reference/glossary.adoc#zimlet[Zimlet]. It also covers the fields of the context, the shared modules and the slots. It has no tutorial text. Use it when you need an exact name, option, signature or default, and follow the links in the guide for the explanation.
+
+[#lookup]
+== Look up
+
+xref:reference/cli.adoc[CLI reference]::
+The `zimlet` commands, with their options, defaults and output.
+
+xref:reference/files.adoc[Files]::
+The fields, elements and settings of each file of a Zimlet, such as `package.json`, the descriptor and `config_template.xml`.
+
+xref:reference/context.adoc[Context]::
+Every field of the context object, with its type, arguments and return value.
+
+xref:reference/shims.adoc[Shared modules]::
+The modules that a Zimlet imports from the xref:reference/glossary.adoc#modern-ui[Modern UI], and the exports of each.
+
+xref:reference/slots.adoc[Slots and extension points]::
+Every place where a Zimlet adds content or takes part in processing, and what a handler receives and returns.
+
+xref:reference/glossary.adoc[Glossary]::
+Short definitions of the terms that the guide uses.
+
+[#next-step]
+== Next step
+
+Find a fix or an answer in xref:help-and-migration.adoc[Help and migration] when something does not work as the reference describes.

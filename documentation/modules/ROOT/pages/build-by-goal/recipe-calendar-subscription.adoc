@@ -123,7 +123,7 @@ include::example$calendar-subscription/utils/is-web-address.js[]
 `ModalDialog` is the frame of a dialog. xref:build-by-goal/recipe-app-events.adoc#modal-dialog[React to app events] explains it, and xref:reference/shims/components/dialogs.adoc#modal-dialog[Dialogs] lists every prop. This dialog asks for input, so it uses the buttons too:
 
 `onAction` and `actionLabel`::
-`onAction` runs when the user chooses the primary button. `actionLabel` is the id of the text on that button, taken from `en_US.json`.
+`onAction` runs when the user chooses the primary button, or presses *Enter* or *Space* outside a text field. `actionLabel` is the id of the text on that button, taken from `en_US.json`.
 
 `disablePrimary`::
 Disables the primary button. The example disables it until both fields have text.

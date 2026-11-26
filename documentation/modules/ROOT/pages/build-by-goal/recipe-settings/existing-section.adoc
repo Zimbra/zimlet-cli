@@ -178,7 +178,7 @@ Look up the `settings` key and the slot in the xref:reference/slots.adoc[slot in
 [#verify]
 == Verify the result
 
-. Run the Zimlet with `npm start` and load it in the sideloader, as xref:getting-started/quickstart.adoc#load-with-sideloader[Your first Zimlet] describes. Reload the Modern UI page.
+. Run the Zimlet with `npm start` and load it in the sideloader, as xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Run and debug] describes. Reload the Modern UI page.
 . Open the gear menu (*Settings and more*) and choose *Settings*.
 . Select *Writing Email* and scroll to the end of the page. A *Closing phrase* row follows *Show send and archive*, with a question mark button and an empty field.
 +

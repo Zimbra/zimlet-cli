@@ -89,7 +89,7 @@ The address of the PDF file. Without it the viewer draws nothing. The request se
 [[pdfjs-viewer-scale]]pass:[<a class="anchor" href="#pdfjs-viewer-scale"></a>]`scale` (number, default `1`)::
 The zoom. At `1` a page is 90 percent of the width of the viewer. A new value draws the pages near the current page again.
 [[pdfjs-viewer-container]]pass:[<a class="anchor" href="#pdfjs-viewer-container"></a>]`container` (object)::
-The scrolling parent of the viewer, as an object with the `instance.wrapperComponent` field. That field holds the https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^] that scrolls. The viewer listens to its scroll events to find the current page. Without `container` the viewer cannot follow the scroll position, and a click on a page does nothing.
+The scrolling parent of the viewer, as an object with the `instance.wrapperComponent` field. That field holds the https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements[HTML element^] that scrolls. The viewer listens to its scroll events to find the current page. Without `container` the viewer cannot follow the scroll position, and a click on a page does nothing.
 +
 WARNING: With a `container`, a click on a page makes it the current page and calls <<pdfjs-viewer-on-change-page,`onChangePage`>>. It does not scroll the page into view.
 [[pdfjs-viewer-overscan]]pass:[<a class="anchor" href="#pdfjs-viewer-overscan"></a>]`overscan` (number, default `2`)::

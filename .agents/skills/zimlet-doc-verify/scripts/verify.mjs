@@ -17,6 +17,7 @@ const templateDir = path.join(siblings, 'zm-x-zimlet-template-default', 'templat
 const SCRATCH_NAME = 'my-zimlet';
 const MAX_OUTPUT = 3000;
 const tail = text => (text.length > MAX_OUTPUT ? '...' + text.slice(-MAX_OUTPUT) : text);
+// eslint-disable-next-line no-control-regex
 const strip = text => text.replace(/\x1b\[[0-9;]*m/g, '');
 
 function finish(status, command, output, extra = '') {
