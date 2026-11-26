@@ -446,18 +446,36 @@ html[data-theme='dark'] .nav-menu h3.title {
 	color: #b4bec9;
 }
 
+html[data-theme='dark'] .nav-link,
+html[data-theme='dark'] .nav-text {
+	color: #b4bec9;
+}
+
+html[data-theme='dark'] .nav-item.is-current-page > .nav-link {
+	color: var(--zm-blue);
+}
+
 html[data-theme='dark'] .toolbar {
 	box-shadow: 0 1px 0 var(--zm-border);
 }
 
 html[data-theme='dark'] .toc-menu,
-html[data-theme='dark'] .toc .toc-menu h3,
-html[data-theme='dark'] .toc .toc-menu a.is-active {
+html[data-theme='dark'] .toc .toc-menu h3 {
 	color: #b4bec9;
 }
 
 html[data-theme='dark'] .toc .toc-menu a {
 	border-left-color: var(--zm-border);
+	color: #b4bec9;
+}
+
+html[data-theme='dark'] .toc .toc-menu a:hover {
+	color: var(--zm-blue);
+}
+
+html[data-theme='dark'] .toc .toc-menu a.is-active {
+	border-left-color: var(--zm-orange);
+	color: #e6ebf0;
 }
 
 html[data-theme='dark'] .doc,

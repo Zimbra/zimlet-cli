@@ -2,6 +2,7 @@
   var KEY = 'zimlet-docs-theme';
   var root = document.documentElement;
   var media = window.matchMedia('(prefers-color-scheme: dark)');
+  var BROWSER_COLORS = { light: '#ffffff', dark: '#14171c' };
 
   function saved() {
     try {
@@ -18,6 +19,9 @@
 
   function apply(theme) {
     root.setAttribute('data-theme', theme);
+    // The meta tag is not in the page yet on the first call, so the DOMContentLoaded call sets it.
+    var browserColor = document.getElementById('theme-color-meta');
+    if (browserColor) browserColor.setAttribute('content', BROWSER_COLORS[theme]);
     var button = document.getElementById('theme-toggle');
     if (button) {
       var label = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
