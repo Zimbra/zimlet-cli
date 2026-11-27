@@ -9,7 +9,7 @@ You need a computer where you can install software and a shell to run commands. 
 [#install-node]
 == Install Node 24
 
-Install Node.js 24 from the https://nodejs.org/en/download[Node.js downloads^]. The `zimlet` tool needs Node.js 24.18.0 or later. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but the tool does not support that setup. If you use nvm, a Node.js version manager, run `nvm use 24`.
+Install Node.js 24 from the https://nodejs.org/en/download[Node.js downloads^]. The `zimlet` tool needs Node.js 24.18.0 or a later 24 release. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but the tool does not support that setup. If you use nvm, a Node.js version manager, run `nvm use 24`.
 
 Check the versions:
 
@@ -115,7 +115,7 @@ Check that each of these is true before you start the quickstart:
 [#if-it-did-not-work]
 == If it didn't work
 
-`node --version` prints a version below 24.18.0.::
+`node --version` prints a version that is below 24.18.0 or is not a 24 release.::
 * Cause: A different Node.js version is first on your path.
 * Fix: Install Node.js 24, or run `nvm use 24` and check again.
 

@@ -46,7 +46,7 @@ JavaScript::
 You write the Zimlet in JavaScript, with ES modules and promises. Aim for working knowledge. Read the https://developer.mozilla.org/en-US/docs/Web/JavaScript[JavaScript guide on MDN^].
 
 Node.js 24 and npm::
-They run the `zimlet` tool and install your dependencies. The tool needs Node.js 24.18.0 or later and npm 11. Node.js 24 includes npm 11. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but that setup is unsupported. Aim for running commands and reading their output. Read the https://nodejs.org/en/download[Node.js downloads^] and the https://docs.npmjs.com/[npm documentation^].
+They run the `zimlet` tool and install your dependencies. The tool needs Node.js 24.18.0 or a later 24 release, and npm 11. Node.js 24 includes npm 11. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but that setup is unsupported. Aim for running commands and reading their output. Read the https://nodejs.org/en/download[Node.js downloads^] and the https://docs.npmjs.com/[npm documentation^].
 
 A code editor::
 You edit JavaScript, JSX, Less and JSON files. Any editor works. Read the https://code.visualstudio.com/docs[Visual Studio Code documentation^] if you use it.
