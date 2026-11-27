@@ -5,6 +5,12 @@ This part helps when a xref:reference/glossary.adoc#zimlet[Zimlet] does not work
 [#find-help]
 == Find help
 
+xref:help-and-migration/breaking-changes.adoc[Breaking changes]::
+Find what breaks in an existing Zimlet when you move to `zimlet` 20.0.0 and Modern UI 5.0.0, and how to fix it.
+
+xref:help-and-migration/classic-vs-modern.adoc[Classic and Modern Zimlets]::
+Check how the two kinds of Zimlet differ and whether the Modern UI can do what an existing Zimlet does.
+
 xref:help-and-migration/troubleshooting.adoc[Troubleshooting]::
 Find the cause of a Zimlet that is missing, fails to load or fails when it runs, from what you see.
 
@@ -13,9 +19,6 @@ Read short answers to common questions, and learn how to report a problem.
 
 xref:help-and-migration/known-limitations-and-gaps.adoc[Known limitations and gaps]::
 Check the limits and defects of commands and of the xref:reference/glossary.adoc#modern-ui[Modern UI], and what to do today.
-
-xref:help-and-migration/classic-vs-modern.adoc[Classic and Modern Zimlets]::
-Check how the two kinds of Zimlet differ and whether the Modern UI can do what an existing Zimlet does.
 
 [#next-step]
 == Next step

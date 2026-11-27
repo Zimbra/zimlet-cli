@@ -1,26 +1,73 @@
-= Breaking changes in the latest release
+= Breaking changes
+:keywords: EBADENGINE, Unsupported engine, ERESOLVE, unable to resolve dependency tree, legacy-peer-deps, npm ci, package-lock.json, Error executing transformer, ERR_REQUIRE_ASYNC_MODULE, Cannot use import statement outside a module, zimlet.config.js, Build failed, export default from, Can't resolve 'raw-loader', Can't resolve 'preact-i18n', Can't resolve 'recompose', Can't resolve 'preact-pwa-install', Can't resolve 'preact-context-provider', ESLint couldn't find an eslint.config file, Cannot read properties of undefined, received name as string, BackArrow, NODE_ENV, Module not found
 
-The latest release of the `zimlet` tool, version 20, raises the Node.js version that your build needs. It also arrives with a Content Security Policy in the Modern UI that blocks some code in a xref:reference/glossary.adoc#zimlet[Zimlet]. Read it when you move an existing Zimlet to the latest release. Read it also when a Zimlet that worked before no longer builds, or fails in the Modern UI, after an upgrade. Each change says what changed, how it shows up and how to fix it, so that you can bring the Zimlet back to working order.
+Moving an existing xref:reference/glossary.adoc#zimlet[Zimlet] to `zimlet` 20.0.0 and Modern UI 5.0.0, which you use together, can break its build or its behaviour. A move from `zimlet` 18 brings all the changes at once. Do not stop at `zimlet` 19.0.0, an intermediate release that lacks parts of Modern UI 5.0.0 support.
 
-[#who-is-affected]
-== Who is affected
+The major changes are:
 
-// To be written.
+* Building a Zimlet needs Node.js 24 and npm 11.
+* esbuild replaces Babel in the build.
+* The Modern UI no longer shares several libraries, such as `preact-i18n` and `recompose`, and no longer provides legacy context.
+* A Zimlet packaged with a version range that excludes 5.0.0 is left out of Modern UI 5.0.0.
+* A Zimbra server 10.1.22 or later enforces a Content Security Policy that can block code.
 
-[#summary]
-== Summary of breaking changes
+Check the changes below when you update a Zimlet, or when a Zimlet that worked before no longer builds or fails in the Modern UI.
 
-// To be written.
+[#changes-at-a-glance]
+== Changes at a glance
+
+The Node.js upgrade arrived together with other changes to the build tool.
+
+Node.js and npm updates::
+* <<node-js-upgrade,Node.js 24 and npm 11>>
+* <<package-lock-update,package-lock.json update>>
+* <<peer-dependency-conflicts,Peer dependency conflicts>>
+
+Build tool updates::
+* <<zimlet-config-loading,Loading of zimlet.config.js>>
+* <<babel-to-esbuild,Babel replaced by esbuild>>
+* <<watch-and-node-env,Watch mode no longer follows NODE_ENV>>
+* <<raw-loader-removed,raw-loader removed>>
+* <<eslint-9,ESLint 9 and @zimbra/eslint-config 3>>
+
+Shared library updates::
+* <<preact-i18n,preact-i18n replaced by @zimbra/preact-i18n>>
+* <<recompose-removed,recompose removed>>
+* <<pwa-install-removed,preact-pwa-install replaced by @zimbra-client/pwa-utils>>
+* <<context-provider-removed,preact-context-provider removed>>
+* <<wiretie-removed,wiretie removed>>
+* <<back-arrow-removed,BackArrow removed>>
+
+Modern UI behaviour updates::
+* <<version-range-excluded,Zimlet left out of Modern UI 5.0.0>>
+* <<legacy-context,Legacy context removed>>
+* <<zimlet-redux-moved,context.zimletRedux moved to context.store.zimletRedux>>
+* <<icon-name-string,Icon names as strings>>
+* <<markup-text-encoding,MarkupText encodes field values>>
+
+Content Security Policy enforcement (Zimbra 10.1.22)::
+* <<content-security-policy-upgrade,Content Security Policy of the Modern UI>>
+
+[#already-on-19]
+== If you already use zimlet 19.0.0
+
+`zimlet` 20.0.0 adds three things to `zimlet` 19.0.0. All other changes below apply to both.
+
+* <<back-arrow-removed,BackArrow removed>>: `zimlet` 20.0.0 no longer shares `BackArrow`.
+* `getCspNonce` is new in `@zimbra-client/util`. See <<csp-script-nonce,Add the nonce to a script>>.
+* `unsafeHtml` is new in `@zimbra/preact-i18n`. See <<markup-text-encoding,MarkupText encodes field values>>.
+
+[#node-js-and-npm-updates]
+== Node.js and npm updates
+
+These changes come from the Node.js upgrade, which brings npm 11. Each entry explains the change, says what you must do, then lists the errors that it can cause.
 
 [#node-js-upgrade]
-== Node.js upgrade
+=== Node.js 24 and npm 11
 
-Starts in `zimlet` 19.0.0.
+*What changed:* Earlier releases of the tool required Node.js 18.20 and npm 6. The tool now requires Node.js 24.18.0 or a later 24 release, and npm 11. Node.js 24 includes npm 11. The Node.js version affects only the machine that builds your Zimlet, not how the Zimlet runs in the Modern UI. See xref:getting-started/prerequisites.adoc[Prerequisites] for the technologies that you need.
 
-Earlier releases of the tool required Node.js 18.20 and npm 6. The tool now requires Node.js 24.18.0 or a later 24 release, and npm 11. Node.js 24 includes npm 11. The Node.js version affects only the machine that builds your Zimlet, not how the Zimlet runs in the Modern UI. See xref:getting-started/prerequisites.adoc[Prerequisites] for the technologies that you need.
-
-[#node-js-update-steps]
-=== Update your project
+[[node-js-update-steps]]*Action required:* Move the project to Node.js 24 and `zimlet` 20.0.0, then build it.
 
 . Check the versions on your machine:
 +
@@ -47,29 +94,281 @@ npm 11 writes a new `package-lock.json` file. Commit it.
 
 The build prints `Compiled successfully!`.
 
-[#node-js-if-it-did-not-work]
-=== If it didn't work
+[[error-node-js-upgrade]]*Related error:* `npm install` prints `npm warn EBADENGINE Unsupported engine`.
 
-`npm install` prints `npm warn EBADENGINE Unsupported engine`.::
-* Cause: Your Node.js or npm version is older than a package requires. The warning names `@zimbra/zimlet-cli` and the versions it requires.
-* Fix: Switch to Node.js 24, as step 1 describes, and install again.
+[#package-lock-update]
+=== package-lock.json update
 
-`zimlet build` prints `Error executing transformer at` the path of `zimlet.config.js`, then `SyntaxError: Cannot use import statement outside a module` and, after that, `Compiled successfully!`.::
-* Cause: Node.js 18 cannot load a `zimlet.config.js` file that uses `import`. The tool prints the error and builds without applying the file.
-* Fix: Switch to Node.js 24 and build again.
+*What changed:* When you install the dependencies with npm 11, it writes a new `package-lock.json` file. Commit the new file together with the rest of your update. A `package-lock.json` file that no longer matches `package.json` makes `npm ci` stop.
 
-`npm install` stops with `ERESOLVE unable to resolve dependency tree`.::
-* Cause: npm 11 stops the install when the peer dependencies of two packages conflict.
-* Fix: Change the versions in `package.json` so that they agree. As a temporary workaround, run `npm install --legacy-peer-deps`.
+*Action required:*
 
-`npm ci` stops with `npm ci can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync`.::
-* Cause: The `package-lock.json` file does not match `package.json`.
-* Fix: Run `npm install`, then commit the new `package-lock.json` file.
+. Run `npm install`.
+. Commit the new `package-lock.json` file.
+
+[[error-package-lock-update]]*Related error:* `npm ci` stops with `npm ci can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync`.
+
+[#peer-dependency-conflicts]
+=== Peer dependency conflicts
+
+*What changed:* npm 11 stops the installation when the peer dependencies of two packages conflict.
+
+*Action required:* If the installation stops on a conflict, change the versions in `package.json` so that they agree. As a temporary workaround, run `npm install --legacy-peer-deps`.
+
+[[error-peer-dependency-conflicts]]*Related error:* `npm install` stops with `ERESOLVE unable to resolve dependency tree`.
+
+[#build-tool-updates]
+== Build tool updates
+
+These changes affect how the `zimlet` tool builds and lints a Zimlet. Each entry explains the change, says what you must do, then lists the errors that it can cause.
+
+[#zimlet-config-loading]
+=== Loading of zimlet.config.js
+
+*What changed:* The tool now loads `zimlet.config.js` with Node.js and no longer through Babel. The file can use `module.exports` or `export default`. See xref:reference/files/zimlet-config.adoc[zimlet.config.js] for what the file can change.
+
+*Action required:* Check `zimlet.config.js`:
+
+* Remove any top-level `await`. The `configure` function must be synchronous.
++
+[[error-config-await]]*Related error:* `zimlet build` prints `Error executing transformer at` the path of the file, and then `Compiled successfully!`. The error names `ERR_REQUIRE_ASYNC_MODULE`. The build continues without the changes of the file.
+* Export a function, as `export default function configure(config, env) {}` does.
++
+[[error-config-export]]*Related error:* `zimlet build` prints no error, but the changes of `zimlet.config.js` have no effect. The tool ignores any other export without a message.
+* If you build on Node.js 18, switch to Node.js 24, as the <<node-js-update-steps,update steps>> describe, and build again.
++
+[[error-config-node18]]*Related error:* `zimlet build` prints `Error executing transformer at` the path of `zimlet.config.js`, then `SyntaxError: Cannot use import statement outside a module` and, after that, `Compiled successfully!`. The tool prints the error and builds without applying the file.
+
+[#babel-to-esbuild]
+=== Babel replaced by esbuild
+
+*What changed:* The tool now compiles JavaScript and JSX with esbuild and no longer includes Babel. Class properties, legacy decorators, `export * as name from` and dynamic `import()` still work. Syntax that only a Babel plugin understood does not. The common case is `export Foo from './foo'`.
+
+*Action required:* If a file uses `export Foo from './foo'`, write the default export in the standard form:
+
+[source,js]
+----
+export { default as Foo } from './foo';
+----
+
+[[error-babel-to-esbuild]]*Related error:* `zimlet build` prints `Build failed!` and an error such as `ERROR: Unexpected "Foo"`.
+
+[#watch-and-node-env]
+=== Watch mode no longer follows NODE_ENV
+
+*What changed:* Earlier releases switched to watch mode when `NODE_ENV` was `dev` or `development`. Now only the `watch` command starts the development server. `NODE_ENV=development zimlet build` builds once and exits. A script or pipeline that relied on the variable must call `zimlet watch` instead.
+
+*Action required:* If a script or pipeline sets `NODE_ENV=development` to start the development server, run `zimlet watch` instead, as xref:run-package-deploy/run-and-debug.adoc#start-the-development-server[Start the development server] describes.
+
+[[error-watch-and-node-env]]*Related error:* A script or pipeline that sets `NODE_ENV=development` no longer starts the development server.
+
+[#raw-loader-removed]
+=== raw-loader removed
+
+*What changed:* The tool no longer includes `raw-loader`, which some `zimlet.config.js` files used to import a file as text. A project that still names it in a rule must replace it, as the fix below describes.
+
+*Action required:* If a rule in `zimlet.config.js` names `raw-loader`, replace `loader: 'raw-loader'` in the rule with the webpack asset module `type: 'asset/source'`. The import then gives the text of the file:
+
+[source,js]
+----
+config.module.rules.push({ test: /\.csv$/, type: 'asset/source' });
+----
+
+[[error-raw-loader-removed]]*Related error:* `zimlet build` prints `Module not found: Error: Can't resolve 'raw-loader'`.
+
+[#eslint-9]
+=== ESLint 9 and @zimbra/eslint-config 3
+
+*What changed:* Version 3 of the `@zimbra/eslint-config` package needs ESLint 9 and, like the `zimlet` tool, Node.js 24.18.0 and npm 11.16. ESLint 9 reads only a flat configuration file, `eslint.config.mjs`. It does not read `.eslintrc` files.
+
+*Action required:* If your project has only an `.eslintrc` file, add `eslint.config.mjs` and delete the `.eslintrc` file. See xref:run-package-deploy/lint-your-code.adoc#add-lint-setup[Add the lint setup to your project].
+
+[[error-eslint-9]]*Related error:* `npm run lint` prints `ESLint couldn't find an eslint.config.(js|mjs|cjs) file.`
+
+[#shared-library-changes]
+== Shared library updates
+
+The Modern UI shares libraries and helpers with each Zimlet, so a Zimlet does not bundle its own copy. See xref:fundamentals/shared-libraries.adoc[Shared libraries]. These changes rename or remove shared names. Each entry explains the change, says what you must do, then lists the errors that it can cause.
+
+[#preact-i18n]
+=== preact-i18n replaced by @zimbra/preact-i18n
+
+*What changed:* The Modern UI shares the localization library as `@zimbra/preact-i18n`. The names are the same: `Text`, `MarkupText`, `Localizer`, `IntlContext`, `IntlProvider`, `intl`, `translate`, `useText` and `withText`. `unsafeHtml` is added in `zimlet` 20.0.0. See xref:go-deeper/localization.adoc[Localization].
+
+*Action required:* If a file still imports `preact-i18n`:
+
+* Change each import:
++
+[source,js]
+----
+import { Text, useText } from '@zimbra/preact-i18n';
+----
+* Remove `preact-i18n` from `package.json`.
+* Do not add `@zimbra/preact-i18n`, because the Modern UI supplies it.
+
+[[error-preact-i18n]]*Related error:* `zimlet build` prints `Module not found: Error: Can't resolve 'preact-i18n'`.
+
+[#recompose-removed]
+=== recompose removed
+
+*What changed:* The tool no longer shares `recompose`. Three helpers keep working under the same names, from `@zimbra-client/util`: `withProps`, `branch` and `getContext`. The tool shares no other helper of the library.
+
+*Action required:* If a file imports from `recompose`:
+
+* Import `withProps` and `branch` from `@zimbra-client/util`:
++
+[source,js]
+----
+import { flowRight } from 'es-toolkit/compat';
+import { branch, withProps } from '@zimbra-client/util';
+----
+* Replace `compose` with `flowRight` from `es-toolkit/compat`, and add `es-toolkit` to your dependencies.
+* Pass `null` as the component to `branch` where you used `renderNothing`. It then renders nothing when the test is true.
+* Rewrite `withState`, `lifecycle` and `withHandlers` with the hooks `useState`, `useEffect` and `useCallback`.
+
+[[error-recompose-removed]]*Related error:* `zimlet build` prints `Module not found: Error: Can't resolve 'recompose'`.
+
+[#pwa-install-removed]
+=== preact-pwa-install replaced by @zimbra-client/pwa-utils
+
+*What changed:* The tool no longer shares `preact-pwa-install`. The Modern UI shares `@zimbra-client/pwa-utils` instead. `isStandalone()` returns `true` when the Modern UI already runs as an installed app. `awaitInstallPrompt(onPrompt)` waits for the browser to offer the install dialog. It calls `onPrompt` with a function that opens the dialog, and returns a function that stops the waiting.
+
+When the browser offers the install dialog, a notification with an *Install* button appears:
+
+.index.js
+[source,js]
+----
+include::example$breaking-changes/install-prompt.js[]
+----
+
+*Action required:* If a file imports `preact-pwa-install`, import `awaitInstallPrompt` and `isStandalone` from `@zimbra-client/pwa-utils`, as the example does.
+
+[[error-pwa-install-removed]]*Related error:* `zimlet build` prints `Module not found: Error: Can't resolve 'preact-pwa-install'`.
+
+[#context-provider-removed]
+=== preact-context-provider removed
+
+*What changed:* The tool no longer shares `preact-context-provider`, and the Modern UI no longer uses legacy context. The `provide` function has no replacement. Pass the values as props when you register the handler.
+
+*Action required:* If a file imports `provide` from `preact-context-provider`:
+
+* Remove the import and the dependency.
+* Replace the call with a handler that passes the values as props, and spread the props of the slot after them:
++
+[source,js]
+----
+plugins.register('<slot-name>', props => <Presence enabled={enabled} {...props} />);
+----
+
+[[error-context-provider-removed]]*Related error:* `zimlet build` prints `Module not found: Error: Can't resolve 'preact-context-provider'`.
+
+[#wiretie-removed]
+=== wiretie removed
+
+*What changed:* `wiretie` gave a component values from legacy context, which the Modern UI no longer supplies. The decorator `@wire` has no replacement. Read the actions from `store` in the factory, and pass them to the component as props.
+
+*Action required:* If a component uses `@wire`:
+
+* Remove `wiretie`.
+* Read the action in the factory and pass it as a prop, as xref:reference/context/store/zimlet-redux/actions.adoc#remove-slot[removeSlot] shows for the actions of the `zimlets` namespace:
++
+[source,js]
+----
+const { removeSlot } = context.store.zimletRedux.actions.zimlets;
+----
+
+[[error-wiretie-removed]]*Related error:* A component that uses `@wire` does not get its values, and its handlers throw `Cannot read properties of undefined`.
+
+[#back-arrow-removed]
+=== BackArrow removed
+
+*What changed:* The Modern UI no longer shares `BackArrow` from `@zimbra-client/components`. The build still succeeds, because it does not check the names that you import. The name is `undefined` when the Zimlet runs. See xref:help-and-migration/known-limitations-and-gaps.adoc#shared-libraries[Shared libraries] under the known limitations.
+
+*Action required:* If a component renders `<BackArrow />`, draw the arrow with the `Icon` component of `@zimbra-client/blocks` and `ArrowLeftIcon` from `lucide-preact`.
+
+[[error-back-arrow-removed]]*Related error:* A component that renders `<BackArrow />` fails when the Zimlet runs.
+
+[#modern-ui-behaviour-updates]
+== Modern UI behaviour updates
+
+These changes come from Modern UI 5.0.0, which pairs with `zimlet` 20.0.0, and none of them comes from the Node.js upgrade. Each entry explains the change, says what you must do, then lists the errors that it can cause.
+
+[#version-range-excluded]
+=== Zimlet left out of Modern UI 5.0.0
+
+*What changed:* The server sends the Modern UI only the Zimlets whose version range includes the version of the Modern UI. Modern UI 5.0.0 is the first release of version 5, so a Zimlet that you packaged with a range such as `^4.0.0` is left out.
+
+*Action required:*
+
+. Test the Zimlet on Modern UI 5.0.0.
+. Set the range in the `package` script to `'^5.0.0'`.
+. Package the Zimlet again and deploy the new zip. See xref:run-package-deploy/build-and-package.adoc#choose-range[Choose the Modern UI versions your Zimlet supports].
+
+[[error-version-range-excluded]]*Related error:* The Zimlet does not appear in Modern UI 5.0.0, and no error message appears.
+
+[#legacy-context]
+=== Legacy context removed
+
+*What changed:* The Modern UI no longer gives a component its values through Preact legacy context. That is the second argument of a function component and `this.context` in a class component. Pass what a component needs as props, as xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item] does. A component can also read the shared Modern UI objects, such as `zimbraBatchClient`, with the `useZimbraContext` hook. See xref:reference/shims/hooks/environment.adoc#use-zimbra-context[useZimbraContext] for the fields it returns.
+
+*Action required:* If a component reads values from its second argument or from `this.context`:
+
+* Receive the value as a prop. Pass it when you register the handler.
+* In a class component, read `this.props` instead of `this.context`:
++
+[source,js]
+----
+const client = this.props.zimbraBatchClient;
+----
+* A decorator can also map the shared objects to props: `@getContext(({ zimbraBatchClient }) => ({ zimbraBatchClient }))`, with `getContext` from `@zimbra-client/util`.
+
+[[error-legacy-context]]*Related error:* A component fails with `Cannot read properties of undefined`, for example when it reads `zimbraBatchClient` from its second argument.
+
+[#zimlet-redux-moved]
+=== context.zimletRedux moved to context.store.zimletRedux
+
+*What changed:* The context that the factory receives no longer has a `zimletRedux` field of its own. Read it from `store` instead, as the fix below shows. See xref:go-deeper/redux.adoc[Shared state with Redux].
+
+*Action required:* If your code reads `context.zimletRedux`, read the field from `store`:
+
+[source,js]
+----
+const { zimletRedux } = context.store;
+----
+
+[[error-zimlet-redux-moved]]*Related error:* `Cannot read properties of undefined (reading 'actions')` when the Zimlet reads `zimletRedux.actions`.
+
+[#icon-name-string]
+=== Icon names as strings
+
+*What changed:* Earlier releases drew an icon from a name such as `name="star"`. The `Icon` component now draws only an icon component, so a name that you give as a string no longer shows an icon. See xref:fundamentals/shared-libraries.adoc#icons[Icons].
+
+*Action required:* If an `Icon` or an `icon` prop receives a string, import the icon component from `lucide-preact` and pass it, not its name:
+
+[source,js]
+----
+import { StarIcon } from 'lucide-preact';
+<Icon name={StarIcon} />
+----
+
+[[error-icon-name-string]]*Related error:* An icon does not appear, and the browser console shows `+Icon => received name as string: star+`.
+
+[#markup-text-encoding]
+=== MarkupText encodes field values
+
+*What changed:* `MarkupText` from `@zimbra/preact-i18n` now encodes every value in `fields` as plain text before it inserts the value into the string. A value that holds markup therefore appears as text, and a value that your code encoded itself is encoded twice. See xref:go-deeper/localization.adoc[Localization].
+
+*Action required:*
+
+* Remove your own HTML encoding from the field values.
+* To insert markup that you trust, wrap it with `unsafeHtml(value)`, which `@zimbra/preact-i18n` exports. Do not pass user-generated content to `unsafeHtml`.
+
+[[error-markup-text-encoding]]*Related error:* A value in a `MarkupText` field shows entities such as `+&amp;+`, or shows HTML tags as text.
 
 [#content-security-policy-upgrade]
-== Content Security Policy (CSP) upgrade
+== Content Security Policy enforcement
 
-Starts in Zimbra 10.1.22. From version 20.0.0, the `zimlet` tool exposes `getCspNonce`, which one fix below needs.
+This applies to Zimbra 10.1.22 and later. From version 20.0.0, the `zimlet` tool exposes `getCspNonce`, which one fix below needs.
 
 The Modern UI runs under a Content Security Policy (CSP). A CSP is a set of rules that the server sends with the page. It says where scripts, styles, images, frames and network requests may come from, and the browser blocks everything else. The server sends the policy for the Modern UI and enforces it by default. A new random value, the nonce, goes into every page that the Modern UI loads. Your Zimlet runs in that page, so a Zimlet that worked before can fail after the server starts to enforce the policy.
 
@@ -138,10 +437,10 @@ The browser blocks the action and prints an error in the browser console. The pa
 [#csp-change-your-zimlet]
 === Change your Zimlet
 
-Set `@zimbra/zimlet-cli` to `^20.0.0`, as step 3 of the <<node-js-update-steps,Node.js upgrade>> describes. Earlier versions do not export `getCspNonce`, which the first fix needs. Then fix each message that you see.
+Set `@zimbra/zimlet-cli` to `^20.0.0`, as step 3 of the <<node-js-update-steps,update steps>> describes. Earlier versions do not export `getCspNonce`, which the first fix needs. Then fix each message that you see.
 
 [#csp-script-nonce]
-==== Add the nonce to a script
+=== Add the nonce to a script
 
 A script that your Zimlet adds to the page needs the nonce, or the browser blocks it. Read the nonce with `getCspNonce` from `@zimbra-client/util` and set it on the script element. The example loads a script from another address this way. `getCspNonce` returns `null` when the page has no nonce, so check the value first.
 
@@ -152,7 +451,7 @@ include::example$breaking-changes/index.js[]
 ----
 
 [#csp-other-fixes]
-==== Fix the other violations
+=== Fix the other violations
 
 An inline event handler or a `javascript:` address::
 * Cause: The browser blocks handler attributes in HTML text, such as `onclick="…"`.
@@ -185,222 +484,6 @@ The Modern UI loads a Zimlet from the development server with a network request.
 === Check the result
 
 Open the Modern UI, load your Zimlet and use each of its features with the xref:run-package-deploy/run-and-debug.adoc#browser-console[browser console] open. The console shows no message that contains `Content Security Policy`. To list the violations of a test server without blocking anything, an administrator sets the `zimbraReverseProxyModernCSP` attribute to `report-only`. The default value is `enforce`.
-
-[#other-breaking-changes]
-== Other breaking changes
-
-These changes affect how the `zimlet` tool builds a Zimlet and which libraries and helpers the Modern UI shares with it. Each change lists the symptom you see and the fix.
-
-[#build-tool-changes]
-=== Build tool changes
-
-[#babel-to-esbuild]
-==== Babel replaced by esbuild
-
-Starts in `zimlet` 19.0.0.
-
-The tool now compiles JavaScript and JSX with esbuild and no longer includes Babel. Class properties, legacy decorators, `export * as name from` and dynamic `import()` still work. Syntax that only a Babel plugin understood does not. The common case is `export Foo from './foo'`.
-
-`zimlet build` prints `Build failed!` and an error such as `ERROR: Unexpected "Foo"`.::
-* Cause: esbuild does not support `export Foo from './foo'`.
-* Fix: Write the default export in the standard form:
-+
-[source,js]
-----
-export { default as Foo } from './foo';
-----
-
-[#zimlet-config-loading]
-==== Loading of zimlet.config.js
-
-Starts in `zimlet` 19.0.0.
-
-The tool now loads `zimlet.config.js` with Node.js and no longer through Babel. The file can use `module.exports` or `export default`. See xref:reference/files/zimlet-config.adoc[zimlet.config.js] for what the file can change.
-
-`zimlet build` prints `Error executing transformer at` the path of the file, and then `Compiled successfully!`.::
-* Cause: The file failed to load, for example because it has a top-level `await`. The error names `ERR_REQUIRE_ASYNC_MODULE`. The build continues without the changes of the file.
-* Fix: Remove the top-level `await`. The `configure` function must be synchronous.
-
-`zimlet build` prints no error, but the changes of `zimlet.config.js` have no effect.::
-* Cause: The file does not export a function. The tool ignores any other export without a message.
-* Fix: Export a function, as `export default function configure(config, env) {}` does.
-
-[#raw-loader-removed]
-==== raw-loader removed
-
-Starts in `zimlet` 19.0.0.
-
-The tool no longer includes `raw-loader`, which some `zimlet.config.js` files used to import a file as text.
-
-`zimlet build` prints `Module not found: Error: Can't resolve 'raw-loader'`.::
-* Cause: A rule in `zimlet.config.js` names `raw-loader`, and the project does not install it.
-* Fix: Replace `loader: 'raw-loader'` in the rule with the webpack asset module `type: 'asset/source'`. The import then gives the text of the file:
-+
-[source,js]
-----
-config.module.rules.push({ test: /\.csv$/, type: 'asset/source' });
-----
-
-[#watch-and-node-env]
-==== Watch mode no longer follows NODE_ENV
-
-Starts in `zimlet` 19.0.0.
-
-Earlier releases switched to watch mode when `NODE_ENV` was `dev` or `development`. Now only the `watch` command starts the development server. `NODE_ENV=development zimlet build` builds once and exits.
-
-A script or pipeline that sets `NODE_ENV=development` no longer starts the development server.::
-* Cause: `NODE_ENV` no longer selects the mode.
-* Fix: Run `zimlet watch`, as xref:run-package-deploy/run-and-debug.adoc#start-the-development-server[Start the development server] describes.
-
-[#eslint-9]
-==== ESLint 9 and @zimbra/eslint-config 3
-
-Starts in `@zimbra/eslint-config` 3.0.0.
-
-Version 3 of the `@zimbra/eslint-config` package needs ESLint 9 and, like the `zimlet` tool, Node.js 24.18.0 and npm 11.16. ESLint 9 reads only a flat configuration file, `eslint.config.mjs`. It does not read `.eslintrc` files.
-
-`npm run lint` prints `ESLint couldn't find an eslint.config.(js|mjs|cjs) file.`::
-* Cause: The project has only an `.eslintrc` file, which ESLint 9 ignores.
-* Fix: Add `eslint.config.mjs`, as xref:run-package-deploy/lint-your-code.adoc#add-lint-setup[Add the lint setup to your project] describes, and delete the `.eslintrc` file.
-
-[#shared-library-changes]
-=== Changes to shared libraries and helpers
-
-The Modern UI shares libraries and helpers with each Zimlet, so a Zimlet does not bundle its own copy. See xref:fundamentals/shared-libraries.adoc[Shared libraries]. These changes rename or remove shared names.
-
-[#preact-i18n]
-==== preact-i18n replaced by @zimbra/preact-i18n
-
-Starts in `zimlet` 19.0.0.
-
-The Modern UI shares the localization library as `@zimbra/preact-i18n`. The names are the same: `Text`, `MarkupText`, `Localizer`, `IntlContext`, `IntlProvider`, `intl`, `translate`, `useText` and `withText`. `unsafeHtml` is added in `zimlet` 20.0.0. See xref:go-deeper/localization.adoc[Localization].
-
-`zimlet build` prints `Module not found: Error: Can't resolve 'preact-i18n'`.::
-* Cause: A file still imports `preact-i18n`, which the tool no longer shares.
-* Fix: Change each import, and remove `preact-i18n` from `package.json`. Do not add `@zimbra/preact-i18n`, because the Modern UI supplies it:
-+
-[source,js]
-----
-import { Text, useText } from '@zimbra/preact-i18n';
-----
-
-[#legacy-context]
-==== Legacy context removed
-
-Starts in Modern UI 4.50.
-
-The Modern UI no longer gives a component its values through Preact legacy context. That is the second argument of a function component and `this.context` in a class component. Pass what a component needs as props, as xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item] does. A component can also read the shared Modern UI objects, such as `zimbraBatchClient`, with the `useZimbraContext` hook. See xref:reference/shims/hooks/environment.adoc#use-zimbra-context[useZimbraContext] for the fields it returns.
-
-A component fails with `Cannot read properties of undefined`, for example when it reads `zimbraBatchClient` from its second argument.::
-* Cause: The value came from legacy context, which is now empty.
-* Fix: Receive the value as a prop and pass it when you register the handler. In a class component, read `this.props` instead of `this.context`:
-+
-[source,js]
-----
-const client = this.props.zimbraBatchClient;
-----
-+
-A decorator can also map the shared objects to props: `@getContext(({ zimbraBatchClient }) => ({ zimbraBatchClient }))`, with `getContext` from `@zimbra-client/util`.
-
-[#zimlet-redux-moved]
-==== context.zimletRedux moved to context.store.zimletRedux
-
-Starts in Modern UI 4.50.
-
-The context that the factory receives no longer has a `zimletRedux` field of its own. Read it from `store`. See xref:go-deeper/redux.adoc[Shared state with Redux].
-
-`Cannot read properties of undefined (reading 'actions')` when the Zimlet reads `zimletRedux.actions`.::
-* Cause: `context.zimletRedux` is `undefined`.
-* Fix: Read the field from `store`:
-+
-[source,js]
-----
-const { zimletRedux } = context.store;
-----
-
-[#context-provider-removed]
-==== preact-context-provider removed
-
-Starts in `zimlet` 19.0.0.
-
-The tool no longer shares `preact-context-provider`, and the Modern UI no longer uses legacy context. The `provide` function has no replacement. Pass the values as props when you register the handler.
-
-`zimlet build` prints `Module not found: Error: Can't resolve 'preact-context-provider'`.::
-* Cause: A file imports `provide` from the removed library.
-* Fix: Remove the import and the dependency. Replace the call with a handler that passes the values as props, and spread the props of the slot after them:
-+
-[source,js]
-----
-plugins.register('<slot-name>', props => <Presence enabled={enabled} {...props} />);
-----
-
-[#wiretie-removed]
-==== wiretie removed
-
-Starts in Modern UI 4.50.
-
-`wiretie` gave a component values from legacy context, which the Modern UI no longer supplies. The decorator `@wire` has no replacement. Read the actions from `store` in the factory, and pass them to the component as props.
-
-A component that uses `@wire` does not get its values, and its handlers throw `Cannot read properties of undefined`.::
-* Cause: `@wire` reads legacy context.
-* Fix: Remove `wiretie`. Read the action in the factory and pass it as a prop, as xref:reference/context/store/zimlet-redux/actions.adoc#remove-slot[removeSlot] shows for the actions of the `zimlets` namespace:
-+
-[source,js]
-----
-const { removeSlot } = context.store.zimletRedux.actions.zimlets;
-----
-
-[#recompose-removed]
-==== recompose removed
-
-Starts in `zimlet` 19.0.0.
-
-The tool no longer shares `recompose`. Three helpers keep working under the same names, from `@zimbra-client/util`: `withProps`, `branch` and `getContext`. The tool shares no other helper of the library.
-
-`zimlet build` prints `Module not found: Error: Can't resolve 'recompose'`.::
-* Cause: A file imports from the removed library.
-* Fix: Import `withProps` and `branch` from `@zimbra-client/util`. Replace `compose` with `flowRight` from `es-toolkit/compat`, and add `es-toolkit` to your dependencies. Pass `null` as the component to `branch` where you used `renderNothing`. It then renders nothing when the test is true. Rewrite `withState`, `lifecycle` and `withHandlers` with the hooks `useState`, `useEffect` and `useCallback`:
-+
-[source,js]
-----
-import { flowRight } from 'es-toolkit/compat';
-import { branch, withProps } from '@zimbra-client/util';
-----
-
-[#pwa-install-removed]
-==== preact-pwa-install replaced by @zimbra-client/pwa-utils
-
-Starts in `zimlet` 19.0.0.
-
-The tool no longer shares `preact-pwa-install`. The Modern UI shares `@zimbra-client/pwa-utils` instead. `isStandalone()` returns `true` when the Modern UI already runs as an installed app. `awaitInstallPrompt(onPrompt)` waits for the browser to offer the install dialog. It calls `onPrompt` with a function that opens the dialog, and returns a function that stops the waiting.
-
-When the browser offers the install dialog, a notification with an *Install* button appears:
-
-.index.js
-[source,js]
-----
-include::example$breaking-changes/install-prompt.js[]
-----
-
-`zimlet build` prints `Module not found: Error: Can't resolve 'preact-pwa-install'`.::
-* Cause: A file imports the removed library.
-* Fix: Import `awaitInstallPrompt` and `isStandalone` from `@zimbra-client/pwa-utils`, as the example does.
-
-[#back-arrow-removed]
-==== BackArrow removed
-
-Starts in `zimlet` 20.0.0.
-
-The Modern UI no longer shares `BackArrow` from `@zimbra-client/components`. The build still succeeds, because it does not check the names that you import. The name is `undefined` when the Zimlet runs. See xref:help-and-migration/known-limitations-and-gaps.adoc#shared-libraries[Shared libraries] under the known limitations.
-
-A component that renders `<BackArrow />` fails when the Zimlet runs.::
-* Cause: `BackArrow` is no longer exported.
-* Fix: Draw the arrow with the `Icon` component of `@zimbra-client/blocks` and `ArrowLeftIcon` from `lucide-preact`.
-
-[#update-an-existing-zimlet]
-== Update an existing Zimlet
-
-// To be written.
 
 [#next-step]
 == Next step
