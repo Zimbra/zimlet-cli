@@ -24,16 +24,19 @@ Steps:
    <zimlet name="…" version="…" description="…" label="…" zimbraXZimletCompatibleSemVer="…">
      <include>index.js</include>
      <includeCSS>index.css</includeCSS>
-     <resource>fonts</resource> …
+     <resource>fonts/logo_8ecf7e6c..svg</resource>
+     <include>scripts/659.88210564.chunk.js</include> …
    </zimlet>
    ```
-   Every top-level entry of the build folder is listed: `.js` → `include`, `.css` → `includeCSS`, anything else (except `.properties` and the descriptor itself, including folders such as `fonts/`, `scripts/`) → `resource`. Values are not XML-escaped, so `"` and `&` in label/description break the XML.
+   Every file of the build folder and its subfolders is listed by its relative path (CLI 20.0.0; CLI 19 listed only top-level entries, so `fonts` and `scripts` were one `resource` each): `.js` → `include`, `.css` → `includeCSS` (also in subfolders, so the on-demand chunks in `scripts/` are now `include` entries), anything else (except `.properties` and the descriptor itself) → `resource`. Folders get no entry, so an empty folder is zipped but not listed. (Checked by running `zimlet package` 19.0.0 and 20.0.0 on the same build with a `fonts/` file and a `scripts/` chunk.) Values are not XML-escaped, so `"` and `&` in label/description break the XML.
 3. **Properties files** for the admin console: `<name>.properties` (English) and `<name>_<locale>.properties` for each other `src/intl/*.json`, with `label`/`description` unicode-escaped. They are written to `./build` (hard-coded; the `--builddir` option only affects where files are read from and zipped).
 4. **Zip**: the whole build folder → `pkg/<name>.zip` (`--dest` changes the folder). `config_template.xml` is already in `build/` if `zimlet build` found it.
 
+**Resource folder** (`--resourcedir/-r`, CLI 20.0.0, default none): before the descriptor is written, the folder is copied recursively into the build folder under its own name (`./src/dictionary` → `build/dictionary`, trailing slash ignored), so it is part of the zip and its files are listed in the descriptor like any other file of the build (a `.js` file becomes `include`, a `.css` file `includeCSS`). The copy overwrites and never deletes, so files removed from the source stay in `build/`. A missing folder stops the command with `Resource directory does not exist: <path>` and exit code `1`, with no descriptor and no zip (checked by running `zimlet package` 20.0.0 in a scratch project).
+
 Naming: `--name` is expected to be globally unique and equal to the npm package name (scripts pass `$npm_package_name`). Existing zimlets use `zimbra-zimlet-<feature>`; the older style is `com_<company>_<feature>`.
 
-`--zimbraXVersion` is a semver **range** (npm style, for example `^4.0.0`, `>=1.0.0`). It becomes LDAP attribute `zimbraXZimletCompatibleSemVer` (`since 8.8.9`, `max=256`). It is optional: without it, `zimlet package` writes the default `>=1.0.0`, which accepts every Modern UI version (checked by running `zimlet package` without the option, CLI 19.0.0). The compatibility filter in §3 then never leaves the Zimlet out.
+`--zimbraXVersion` is a semver **range** (npm style, for example `^5.0.0`, `>=1.0.0`). It becomes LDAP attribute `zimbraXZimletCompatibleSemVer` (`since 8.8.9`, `max=256`). It is optional: without it, `zimlet package` writes the default `>=1.0.0`, which accepts every Modern UI version (checked by running `zimlet package` without the option, CLI 19.0.0 and 20.0.0). The compatibility filter in §3 then never leaves the Zimlet out.
 
 **Finding the host version to target.** The server compares your range with the Modern UI (`zm-x-web`) version (`PKG_VERSION` in `ZimletLoader`, sent as `zimbraXZimletCompatibleWith`). In Modern UI, log in, click the settings icon (top right), then **About**. It shows "Zimbra Modern Web App Version `<version-number>` (`<commit-hash>`)" (from the `zm-x-web` README; not run here). The range has to include that version. The mapping between a Zimbra server release and its `zm-x-web` version is not documented in these files; see [zimlet-known-issues.md](../../../zm-modern-zimlets/.agents/reference/zimlet-known-issues.md#documentation-sources).
 

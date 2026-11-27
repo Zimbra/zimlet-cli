@@ -1,6 +1,6 @@
 = Command handler
 
-Runs a function when a command is triggered. Use it to give a command a behaviour that runs when the user presses its key. Take the field from the context first, as in `const { shortcutCommandHandler } = context;`. The Modern UI calls its `handleKeyDown` and `handleKeyUp` methods for key events, so a Zimlet does not call them. A handler runs only for a command that has a binding. See xref:reference/context/keyboard-shortcuts/key-bindings.adoc[Key bindings].
+Runs a function when a command is triggered. Use it to give a command a behaviour that runs when the user presses its key. Take the field from the context first, as in `const { shortcutCommandHandler } = context;`. The Modern UI calls its `handleKeyDown` and `handleKeyUp` methods for key events, so a Zimlet does not call them. A handler runs only for a command that has a binding. The Modern UI also calls `setEnabled(value)` when the window size changes. With `false`, it ignores every key until the next call with `true`, so a Zimlet does not call it. Shortcuts work in a window that is at least 1025 px wide. In a narrower window, such as a phone or a tablet, every shortcut is off, including the ones of your Zimlet. See xref:reference/context/keyboard-shortcuts/key-bindings.adoc[Key bindings].
 
 [#members]
 == Members

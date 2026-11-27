@@ -28,9 +28,9 @@ Working examples: the [default template](#starting-from-the-default-template) an
     "build": "zimlet build",
     "watch": "zimlet watch",
     "start": "zimlet watch",
-    "package": "zimlet package --name \"$npm_package_name\" --pkg-version $npm_package_version --zimbraXVersion '^4.0.0'"
+    "package": "zimlet package --name \"$npm_package_name\" --pkg-version $npm_package_version --zimbraXVersion '^5.0.0'"
   },
-  "devDependencies": { "@zimbra/zimlet-cli": "^19.0.0" }
+  "devDependencies": { "@zimbra/zimlet-cli": "^20.0.0" }
 }
 ```
 
@@ -42,7 +42,7 @@ Working examples: the [default template](#starting-from-the-default-template) an
 
 | File | Purpose |
 |---|---|
-| `package.json` | Scripts `build`, `watch`/`start`, `package` (with `--zimbraXVersion '^4.0.0'`), `lint` (`eslint src`), `lint:fix` and `prepare` (`husky \|\| true`); a `lint-staged` block; `main`/`module` as above. Dependencies `@zimbra/x-ui` and `lucide-preact`; devDependencies `@zimbra/zimlet-cli`, `@zimbra/eslint-config`, `eslint`, `husky` and `lint-staged`. It has no `engines` field. |
+| `package.json` | Scripts `build`, `watch`/`start`, `package` (with `--zimbraXVersion '^5.0.0'`), `lint` (`eslint src`), `lint:fix` and `prepare` (`husky \|\| true`); a `lint-staged` block; `main`/`module` as above. Dependencies `@zimbra/x-ui` and `lucide-preact`; devDependencies `@zimbra/zimlet-cli`, `@zimbra/eslint-config`, `eslint`, `husky` and `lint-staged`. It has no `engines` field. |
 | `src/index.js` | Factory registering `slot::email-tab-item` (the tab) and `slot::routes` (a route at `/<email slug>/<name>`, the slug read with `useClientConfig`). |
 | `src/components/EmailTabItem/` | The tab: a `MenuItem` with a `lucide-preact` icon that links to the route. |
 | `src/components/app/` | The routed page (`App`) and its `style.less` (CSS Modules, imports `@zimbra/x-ui/helpers.less`). |

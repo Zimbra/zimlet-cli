@@ -47,12 +47,18 @@ import { ModalDialog } from '@zimbra-client/components';
 The heading of the dialog. A string is the id of a text, and the dialog shows that text, or the string itself when no text has that id. Pass a `<Text>` element for a text of your Zimlet.
 [[modal-dialog-children]]pass:[<a class="anchor" href="#modal-dialog-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
 The content of the dialog.
-[[modal-dialog-on-action]]pass:[<a class="anchor" href="#modal-dialog-on-action"></a>]`onAction` (function `(event: event) => void`)::
-Called with the click event when the user presses the primary button. Its return value is ignored. The dialog stays open.
-[[modal-dialog-on-close]]pass:[<a class="anchor" href="#modal-dialog-on-close"></a>]`onClose` (function `(event: event) => void`)::
-Called with the event when the user presses the close button or the cancel button, presses *Escape* or clicks outside the dialog. Its return value is ignored.
+[[modal-dialog-on-action]]pass:[<a class="anchor" href="#modal-dialog-on-action"></a>]`onAction` (function `(event?: event) => void`)::
+Called with the click event when the user presses the primary button. The *Enter* and *Space* keys call it too, and then it gets no argument. Its return value is ignored. The dialog stays open.
+[[modal-dialog-on-close]]pass:[<a class="anchor" href="#modal-dialog-on-close"></a>]`onClose` (function `(event?: event) => void`)::
+Called with the event when the user presses the close button or the cancel button, presses *Escape* or clicks outside the dialog. The keyboard shortcut for *Escape* calls it with no argument, so check that `event` exists before you read it. Its return value is ignored.
 [[modal-dialog-on-click-outside]]pass:[<a class="anchor" href="#modal-dialog-on-click-outside"></a>]`onClickOutside` (function `(event: event) => void`)::
 The same as <<modal-dialog-on-close,`onClose`>>, and used only when `onClose` is not set. The close and cancel buttons call it too.
+[[modal-dialog-on-reject]]pass:[<a class="anchor" href="#modal-dialog-on-reject"></a>]`onReject` (function `() => void`)::
+Called when the user presses *N* and <<modal-dialog-enable-yes-no-shortcuts,`enableYesNoShortcuts`>> is `true`. The dialog has no button for it. Without `onReject`, *N* calls <<modal-dialog-on-close,`onClose`>>, unless <<modal-dialog-disable-escape,`disableEscape`>> is `true`. Its return value is ignored.
+[[modal-dialog-enable-yes-no-shortcuts]]pass:[<a class="anchor" href="#modal-dialog-enable-yes-no-shortcuts"></a>]`enableYesNoShortcuts` (boolean)::
+Turns on the *Y* and *N* keys. *Y* calls <<modal-dialog-on-action,`onAction`>> and *N* calls <<modal-dialog-on-reject,`onReject`>>. Set it for a dialog that asks a yes or no question. *Y* does nothing while the primary button is disabled.
+[[modal-dialog-sub-title]]pass:[<a class="anchor" href="#modal-dialog-sub-title"></a>]`subTitle` (string or xref:reference/glossary.adoc#node[node])::
+A line below the title, in the header. A string is the id of a text, as for <<modal-dialog-title,`title`>>. It shows only when <<modal-dialog-header,`header`>> is `true`.
 [[modal-dialog-action-label]]pass:[<a class="anchor" href="#modal-dialog-action-label"></a>]`actionLabel` (string, default `buttons.ok`)::
 The id of the text on the primary button. The button shows the string itself when no text has that id. It has no effect with <<modal-dialog-buttons,`buttons`>>.
 [[modal-dialog-cancel-label]]pass:[<a class="anchor" href="#modal-dialog-cancel-label"></a>]`cancelLabel` (string, default `buttons.cancel`)::
@@ -85,8 +91,8 @@ Gives the dialog a height of 328 px. The content then scrolls between the header
 Ignores the *Escape* key. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-disable-escape[`disableEscape` of `Dialog`].
 [[modal-dialog-disable-outside-click]]pass:[<a class="anchor" href="#modal-dialog-disable-outside-click"></a>]`disableOutsideClick` (boolean, default `false`)::
 Ignores clicks outside the dialog. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-disable-outside-click[`disableOutsideClick` of `Dialog`].
-[[modal-dialog-autofocus-child-index]]pass:[<a class="anchor" href="#modal-dialog-autofocus-child-index"></a>]`autofocusChildIndex` (number, default `0`)::
-The position of the element that gets the focus when the dialog opens, counted among its focusable elements. The close button of the header is the first, so `1` is the first element of your content. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-autofocus-child-index[`autofocusChildIndex` of `Dialog`].
+[[modal-dialog-autofocus-child-index]]pass:[<a class="anchor" href="#modal-dialog-autofocus-child-index"></a>]`autofocusChildIndex` (number, default `1`)::
+The position of the element that gets the focus when the dialog opens, counted among its focusable elements, starting at `0`. The close button of the header is the first, so the default `1` is the first element of your content. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-autofocus-child-index[`autofocusChildIndex` of `Dialog`].
 [[modal-dialog-aria-label]]pass:[<a class="anchor" href="#modal-dialog-aria-label"></a>]`ariaLabel` (string)::
 The accessible name of the dialog. See xref:reference/shims/blocks/dialogs-and-overlays.adoc#dialog-aria-label[`ariaLabel` of `Dialog`].
 [[modal-dialog-into]]pass:[<a class="anchor" href="#modal-dialog-into"></a>]`into` (string, default `body`)::
@@ -113,7 +119,9 @@ A layer that covers the window, with the dialog box in it. It is drawn into the 
 * Show the dialog from a handler with xref:reference/context/store/zimlet-redux/actions.adoc#add-modal[`addModal`], and close it with xref:reference/context/store/zimlet-redux/actions.adoc#remove-modal[`removeModal`]. See xref:build-by-goal/recipe-app-events.adoc#modal-dialog[The ModalDialog component] for a dialog in use.
 * The Modern UI draws the dialog outside your Zimlet. Wrap your component with `withIntl` so that a `Text` in the content, and an id in a label prop, find the texts of your Zimlet. See xref:go-deeper/localization.adoc[Localization].
 * The dialog reads only the props above. Any other prop is ignored, and `className` is not read: use `class`.
-* With a header, the close button is the first focusable element, so it has the focus when the dialog opens. Set <<modal-dialog-autofocus-child-index,`autofocusChildIndex`>> to focus a field of your content instead.
+* The dialog has no close button when <<modal-dialog-header,`header`>> is `false` or <<modal-dialog-hide-close,`hideClose`>> is `true`. The default <<modal-dialog-autofocus-child-index,`autofocusChildIndex`>> of `1` then focuses the second focusable element. Set it to `0` to focus the first.
+* The dialog adds keyboard shortcuts. *Enter* and *Space* call <<modal-dialog-on-action,`onAction`>>, and *Escape* calls <<modal-dialog-on-close,`onClose`>>, unless <<modal-dialog-disable-escape,`disableEscape`>> is `true`. *Enter* and *Space* do nothing while <<modal-dialog-pending,`pending`>> or <<modal-dialog-disable-primary,`disablePrimary`>> is set. A key pressed in a text field is ignored, except *Escape*.
+* The shortcuts work for every open dialog, so when two dialogs are open, each of them reacts. While a dialog is open, the Modern UI removes its own bindings `all.ESCAPE`, `mail.ENTER` and `mail.N`. It puts them back when the last dialog closes. See xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[addBindings].
 * The title is not linked to the dialog as its name, so a screen reader announces no name. Set <<modal-dialog-aria-label,`ariaLabel`>>.
 * Do not remove every way to close the dialog, with `hideClose`, `cancelButton`, `disableEscape` and `disableOutsideClick`, unless your code is sure to close it.
 * The frame without header and buttons is xref:reference/shims/blocks/dialogs-and-overlays.adoc#modal-dialog[`ModalDialog` of `@zimbra-client/blocks`].
@@ -139,13 +147,15 @@ import { ConfirmModalDialog } from '@zimbra-client/components';
 [[confirm-modal-dialog-children]]pass:[<a class="anchor" href="#confirm-modal-dialog-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
 The question or the explanation.
 [[confirm-modal-dialog-on-result]]pass:[<a class="anchor" href="#confirm-modal-dialog-on-result"></a>]`onResult` (function `(result: boolean | null) => void`)::
-Required. Called with `true` for the accept button and `false` for the reject button. It gets `null` for the close button, the cancel button, the *Escape* key and a click outside. Its return value is ignored. The dialog does not close itself: remove it in this function.
+Required. Called with `true` for the accept button and the *Enter* and *Space* keys, and `false` for the reject button. With <<confirm-modal-dialog-enable-yes-no-shortcuts,`enableYesNoShortcuts`>>, *Y* gives `true` and *N* gives `false`. It gets `null` for the close button, the cancel button, the *Escape* key and a click outside. Its return value is ignored. The dialog does not close itself: remove it in this function.
 [[confirm-modal-dialog-accept-text]]pass:[<a class="anchor" href="#confirm-modal-dialog-accept-text"></a>]`acceptText` (string, default `buttons.yes`)::
 The id of the text on the accept button, which has the primary look. The button is empty when no text has that id.
 [[confirm-modal-dialog-reject-text]]pass:[<a class="anchor" href="#confirm-modal-dialog-reject-text"></a>]`rejectText` (string, default `buttons.no`)::
 The id of the text on the reject button. The button is empty when no text has that id.
 [[confirm-modal-dialog-cancel-button]]pass:[<a class="anchor" href="#confirm-modal-dialog-cancel-button"></a>]`cancelButton` (boolean, default `true`)::
 Shows a third button, *Cancel*, after the other two. `false` removes it. Use `false` when the reject button already stops the action.
+[[confirm-modal-dialog-enable-yes-no-shortcuts]]pass:[<a class="anchor" href="#confirm-modal-dialog-enable-yes-no-shortcuts"></a>]`enableYesNoShortcuts` (boolean)::
+Turns on the *Y* key for the accept button and the *N* key for the reject button. *Enter* and *Space* accept in every case. See <<modal-dialog-enable-yes-no-shortcuts,`enableYesNoShortcuts` of `ModalDialog`>>.
 [[confirm-modal-dialog-other-props]]pass:[<a class="anchor" href="#confirm-modal-dialog-other-props"></a>]Any other prop (any)::
 Passed to <<modal-dialog,`ModalDialog`>>, such as <<modal-dialog-title,`title`>>, <<modal-dialog-cancel-label,`cancelLabel`>>, <<modal-dialog-error,`error`>> and <<modal-dialog-class,`class`>>. The props `buttons`, `onClose` and `onClickOutside` have no effect, because the dialog sets its own buttons and closes through `onResult`.
 

@@ -7,7 +7,7 @@ A data hook gives a component data that the xref:reference/glossary.adoc#modern-
 
 Call a hook inside a component. Each hook returns its own values. The hooks in this section return an object with `data`, `loading` and `error`. For the values of every other hook, see xref:reference/shims/hooks.adoc[Hooks].
 
-To offer a *Formatting tips* item in the settings menu only to users who compose email in HTML, read the preferences with `usePreferences`. It returns the preferences in `data.getPreferences`, with one field for each preference, such as `zimbraPrefComposeFormat`. The component renders nothing until the preferences have loaded, and nothing when the format is not `html`. Choosing the item opens the page at `<tips-page-url>`, which you replace with your own address.
+To offer a *Formatting tips* item in the settings menu only to users who compose email in HTML, read the preferences with xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[`usePreferences`]. It returns the preferences in `data.getPreferences`, with one field for each preference, such as `zimbraPrefComposeFormat`. The component renders nothing until the preferences have loaded, and nothing when the format is not `html`. Choosing the item opens the page at `<tips-page-url>`, which you replace with your own address.
 
 .src/index.js
 [source,js]
@@ -27,7 +27,7 @@ With these hooks, `data` is `undefined` while `loading` is `true`, and when the 
 [#change-data]
 == Change data with a hook
 
-A hook that changes data returns a function that you call. It does not return `data`. `useItemActionMutation` returns an array, and its first element is the function that sends an action on an item, such as a message. Call that function from an event handler, for example when the user chooses a menu item. Call the hook itself while the component renders.
+A hook that changes data returns a function that you call. It does not return `data`. xref:reference/shims/hooks/mail.adoc#use-item-action-mutation[`useItemActionMutation`] returns an array, and its first element is the function that sends an action on an item, such as a message. Call that function from an event handler, for example when the user chooses a menu item. Call the hook itself while the component renders.
 
 To add a *Flag* item to the *More* menu of a message, call the function with the `id` of the message and `op: 'flag'`. The `emailData` prop holds the message that the menu belongs to. The function sends `ItemActionRequest` with `op="flag"`. The server then flags the item.
 

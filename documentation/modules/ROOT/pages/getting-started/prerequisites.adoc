@@ -10,8 +10,8 @@ You need a Zimbra server that runs the Modern UI. It can be a test server or a p
 The server must provide:
 
 * An account that can sign in to the Modern UI. Any valid account works, so a test account is not required.
-* The xref:run-package-deploy/run-and-debug.adoc[sideloader] Zimlet, installed and enabled for that account. It loads the Zimlet that runs on your machine into the Modern UI.
-* A Modern UI version number that you can read. See xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version].
+* The xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[sideloader] Zimlet, installed and enabled for that account. It loads the Zimlet that runs on your machine into the Modern UI.
+* Modern UI {modern-ui-version}. See xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version] to read the number of your server.
 * A way to deploy a Zimlet: access to the Admin Console or a shell on the server, or an administrator who deploys for you.
 
 You install the sideloader in xref:getting-started/setup-environment.adoc[Set up your machine].
@@ -28,8 +28,8 @@ The Modern UI version tells you which xref:reference/glossary.adoc#semver-range[
 
 The `Zimbra Modern Web App Version` line shows the version number, then a build identifier and a build date. The server version is on the next line.
 
-.The About dialog of the Modern UI
-image::prerequisites-about-dialog.png["The About dialog. The first line, Zimbra Modern Web App Version, gives the Modern UI version, for example 4.50.0. The server version is on the line below it."]
+.The About dialog of the Modern UI, with the Zimbra Modern Web App Version line outlined
+image::prerequisites-about-dialog.png["The Mail screen of the Modern UI with the About dialog open over it. The first line of the dialog, Zimbra Modern Web App Version, is outlined in red and reads 5.0.0, followed by a build identifier and a build date. The server version is on the line below it."]
 
 The `--zimbraXVersion` option of `zimlet package` takes the semver range. The option is optional. Without it, the range is `>=1.0.0`, which accepts every Modern UI version. Set a range to keep your Zimlet off versions you have not tested.
 
@@ -46,7 +46,7 @@ JavaScript::
 You write the Zimlet in JavaScript, with ES modules and promises. Aim for working knowledge. Read the https://developer.mozilla.org/en-US/docs/Web/JavaScript[JavaScript guide on MDN^].
 
 Node.js 24 and npm::
-They run the `zimlet` tool and install your dependencies. The tool needs Node.js 24.18.0 or later and npm 11. Node.js 24 includes npm 11. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but that setup is unsupported. Aim for running commands and reading their output. Read the https://nodejs.org/en/download[Node.js downloads^] and the https://docs.npmjs.com/[npm documentation^].
+They run the `zimlet` tool and install your dependencies. The tool needs Node.js 24.18.0 or a later 24 release, and npm 11. Node.js 24 includes npm 11. The Node.js version affects only your build, not how the Zimlet runs in the Modern UI. A Zimlet built with an older version can still work, but that setup is unsupported. Aim for running commands and reading their output. Read the https://nodejs.org/en/download[Node.js downloads^] and the https://docs.npmjs.com/[npm documentation^].
 
 A code editor::
 You edit JavaScript, JSX, Less and JSON files. Any editor works. Read the https://code.visualstudio.com/docs[Visual Studio Code documentation^] if you use it.
@@ -55,7 +55,7 @@ Shell basics::
 You run the commands in a POSIX shell. On the server, an administrator deploys from a shell. Aim for changing folders and running commands. Read the https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html[POSIX shell command language^].
 
 HTTPS and self-signed certificates::
-The Zimlet development server uses HTTPS with a self-signed certificate. Your browser blocks it until you accept it. Aim for awareness of what it is and how to accept it. Read the https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security[Transport Layer Security on MDN^].
+The Zimlet development server uses HTTPS with a self-signed certificate. Your browser blocks it until you accept it. Aim for awareness of what it is and how to accept it. Read the https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Transport_Layer_Security[Transport Layer Security on MDN^].
 
 === Recommended
 
@@ -65,7 +65,7 @@ Preact and JSX::
 You build the user interface of a Zimlet with Preact components written in JSX. Aim for working knowledge of components, props and hooks. Read the https://preactjs.com/guide/v10/getting-started[Preact guide^]. The components and hooks that the Modern UI gives you are written for Preact. Another framework can cause problems that Zimbra has not tested, so check it carefully before you ship it.
 
 Semver ranges::
-You package a Zimlet with a range of Modern UI versions, such as `^4.42.0`. Aim for reading a range. Read the https://semver.org/[Semantic Versioning^] and the https://github.com/npm/node-semver#ranges[range syntax of node-semver^].
+You package a Zimlet with a range of Modern UI versions, such as `^{modern-ui-version}`. Aim for reading a range. Read the https://semver.org/[Semantic Versioning^] and the https://github.com/npm/node-semver#ranges[range syntax of node-semver^].
 
 === When needed
 
@@ -78,7 +78,7 @@ You style the user interface of a Zimlet with CSS. See xref:go-deeper/styling.ad
 A Zimlet that adds a screen registers a route. See xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen]. Use the router of the Modern UI. Aim for basic knowledge. Read the https://github.com/preactjs/preact-router[preact-router documentation^].
 
 Redux::
-You read or change state that the Modern UI shares. See xref:go-deeper/redux.adoc[Shared state with Redux]. The Modern UI provides `react-redux` and `redux-actions` to your Zimlet. Aim for basic knowledge. Read the https://redux.js.org/[Redux documentation^] and the https://react-redux.js.org/[React Redux documentation^].
+You read or change state that the Modern UI shares. See xref:go-deeper/redux.adoc[Shared state with Redux]. The Modern UI provides `react-redux` and `redux-actions` to your Zimlet. Aim for basic knowledge. Read the https://redux.js.org/[Redux documentation^] and the https://redux.js.org/react-redux/[React Redux documentation^].
 
 === Optional
 

@@ -16,11 +16,11 @@ When documenting a slot, follow the payload through wrappers and callers, distin
 
 ## Maintaining the catalog
 
-The source scanner owns `kind`, `name`, and `usages` and rewrites them on every run. When researching an entry, update only `placementAreas` with evidence-based, concise UI or processing areas. Do not infer placement from a name alone. Do not store documentation prose or an AsciiDoc `anchor` in this index; a future documentation generator can derive a stable anchor from the exact `name`.
+The source scanner `find-slots.sh` in `zm-x-web` owns every field of the catalog (`kind`, `name`, `doc` and `usages`) and rewrites them on every run. Do not edit the catalog by hand. The `doc` field holds the page and anchor of the entry in the guide, which the scanner reads from the slot pages in this repository, so after you add, rename, move or remove an entry on a slot page, run the scanner from the `zm-x-web` root and commit the catalog there. A name without `doc` is not documented yet. Do not store documentation prose in the catalog.
 
 These usage details are scanner-derived clues, not a substitute for tracing code. They identify where to look and what is syntactically passed; they do not establish semantic meaning, types, UI purpose, or plugin behavior. Follow the source from each usage and record only conclusions supported by that evidence.
 
-The scanner rewrites `kind`, `name`, and `usages`; preserve those fields when researching entries. Keep the catalog concise rather than adding documentation prose. The generated AsciiDoc guide can contain the fuller behavior, contract, and placement explanations.
+Keep the catalog concise. The generated AsciiDoc guide contains the fuller behavior, contract, and placement explanations.
 
 ## Producing documentation from the catalog
 
@@ -39,11 +39,11 @@ Do not repeat generic manager or `ZimletSlot` behavior in every section. Summari
 `reference/slots/all-slots.adoc` is generated. Do not edit it by hand. Run `node .agents/scripts/generate-all-slots.mjs` from the repository root after any of these changes, and commit the regenerated page with them:
 
 - The catalog `zimlet-slots.yml` in `zm-x-web` adds, renames or removes a name.
-- A slot page under `reference/slots/` adds, renames or removes an entry heading, or a slot term of the `Hide built-in UI` page.
+- A slot page under `reference/slots/` adds, renames or removes an entry heading, or a slot term of the `Hide built-in UI` page, or moves an entry to another page. Run `find-slots.sh` in `zm-x-web` first, so that the `doc` fields of the catalog follow the pages.
 
-The script reads the catalog and the entry headings of the slot pages, and writes one entry for each catalog name with its link, its kind (slot or data key), its place in the guide, and the shared pattern entry for the per-vertical names. It needs `zm-x-web` checked out next to this repository.
+The script reads the catalog, and writes one entry for each catalog name with its link (the `doc` field), its kind (slot or data key), its place in the guide, and the shared pattern entry for the per-vertical names. It needs `zm-x-web` checked out next to this repository, and it writes nothing there.
 
-Run it with `--check` to see whether the page is current without writing it. It exits with 1 when the page is out of date. When it fails with `No entry found`, a catalog name has no entry in any slot page: document the name, or fix its heading or anchor on the slot page. Do not change the script to skip the name. When it fails with `Two names give the anchor`, rename one of the entries.
+Run it with `--check` to see whether the page is current without writing it. It exits with 1 when the page is out of date. When it fails with `No doc for`, a catalog name has no entry in any slot page: document the name, or fix its heading or anchor on the slot page, and run `find-slots.sh` again. When it fails with `points to a page or anchor that does not exist`, the catalog is behind the pages: run `find-slots.sh` again. Do not change the script to skip the name. When it fails with `Two names give the anchor`, rename one of the entries.
 
 ## Slot reference page format in the developer guide
 

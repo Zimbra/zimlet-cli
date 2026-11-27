@@ -24,8 +24,8 @@ The sideloader shows each load that fails in the *Status* column and prints the 
 image::troubleshooting-sideloader-error.png["The Zimlets Sideloader tab of the Modern UI. The table lists the Zimlet my-zimlet with the address https://localhost:8081/index.js. Its Status column, outlined in red, reads Error: TypeError: Failed to fetch. The browser console below the page prints the same error."]
 
 [[failed-to-fetch]]pass:[<a class="anchor" href="#failed-to-fetch"></a>]The *Status* column shows `Error: TypeError: Failed to fetch`::
-* Cause: The sideloader cannot reach the development server. The server is not running, the browser has not accepted its self-signed certificate, or Chrome blocked the request.
-* Fix: Start the server and accept its certificate, as xref:run-package-deploy/run-and-debug.adoc#start-the-development-server[Start the development server] describes. For Chrome, see xref:getting-started/setup-environment.adoc#allow-chrome-access[Allow Chrome to reach your development server].
+* Cause: The sideloader cannot reach the development server. The server is not running, the browser has not accepted its self-signed certificate, or Chrome blocked the request. The xref:reference/glossary.adoc#csp[Content Security Policy] of the Modern UI can also forbid the address. The console then names the directive `connect-src`.
+* Fix: Start the server and accept its certificate, as xref:run-package-deploy/run-and-debug.adoc#start-the-development-server[Start the development server] describes. For Chrome, see xref:getting-started/setup-environment.adoc#allow-chrome-access[Allow Chrome to reach your development server]. For the policy, ask the administrator to add the origin `https://localhost:<port>` to `connect-src`, as xref:go-deeper/server-data/fetch.adoc#blocked-requests[When the browser blocks a request] describes. Use the port that the terminal prints.
 * If you stopped the server on purpose, clear *Persist on Reload* for the row. The sideloader loads every ticked Zimlet again each time the page loads. See xref:run-package-deploy/run-and-debug.adoc#persist[Keep the Zimlet loaded with Persist on Reload].
 
 [[construct-handler-object]]pass:[<a class="anchor" href="#construct-handler-object"></a>]The *Status* column or the console contains `Failed to construct handlerObject`::
@@ -73,6 +73,10 @@ image::troubleshooting-sideloader-error.png["The Zimlets Sideloader tab of the M
 [[export-not-found]]pass:[<a class="anchor" href="#export-not-found"></a>]A call fails with `[ZimletCli]: Export <module>.<name> was not found`::
 * Cause: The build accepts a named import of a shared module without checking it. The Modern UI does not provide every name that the build knows, so the call fails when it runs.
 * Fix: Import only the names that xref:reference/shims.adoc[Shared modules] lists. See xref:fundamentals/shared-libraries.adoc#export-not-found[The Export … was not found error]. If the call fails with a `TypeError` instead, see xref:help-and-migration/known-limitations-and-gaps.adoc#names-missing-at-run-time[An import of a name that the Modern UI does not export].
+
+[[csp-violation]]pass:[<a class="anchor" href="#csp-violation"></a>]The console reports `violates the following Content Security Policy directive`::
+* Cause: The server sends the Modern UI with a xref:reference/glossary.adoc#csp[Content Security Policy], and your Zimlet does something that it does not allow. The directive in the message names it: `connect-src` for a request, `script-src` for a script, `img-src` for an image and `frame-src` for a frame. A blocked request also rejects with `TypeError: Failed to fetch`.
+* Fix: For a script that your code adds, set the nonce from xref:reference/shims/utilities/browser-and-app.adoc#get-csp-nonce[`getCspNonce`] on the element. For any other address, ask the administrator to allow it, as xref:go-deeper/server-data/fetch.adoc#blocked-requests[When the browser blocks a request] describes.
 
 [[remove-listener-throws]]pass:[<a class="anchor" href="#remove-listener-throws"></a>]`Can't remove a listener. Event "<name>" doesn't exits.`::
 * Cause: xref:go-deeper/app-events.adoc[`zimletEventEmitter.off`] found no listener for that event name. The name is wrong, you never added the listener, or you removed the last one twice.

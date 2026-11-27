@@ -35,7 +35,7 @@ include::example$project-structure/src/index.js[]
 include::example$project-structure/src/intl/en_US.json[]
 ----
 
-`npm run build` compiles these files into `build/index.js`, and `npm run package` adds the xref:run-package-deploy/build-and-package.adoc[descriptor] and zips the result to `pkg/my-zimlet.zip`. This Zimlet adds nothing to the xref:reference/glossary.adoc#modern-ui[Modern UI] yet. Register your first handler as xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] describes.
+`npm run build` compiles these files into `build/index.js`, and `npm run package` adds the xref:run-package-deploy/build-and-package.adoc[descriptor] and zips the result to `pkg/my-zimlet.zip`. This Zimlet adds nothing to the xref:reference/glossary.adoc#modern-ui[Modern UI] yet. Register your first xref:fundamentals/extending-the-ui.adoc[handler] as xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] describes.
 
 [#template-layout]
 == Folders and files of the default template

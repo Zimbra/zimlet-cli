@@ -152,7 +152,7 @@ Gives the dialog a fixed height and scrolls its content, so a long selection doe
 Set to `false` to hide the *Cancel* button. The dialog only reports a result, so it has one button.
 
 `onAction`::
-Runs when the user chooses the main button, which reads *OK* because `actionLabel` keeps its default. The close button calls `onClose`. Both close the dialog here.
+Runs when the user chooses the main button, which reads *OK* because `actionLabel` keeps its default, or presses *Enter* or *Space*. The close button calls `onClose`. Both close the dialog here.
 
 The Modern UI draws the dialog outside your Zimlet, so wrap it with `withIntl`. The `Text` element fills the placeholder in the text `+Larger than {{limit}} MB+` from its `fields` prop, as xref:go-deeper/localization.adoc#show-texts[Localization] describes.
 

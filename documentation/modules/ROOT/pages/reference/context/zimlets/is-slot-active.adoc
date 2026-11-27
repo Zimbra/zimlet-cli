@@ -38,7 +38,7 @@ zimlets.isSlotActive(slot)
 [#example]
 == Example
 
-A tip is added to the description list of the email landing page, but only if no other Zimlet has added one.
+A tip is added to the description list of the Video landing page, but only if no other Zimlet has added one.
 
 .src/index.js
 [source,js]

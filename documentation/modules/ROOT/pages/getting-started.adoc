@@ -1,0 +1,23 @@
+= Getting started
+
+Getting started takes you from an empty machine to a Zimlet that runs in the xref:reference/glossary.adoc#modern-ui[Modern UI]. You learn the short mental model, check what you need, prepare your machine and your Zimbra server, and build a first Zimlet. Begin here if you have never built a Zimlet. Each step gives only what the next one needs, and the later parts hold the detail.
+
+[#read-in-this-order]
+== Read in this order
+
+xref:getting-started/concepts.adoc[How Zimlets work]::
+Learn how a Zimlet gets from your source files to the screen of the Modern UI.
+
+xref:getting-started/prerequisites.adoc[Prerequisites]::
+Check the server and the web technologies that you need before you install anything.
+
+xref:getting-started/setup-environment.adoc[Set up your machine]::
+Prepare your machine and your Zimbra server for development. You do it once.
+
+xref:getting-started/quickstart.adoc[Your first Zimlet]::
+Create a Zimlet from the default template, run it in the Modern UI, change it and package it.
+
+[#next-step]
+== Next step
+
+Learn what every Zimlet author needs to understand in xref:fundamentals.adoc[Fundamentals].

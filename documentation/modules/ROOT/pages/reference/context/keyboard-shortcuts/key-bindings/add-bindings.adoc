@@ -38,6 +38,8 @@ Nothing (`undefined`).
 * If two Zimlets bind the same key in the same context, the one that runs last wins.
 * To add behaviour to a Modern UI command without taking over its key, add a handler for that command with xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers]. Every handler of a command runs.
 * A command only does something when a handler exists for it. See xref:reference/context/keyboard-shortcuts/command-handler/add-command-handlers.adoc[addCommandHandlers].
+* The Modern UI binds many keys in `mail`, `compose`, `toolbar`, `trees`, `buttons` and `dialog`. Check a key with xref:reference/context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.adoc[getCommandsAndSequences] before you bind it.
+* While a dialog of the Modern UI is open, the Modern UI removes the bindings `all.ESCAPE`, `mail.ENTER` and `mail.N`. When the last dialog closes, it puts back the values that it saved. A change that you make to one of them in the meantime is lost.
 
 [#example]
 == Example

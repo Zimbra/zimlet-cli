@@ -3,5 +3,5 @@
 export default function configure(config) {
 	const assetRule = config.module.rules.find(rule => rule.test?.test('image.png'));
 	assetRule.generator.filename =
-		'fonts/[name]_[contenthash:8][ext]?zimbraXZimletCompatibleWith=4.0.0';
+		'fonts/[name]_[contenthash:8][ext]?zimbraXZimletCompatibleWith=5.0.0';
 }

@@ -73,7 +73,7 @@ include::example$privacy-blur/constants/index.js[]
 
 WARNING: xref:reference/context/keyboard-shortcuts/key-bindings/add-bindings.adoc[`addBindings`] replaces any binding of the same key, including a shortcut of the Modern UI or of another Zimlet. Check the key with xref:reference/context/keyboard-shortcuts/key-bindings/get-commands-and-sequences.adoc[getCommandsAndSequences] first. The reference of `addBindings` lists the cases where a binding removes a whole sequence.
 
-The binding is `Y`, then `B`, in the `all` context, so it works on every screen. The Modern UI does not use the key `Y` in its own bindings.
+The binding is `Y`, then `B`, in the `all` context, so it works on every screen. The Modern UI binds `Y` only in the `dialog` context. A dialog that turns on the *Y* and *N* keys uses it, so the sequence is free elsewhere.
 
 [#show-the-overlay]
 == Show the overlay

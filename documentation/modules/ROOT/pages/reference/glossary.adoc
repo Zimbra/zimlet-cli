@@ -1,21 +1,56 @@
 = Glossary
 
-Short definitions of the everyday terms that the guide uses. A concept that the guide explains on a page of its own, such as the context, the factory, slots and plugin handlers, is not listed here. Each page links to the concept page where the term first appears. Each entry below links to the page that covers the topic.
+Short definitions of the terms that the guide uses, for looking a term up. A term can have a page of its own, such as the context, the factory or slots. Its entry then gives one line and links to that page for the full explanation.
 
 [[cos]]
 == Class of service (COS)
 
 A set of account settings on the Zimbra server that applies to a group of accounts. A COS lists the Zimlets its accounts can use. Each Zimlet is mandatory, enabled by default or disabled by default. Users can switch off a Zimlet that is not mandatory. See xref:run-package-deploy/deploy.adoc[Deploy].
 
+[[csp]]
+== Content Security Policy (CSP)
+
+A rule that the server sends with a page. It tells the browser which scripts, styles and other resources the page may load. A policy can allow a script only when it carries a xref:reference/glossary.adoc#nonce[nonce]. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP[Content Security Policy^] in the MDN documentation.
+
+[[context]]
+== Context
+
+The object that the Modern UI passes to the factory of a Zimlet. Through its fields, a Zimlet adds content, sends requests to the server and shares state. See xref:fundamentals/host-context.adoc[The context object].
+
+[[descriptor]]
+== Descriptor
+
+The small XML file in the zip of a Zimlet. It tells the Zimbra server the name, version, label and description of the Zimlet. It also lists the files to load and the Modern UI versions that the Zimlet works with. See xref:run-package-deploy/build-and-package.adoc#descriptor[The descriptor and the properties files].
+
 [[element]]
 == Element
 
 A description of one thing to draw, such as `<Icon />` or `<div>`. JSX produces it. An element is one kind of xref:reference/glossary.adoc#node[node]. See https://preactjs.com/guide/v10/getting-started/[Getting started^] in the Preact documentation.
 
+[[factory]]
+== Factory
+
+The function that the entry file of a Zimlet exports by default. The Modern UI calls it once, passes it the context and receives an object with an `init()` method. See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle].
+
+[[handler]]
+== Handler
+
+A function that a Zimlet registers for a slot or for another key. The Modern UI calls it, and a slot shows what it returns. See xref:fundamentals/extending-the-ui.adoc[Slots and handlers].
+
+[[headless-zimlet]]
+== Headless Zimlet
+
+A Zimlet with no user interface. It registers no slot handler and reacts to events or processes data. See xref:fundamentals/factory-and-lifecycle.adoc#headless-zimlets[Headless Zimlets].
+
 [[hmr]]
 == Hot module replacement (HMR)
 
 A development feature of `zimlet watch` intended to update a running Zimlet without a page reload. In the sideloader check on the Modern UI, the open page did not update on save, so reload the page to see the change. HMR runs only in development, not in a production build. See xref:run-package-deploy/run-and-debug.adoc[Run and debug].
+
+[[init]]
+== `init()`
+
+The method that the factory returns. The Modern UI calls it once, and only for a Zimlet that is enabled for the account. A Zimlet registers its handlers here. See xref:fundamentals/factory-and-lifecycle.adoc#init[The init method].
 
 [[modern-ui]]
 == Modern UI
@@ -27,10 +62,45 @@ The Zimbra web client that loads and runs Zimlets. Its screens contain xref:fund
 
 A value that a component can render: an xref:reference/glossary.adoc#element[element] such as `<Icon />`, a string, a number or an array of these. `null`, `undefined`, `true` and `false` render nothing. Props of type node, such as `children`, take any of these. See https://preactjs.com/guide/v10/components/[Components^] in the Preact documentation.
 
+[[nonce]]
+== Nonce
+
+A value that the server puts in the page and in its xref:reference/glossary.adoc#csp[Content Security Policy]. A `script` element runs only when its `nonce` attribute holds this value. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/nonce[nonce^] in the MDN documentation.
+
+[[payload]]
+== Payload
+
+The one object that a slot passes to each of its handlers. It holds the props that the screen gives to the slot. See xref:fundamentals/extending-the-ui.adoc#props-and-payload[Props and payload].
+
+[[plugins]]
+== Plugins
+
+The field of the context that registers and removes the handlers of a Zimlet. See xref:fundamentals/extending-the-ui.adoc[Slots and handlers].
+
 [[semver-range]]
 == Semver range
 
-A version range in npm style, such as `^4.42.0`. You set it with the `--zimbraXVersion` option of `zimlet package`. The option is optional. Without it, the range is `>=1.0.0`, which accepts every Modern UI version. The range states which Modern UI versions your Zimlet works with. The server leaves out a Zimlet whose range does not include the running Modern UI version. See xref:run-package-deploy/build-and-package.adoc[Build and package].
+A version range in npm style, such as `^{modern-ui-version}`. You set it with the `--zimbraXVersion` option of `zimlet package`. The option is optional. Without it, the range is `>=1.0.0`, which accepts every Modern UI version. The range states which Modern UI versions your Zimlet works with. The server leaves out a Zimlet whose range does not include the running Modern UI version. See xref:run-package-deploy/build-and-package.adoc[Build and package].
+
+[[shim]]
+== Shim
+
+The Modern UI's own copy of a module that it shares with Zimlets. The build replaces each import of such a module with a stand-in, so the bundle holds no copy. See xref:fundamentals/shared-libraries.adoc#how-shims-work[How shims work].
+
+[[sideloader]]
+== Sideloader
+
+A Zimlet in the Modern UI that loads another Zimlet from a web address, such as your development server. See xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[Load the Zimlet with the sideloader].
+
+[[slot]]
+== Slot
+
+A named place in a screen of the Modern UI where a Zimlet adds content. A Zimlet registers a handler under the name of the slot. See xref:fundamentals/extending-the-ui.adoc[Slots and handlers].
+
+[[store]]
+== Store
+
+The Redux store of the Modern UI, a field of the context. A Zimlet reads shared state from it and sends actions to it. See xref:go-deeper/redux.adoc[Shared state with Redux].
 
 [[vertical]]
 == Vertical

@@ -1,0 +1,26 @@
+= Fundamentals
+
+Fundamentals explain what every xref:reference/glossary.adoc#zimlet[Zimlet] author must understand. They cover how a project is laid out, where code runs, how a Zimlet reaches the xref:reference/glossary.adoc#modern-ui[Modern UI] and which libraries it shares. Read them after your first Zimlet and before you build a real feature. They give the depth that you need to build correctly, one topic for each page.
+
+[#topics]
+== Topics
+
+xref:fundamentals/project-structure.adoc[Project structure]::
+See what a Zimlet project is made of and where your code, texts and settings go.
+
+xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle]::
+Decide what belongs in the factory and what belongs in `init()`, including asynchronous setup and conditional registration.
+
+xref:fundamentals/host-context.adoc[The context object]::
+Learn how your Zimlet receives the context and which field fits which job.
+
+xref:fundamentals/extending-the-ui.adoc[Slots and handlers]::
+Add content to a screen of the Modern UI by registering a plugin handler for a slot.
+
+xref:fundamentals/shared-libraries.adoc[Shared libraries]::
+Tell apart the imports that the Modern UI provides from the packages that your Zimlet bundles.
+
+[#next-step]
+== Next step
+
+Choose a complete feature to build in xref:build-by-goal.adoc[Build by goal].

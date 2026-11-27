@@ -2,7 +2,7 @@
 
 Some commands and parts of the Modern UI have limits or defects. You can meet them while you build, package, deploy and run a Zimlet. Each entry gives the symptom and what to do today. Check the entries when something fails and your code looks correct, or before you plan a feature around one of these areas.
 
-The entries describe Modern UI 4.50 and `zimlet` 19.0.0. A later release can change them.
+The entries describe Modern UI {modern-ui-version} and `zimlet` {zimlet-cli-version}. A later release can change them.
 
 [#create-and-package]
 == Create and package
@@ -106,7 +106,7 @@ For only one or two images, there are two simpler options. You can inline each i
 [[one-zimlet-fails-to-start]]pass:[<a class="anchor" href="#one-zimlet-fails-to-start"></a>]One Zimlet that fails to start stops other Zimlets from starting::
 The server sends all deployed Zimlets in one bundle, and the Modern UI starts them together. When the factory of one Zimlet throws, no Zimlet of the bundle starts. When `init()` of one Zimlet throws, the Zimlets after it do not start. The only sign is a warning in the browser console.
 +
-* Suggestion: Wrap the body of your factory and of `init()` in `try` and `catch`. Your Zimlet then never throws into the Modern UI.
+* Suggestion: Wrap the body of your factory and of `init()` in `try` and `catch`, and write the caught error to the console. This stops errors that these functions throw from reaching the Modern UI. It does not cover code that runs outside them when the file loads, such as top-level statements and imports. An error there still stops the other Zimlets, so put code that can fail inside the factory or `init()`. A promise that `init()` returns and that is rejected does not stop the other Zimlets.
 * See xref:fundamentals/factory-and-lifecycle.adoc#init[Factory and lifecycle].
 
 [[unload-and-destroy]]pass:[<a class="anchor" href="#unload-and-destroy"></a>]`unload()` and `destroy()` are not called::
@@ -128,7 +128,7 @@ Whatever `id` you pass, the call removes all the dialogs that Zimlets added.
 * See xref:reference/context/store/zimlet-redux/actions.adoc#remove-modal[removeModal].
 
 [[email-processor-error]]pass:[<a class="anchor" href="#email-processor-error"></a>]One failing message processor breaks the message view::
-When a handler for `messageProcessors:emailProcessor` throws, or returns something that is not a function, the viewer fails. The browser console shows a `TypeError` that ends with `is not a function`. The names before that text depend on the build of the Modern UI, so a production build shows short names such as `t[e]`. The same applies to the other processor keys that go through the message sanitizer.
+When a handler for xref:reference/slots/content-processors.adoc#email-processor[`messageProcessors:emailProcessor`] throws, or returns something that is not a function, the viewer fails. The browser console shows a `TypeError` that ends with `is not a function`. The names before that text depend on the build of the Modern UI, so a production build shows short names such as `t[e]`. The same applies to the other processor keys that go through the message sanitizer.
 +
 * Suggestion: Wrap the body of your handler in `try` and `catch`, and always return a function.
 * See xref:reference/slots/content-processors.adoc#email-processor[messageProcessors:emailProcessor].

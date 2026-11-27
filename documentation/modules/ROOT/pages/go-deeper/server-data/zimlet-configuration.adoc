@@ -38,7 +38,7 @@ See xref:reference/files/config-template.adoc[config_template.xml] for every ele
 [#user-values]
 == Let users save their own value
 
-Register a settings section under the `settings` key, as xref:build-by-goal/recipe-settings.adoc[Add a settings] describes. Give the section a field of the type `modifyProperties`. The Settings dialog shows your section, and it saves the fields that the user changed when the user selects *Save*.
+Register a settings section under the xref:reference/slots/settings.adoc#settings[`settings`] key, as xref:build-by-goal/recipe-settings.adoc[Add a settings] describes. Give the section a field of the type `modifyProperties`. The Settings dialog shows your section, and it saves the fields that the user changed when the user selects *Save*.
 
 How a `modifyProperties` value is saved:
 
@@ -58,7 +58,7 @@ See xref:reference/slots/settings.adoc#settings[Settings] for all keys of the `s
 [#read]
 == Read both values
 
-The `useAccountInfo` hook returns the data of the account, as xref:go-deeper/server-data/data-hooks.adoc[Data hooks] describes. It has no data until it has loaded, so each value is `undefined` at first.
+The xref:reference/shims/hooks/account-and-preferences.adoc#use-account-info[`useAccountInfo`] hook returns the data of the account, as xref:go-deeper/server-data/data-hooks.adoc[Data hooks] describes. It has no data until it has loaded, so each value is `undefined` at first.
 
 * The administrator default is in `zimlets.zimlet`. Each entry carries the configuration of one Zimlet. `useAdminSetting` finds the entry by name, collects the properties of its `global` section and returns one value. Use the name that you pass to `zimlet package` as `ZIMLET_NAME`.
 * The user value is in `props.prop`, a list of objects with `zimlet`, `name` and `_content`. `useUserSetting` returns the text of the object that has your Zimlet name and your setting name.

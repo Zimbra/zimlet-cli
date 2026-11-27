@@ -42,8 +42,8 @@ import { Sidebar } from '@zimbra-client/components';
 [#sidebar-props]
 === Props
 
-[[sidebar-children]]pass:[<a class="anchor" href="#sidebar-children"></a>]`children` (xref:reference/glossary.adoc#node[node])::
-The content of the sidebar, below the header. In a window at least 1025 px wide, the handle that collapses the sidebar shows only when `children` is set.
+[[sidebar-children]]pass:[<a class="anchor" href="#sidebar-children"></a>]`children` (xref:reference/glossary.adoc#node[node] or function `(hideSidebar: boolean) => node`)::
+The content of the sidebar, below the header. A function is called each time the sidebar draws. It gets `true` while the sidebar is hidden, as <<sidebar-tab-content-loaded,`tabContentLoaded`>> and the <<sidebar-usage-notes,usage notes>> describe, and returns the content. In a window at least 1025 px wide, the handle that collapses the sidebar shows only when `children` is set.
 
 [[sidebar-header]]pass:[<a class="anchor" href="#sidebar-header"></a>]`header` (boolean)::
 Set it to `true` to draw a bar above the content with the logo, the header actions and the list of verticals. Without it, no bar is drawn. The Modern UI screens set it only in a window narrower than 1025 px.
@@ -55,7 +55,7 @@ Drawn between the header and the content, with no frame of its own. Nothing is d
 `true` always draws the sidebar as a panel over the screen, and `false` always draws it as a column. When it is not set, the sidebar is a panel when the area that holds it is 1024 px wide or less. Before the first resize of the window, it uses the width of the window.
 
 [[sidebar-into]]pass:[<a class="anchor" href="#sidebar-into"></a>]`into` (string, default `body`)::
-A CSS selector of the https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^] that receives the sidebar while it is a panel. The sidebar is not drawn where you render it in that case. The Modern UI has the element `#sidebar_portal` for it. Use a selector that matches an element of the page.
+A CSS selector of the https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements[HTML element^] that receives the sidebar while it is a panel. The sidebar is not drawn where you render it in that case. The Modern UI has the element `#sidebar_portal` for it. Use a selector that matches an element of the page.
 
 [[sidebar-class]]pass:[<a class="anchor" href="#sidebar-class"></a>]`class` (string)::
 A class name added to the sidebar.
@@ -292,6 +292,9 @@ Where the tree reads the name of a folder. A string names a field of the folder.
 
 [[folder-list-badge-prop]]pass:[<a class="anchor" href="#folder-list-badge-prop"></a>]`badgeProp` (string, function `(folder: object) => node` or `false`)::
 Sets the counter at the right of a folder. A string names a field of the folder to show. A function returns what to show. `false` shows no counter. Without it, the counter shows `unread`, or `nonFolderItemCount` for Drafts and Outbox. A counter of `0` is not shown.
+
+[[folder-list-hide-sidebar]]pass:[<a class="anchor" href="#folder-list-hide-sidebar"></a>]`hideSidebar` (boolean)::
+Set it to `true` while the sidebar that holds the tree is hidden. The tree then does not add the keyboard shortcut *N*, then *F*, which starts a new folder. The Mail sidebar sets it from its own sidebar. The shortcut exists only in the `message` view, while the Modern UI is online.
 
 ==== Open folders and refresh
 

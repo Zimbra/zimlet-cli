@@ -128,7 +128,7 @@ plugins.register('slot::composer-toolbar-start', handler)
 [#composer-toolbar-start-props]
 === Props
 
-[[composer-toolbar-start-active-editor]]pass:[<a class="anchor" href="#composer-toolbar-start-active-editor"></a>]`activeEditor` (object or https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^])::
+[[composer-toolbar-start-active-editor]]pass:[<a class="anchor" href="#composer-toolbar-start-active-editor"></a>]`activeEditor` (object or https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements[HTML element^])::
 The editor of the message. In an HTML message it is the editor component, whose `getEditor` method returns the TinyMCE editor. In a plain text message it is the `textarea`. It is `null` or `undefined` before the editor has started, in a draft that opens read-only and in the event editor of Calendar.
 
 [#composer-toolbar-start-usage-notes]
@@ -156,7 +156,7 @@ plugins.register('slot::composer-toolbar-end', handler)
 [#composer-toolbar-end-props]
 === Props
 
-[[composer-toolbar-end-active-editor]]pass:[<a class="anchor" href="#composer-toolbar-end-active-editor"></a>]`activeEditor` (object or https://developer.mozilla.org/en-US/docs/Web/HTML/Element[HTML element^])::
+[[composer-toolbar-end-active-editor]]pass:[<a class="anchor" href="#composer-toolbar-end-active-editor"></a>]`activeEditor` (object or https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements[HTML element^])::
 The editor of the message, as for <<composer-toolbar-start-active-editor,`composer-toolbar-start`>>.
 
 [#composer-toolbar-end-usage-notes]

@@ -1,10 +1,10 @@
 = Your first Zimlet
 
-This tutorial takes you from an empty folder to a working Zimlet. You create it from the default template, run it in the xref:reference/glossary.adoc#modern-ui[Modern UI], change it and package it for deployment. It is the first hands-on step after setup, and it shows the whole development loop that every later Zimlet follows.
+This tutorial takes you from an empty folder to a working Zimlet. You create it from the default template and run it in the xref:reference/glossary.adoc#modern-ui[Modern UI]. You see how it adds a tab and a page, change the page and package it for deployment. It is the first hands-on step after setup, and it shows the whole development loop that every later Zimlet follows.
 
 == Before you start
 
-Complete the ready check in xref:getting-started/setup-environment.adoc#ready-check[Set up your machine]. You need Node.js 24, the `zimlet` tool and the xref:run-package-deploy/run-and-debug.adoc[sideloader] on your Zimbra server. Run the commands in a folder where you keep your projects.
+Complete the ready check in xref:getting-started/setup-environment.adoc#ready-check[Set up your machine]. You need Node.js 24, the `zimlet` tool and the xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[sideloader] on your Zimbra server. Run the commands in a folder where you keep your projects.
 
 [#create-from-template]
 == Create a Zimlet from the template
@@ -61,7 +61,7 @@ Keep this terminal open while you work. The server listens on port 8081 and answ
 [#load-with-sideloader]
 == Load it through the sideloader
 
-The xref:run-package-deploy/run-and-debug.adoc[sideloader] loads the Zimlet from your development server into the Modern UI.
+The xref:run-package-deploy/run-and-debug.adoc#load-with-the-sideloader[sideloader] loads the Zimlet from your development server into the Modern UI. Keep the development server from the previous section running. Your browser must have accepted its certificate.
 
 . Sign in to the Modern UI.
 . Choose *Integrations*, then choose the *Zimlets Sideloader* tab.
@@ -72,26 +72,63 @@ The xref:run-package-deploy/run-and-debug.adoc[sideloader] loads the Zimlet from
 
 The *Zimlets Loaded By Sideloader* table lists `my-zimlet` with the status *Running*. *Persist on Reload* is ticked, so the sideloader loads the Zimlet again on every page reload. See xref:run-package-deploy/run-and-debug.adoc#persist[Keep the Zimlet loaded with Persist on Reload] for how that works.
 
-.The sideloader after it loads my-zimlet
-image::quickstart-sideloader-running.png["The Zimlets Sideloader tab. The table of loaded Zimlets has one row: the name my-zimlet, the address https://localhost:8081/index.js, the status Running and the Persist on Reload box ticked"]
+.The sideloader after it loads my-zimlet, with the table row outlined
+image::quickstart-sideloader-running.png["The Zimlets Sideloader tab in the Modern UI. A red outline surrounds the one row of the table of loaded Zimlets: the name my-zimlet, the address https://localhost:8081/index.js, the status Running and the Persist on Reload box ticked"]
 
 [#see-and-change]
-== See the result and change it
+== See the result
 
 . Choose *Mail*. A *my-zimlet* tab appears next to the *Mail* tab.
 . Choose the *my-zimlet* tab. The page shows the text "Hello World".
 
-.The my-zimlet tab and its page in the Modern UI
-image::quickstart-hello-world.png["The Mail section with a my-zimlet tab beside the Mail tab. The tab is selected and the page below it shows the text Hello World"]
+.The my-zimlet tab and its page in the Modern UI, with the tab and the text outlined
+image::quickstart-hello-world.png["The Mail section of the Modern UI. A red outline surrounds the my-zimlet tab beside the Mail tab, and a second red outline surrounds the text Hello World on the page below it"]
 
-Now change the text:
+[#how-it-works]
+== How the tab and the page get on the screen
 
-. Open `src/intl/en_US.json` in your editor.
-. Change the value of `helloWorld`, for example to `Hello from my first Zimlet`, and save the file.
-. Check that the terminal prints `Compiled successfully!` again.
+The template adds the tab and the page with two handlers. A xref:fundamentals/extending-the-ui.adoc[slot] is a named place in a screen of the Modern UI. A handler is a function that you register for a slot, and the slot shows what the handler returns. `plugins` is a field of the xref:fundamentals/host-context.adoc[context] that the Modern UI passes to your Zimlet. `src/index.js` registers both handlers in xref:fundamentals/factory-and-lifecycle.adoc#init[`init()`]:
+
+[source,js]
+----
+plugins.register('slot::email-tab-item', EmailTabItem);
+plugins.register('slot::routes', EmailTabRoute);
+----
+
+xref:reference/slots/app-shell/navigation-and-tabs.adoc#vertical-tab-item[`slot::email-tab-item`]::
+The tab bar of Mail. The handler returns the *my-zimlet* tab, the component in `src/components/EmailTabItem/`.
+
+xref:reference/slots/app-shell/app-frame.adoc#routes[`slot::routes`]::
+The screens that open at an address. The handler returns the page for the address that the tab links to, the component in `src/components/app/`.
+
+The tab links to an address, and the page is registered for the same address, so choosing the tab opens the page. The Modern UI calls `init()` once after it loads the Zimlet, which is why the handlers are registered there. See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] for the entry file and xref:fundamentals/extending-the-ui.adoc[Slots and handlers] for how a slot calls its handlers. To build a tab of your own, follow xref:build-by-goal/recipe-tab-and-route.adoc[Add a tab and a screen].
+
+[#change-the-page]
+== Change the page
+
+The page is the component in `src/components/app/index.js`, and it shows its text from `src/intl/en_US.json`. The example adds a second line under the greeting. The line needs a new string in the translation file and a second `Text` element in the component.
+
+. Replace the content of `src/intl/en_US.json`. It adds the string `intro`:
++
+.src/intl/en_US.json
+[source,json]
+----
+include::example$quickstart/intl/en_US.json[]
+----
+. Replace the content of `src/components/app/index.js`. It shows the string `intro` below the greeting:
++
+.src/components/app/index.js
+[source,js]
+----
+include::example$quickstart/components/app/index.js[]
+----
+. Save both files and check that the terminal prints `Compiled successfully!` again.
 . Reload the Modern UI page and open the *my-zimlet* tab again.
 
-The page shows your new text. The page that is already open keeps the old text until you reload it. The page text comes from the translation file, which is why you edit `en_US.json` and not a component.
+The page shows your new line below "Hello World". The page that is already open keeps the old content until you reload it.
+
+.The my-zimlet page with the new line, with the tab and the two lines outlined
+image::quickstart-see-and-change.png["The Mail section of the Modern UI. A red outline surrounds the my-zimlet tab beside the Mail tab, and a second red outline surrounds the page text. The page shows Hello World and below it This page is part of my first Zimlet."]
 
 [#build-and-package]
 == Build and package
@@ -120,11 +157,11 @@ Successfully packaged zimlet to: <your-project-path>/my-zimlet/pkg/my-zimlet.zip
 
 The zip holds `index.js`, `index.js.LICENSE.txt`, a `my-zimlet.xml` xref:run-package-deploy/build-and-package.adoc[descriptor] and a `my-zimlet.properties` file. The descriptor carries the label and description from `src/intl/en_US.json`.
 
-The `package` script in `package.json` packages the Zimlet for Modern UI versions `^4.0.0`. Change that range to match your server. See xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version]. For every option of these commands, see xref:run-package-deploy/build-and-package.adoc[Build and package].
+The `package` script in `package.json` packages the Zimlet for Modern UI versions `^{modern-ui-version}`. Change that range to match your server. See xref:getting-started/prerequisites.adoc#find-modern-ui-version[Find the Modern UI version]. For every option of these commands, see xref:run-package-deploy/build-and-package.adoc[Build and package].
 
 == Expected result
 
-* The Modern UI shows a *my-zimlet* tab that opens a page with your text.
+* The Modern UI shows a *my-zimlet* tab that opens a page with your new line below "Hello World".
 * The `build` folder holds `index.js`.
 * The `pkg` folder holds `my-zimlet.zip`, ready to deploy as xref:run-package-deploy/deploy.adoc[Deploy] describes.
 
@@ -153,4 +190,4 @@ The page still shows the old text after you save.::
 
 == Next step
 
-Learn what each file of your new Zimlet does in xref:fundamentals/project-structure.adoc[Project structure].
+Learn what each file of your new Zimlet does in xref:fundamentals/project-structure.adoc[Project structure]. Before you give a Zimlet to users, read xref:go-deeper/security-and-best-practices.adoc[Security and best practices].

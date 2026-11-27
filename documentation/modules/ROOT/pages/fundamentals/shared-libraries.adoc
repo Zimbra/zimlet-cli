@@ -24,11 +24,11 @@ Other libraries::
 `moment`, `dompurify`, `react-redux` and `redux-actions`, which xref:reference/shims/libraries.adoc[Third-party libraries] lists, and xref:reference/shims/localization.adoc[`@zimbra/preact-i18n`], which provides `Text` and `Localizer` for xref:go-deeper/localization.adoc[localization]. Use `dompurify` to sanitise HTML, as xref:go-deeper/security-and-best-practices.adoc[Security and best practices] describes.
 
 Building blocks of the Modern UI::
-xref:reference/shims/blocks.adoc[`@zimbra-client/blocks`] (buttons, icons and other UI kit parts) and xref:reference/shims/components.adoc[`@zimbra-client/components`] (components of the Modern UI screens, such as `MenuItem` and `ModalDialog`). Also xref:reference/shims/hooks.adoc[`@zimbra-client/hooks`] (hooks such as `usePreferences`), xref:reference/shims/hocs.adoc[`@zimbra-client/enhancers`], xref:reference/shims/utilities.adoc[`@zimbra-client/util`], xref:reference/shims/constants.adoc[`@zimbra-client/constants`], and `@zimbra-client/errors`, `@zimbra-client/platform` and `@zimbra-client/browser`, which xref:reference/shims/errors-and-platform.adoc[Errors and platform] lists.
+xref:reference/shims/blocks.adoc[`@zimbra-client/blocks`] (buttons, icons and other UI kit parts) and xref:reference/shims/components.adoc[`@zimbra-client/components`] (components of the Modern UI screens, such as xref:reference/shims/components/menus.adoc#menu-item[`MenuItem`] and xref:reference/shims/components/dialogs.adoc#modal-dialog[`ModalDialog`]). Also xref:reference/shims/hooks.adoc[`@zimbra-client/hooks`] (hooks such as xref:reference/shims/hooks/account-and-preferences.adoc#use-preferences[`usePreferences`]), xref:reference/shims/hocs.adoc[`@zimbra-client/enhancers`], xref:reference/shims/utilities.adoc[`@zimbra-client/util`], xref:reference/shims/constants.adoc[`@zimbra-client/constants`], and `@zimbra-client/errors`, `@zimbra-client/platform` and `@zimbra-client/browser`, which xref:reference/shims/errors-and-platform.adoc[Errors and platform] lists.
 
 A shared module offers only the exports that xref:reference/shims.adoc[Shared modules] lists for it. Check the list before you import a name.
 
-The example puts a button in the xref:fundamentals/extending-the-ui.adoc[slot] `mail-sidebar-footer`, the area at the bottom of the mail sidebar. It shows today's date, and a click switches between a long and a short format. The button uses four shared modules and one package that is not shared.
+The example puts a button in the xref:fundamentals/extending-the-ui.adoc[slot] xref:reference/slots/mail/mail-list-and-sidebar.adoc#mail-sidebar-footer[`mail-sidebar-footer`], the area at the bottom of the mail sidebar. It shows today's date, and a click switches between a long and a short format. The button uses four shared modules and one package that is not shared.
 
 .src/index.js
 [source,js]
@@ -66,12 +66,12 @@ The build turns JSX such as `<Today />` into calls of `createElement`, and it do
 import { createElement } from 'preact';
 ----
 
-Without the import, the build still succeeds. The handler fails when the slot calls it, with `ReferenceError: createElement is not defined`.
+Without the import, the build still succeeds. The xref:fundamentals/extending-the-ui.adoc[handler] fails when the slot calls it, with `ReferenceError: createElement is not defined`.
 
 [#icons]
 == Icons
 
-A prop named `icon`, such as the one on `Button` and `MenuItem`, takes an icon component and not a name. Import the component from `lucide-preact` and pass it, as the example does with `+icon={CalendarIcon}+`.
+A prop named `icon`, such as the one on xref:reference/shims/blocks/buttons-and-progress.adoc#button[`Button`] and `MenuItem`, takes an icon component and not a name. Import the component from `lucide-preact` and pass it, as the example does with `+icon={CalendarIcon}+`.
 
 A string such as `icon="calendar"` is not supported. The Modern UI logs `+Icon => received name as string: calendar+` in the browser console.
 

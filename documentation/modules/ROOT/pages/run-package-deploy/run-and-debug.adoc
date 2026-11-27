@@ -40,12 +40,15 @@ The path of a custom build configuration file. The default is `./zimlet.config.j
 [#load-with-the-sideloader]
 == Load the Zimlet with the sideloader
 
-The sideloader is a Zimlet that loads another Zimlet from a web address into the Modern UI. For a first walk-through with screenshots, see xref:getting-started/quickstart.adoc#load-with-sideloader[Load it through the sideloader]. To load any Zimlet:
+The sideloader is a Zimlet that loads another Zimlet from a web address into the Modern UI. To load any Zimlet:
 
+. Start the development server, as <<start-the-development-server,Start the development server>> describes.
+. Accept the certificate of the server in your browser the first time. Follow xref:getting-started/setup-environment.adoc#accept-certificate[Accept the development HTTPS certificate].
 . Sign in to the Modern UI. Choose *Integrations*, then choose the *Zimlets Sideloader* tab.
 . In the Zimlet Name field, enter the name of your Zimlet.
 . In the address field, enter `https://localhost:8081/index.js`. Use your port if it is not 8081.
 . Choose *Load Zimlet*.
+. In Chrome, a prompt can ask to access other apps and services on this device. Choose *Allow*. If you block it, the status shows `Error: TypeError: Failed to fetch`. See xref:getting-started/setup-environment.adoc#allow-chrome-access[Allow Chrome to reach your development server].
 
 The table *Zimlets Loaded By Sideloader* lists the Zimlet. The status changes from *Loading* to *Running* when the Zimlet has loaded and its `init()` function has run. See xref:fundamentals/factory-and-lifecycle.adoc[Factory and lifecycle] for what `init()` does.
 

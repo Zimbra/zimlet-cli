@@ -17,7 +17,7 @@ xref:go-deeper/server-data/batch-client.adoc[Batch client]::
 Send a Zimbra request that has no hook, with `zimbraBatchClient`. The client adds the address, the session and the token for you.
 
 xref:go-deeper/server-data/fetch.adoc[Call a server API with fetch]::
-Send a request that you control yourself, with your own `fetch`, the `zimbraOrigin` field of the xref:fundamentals/host-context.adoc[context] and `csrfStorage` from `@zimbra-client/util`. Use it for an endpoint that is not a Zimbra request.
+Send a request that you control yourself, with your own `fetch`, the `zimbraOrigin` field of the xref:fundamentals/host-context.adoc[context] and xref:reference/shims/utilities/browser-and-app.adoc#csrf-storage[`csrfStorage`] from `@zimbra-client/util`. Use it for an endpoint that is not a Zimbra request.
 
 [#when-to-use-which]
 ==== When to use which method
@@ -33,7 +33,7 @@ Go with this preference. Take the first method that covers your need. Move to th
 
 The user expects to see a change that your Zimlet makes to data that the xref:reference/glossary.adoc#modern-ui[Modern UI] shows, such as a tag. Follow the same preference as above. The answer differs because each method tells the Modern UI about the change in a different way.
 
-. *Data hook.* A hook works through the data that the Modern UI itself keeps, so the Modern UI updates what it shows. The recipe xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item] puts a tag on messages with `useItemActionMutation`.
+. *Data hook.* A hook works through the data that the Modern UI itself keeps, so the Modern UI updates what it shows. The recipe xref:build-by-goal/recipe-mail-action-menu.adoc[Add a mail menu item] puts a tag on messages with xref:reference/shims/hooks/mail.adoc#use-item-action-mutation[`useItemActionMutation`].
 . *Batch client or `fetch`.* The request goes to the server, and the server should report the change as an event. The Modern UI listens to these events and updates what it shows. This works for most kinds of data, with a few exceptions. Check the result in the Modern UI before you rely on it.
 . *Reload.* Use it only when no event arrives, or when the Modern UI does not handle the event. For example, the Modern UI does not show a tag that your Zimlet creates until the page is reloaded. To offer the reload, show a notification with a button. Pass `action` to `notify`, with a `label` for the button and an `fn` that reloads the page. The recipe xref:build-by-goal/recipe-mail-action-menu.adoc#notify[Add a mail menu item] shows the code. 
 

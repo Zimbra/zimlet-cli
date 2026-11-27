@@ -98,6 +98,7 @@ A link (`a`) when `href` is set, or a `button` when it is not. It holds the icon
 
 * Choose the element by `href`. Set `href` for a screen or an address. Leave it out for an action, and set `onClick`.
 * A button item focuses itself when the pointer moves over it, so that the keyboard continues from the item that the pointer is on.
+* A button item stops the *Enter* key press from going to the elements above it. Pass your own `onKeyDown` to replace this.
 * The `responsive` and `isCheckbox` props have no effect.
 * The component is memoized. A new function in `onClick` on every render makes it draw again, so keep the same function between renders.
 
@@ -194,7 +195,8 @@ The container of a xref:reference/shims/blocks/dialogs-and-overlays.adoc#popover
 === Usage notes
 
 * Wrap the items in a <<drop-down-wrapper,`DropDownWrapper`>>. It gives the arrow keys and the closing on a click. A child element that does not pass these props on works, but the menu does not close when the user chooses an item.
-* The menu moves the focus to its first item 100 ms after it opens. The arrow keys then move the focus between the items that have the default look of <<menu-item,`MenuItem`>>, without `customClass`. Items that appear after that delay are not reached with the arrow keys.
+* A moment after the menu opens (1 ms), it moves the focus to its first item that is not disabled. The *Up arrow* and *Down arrow* keys then move the focus between the items that have the default look of <<menu-item,`MenuItem`>>, without `customClass`. They go round at the ends and skip a disabled button item. Items that appear after that moment are not reached with the arrow keys.
+* When the menu closes, the focus returns to the element that had it when the menu opened.
 * The `corners` prop has no effect.
 * The menu keeps its own open state. You cannot open it with a prop. Use <<action-menu-render-label,`renderLabel`>> with `toggle` to open it from your own control.
 
@@ -426,6 +428,7 @@ An item with a right arrow, in a xref:reference/shims/blocks/dialogs-and-overlay
 
 * Put it inside an <<action-menu,`ActionMenu`>>, so that it gets `closeDropdown`. Without that, choosing an item closes the second menu and leaves the first one open.
 * A click on the item opens the second menu, and the first menu stays open. In a window that is 1025 px wide or wider, the second menu also opens when the pointer rests on the item for 250 ms.
+* With the keyboard, *Right arrow* opens the second menu while the item has the focus. The focus moves to the first item that is not disabled. *Up arrow* and *Down arrow* move the focus between the items and go round at the ends. *Left arrow* closes the second menu and returns the focus to the item.
 * The component ignores every prop that the list does not name, such as `anchor`.
 
 

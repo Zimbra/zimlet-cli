@@ -1,6 +1,6 @@
 = Key bindings
 
-Maps keys to commands. Use it to add, find or remove the keys that trigger commands. Take the field from the context first, as in `const { keyBindings } = context;`. A binding is an object `{ <context>: { <key>: <command> } }`. The context is `all` or the name of a screen. A key is in upper case, and modifiers come first in the order `cmd`, `ctrl`, `shift`, `alt`, joined with `+`, as in `ctrl+shift+C`. A key that holds an object instead of a command starts a sequence of keys, as `G` then `M` does for the Modern UI.
+Maps keys to commands. Use it to add, find or remove the keys that trigger commands. Take the field from the context first, as in `const { keyBindings } = context;`. A binding is an object `{ <context>: { <key>: <command> } }`. The context is `all` or the name of a part of the Modern UI: `mail`, `compose`, `toolbar`, `trees`, `buttons` or `dialog`. A key is in upper case, and modifiers come first in the order `cmd`, `ctrl`, `shift`, `alt`, joined with `+`, as in `ctrl+shift+C`. Write the keys `.`, `,` and the space bar as `PERIOD`, `COMMA` and `SPACE`. The Modern UI renames a pressed key that way before it looks for a binding, so a binding with the character itself never matches. A key that holds an object instead of a command starts a sequence of keys, as `G` then `M` does for the Modern UI.
 
 [#members]
 == Members

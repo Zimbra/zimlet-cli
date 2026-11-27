@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 /**
  * Generates documentation/modules/ROOT/pages/reference/slots/all-slots.adoc (P34.8) from the
- * extension-point catalog (zm-x-web/.agents/zimlet/context/zimlet-slots.yml) and the slot pages
- * under pages/reference/slots/. Run it again after the catalog or a slot page changes.
+ * extension-point catalog (zm-x-web/.agents/zimlet/context/zimlet-slots.yml). The catalog gives each name
+ * the page and anchor of its entry in its `doc` field, which zm-x-web/.agents/zimlet/scripts/find-slots.sh
+ * sets from the slot pages. Run this again after the catalog or a slot page changes.
+ *
+ * The script only reads zm-x-web and writes nothing there.
  *
  * Usage: node .agents/scripts/generate-all-slots.mjs [--check]
  *
  * --check writes nothing and exits 1 when the page on disk differs from the generated one.
- * Exit code 1 also when a catalog name has no entry in a slot page, 2 on a usage or input error.
+ * Exit code 1 also when a catalog name has no `doc` or its `doc` points to a page or anchor that does not exist,
+ * 2 on a usage or input error.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,8 +22,6 @@ const CATALOG = path.resolve(ROOT, '../zm-x-web/.agents/zimlet/context/zimlet-sl
 const PAGES = path.join(ROOT, 'documentation/modules/ROOT/pages');
 const SLOTS_DIR = path.join(PAGES, 'reference/slots');
 const OUTPUT = path.join(SLOTS_DIR, 'all-slots.adoc');
-const PATTERN_SUFFIXES = ['tab-item', 'default-tab', 'landing-page', 'landing-page-description', 'landing-page-videos'];
-const PATTERN_NAME = new RegExp(`^[a-z]+-(${PATTERN_SUFFIXES.join('|')})$`);
 
 const args = process.argv.slice(2);
 const check = args.includes('--check');
@@ -41,12 +43,15 @@ function readCatalog() {
 			current = { kind: kind[1] };
 			continue;
 		}
+		if (!current) continue;
 		const name = /^ {4}name: (\S+)/.exec(line);
-		if (name && current) {
+		if (name) {
 			current.name = name[1];
 			names.push(current);
-			current = null;
+			continue;
 		}
+		const doc = /^ {4}doc: (\S+)/.exec(line);
+		if (doc) current.doc = doc[1];
 	}
 	return names;
 }
@@ -56,59 +61,58 @@ function pageTitle(file) {
 	return title ? title[1].trim() : path.basename(file, '.adoc');
 }
 
-// Maps every entry heading of the slot pages, and every slot term of a page that lists slots as a description list
-// (such as Hide built-in UI), to its page, anchor id and place in the guide.
-function readEntries() {
-	const entries = new Map();
-	const files = [];
-	(function walk(dir) {
-		for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
-			const full = path.join(dir, item.name);
-			if (item.isDirectory()) walk(full);
-			else if (item.name.endsWith('.adoc') && full !== OUTPUT) files.push(full);
-		}
-	})(SLOTS_DIR);
-	for (const file of files) {
-		const relative = path.relative(SLOTS_DIR, file).replace(/\\/g, '/');
-		const parts = relative.replace(/\.adoc$/, '').split('/');
-		const group = pageTitle(path.join(SLOTS_DIR, `${parts[0]}.adoc`));
-		const place = parts.length > 1 ? `${group}, ${pageTitle(file)}` : group;
-		const xrefPath = `reference/slots/${relative}`;
-		const lines = fs.readFileSync(file, 'utf8').split('\n');
-		lines.forEach((line, i) => {
-			const heading = /^== (.+)$/.exec(line);
-			const id = /^\[#([a-z0-9-]+)(?:\.[a-z-]+)?\]$/.exec(lines[i - 1] || '');
-			if (heading && id) entries.set(heading[1].trim(), { xrefPath, id: id[1], place });
-			const term = /^\[\[([a-z0-9-]+)\]\]pass:\[<a class="anchor" href="#\1"><\/a>\]`([^`]+)`::$/.exec(line);
-			if (term && term[1] === term[2] && !entries.has(term[2])) {
-				entries.set(term[2], { xrefPath, id: term[1], place });
-			}
-		});
+// Finds the entry that a `doc` value (`reference/slots/<page>.adoc#<anchor>`) points to: the title of the entry,
+// and the place of its page in the guide. Returns null when the page or the anchor does not exist.
+function resolveDoc(doc) {
+	const [xrefPath, id] = doc.split('#');
+	const file = path.join(PAGES, xrefPath);
+	if (!id || !xrefPath.startsWith('reference/slots/') || !xrefPath.endsWith('.adoc') || !fs.existsSync(file)) {
+		return null;
 	}
-	return entries;
+	const lines = fs.readFileSync(file, 'utf8').split('\n');
+	let title = null;
+	lines.forEach((line, i) => {
+		const heading = /^== (.+)$/.exec(line);
+		if (heading && new RegExp(`^\\[#${id}(?:\\.[a-z-]+)?\\]$`).test(lines[i - 1] || '')) title = heading[1].trim();
+		const term = /^\[\[([a-z0-9-]+)\]\]pass:\[<a class="anchor" href="#\1"><\/a>\]`([^`]+)`::$/.exec(line);
+		if (term && term[1] === id && term[2] === id && !title) title = term[2];
+	});
+	if (!title) return null;
+	const parts = xrefPath.slice('reference/slots/'.length).replace(/\.adoc$/, '').split('/');
+	const group = pageTitle(path.join(SLOTS_DIR, `${parts[0]}.adoc`));
+	const place = parts.length > 1 ? `${group}, ${pageTitle(file)}` : group;
+	return { xrefPath, id, title, place };
 }
 
 const slug = name => name.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase();
 
 const catalog = readCatalog();
-const entries = readEntries();
 const rows = [];
-const missing = [];
-for (const { kind, name } of catalog) {
-	let entry = entries.get(name);
-	let pattern = null;
-	if (!entry && PATTERN_NAME.test(name)) {
-		pattern = `<vertical>-${PATTERN_NAME.exec(name)[1]}`;
-		entry = entries.get(pattern);
-	}
-	if (!entry) {
-		missing.push(name);
+const undocumented = [];
+const broken = [];
+for (const { kind, name, doc } of catalog) {
+	if (!doc) {
+		undocumented.push(name);
 		continue;
 	}
-	rows.push({ name, pattern, entry, isKey: kind === 'invoke-plugin' });
+	const entry = resolveDoc(doc);
+	if (!entry) {
+		broken.push(`${name} -> ${doc}`);
+		continue;
+	}
+	rows.push({ name, pattern: entry.title === name ? null : entry.title, entry, isKey: kind === 'invoke-plugin' });
 }
-if (missing.length) {
-	console.error(`No entry found for ${missing.length} name(s):\n${missing.map(n => `  ${n}`).join('\n')}`);
+if (undocumented.length || broken.length) {
+	if (undocumented.length) {
+		console.error(
+			`No doc for ${undocumented.length} name(s): document the name, then run find-slots.sh in zm-x-web:\n${undocumented.map(n => `  ${n}`).join('\n')}`
+		);
+	}
+	if (broken.length) {
+		console.error(
+			`The doc of ${broken.length} name(s) points to a page or anchor that does not exist: run find-slots.sh in zm-x-web:\n${broken.map(n => `  ${n}`).join('\n')}`
+		);
+	}
 	process.exit(1);
 }
 
@@ -162,9 +166,10 @@ out.push(
 out.push('');
 
 const text = out.join('\n');
+
+const read = file => (fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '');
 if (check) {
-	const current = fs.existsSync(OUTPUT) ? fs.readFileSync(OUTPUT, 'utf8') : '';
-	if (current !== text) {
+	if (read(OUTPUT) !== text) {
 		console.error('all-slots.adoc is out of date: run node .agents/scripts/generate-all-slots.mjs');
 		process.exit(1);
 	}

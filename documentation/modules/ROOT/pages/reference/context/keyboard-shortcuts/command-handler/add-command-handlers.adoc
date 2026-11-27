@@ -19,7 +19,7 @@ shortcutCommandHandler.addCommandHandlers(commandHandlers)
 
 |`commandHandlers`
 |array of object
-|Each object has `context` (string), `command` (string) and `handler` (function `(info: { e?: KeyboardEvent, context: string, command: string }) => void`). The handler is called with `info`. `e` is the event of the key release. It is missing when the command comes from a sequence of keys that ended after its delay. Its return value is ignored.
+|Each object has `context` (string), `command` (string), `handler` (function `(info: { e?: KeyboardEvent, context: string, command: string }) => void`) and an optional `processOnKeyDown` (boolean, default `false`). The handler is called with `info`. `e` is the event of the key release, or of each key press when `processOnKeyDown` is `true`. It is missing when the command comes from a sequence of keys that ended after its delay. Its return value is ignored.
 
 |===
 
@@ -34,6 +34,9 @@ Nothing (`undefined`).
 * Handlers of a specific context run first. Handlers of the `all` context run only when none of the others ran.
 * Keep the objects in a variable if you want to remove them later with xref:reference/context/keyboard-shortcuts/command-handler/remove-command-handlers.adoc[removeCommandHandlers].
 * A command that no binding points to never runs.
+* With `processOnKeyDown` set to `true`, the handler runs for each key press, and again for each repeat while the user holds the key. It does not run on the key release. Use it for a command that must repeat, such as moving through a list.
+* The setting belongs to the pair of `context` and `command`, not to one handler. The handler that you add last decides it for every handler of the pair, so give all handlers of one command the same value.
+* The Modern UI ignores a key pressed in a text field, a list box or an editable area. *Escape*, *Ctrl+M*, *Ctrl+G*, *Ctrl+H* and *Ctrl+Q* are the exceptions. A checkbox does not block keys.
 
 [#example]
 == Example
